@@ -8,7 +8,7 @@ export type TaskDetailDto = {
     id: number;
     created_at: (string | null);
     updated_at: (string | null);
-    projectid: number;
+    project_id: number;
     name: (string | null);
     instruction: (string | null);
     annotations?: Array<AnnotationDto>;

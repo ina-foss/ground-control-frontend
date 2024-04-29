@@ -53,18 +53,18 @@ export class ProjectService {
     }
     /**
      * Read Project
-     * @param projectid
+     * @param projectId
      * @returns ProjectListDto Successful Response
      * @throws ApiError
      */
-    public static readProjectProjectProjectidGet(
-        projectid: number,
+    public static readProjectProjectProjectIdGet(
+        projectId: number,
     ): CancelablePromise<ProjectListDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/project/{projectid}',
+            url: '/project/{project_id}',
             path: {
-                'projectid': projectid,
+                'project_id': projectId,
             },
             errors: {
                 422: `Validation Error`,
@@ -73,20 +73,20 @@ export class ProjectService {
     }
     /**
      * Update Project
-     * @param projectid
+     * @param projectId
      * @param requestBody
      * @returns ProjectDetailDto Successful Response
      * @throws ApiError
      */
-    public static updateProjectProjectProjectidPut(
-        projectid: number,
+    public static updateProjectProjectProjectIdPut(
+        projectId: number,
         requestBody: ProjectBaseDto,
     ): CancelablePromise<ProjectDetailDto> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/project/{projectid}',
+            url: '/project/{project_id}',
             path: {
-                'projectid': projectid,
+                'project_id': projectId,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -97,18 +97,18 @@ export class ProjectService {
     }
     /**
      * Delete Project
-     * @param projectid
+     * @param projectId
      * @returns ProjectDetailDto Successful Response
      * @throws ApiError
      */
-    public static deleteProjectProjectProjectidDelete(
-        projectid: number,
+    public static deleteProjectProjectProjectIdDelete(
+        projectId: number,
     ): CancelablePromise<ProjectDetailDto> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/project/{projectid}',
+            url: '/project/{project_id}',
             path: {
-                'projectid': projectid,
+                'project_id': projectId,
             },
             errors: {
                 422: `Validation Error`,

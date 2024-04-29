@@ -10,7 +10,7 @@ export type PredictionDto = {
     score: (number | null);
     created_at: (string | null);
     updated_at: (string | null);
-    taskid: number;
-    projectid: number;
+    task_id: number;
+    project_id: number;
 };
 

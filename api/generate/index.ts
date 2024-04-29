@@ -20,7 +20,6 @@ export type { UserBaseDto } from './models/UserBaseDto';
 export type { UserDto } from './models/UserDto';
 export type { ValidationError } from './models/ValidationError';
 
-export { DefaultService } from './services/DefaultService';
 export { ProjectService } from './services/ProjectService';
 export { TaskService } from './services/TaskService';
 export { UserService } from './services/UserService';
