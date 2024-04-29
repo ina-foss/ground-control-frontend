@@ -42,8 +42,24 @@
             </FloatLabel>
             
         </div>
+        <div class="pt-8">
+        <FileUpload 
+        :pt="{
+            buttonbar: {
+                style: 'display:none'
+            }
+        }">
+            <template #empty>
+                <div class="flex items-center justify-content-center flex-col"> 
+                    <span class="pi pi-file-arrow-up align-center " style="font-size: 2.5rem"></span>
+                    <p class="text-xs pt-3 text-slate-400">Drag and frop JSON file to upload</p>
+                </div>
+            </template>
+
+        </FileUpload>
+        </div>
         <template #footer>
-            <div class="flex gap4">
+            <div class="flex">
             <Button label="Create" @click="createProject" />
             </div>
         </template>
@@ -59,6 +75,8 @@
 <script setup>
 
 import {bcStore} from '~/stores/breadcrumbs';
+
+import { ProjectService } from '~/api/generate';
 
 const items = bcStore().items
 
@@ -82,20 +100,23 @@ const createProject = async() => {
         errorVisible.value = true;
     }
     else{
-        const response =  await $fetch(`/api/project`, {
-                method: 'POST',
-                headers: {
-                    'Accept': "application/json",
-                    'Content-Type': "application/json"
-                },
-                body : JSON.stringify({
-                    title: titleValue.value,
-                    description: descriptionValue.value,
-                    created_by: 1
-                })
-            })
+
+        const response = await ProjectService.createProjectProjectPost({title: titleValue.value, description: descriptionValue.value, created_by: 1})
+
+        // const response =  await $fetch(`/api/project`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Accept': "application/json",
+        //             'Content-Type': "application/json"
+        //         },
+        //         body : JSON.stringify({
+        //             title: titleValue.value,
+        //             description: descriptionValue.value,
+        //             created_by: 1
+        //         })
+        //     })
         
-        console.log(response.response)
+        // console.log(response.response)
         
     }
 }

@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   css: [
     '@/assets/css/base.css',
   ],
-  plugins: ['~/plugins/baseURL','~/plugins/tooltip' ],
+  plugins: ['~/plugins/baseURL'],
   modules: [
     'nuxt-primevue',
     '@nuxtjs/tailwindcss',

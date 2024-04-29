@@ -2,17 +2,17 @@
     <div class="bg-black">
         <DataTable @row-click="handleRowClick" :value="data.tasks" tableStyle="background-color: white" breakpoint="300px" contextMenu="true" row-hover="true" columnResizeMode="fit" size="large"> 
             <Column field="name" header="Title" style="width : 8rem ; min-width: 50px; "></Column>
-            <Column field="taskid" header="ID" style="width: 40px;"></Column>
+            <Column field="id" header="ID" style="width: 40px;"></Column>
             <Column field="annotations.length" style="width: 3rem;" >
-                <template #header ><i v-tooltip="'Nbr total annotation'" class="pi pi-star"></i></template>
+                <template #header ><i v-tooltip="'Nbr total annotation'" class="pi pi-star cursor-help"></i></template>
                 <template #body="slotProps" > <div class="flex-1 text-center"> {{ slotProps.data.annotations.length }}</div></template>
             </Column>
             <Column field="predictions.length" style="width: 3rem">
-                <template #header><i v-tooltip="'Nbr annotations remplies'" class="pi pi-star-fill"></i></template>
+                <template #header><i  v-tooltip="'Nbr annotations remplies'" class="pi pi-star-fill cursor-help"></i></template>
                 <template #body="slotProps" > <div class="flex-1 text-center"> {{ count_validated_task(slotProps.data.annotations) }}</div></template>
             </Column>
             <Column field="predictions.length" style="width: 12px">
-                <template #header><i v-tooltip="'Nbr de prédictions'" class="pi pi-lightbulb"></i></template>
+                <template #header><i  v-tooltip="'Nbr de prédictions'" class="pi pi-lightbulb cursor-help"></i></template>
                 <template #body="slotProps" > <div class="flex-1 text-center"> {{ slotProps.data.predictions.length }}</div></template>
             </Column>
             <Column header="Annoted by" style="width: 12rem">
@@ -36,7 +36,7 @@
                         
                     </Button>
                 </NuxtLink> -->
-                <Button @click="navigateToTask(slotProps.data.taskid)" severity="secondary" label="GO"/>
+                <Button @click="navigateToTask(slotProps.data.id)" severity="secondary" label="GO"/>
                 </template>
             </Column>
 
@@ -113,12 +113,12 @@
         // Open the dialog
         this.visible = true;
         },
-        navigateToTask(taskid){
-            navigateTo(`/tasks/${taskid}`)
+        navigateToTask(id){
+            navigateTo(`/tasks/${id}`)
         },
         handleRowClick(event){
             this.clickedRowData = event.data;
-            this.navigateToTask(this.clickedRowData.taskid)
+            this.navigateToTask(this.clickedRowData.id)
         }
     }
     };

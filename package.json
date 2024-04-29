@@ -7,7 +7,8 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "update-api": "openapi --input ./swagger.json --output ./api/generate"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
@@ -18,7 +19,9 @@
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.42.1",
     "@nuxtjs/tailwindcss": "^6.11.4",
-    "nuxt-primevue": "^0.3.1"
+    "nuxt-primevue": "^0.3.1",
+    "openapi-typescript-codegen": "^0.26.0"
   }
 }
