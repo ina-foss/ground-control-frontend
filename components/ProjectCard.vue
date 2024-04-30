@@ -1,6 +1,6 @@
 <template>
     <div  class="min-w-fit bg-white max-w-screen h-150 px-3 py-1 cursor-pointer rounded-md shadow hover:scale-105 transition-transform tansition-shadow hover:shadow-xl">
-        <NuxtLink :to="{ name: 'projects-id', params: { id: $props.project.id } } " @click="updateBreadcrumd">
+        <NuxtLink :to="{ name: 'projects-id', params: { id: $props.project.id } } " >
             <div class="flex justify-between align-middle pl-2">
                 <p class="font-semibold self-center">{{ $props.project.title }}</p>
                 <p class="inline-block  text-2xl" >
@@ -17,17 +17,17 @@
                                 <label class="self-center basis-1/4">Task description</label>
                                 <InputText placeholder="Enter a new task description" autocomplete="off" class="flex-auto" v-model="description"/>
                             </div>
-                            <ButtonGroup>
+                            <ButtonGroup class="justify-evenly flex items-center pt-6 ">
                                 <Button label="Update" severity="info" class="justify-self-center" @click="updateProject" />
                                 <Button  v-if="deleteDialog == false"label="Delete" severity="danger" @click="deleteDialog=true" />
-                                <Button v-else label="Sure ?" severity="danger" @click="deleteProject"/>
+                                <Button v-else label="Sure ?" severity="danger" @click="deleteProject" class=""/>
                             </ButtonGroup>
                         </div>
                     </Dialog>
                 </p>
             </div>
             <div class="flex justify-between justify-items-stretch pl-2 pt-1 text-sm">
-                <p >0/{{ $props.project.id.total_tasks }} <i class="pi pi-list-check"></i></p>
+                <p >0/{{ $props.project.total_tasks }} <i class="pi pi-list-check"></i></p>
                 <div class="flex justify-between justify-items-stretch gap-3" > 
                     <span>1/{{  }} </span>
                     <span>2 <i class="pi pi-flag-fill" style="color:red" ></i> </span>
@@ -48,7 +48,7 @@
     @import url(/assets/css/base.css);
 </style>
 
-<script setup lang="ts">
+<script setup >
 
     import {bcStore} from '~/stores/breadcrumbs';   
     import { reactive, toRefs } from 'vue';
@@ -87,7 +87,7 @@
         }
         else {
             console.log("api called")
-            const response = await ProjectService.updateProjectProjectProjectidPut(project.value.id,{title: title.value, description: description.value,  created_by: 1})
+            const response = await ProjectService.updateProjectProjectProjectIdPut(project.value.id,{title: title.value, description: description.value,  created_by: 1})
             console.log(response.title)
             visible.value = false
         }
@@ -114,7 +114,7 @@
 
 </script>
 
-<script lang="ts">
+<script >
 
 export default {
     data () {

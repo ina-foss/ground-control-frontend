@@ -6,20 +6,20 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
 
 
     let baseURL;
     if (process.client){
-        baseURL = 'http://localhost:80';
+        baseURL = 'http://localhost:8000';
     }
     else if (process.server){
         baseURL = 'http://nginx'
     }
 
 
-    const { data, pending, error, refresh } = await useFetch(`${baseURL}/api/projects/`)
+    const { data, pending, error, refresh } = await useFetch(`${baseURL}/projects/`)
 
     const projectData = ref(data)
 

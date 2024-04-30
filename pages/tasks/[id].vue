@@ -25,18 +25,23 @@
     let baseURL;
 
     if (process.client){
-        baseURL = 'http://localhost:80';
+        baseURL = 'http://localhost:8000';
     }
     else if (process.server){
         baseURL = 'http://nginx'
     }
 
-    const {data, pending, refresh, error} = await useFetch(`${baseURL}/api/task/${route.params.id}` ,{ 
+    const {data, pending, refresh, error} = await useFetch(`${baseURL}/task/${route.params.id}` ,{ 
         headers: {
             Accept: 'application/json',
             
         },
         
     })
+    if (store.items.length == 0){
+        store.addCrumb({label: 'Project name', url: `/projects/${data.value.project_id}`})
+    }
+    store.addCrumb({label: data.value.name, url: `/tasks/${data.value.id}`})
+    console.log(store.items)
 
 </script>

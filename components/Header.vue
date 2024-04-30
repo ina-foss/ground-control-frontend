@@ -27,9 +27,13 @@
         
     </div>
 
-    <Dialog modal v-model:visible="dialogVisible" header="New Project" style="width:20rem;" >
+    <Dialog modal v-model:visible="dialogVisible" header="New Project" style="width:20rem;" :pt="{
+        header:{
+            class:'bg-surface-0 border-t-0 rounded-tr-lg rounded-tl-lg justify-between items-center shrink-0 flex p-6 pb-2'
+        }
+    }" >
         <InlineMessage v-if="errorVisible==true && !titleValue" class="mb-2" >Title is required</InlineMessage>
-        <div class=" pt-4 flex flex-col gap-4">
+        <div class=" pt-5 flex flex-col gap-4">
             <FloatLabel class="py-1" >
                 <InputText id="title" v-model="titleValue" ></InputText>
                 

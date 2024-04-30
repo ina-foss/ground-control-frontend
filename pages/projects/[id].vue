@@ -1,6 +1,7 @@
 <template>
     <div class="bg-black">
-        <DataTable @row-click="handleRowClick" :value="data.tasks" tableStyle="background-color: white" breakpoint="300px" contextMenu="true" row-hover="true" columnResizeMode="fit" size="large"> 
+        
+        <DataTable v-if="data.tasks.length > 0" @row-click="handleRowClick" :value="data.tasks" tableStyle="background-color: white" breakpoint="300px" contextMenu="true" row-hover="true" columnResizeMode="fit" size="large"> 
             <Column field="name" header="Title" style="width : 8rem ; min-width: 50px; "></Column>
             <Column field="id" header="ID" style="width: 40px;"></Column>
             <Column field="annotations.length" style="width: 3rem;" >
@@ -29,18 +30,12 @@
                     
                 </template>
             </Column>
-            <Column header="button">
-                <template #body="slotProps">
-                    <!-- <NuxtLink :to="{name: 'tasks-id', params: {id:slotProps.data.taksid}}">
-                    <Button icon="pi pi-caret-right" >
-                        
-                    </Button>
-                </NuxtLink> -->
-                <Button @click="navigateToTask(slotProps.data.id)" severity="secondary" label="GO"/>
-                </template>
-            </Column>
 
         </DataTable>
+        <div v-else class="min-h-[calc(100vh-52px)] bg-white items-center justify-center flex flex-col">
+            <span class="pi pi-folder-open" style="font-size: 20rem; opacity: 25% ;"></span>
+            <p class="text-slate-500">No tasks in this project</p>
+        </div>
         <Dialog v-model:visible="visible" modal @hide="visible = false">
                 <DataDialog />
         </Dialog>
@@ -78,13 +73,13 @@
     let baseURL;
 
     if (process.client){
-        baseURL = 'http://localhost:80';
+        baseURL = 'http://localhost:8000';
     }
     else if (process.server){
         baseURL = 'http://nginx'
     }
 
-    const {data, pending, refresh, error} = await useFetch(`${baseURL}/api/project/${route.params.id}` ,{ 
+    const {data, pending, refresh, error} = await useFetch(`${baseURL}/project/${route.params.id}` ,{ 
         headers: {
             Accept: 'application/json',
             
@@ -92,7 +87,8 @@
         
     })
 
-    store.items= [{label: data.value.title }]
+    store.addCrumb({label: data.value.title })
+    console.log(store.items)
 
 </script>
 
