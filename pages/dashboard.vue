@@ -1,7 +1,7 @@
 <template>
     <div >
         <div class="py-8 px-4 grid gap-5 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 bg-white-100">
-            <ProjectCard v-for="project in data" :project=project @refreshData="handleRefresh"/>
+            <ProjectCard v-for="project in sortDataById(data)" :project=project @refreshData="handleRefresh"/>
         </div>
     </div>
 </template>
@@ -28,7 +28,11 @@
         refresh()
         console.log(data)
         
-    }   
+    }
+
+    const sortDataById = (array) => {
+        return array.sort((a,b)=> a.id - b.id)
+    }
 
 
 </script>

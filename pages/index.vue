@@ -11,15 +11,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
 
-    export default {
-        data() {
-            return {
-                visible: false
-            }
-        }
-    }
+const visible = ref(false)
 
 </script>
 

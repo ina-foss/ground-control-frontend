@@ -35,7 +35,8 @@
                 </div>
             </div>
             <hr>
-            <div class="flex justify-between  pl-2 pt-10 pb-2 text-gray-400">
+            <div class="text-sm px-2 py-3 text-slate-500"> {{ $props.project.description }} </div>
+            <div class="flex justify-between  pl-2 py-2 text-gray-400">
                 <p class="self-center" v-if="$props.project.created_at != null">{{$props.project.created_at.split('T')[0]}}</p>
                 <Avatar shape="circle" label="PR" />
             </div>
@@ -48,7 +49,7 @@
     @import url(/assets/css/base.css);
 </style>
 
-<script setup >
+<script setup lang="ts">
 
     import {bcStore} from '~/stores/breadcrumbs';   
     import { reactive, toRefs } from 'vue';
@@ -113,17 +114,3 @@
     }
 
 </script>
-
-<script >
-
-export default {
-    data () {
-        return {
-            
-        }
-        
-    }
-}
-
-</script>
-
