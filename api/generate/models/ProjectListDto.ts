@@ -7,6 +7,7 @@ export type ProjectListDto = {
     title: (string | null);
     description: (string | null);
     created_by: number;
+    id: number;
     tasks?: Array<TaskListDto>;
 };
 

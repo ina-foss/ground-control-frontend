@@ -5,6 +5,7 @@
 import type { ProjectBaseDto } from '../models/ProjectBaseDto';
 import type { ProjectDetailDto } from '../models/ProjectDetailDto';
 import type { ProjectListDto } from '../models/ProjectListDto';
+import type { ProjectWithIdDto } from '../models/ProjectWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -75,13 +76,13 @@ export class ProjectService {
      * Update Project
      * @param projectId
      * @param requestBody
-     * @returns ProjectDetailDto Successful Response
+     * @returns ProjectWithIdDto Successful Response
      * @throws ApiError
      */
     public static updateProjectProjectProjectIdPut(
         projectId: number,
         requestBody: ProjectBaseDto,
-    ): CancelablePromise<ProjectDetailDto> {
+    ): CancelablePromise<ProjectWithIdDto> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/project/{project_id}',
@@ -98,12 +99,12 @@ export class ProjectService {
     /**
      * Delete Project
      * @param projectId
-     * @returns ProjectDetailDto Successful Response
+     * @returns ProjectWithIdDto Successful Response
      * @throws ApiError
      */
     public static deleteProjectProjectProjectIdDelete(
         projectId: number,
-    ): CancelablePromise<ProjectDetailDto> {
+    ): CancelablePromise<ProjectWithIdDto> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/project/{project_id}',

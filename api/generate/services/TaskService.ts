@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { TaskDetailDto } from '../models/TaskDetailDto';
+import type { TaskCreateDto } from '../models/TaskCreateDto';
+import type { TaskListDto } from '../models/TaskListDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -10,18 +11,37 @@ export class TaskService {
     /**
      * Read Task
      * @param id
-     * @returns TaskDetailDto Successful Response
+     * @returns TaskListDto Successful Response
      * @throws ApiError
      */
     public static readTaskTaskIdGet(
         id: number,
-    ): CancelablePromise<TaskDetailDto> {
+    ): CancelablePromise<TaskListDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/task/{id}',
             path: {
                 'id': id,
             },
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Create Task
+     * @param requestBody
+     * @returns TaskCreateDto Successful Response
+     * @throws ApiError
+     */
+    public static createTaskTaskPost(
+        requestBody: TaskCreateDto,
+    ): CancelablePromise<TaskCreateDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/task/',
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 422: `Validation Error`,
             },

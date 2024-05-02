@@ -5,12 +5,13 @@
 import type { AnnotationDto } from './AnnotationDto';
 import type { PredictionDto } from './PredictionDto';
 export type TaskListDto = {
+    name: (string | null);
+    instruction: (string | null);
+    project_id: number;
+    data?: (Record<string, any> | null);
     id: number;
     created_at: (string | null);
     updated_at: (string | null);
-    project_id: number;
-    name: (string | null);
-    instruction: (string | null);
     annotations?: Array<AnnotationDto>;
     predictions?: Array<PredictionDto>;
 };

@@ -2,9 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type TaskBaseDto = {
+export type TaskCreateDto = {
     name: (string | null);
     instruction: (string | null);
     project_id: number;
+    data?: (Record<string, any> | null);
 };
 
