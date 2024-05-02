@@ -7,8 +7,14 @@
 </template>
 
 <script setup>
+    import { useRefreshStore } from '../stores/refresh';
+    import { storeToRefs } from 'pinia'
 
 
+    const refreshStore = useRefreshStore()
+
+    // const { data }= storeToRefs(refreshStore)
+    
 
     let baseURL;
     if (process.client){
@@ -21,13 +27,17 @@
 
     const { data, pending, error, refresh } = await useFetch(`${baseURL}/projects/`)
 
-    const projectData = ref(data)
+    refreshStore.fetch()
+    
+    console.log(data)
+
 
     const handleRefresh = () => {
         console.log("emit working")
         refresh()
         console.log(data)
         
+    
     }
 
     const sortDataById = (array) => {

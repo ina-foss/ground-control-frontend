@@ -47,26 +47,29 @@
             
         </div>
         <div class="pt-8">
-        <FileUpload accept="application/json" :showUploadButton=false :showCancelButton="false" invalidFileTypeMessage="Invalid type" auto @remove="handleRemove" name="file[]"
+        <Toast />
+        <FileUpload accept="application/json" :showUploadButton=false :showCancelButton="false" invalidFileTypeMessage="Invalid type" @removeUploadedFile="showRemove($event)" @upload="onUpload($event)" auto name="file[]"
         :pt="{
             buttonbar: {
                 // style: 'display:none'
             }
         }">
-            <template #empty>
+            <template #empty ="{chooseCallback}">
                 <div class="flex items-center justify-content-center flex-col"> 
-                    <span class="pi pi-file-arrow-up align-center " style="font-size: 2.5rem"></span>
-                    <p class="text-xs pt-3 text-slate-400">Drag and frop JSON file to upload</p>
+                    <span class="pi pi-file-arrow-up align-center cursor-pointer" @click="chooseCallback()" style="font-size: 2.5rem"></span>
+                    <p class="text-xs pt-3 text-slate-400 "  >Drag and drop JSON file to upload</p>
                 </div>
             </template>
 
-            <template #content="{uploadedFiles, files}" >
+            <template #header></template>
+
+            <template #content="{uploadedFiles, files, removeUploadedFileCallback, removeFileCallback }" >
                 <div class="flex flex-col gap-2">
-                    <div v-for="file in uploadedFiles" class="flex flex-row justify-between px-4 items-center">
+                    <div v-for="(file,index) in uploadedFiles" class="flex flex-row justify-between px-4 items-center">
                         <span class="pi pi-file self-center"></span>
                         <p>{{ file.name }}</p>
                         <p class="text-slate-400">{{ file.size }}   B</p>
-                        <Button icon="pi pi-times" text rounded size="small" severity="danger"   class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
+                        <Button icon="pi pi-times" text rounded size="small" severity="danger"  @click="removeUploadedFileCallback(index)"  class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
                             root:{
                                 // style: 'padding-left:0px; padding-right: 0px; padding-top:6px; padding-bottom:6px; width=30px'
                             },
@@ -81,11 +84,11 @@
 
         </FileUpload>
         </div>
-        <template #footer>
-            <div class="flex">
-            <Button label="Create" @click="createProject" />
-            </div>
-        </template>
+            <template #footer>
+                <div class="flex">
+                <Button label="Create" @click="createProject" />
+                </div>
+            </template>
     </Dialog>
 
     <Sidebar v-model:visible="menuVisible" class="bg-white">
@@ -100,14 +103,23 @@
 import {bcStore} from '~/stores/breadcrumbs';
 
 import { ProjectService } from '~/api/generate';
+import { TaskService } from '../api/generate';
+import {  useRefreshStore } from '../stores/refresh';
 
 const items = bcStore().items
+
+const refreshStore = useRefreshStore()
 
 const titleValue = ref(null)
 const descriptionValue = ref(null)
 const errorVisible = ref(false);
 const menuVisible = ref(false);
 const dialogVisible = ref(false)
+
+const toast = useToast()
+
+const files = ref([])
+const fileData = ref()
 
 const home = {label:'Projects', url: '/dashboard'}
 
@@ -120,10 +132,24 @@ let baseURL;
         baseURL = 'http://nginx'
     }
 
-const handleRemove = (file) => {
-    console.log("file that needs to be removed : " + file.name)
+const showRemove = (e) => {
+    console.log('toast triggered')
+    toast.add({severity: 'info', detail: 'The file "'+ e.file.name +'" has been deleted'})
 }
 
+const onUpload = (event)=> {
+    files.value = event.files;
+    // console.log(fetch(files.value[0]).then((res)=> res.json()).then((data)=> console.log(data)).catch((err)=> console.error(err)))
+    let reader = new FileReader();
+    reader.onload = onReaderLoad;
+    reader.readAsText(event.files[0])
+}
+
+const onReaderLoad = (event) => {
+    var obj = JSON.parse(event.target.result);
+    fileData.value = obj
+    console.log(fileData.value)
+}
 
 const createProject = async() => {
     if (titleValue.value == null){
@@ -131,8 +157,18 @@ const createProject = async() => {
     }
     else{
 
-        const response = await ProjectService.createProjectProjectPost({title: titleValue.value, description: descriptionValue.value, created_by: 1})
+        const response = ProjectService.createProjectProjectPost({title: titleValue.value, description: descriptionValue.value, created_by: 1})
         
+        response.catch((err) => (toast.add({severiry:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {
+            if (files.value.length > 0) {
+                console.log(res)
+                TaskService.createTaskTaskPost({name:'test', instruction:'test instruction', data: fileData.value, project_id:res.id}).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
+                files.value = []
+            }
+            dialogVisible.value = false
+            const { data } = useFetch("http:/localhost:8000/projects/")
+            refreshStore.setData(data)
+        })
     }
 }
 

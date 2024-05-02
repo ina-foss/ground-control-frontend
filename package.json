@@ -8,7 +8,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "update-api": "openapi --input ./swagger.json --output ./api/generate"
+    "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",

@@ -49,7 +49,7 @@
     @import url(/assets/css/base.css);
 </style>
 
-<script setup lang="ts">
+<script setup >
 
     import {bcStore} from '~/stores/breadcrumbs';   
     import { reactive, toRefs } from 'vue';
@@ -88,7 +88,7 @@
         }
         else {
             console.log("api called")
-            const response = await ProjectService.updateProjectProjectProjectIdPut(project.value.id,{title: title.value, description: description.value,  created_by: 1})
+            const response = await ProjectService.updateProjectProjectProjectIdPut(project.value.id,{title: title.value, description: description.value, created_by: 1})
             console.log(response.title)
             visible.value = false
         }
@@ -96,7 +96,7 @@
 
     const deleteProject = async () => {
         console.log("delete Projec debug")
-        const response = await ProjectService.deleteProjectProjectProjectidDelete(project.value.id)
+        const response = await ProjectService.deleteProjectProjectProjectIdDelete(project.value.id)
         visible.value = false
     }
 
