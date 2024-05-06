@@ -1,8 +1,19 @@
 <template>
     <div class="bg-black">
         
-        <DataTable v-if="data.tasks.length > 0" @row-click="handleRowClick" :value="data.tasks" sortOrder=0 tableStyle="background-color: white" breakpoint="300px" contextMenu="true" row-hover="true" columnResizeMode="fit" size="large" > 
-            <Column field="name" header="Title" style="width : 8rem ; min-width: 50px; "></Column>
+        <DataTable v-if="data.tasks.length > 0" @row-click="handleRowClick($event)"  editMode="cell" :value="data.tasks" sortOrder=0 tableStyle="background-color: white" breakpoint="300px" contextMenu="true" row-hover="true" columnResizeMode="fit"  :pt="{
+            column: {
+                    bodycell: ({ state }) => ({
+                        style:  state['d_editing']
+                    })
+                },
+            style: 'height:88px'
+        }" > 
+            <Column field="name" header="Title" style="width : 8rem ; min-width: 50px; ">
+                <template #editor=" {data, field} ">
+                    <InputText v-model="data[field]" />
+                </template>
+            </Column>
             <Column field="id" header="ID" style="width: 40px;"></Column>
             <Column field="annotations.length" sortable style="width: 3rem;" >
                 <template #header ><i v-tooltip="'Nbr total annotation'" class="pi pi-star cursor-help"></i></template>
@@ -29,6 +40,7 @@
                     
                 </template>
             </Column>
+            <Column :rowEditor.value="true" style="width: 10%; min-width: 8rem" bodyStyle="text-align:center"></Column>
 
         </DataTable>
         <div v-else class="min-h-[calc(100vh-52px)] bg-white items-center justify-center flex flex-col">
@@ -43,7 +55,7 @@
 </template>
 
 
-<script setup lang="ts">
+<script setup>
 
     import { ref, watchEffect } from 'vue';
     import {bcStore} from '~/stores/breadcrumbs';
@@ -55,6 +67,7 @@
     const dialogContent = ref('')
     const clickedRowData = ref(null)
     const spinnerVisible = ref(true)
+    const editingRows= ref([])
 
     const count_validated_task = ((annotations) => {
         let task_count = 0;
@@ -67,13 +80,14 @@
     })
 
     const navigateToTask = (id) => {
-            navigateTo(`/tasks/${id}`)
-        }
+        navigateTo(`/tasks/${id}`)
+    }
 
     const handleRowClick = (event) => {
-            clickedRowData.value = event.data;
-            navigateToTask(clickedRowData.value.id)
-        }
+        clickedRowData.value = event.data;
+        console.log(event.originalEvent)
+        navigateToTask(clickedRowData.value.id)
+    }
     
     const openDialog = (data) => {
         // Set dialog content based on the data passed
@@ -81,7 +95,7 @@
 
         // Open the dialog
         visible.value = true;
-        }
+    }
 
     let baseURL;
 
@@ -94,8 +108,7 @@
 
     const {data, pending, refresh, error} = await useFetch(`${baseURL}/project/${route.params.id}` ,{ 
         headers: {
-            Accept: 'application/json',
-            
+            Accept: 'application/json',     
         },
         
     })

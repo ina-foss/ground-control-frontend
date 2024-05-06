@@ -48,13 +48,17 @@
         </div>
         <div class="pt-8">
         <Toast />
-        <FileUpload accept="application/json" :showUploadButton=false :showCancelButton="false" invalidFileTypeMessage="Invalid type" @removeUploadedFile="showRemove($event)" @upload="onUpload($event)" auto name="file[]"
+        <FileUpload accept="application/json" :showUploadButton=false :showCancelButton="false" :maxFileSize=maxFileSize invalidFileTypeMessage="Invalid type"  @removeUploadedFile="showRemove($event)" @upload="onUpload($event)" @error="onUpload($event)" auto name="file[]"
         :pt="{
             buttonbar: {
                 // style: 'display:none'
+            },
+            content: {
+                style: 'padding: 14px'
             }
         }">
             <template #empty ="{chooseCallback}">
+                
                 <div class="flex items-center justify-content-center flex-col"> 
                     <span class="pi pi-file-arrow-up align-center cursor-pointer" @click="chooseCallback()" style="font-size: 2.5rem"></span>
                     <p class="text-xs pt-3 text-slate-400 "  >Drag and drop JSON file to upload</p>
@@ -65,14 +69,19 @@
 
             <template #content="{uploadedFiles, files, removeUploadedFileCallback, removeFileCallback }" >
                 <div class="flex flex-col gap-2">
-                    <div v-for="(file,index) in uploadedFiles" class="flex flex-row justify-between px-4 items-center">
-                        <span class="pi pi-file self-center"></span>
-                        <p>{{ file.name }}</p>
-                        <p class="text-slate-400">{{ file.size }}   B</p>
+                    <div v-for="(file,index) in uploadedFiles" class="grid grid-cols-8 gap-2 px-1 items-center">
+                        <span class="pi pi-file self-center w-2"></span>
+                        <p v-tooltip.top="file.name" class="text-ellipsis text-nowrap col-span-4 overflow-hidden " >{{ file.name }}</p>
+                        <p v-if="file.size < 1024 " class="text-slate-400 text-xs text-nowrap col-span-2   ">{{ file.size }} B</p>
+                        <p v-else class="text-slate-400 text-xs text-nowrap col-span-2  ">{{ Math.round(file.size/1024) }} KB</p>
                         <Button icon="pi pi-times" text rounded size="small" severity="danger"  @click="removeUploadedFileCallback(index)"  class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
                             root:{
                                 // style: 'padding-left:0px; padding-right: 0px; padding-top:6px; padding-bottom:6px; width=30px'
+                                style: 'justify-content: center; justify-items: center; place-self: center;'
                             },
+                            icon:{
+                                style: 'max-width:24px'
+                            }
                             // style: 'padding-left:0px; padding-right: 0px; padding-top:6px; padding-bottom:6px; width=30px'
                         }" />
                     </div>
@@ -118,8 +127,14 @@ const dialogVisible = ref(false)
 
 const toast = useToast()
 
+const maxFileSize= 100000000
+
 const files = ref([])
+
+const testFile = ref({name: null, size: 0, data: null})
 const fileData = ref()
+
+
 
 const home = {label:'Projects', url: '/dashboard'}
 
@@ -134,21 +149,52 @@ let baseURL;
 
 const showRemove = (e) => {
     console.log('toast triggered')
-    toast.add({severity: 'info', detail: 'The file "'+ e.file.name +'" has been deleted'})
+    toast.add({severity: 'info', detail: 'The file "'+ e.file.name +'" has been deleted', life: 5000})
+    fileData.value=null
+    console.log(fileData.value)
 }
 
-const onUpload = (event)=> {
+const debug = (event) => {
+    console.log(event.xhr)
+    console.log(event.formData)
+}
+
+const onUploadError = (event) => {
+    console.log("ERROR")
+    console.log(event.xhr)
+    console.log(event.files[0])
+}
+
+const onUpload = async (event)=> {
+    let xhr = new XMLHttpRequest()
+    let formData = new FormData()
+    let file = event.files[0]
+    testFile.value.name=file.name
+    testFile.value.size = file.size
+
+    formData.append("file", file)
+    xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            var _this$uploadedFiles;
+          }
+        };
+        xhr.open('POST', '/', true);
+        xhr.send(formData);
+    // fetch('/null', {method: "POST", body: formData}).then((r)=> r.blob());
+    // console.log(blob)
     files.value = event.files;
     // console.log(fetch(files.value[0]).then((res)=> res.json()).then((data)=> console.log(data)).catch((err)=> console.error(err)))
     let reader = new FileReader();
-    reader.onload = onReaderLoad;
+    reader.onloadend= onReaderLoad;
     reader.readAsText(event.files[0])
 }
 
 const onReaderLoad = (event) => {
     var obj = JSON.parse(event.target.result);
     fileData.value = obj
+    testFile.value.data=obj
     console.log(fileData.value)
+    console.log(testFile.value)
 }
 
 const createProject = async() => {
@@ -168,6 +214,9 @@ const createProject = async() => {
             dialogVisible.value = false
             const { data } = useFetch("http:/localhost:8000/projects/")
             refreshStore.setData(data)
+            navigateTo(`/dashboard`, {
+                replace:true
+            })
         })
     }
 }

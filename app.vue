@@ -1,7 +1,5 @@
 <script>
   import 'primeicons/primeicons.css'
-
-  
 </script>
 
 

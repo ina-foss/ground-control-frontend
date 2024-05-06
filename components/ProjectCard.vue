@@ -31,7 +31,7 @@
                 <div class="flex justify-between justify-items-stretch gap-3" > 
                     <span>1/{{  }} </span>
                     <span>2 <i class="pi pi-flag-fill" style="color:red" ></i> </span>
-                    <span>5 <i class="pi pi-users"></i></span>
+                    <span>{{ $props.project.total_users_with_annotations }} <i class="pi pi-users"></i></span>
                 </div>
             </div>
             <hr>

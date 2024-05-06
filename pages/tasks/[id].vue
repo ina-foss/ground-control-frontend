@@ -1,5 +1,8 @@
 <template>
-    <div class="grid grid-cols-3">
+    <div v-if="data.data.data == null" >
+        <span>data is not in the right format</span>
+    </div>
+    <div class="grid grid-cols-3" v-else>
         <div></div>
         <ol class="flex flex-col gap-5" >
             <li class="bg-gray-300 p-3 pl-7 rounded-lg flex items-center"  v-for="phrase in data.data.data.localisation[0].sublocalisations.localisation">
@@ -17,8 +20,8 @@
     import {bcStore} from '~/stores/breadcrumbs';
 
     const store = bcStore()
-    const route = useRoute()
-
+    const route = useRoute()    
+    
     
     
 
@@ -39,9 +42,10 @@
         
     })
     if (store.items.length == 0){
-        store.addCrumb({label: 'Project name', url: `/projects/${data.value.project_id}`})
+        store.addCrumb({label: data.value.project.title , url: `/projects/${data.value.project_id}`})
     }
     store.addCrumb({label: data.value.name, url: `/tasks/${data.value.id}`})
     console.log(store.items)
+    console.log(data.value.data)
 
 </script>
