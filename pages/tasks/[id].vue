@@ -5,9 +5,9 @@
     <div class="grid grid-cols-3" v-else>
         <div></div>
         <ol class="flex flex-col gap-5" >
-            <li class="bg-gray-300 p-3 pl-7 rounded-lg flex items-center"  v-for="phrase in data.data.data.localisation[0].sublocalisations.localisation">
-                <i class="pi pi-bookmark pr-5"></i>
-                <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout" class="bg-white p-1 col-auto grow rounded-md cursor-pointer hover:scale-[1.01]  transition-all hover:shadow-lg">{{phrase.data.text[0]}}</div></li>
+            <li class="bg-gray-300 p-3 pl-3 rounded-lg "  v-for="(phrase,index) in data.data.data.localisation[0].sublocalisations.localisation">
+                <SegmentationMolecules :phrase="phrase" :colors="colors" :topics="topics" v-bind:index="index"  @segmentation="console.log(topics,colors)" />
+            </li>
         </ol>
         <div></div>
     </div>
@@ -22,7 +22,24 @@
     const store = bcStore()
     const route = useRoute()    
     
-    
+    const colors =  ref(['transparent'])
+    const topics = ref([])
+
+    const lastSegUpdate = ref()
+    const lastUsedColor = ref('')
+    const lastIndex = ref(1)
+
+
+    const handleSegmentation = (event,index) => {
+
+        console.log(topics.value,colors.value)
+        // if(event.value == topics.value.length){
+        //     var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+        //     topics.value.push(randomColor)
+        // }
+        
+        
+    }
     
 
     let baseURL;
@@ -44,7 +61,10 @@
     if (store.items.length == 0){
         store.addCrumb({label: data.value.project.title , url: `/projects/${data.value.project_id}`})
     }
-    store.addCrumb({label: data.value.name, url: `/tasks/${data.value.id}`})
+    if(store.items[store.items.length-1].url != `/tasks/${data.value.id}`){
+        store.addCrumb({label: data.value.name, url: `/tasks/${data.value.id}`})
+
+    }
     console.log(store.items)
     console.log(data.value.data)
 

@@ -1,7 +1,7 @@
 <template>
     <div class="bg-black">
         
-        <DataTable v-if="data.tasks.length > 0" @row-click="handleRowClick($event)"  editMode="cell" :value="data.tasks" sortOrder=0 tableStyle="background-color: white" breakpoint="300px" contextMenu="true" row-hover="true" columnResizeMode="fit"  :pt="{
+        <DataTable v-if="data.tasks.length > 0" @row-click="handleRowClick($event)"  editMode="cell" :value="data.tasks" :sortOrder=0 tableStyle="background-color: white" breakpoint="300px" :contextMenu=true :row-hover=true columnResizeMode="fit"  :pt="{
             column: {
                     bodycell: ({ state }) => ({
                         style:  state['d_editing']
@@ -9,7 +9,12 @@
                 },
             style: 'height:88px'
         }" > 
-            <Column field="name" header="Title" style="width : 8rem ; min-width: 50px; ">
+            <Column field="name" header="Title" style="width : 8rem ; min-width: 50px; " :pt="{
+                root:  {
+                    test:'test',
+                    
+                }
+            }">
                 <template #editor=" {data, field} ">
                     <InputText v-model="data[field]" />
                 </template>
@@ -112,7 +117,14 @@
         },
         
     })
+    console.log(store.items)
+    if(store.items.length != 0 && store.items[store.items.length-1].url != `/projects/${data.value.id}`){ // When coming from Task
+        store.removeLastCrumb()
+    }
+    if(store.items.length == 0){ // When coming from dashboard
+        store.addCrumb({label: data.value.title, url:`/projects/${data.value.id}`})
+    }
 
-    store.addCrumb({label: data.value.title, url:`/projects/${data.value.id}`})
+    
 
 </script>

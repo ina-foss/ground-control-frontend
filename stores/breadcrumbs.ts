@@ -13,5 +13,8 @@ export const bcStore = defineStore('breadcrumbs', {
     removeLastCrumb() {
       this.items.pop()
     }
+  },
+  getter: {
+    
   }
 })
