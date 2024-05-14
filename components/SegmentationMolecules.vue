@@ -1,12 +1,13 @@
 <template>
     <div  class="flex items-center gap-2">
+ 
         <Button v-bind:icon="iconBool" v-bind:label="topicText" @click="handleSegmentation()"
             :pt="{
                 root: {
                     style: `max-width: 40px; min-width: 40px; background-color:${$props.colors[topicIndex]}; border:none `
                 }
             }" />
-            <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout" class="bg-white p-1 col-auto grow rounded-md cursor-pointer hover:scale-[1.01]  transition-all hover:shadow-lg">
+            <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout" class="bg-white p-1 col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg " @click="$emit('onSegmentClick',{tcin : phrase.tcin, tcout: phrase.tcout})">
                 {{$props.phrase.data.text[0]}}
             </div>
     </div>

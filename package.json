@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
+    "hls.js": "^1.5.8",
     "nuxt": "^3.11.1",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
