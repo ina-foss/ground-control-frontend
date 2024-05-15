@@ -16,7 +16,7 @@
         </div>
         <div class="grid grid-cols-9 " >
             <div class="col-span-3  bg-surface-700 px-5 py-5">
-                <video ref="video" controls class="w-full" @timeupdate="handleSeeking($event)"></video>
+                <video ref="video" controls class="w-full" @seeked="handleSeeking($event)"></video>
                 
             </div>
             <ol class="flex flex-col gap-5 overflow-y-auto h-[calc(100vh-51px)] col-span-4 pl-4 py-4" >
@@ -56,9 +56,26 @@
 
     const lastSegUpdate = ref()
     const lastUsedColor = ref('')
-    const lastIndex = ref(1)
     const video = ref(null)
     var lastTimecode = 0
+    var lastIndex = 0
+
+    let baseURL;
+
+    if (process.client){
+        baseURL = 'http://localhost:8000';
+    }
+    else if (process.server){
+        baseURL = 'http://nginx'
+    }
+
+    const {data, pending, refresh, error} = await useFetch(`${baseURL}/task/${route.params.id}` ,{ 
+        headers: {
+            Accept: 'application/json',
+            
+        },
+        
+    })
 
     const handleSegmentation = (event,index) => {
 
@@ -78,15 +95,7 @@
     const handleSeeking = (seekingEvent) => {
         let locals =  data.value.data.data.localisation[0].sublocalisations.localisation
         let currentTime = video.value.currentTime
-        let timecodeHour = Math.floor(currentTime / 3600 )
-        let timecodeMinute = Math.floor((currentTime - timecodeHour * 3600) / 60 )
-        let timecodeSecond = Math.floor(currentTime % 60) 
-        let timecodeMillisecond = Math.round(((currentTime % 60) - timecodeSecond) * 1000 )
 
-        let timecode  = timecodeHour.toString().padStart(2,'0')+':'+timecodeMinute.toString().padStart(2,'0')+':'+ timecodeSecond.toString().padStart(2,'0')+'.'+timecodeMillisecond.toString().padStart(3,'0')
-
-        
-        // console.log(seekingEvent + '      gjh')
         if (Math.abs(video.value.currentTime - lastTimecode) > 1){
             let bestIndex = null
             let bestDiff =  100000
@@ -96,12 +105,16 @@
                     // console.log( Math.abs(video.value.currentTime  - unixToTimestamp(locals[index+1].tcin) ))
                     bestDiff = video.value.currentTime - unixToTimestamp(phrase.tcin)
                     bestIndex = index
-                    console.log('focus on index : ' + index)
-                    console.log(phrase.tcin + '<' +timecode+ '<' +  phrase.tcout)
+                    // console.log('focus on index : ' + index)
+                    // console.log(phrase.tcin + '<' +timecode+ '<' +  phrase.tcout)
                     
                 }
             });
+
+            segmentationRefs.value[lastIndex].style.border = "none"
             segmentationRefs.value[bestIndex].scrollIntoView({ behavior: "smooth" });
+            segmentationRefs.value[bestIndex].style.border = "solid black"
+            lastIndex = bestIndex
         }
         lastTimecode = currentTime
         
@@ -114,7 +127,7 @@
       return videoHls;
     };
 
-    function unixToTimestamp(tc) {
+    function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
         let millisecond = tc.split('.')[1]
         let timeArray = tc.split('.')[0].split(':')
         let videoTime = parseInt(timeArray[0])*3600 + parseInt(timeArray[1])*60 + parseInt(timeArray[2]) +  (parseInt(millisecond) / 1000 )
@@ -131,7 +144,8 @@
         console.log(topics.value)
     }
     
-    var videoSrc = 'https://front.wsmedia.p.sas.ina/wsmedia/stock:FPVDB14111905.01?type=stream&protocol=hls&typemedia=video';
+    var videoId = data.value.data.data.id
+    var videoSrc = `https://front.wsmedia.p.sas.ina/wsmedia/${videoId}?type=stream&protocol=hls&typemedia=video`
 
     const hlsPlayer = () => {
         fetchVideoStream(videoSrc).then((content) => {
@@ -156,27 +170,13 @@
     }
 
 
-    onMounted(()=> {
+    onMounted(()=> { // Une fois la page chargee, on stream la video
         hlsPlayer()
+    })
+
+   
+
     
-    })
-
-    let baseURL;
-
-    if (process.client){
-        baseURL = 'http://localhost:8000';
-    }
-    else if (process.server){
-        baseURL = 'http://nginx'
-    }
-
-    const {data, pending, refresh, error} = await useFetch(`${baseURL}/task/${route.params.id}` ,{ 
-        headers: {
-            Accept: 'application/json',
-            
-        },
-        
-    })
     if (store.items.length == 0){
         store.addCrumb({label: data.value.project.title , url: `/projects/${data.value.project_id}`})
     }

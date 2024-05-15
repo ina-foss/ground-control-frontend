@@ -135,6 +135,10 @@ const testFile = ref({name: null, size: 0, data: null})
 const fileData = ref()
 
 
+const fetchProject = inject('fetchProject',ref(false))
+
+
+
 
 const home = {label:'Projects', url: '/dashboard'}
 
@@ -197,6 +201,9 @@ const onReaderLoad = (event) => {
     console.log(testFile.value)
 }
 
+// const { projectData ,refresh} = inject('project' )
+
+
 const createProject = async() => {
     if (titleValue.value == null){
         errorVisible.value = true;
@@ -212,6 +219,14 @@ const createProject = async() => {
                 files.value = []
             }
             dialogVisible.value = false
+
+            console.log(fetchProject.value)
+          
+            console.log(refresh)
+            
+          
+
+            refresh()
             const { data } = useFetch("http:/localhost:8000/projects/")
             refreshStore.setData(data)
             navigateTo(`/dashboard`, {

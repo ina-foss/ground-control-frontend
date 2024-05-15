@@ -14,6 +14,8 @@
     const refreshStore = useRefreshStore()
 
     // const { data }= storeToRefs(refreshStore)
+
+   
     
 
     let baseURL;
@@ -26,6 +28,20 @@
 
 
     const { data, pending, error, refresh } = await useFetch(`${baseURL}/projects/`)
+    // .then((response) => provide('project', response ))
+
+    const fetchHappened = ref(true)
+
+    provide('fetchProject',fetchHappened)
+
+    if(pending.value==true){
+        console.log(pending.value) 
+    }
+    else{
+        console.log(data.value)
+        let projectData = data.value
+        provide('project',{ projectData, refresh})
+    }
 
     refreshStore.fetch()
     
