@@ -150,13 +150,13 @@
 
         locals.forEach( (phrase, index) => { 
             if ( ![0,undefined].includes(topics.value[index]) ){
-                phrase.topic = topics.value[index]
+                phrase.data.topic = topics.value[index]
             }
         })
 
         console.log(locals[0])
         data.value.data.data.localisation[0].sublocalisations.localisation = locals
-        TaskService.updateDataTaskTaskIdPut(data.value.id,{data: data.value.data.data}).then( (response) => console.log(response) )
+        TaskService.updateDataTaskTaskIdPatch(data.value.id,{data: data.value.data.data}).then( (response) => console.log(response) )
 
     }
     
@@ -187,9 +187,9 @@
 
     const loadTopics = () => {
         locals.forEach( (phrase,index) => {
-            if ( ![0,undefined].includes(phrase.topic) ){
-                topics.value[index] = phrase.topic
-                console.log('loaded topic number '+phrase.topic + " from index " + index)
+            if ( ![0,undefined].includes(phrase.data.topic) ){
+                topics.value[index] = phrase.data.topic
+                console.log('loaded topic number '+phrase.data.topic + " from index " + index)
                 // console.log(topics.value)
                 if( index == 0 || topics.value[index] != topics.value[index-1] ){
                     var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);

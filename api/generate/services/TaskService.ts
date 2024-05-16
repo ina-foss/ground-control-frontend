@@ -35,12 +35,12 @@ export class TaskService {
      * @returns TaskListDto Successful Response
      * @throws ApiError
      */
-    public static updateDataTaskTaskIdPut(
+    public static updateDataTaskTaskIdPatch(
         id: number,
         requestBody: Record<string, any>,
     ): CancelablePromise<TaskListDto> {
         return __request(OpenAPI, {
-            method: 'PUT',
+            method: 'PATCH',
             url: '/task/{id}',
             path: {
                 'id': id,

@@ -25,7 +25,7 @@ const toast = useToast()
 
 // let bgButtonColor = ref('transparent')
 let topicIndex = ref(0)
-if (props.phrase.topic != undefined) topicIndex.value = props.phrase.topic 
+if (props.phrase.data.topic != undefined) topicIndex.value = props.phrase.data.topic 
 var iconBool = ref('pi pi-tag')
 
 var topicText = ref(null)
