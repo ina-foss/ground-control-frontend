@@ -1,7 +1,7 @@
 <template>
     <div class=" ">
         <div class="py-8 px-4 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
-            <ProjectCard v-for="project in sortDataById(data)" :project=project @refreshData="handleRefresh"/>
+            <ProjectCard v-if="data != undefined" v-for="project in sortDataById(data)" :project=project @refreshData="handleRefresh"/>
         </div>
     </div>
 </template>
@@ -27,33 +27,44 @@
     }
 
 
-    const { data, pending, error, refresh } = await useFetch(`${baseURL}/projects/`)
-    // .then((response) => provide('project', response ))
+    // var { data, pending, error, refresh } = await useFetch(`${baseURL}/projects/`)
+    // // .then((response) => provide('project', response ))
 
     const fetchHappened = ref(true)
 
     provide('fetchProject',fetchHappened)
 
-    if(pending.value==true){
-        console.log(pending.value) 
-    }
-    else{
-        console.log(data.value)
-        let projectData = data.value
-        provide('project',{ projectData, refresh})
-    }
+    // if(pending.value==true){
+    //     console.log(pending.value) 
+    // }
+    // else{
+    //     console.log(data.value)
+    //     let projectData = data.value
+    //     provide('project',{ projectData, refresh})
+    // }
 
     refreshStore.fetch()
+
+    const { getData }  = storeToRefs(refreshStore)
+
     
-    console.log(data)
+    const data = ref(getData)
 
 
-    const handleRefresh = () => {
-        console.log("emit working")
-        refresh()
-        console.log(data)
+    const handleRefresh =  async () => {
+        console.log("emit working rtyrty")
+        // refresh()
+        refreshStore.fetch()
+      
         
     
+    }
+
+    const testStore = () => {
+        console.log(refreshStore.getData)
+        // debugger
+        data = refreshStore.getData
+        console.log(data)
     }
 
     const sortDataById = (array) => {

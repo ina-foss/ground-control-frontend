@@ -1,5 +1,5 @@
 <template>
-    <div v-if="data.data.data == null" >
+    <div v-if="data.data.data == null || locals == undefined" >
         <span>data is not in the right format</span>
     </div>
     <div v-else >
@@ -28,7 +28,7 @@
                 }"
                 />
                 <li class="bg-gray-300 p-3 pl-3 rounded-lg " v-for="(phrase,index) in data.data.data.localisation[0].sublocalisations.localisation" :ref="el => segmentationRefs.push(el) ">
-                    <SegmentationMolecules :phrase="phrase" :colors="colors" :topics="topics" v-bind:index="index"  @segmentation="handleSegmentation" @onSegmentClick="handleSegmentClick" />
+                    <SegmentationMolecules :phrase="phrase" v-bind:colors="colors" v-bind:topics="topics" v-bind:index="index" @segmentation="handleSegmentation" @onSegmentClick="handleSegmentClick" />
                 </li>
             </ol>
             <div></div>
@@ -44,6 +44,7 @@
     import { ref, watchEffect } from 'vue';
     import {bcStore} from '~/stores/breadcrumbs';
     import {Hls} from 'hls.js'
+    import { TaskService } from '../../api/generate';
 
     const store = bcStore()
     const route = useRoute()
@@ -59,6 +60,8 @@
     const video = ref(null)
     var lastTimecode = 0
     var lastIndex = 0
+
+    const topicsLoaded = ref(false)
 
     let baseURL;
 
@@ -92,8 +95,10 @@
         
     }
 
+    var locals =  data.value.data.data.localisation[0].sublocalisations.localisation
+
     const handleSeeking = (seekingEvent) => {
-        let locals =  data.value.data.data.localisation[0].sublocalisations.localisation
+        
         let currentTime = video.value.currentTime
 
         if (Math.abs(video.value.currentTime - lastTimecode) > 1){
@@ -142,6 +147,17 @@
 
     const handleSubmit = () => {
         console.log(topics.value)
+
+        locals.forEach( (phrase, index) => { 
+            if ( ![0,undefined].includes(topics.value[index]) ){
+                phrase.topic = topics.value[index]
+            }
+        })
+
+        console.log(locals[0])
+        data.value.data.data.localisation[0].sublocalisations.localisation = locals
+        TaskService.updateDataTaskTaskIdPut(data.value.id,{data: data.value.data.data}).then( (response) => console.log(response) )
+
     }
     
     var videoId = data.value.data.data.id
@@ -169,14 +185,31 @@
         })
     }
 
+    const loadTopics = () => {
+        locals.forEach( (phrase,index) => {
+            if ( ![0,undefined].includes(phrase.topic) ){
+                topics.value[index] = phrase.topic
+                console.log('loaded topic number '+phrase.topic + " from index " + index)
+                // console.log(topics.value)
+                if( index == 0 || topics.value[index] != topics.value[index-1] ){
+                    var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+                    colors.value.push(randomColor)
+                    console.log(index)
+                }
+            }
+        } )
+
+        topicsLoaded.value = true
+    }
+
 
     onMounted(()=> { // Une fois la page chargee, on stream la video
+        loadTopics()
+        
         hlsPlayer()
+
     })
 
-   
-
-    
     if (store.items.length == 0){
         store.addCrumb({label: data.value.project.title , url: `/projects/${data.value.project_id}`})
     }

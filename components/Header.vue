@@ -221,14 +221,12 @@ const createProject = async() => {
             dialogVisible.value = false
 
             console.log(fetchProject.value)
-          
-            console.log(refresh)
+      
             
-          
+            refreshStore.fetch()
 
-            refresh()
-            const { data } = useFetch("http:/localhost:8000/projects/")
-            refreshStore.setData(data)
+           
+            refreshStore
             navigateTo(`/dashboard`, {
                 replace:true
             })
