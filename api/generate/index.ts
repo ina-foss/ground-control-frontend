@@ -22,5 +22,6 @@ export type { UserDto } from './models/UserDto';
 export type { ValidationError } from './models/ValidationError';
 
 export { ProjectService } from './services/ProjectService';
+export { ResourcesService } from './services/ResourcesService';
 export { TaskService } from './services/TaskService';
 export { UserService } from './services/UserService';

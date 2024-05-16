@@ -11,6 +11,7 @@ export type ProjectDetailDto = {
     created_at: (string | null);
     updated_at: (string | null);
     tasks?: Array<TaskBaseDto>;
+    total_users_with_annotations: number;
     total_tasks: number;
 };
 

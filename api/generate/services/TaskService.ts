@@ -29,6 +29,30 @@ export class TaskService {
         });
     }
     /**
+     * Update Data Task
+     * @param id
+     * @param requestBody
+     * @returns TaskListDto Successful Response
+     * @throws ApiError
+     */
+    public static updateDataTaskTaskIdPut(
+        id: number,
+        requestBody: Record<string, any>,
+    ): CancelablePromise<TaskListDto> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/task/{id}',
+            path: {
+                'id': id,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
      * Create Task
      * @param requestBody
      * @returns TaskCreateDto Successful Response
