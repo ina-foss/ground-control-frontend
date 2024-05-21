@@ -29,7 +29,7 @@
                 }"
                 />
                 <li class="bg-gray-300 p-3 pl-3 rounded-lg " v-for="(phrase,index) in data.data.data.localisation[0].sublocalisations.localisation" :ref="el => segmentationRefs.push(el) ">
-                    <SegmentationMolecules :phrase="phrase" v-bind:colors="colors" v-bind:topics="topics" v-bind:index="index" @segmentation="handleSegmentation" @onSegmentClick="handleSegmentClick" />
+                    <SegmentationMolecules :phrase="phrase" v-bind:colors="colors" v-bind:topics="topics" v-bind:index="index" @segmentation="handleSegmentation($event)" @onSegmentClick="handleSegmentClick" />
                 </li>
             </ol>
             <div></div>
@@ -82,7 +82,10 @@
         
     })
 
-    const handleSegmentation = (event,index) => {
+    const handleSegmentation = (event) => {
+
+
+       
 
         window.onbeforeunload = function(){
             return confirm("You didn't saved your progression")
@@ -148,8 +151,8 @@
     }
 
     const handleSegmentClick = (event) => {
-        console.log(event)
-        console.log(unixToTimestamp(event.tcin) )
+       
+        segmentationRefs.value[event.index].scrollIntoView({ behavior: "smooth" });
         video.value.currentTime = unixToTimestamp(event.tcin) 
     }
 
@@ -201,7 +204,6 @@
         locals.forEach( (phrase,index) => {
             if ( ![0,undefined].includes(phrase.data.topic) ){
                 topics.value[index] = phrase.data.topic
-                console.log('loaded topic number '+phrase.data.topic + " from index " + index)
                 // console.log(topics.value)
                 if( index == 0 || topics.value[index] != topics.value[index-1] ){
                     var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);

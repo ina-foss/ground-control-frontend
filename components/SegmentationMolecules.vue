@@ -7,7 +7,7 @@
                     style: `max-width: 40px; min-width: 40px; background-color:${$props.colors[topicIndex]}; border:none `
                 }
             }" />
-            <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout" class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg " @click="$emit('onSegmentClick',{tcin : phrase.tcin, tcout: phrase.tcout})">
+            <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout" class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg " @click="$emit('onSegmentClick',{tcin : phrase.tcin, tcout: phrase.tcout, index: props.index})">
                 {{$props.phrase.data.text[0]}}
             </div>
     </div>
@@ -89,7 +89,7 @@ const handleSegmentation = () => {
     console.log('COLORS :')
     console.log(props.colors)
 
-    emit('segmentation')
+    emit('segmentation',props.index)
 
     iconBool.value = topicIndex.value == 0 ? 'pi pi-bookmark' : ''
     topicText.value = topicIndex.value == 0 ? null : "#"+topicIndex.value
