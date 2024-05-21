@@ -32,6 +32,12 @@ export default defineNuxtConfig({
       include: '*'
     }
   },
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    }
+  },
   tailwindcss: {
     config :{
       content: [
