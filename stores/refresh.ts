@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 
+import { ProjectService } from '../api/generate'
 
 export const useRefreshStore = defineStore('refresh',{
     state: () => {
@@ -14,7 +15,7 @@ export const useRefreshStore = defineStore('refresh',{
             console.log(newData.value)
         },
         async fetch() {
-            useFetch('http://localhost:8000/projects/').then( (response) => this.data = response.data ).then(() =>  console.log( this.data ) ).catch( (error) => console.log(error))
+            ProjectService.readProjectsProjectsGet().then( (response) => this.data = response ).then(() =>  console.log( this.data ) ).catch( (error) => console.log(error))
         }
     },
     getters: {

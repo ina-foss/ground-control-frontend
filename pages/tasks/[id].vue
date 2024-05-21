@@ -203,13 +203,25 @@
         })
     }
 
+    function generatePastelColor(tagNumber) {
+        // Use tag number to create a seed (this is a basic example, there are better ways to do this)
+        const seed = tagNumber * 123456789;
+        const random = s => ((seed * s) % 155) + 100;  // Between 100 and 255
+    
+        const r = random(3);
+        const g = random(5);
+        const b = random(7);
+    
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
     const loadTopics = () => {
         locals.forEach( (phrase,index) => {
             if ( ![0,undefined].includes(phrase.data.topic) ){
                 topics.value[index] = phrase.data.topic
                 // console.log(topics.value)
                 if( index == 0 || topics.value[index] != topics.value[index-1] ){
-                    var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+                    var randomColor = generatePastelColor(index+1)
                     colors.value.push(randomColor)
                     console.log(index)
                 }

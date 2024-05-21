@@ -13,11 +13,6 @@
 
     const refreshStore = useRefreshStore()
 
-    // const { data }= storeToRefs(refreshStore)
-
-   
-    
-
     let baseURL;
     if (process.client){
         baseURL = 'http://localhost:8000';
@@ -27,21 +22,10 @@
     }
 
 
-    // var { data, pending, error, refresh } = await useFetch(`${baseURL}/projects/`)
-    // // .then((response) => provide('project', response ))
-
     const fetchHappened = ref(true)
 
     provide('fetchProject',fetchHappened)
 
-    // if(pending.value==true){
-    //     console.log(pending.value) 
-    // }
-    // else{
-    //     console.log(data.value)
-    //     let projectData = data.value
-    //     provide('project',{ projectData, refresh})
-    // }
 
     refreshStore.fetch()
 
@@ -53,16 +37,11 @@
 
     const handleRefresh =  async () => {
         console.log("emit working rtyrty")
-        // refresh()
         refreshStore.fetch()
-      
-        
-    
     }
 
     const testStore = () => {
         console.log(refreshStore.getData)
-        // debugger
         data = refreshStore.getData
         console.log(data)
     }

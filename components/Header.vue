@@ -44,6 +44,8 @@
                 <InputText id="description" v-model="descriptionValue"></InputText>
                 <label for="description">Description</label>
             </FloatLabel>
+
+            <Dropdown v-model="selectedType" :options="['🏷️Segmentation','✒️Transcription','Identification des visages']" placeholder="Select a task type" class="w-3/4"/>
             
         </div>
         <div class="pt-8">
@@ -126,6 +128,7 @@ const descriptionValue = ref(null)
 const errorVisible = ref(false);
 const menuVisible = ref(false);
 const dialogVisible = ref(false)
+const selectedType = ref('')
 
 const selectFile = ref('')
 
@@ -220,13 +223,13 @@ const createProject = async() => {
         const response = ProjectService.createProjectProjectPost({title: titleValue.value, description: descriptionValue.value, created_by: 1})
         
         response.catch((err) => (toast.add({severity:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {
-            fileData.value.every(()=> {
+            fileData.value.forEach((file)=> {
                 console.log(res)
-                TaskService.createTaskTaskPost({name:'test', instruction:'test instruction', data: fileData.value, project_id:res.id}).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
-                files.value = []
+                TaskService.createTaskTaskPost({name:'Task #1', instruction:'Instruction', data: file, project_id:res.id}).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
+                
             })
             dialogVisible.value = false
-
+            files.value = []
             console.log(fetchProject.value)
       
             

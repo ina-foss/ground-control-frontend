@@ -64,6 +64,7 @@
 
     import { ref, watchEffect } from 'vue';
     import {bcStore} from '~/stores/breadcrumbs';
+    import { ProjectService } from '../../api/generate';
 
     const store = bcStore()
     const route = useRoute()
@@ -73,6 +74,8 @@
     const clickedRowData = ref(null)
     const spinnerVisible = ref(true)
     const editingRows= ref([])
+
+    const data = ref( await ProjectService.readProjectProjectProjectIdGet(route.params.id) )
 
     const count_validated_task = ((annotations) => {
         let task_count = 0;
@@ -111,12 +114,13 @@
         baseURL = 'http://nginx'
     }
 
-    const {data, pending, refresh, error} = await useFetch(`${baseURL}/project/${route.params.id}` ,{ 
-        headers: {
-            Accept: 'application/json',     
-        },
-        
-    })
+    // const {data, pending, refresh, error} = await useFetch(`${baseURL}/project/${route.params.id}` ,{ 
+    //     headers: {
+    //         Accept: 'application/json',     
+    //     }, 
+    // })
+
+    
     console.log(store.items)
     if(store.items.length != 0 && store.items[store.items.length-1].url != `/projects/${data.value.id}`){ // When coming from Task
         store.removeLastCrumb()
