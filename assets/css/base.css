@@ -28,6 +28,6 @@
 
 @layer base {
     html {
-        @apply font-customFont
+        @apply font-customFont leading-snug 
     }
 }
