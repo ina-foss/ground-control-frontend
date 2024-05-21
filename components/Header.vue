@@ -48,24 +48,26 @@
         </div>
         <div class="pt-8">
         <Toast />
-        <FileUpload accept="application/json" :showUploadButton=false :showCancelButton="false" :maxFileSize=maxFileSize invalidFileTypeMessage="Invalid type"  @removeUploadedFile="showRemove($event)" @upload="onUpload($event)" @error="onUpload($event)" auto name="file[]"
+        <FileUpload accept="application/json" :showUploadButton=false :showCancelButton="false" :maxFileSize=maxFileSize invalidFileTypeMessage="Invalid type" @select="handleSelect()"  @removeUploadedFile="showRemove($event)" @upload="onUpload($event)" @error="onUpload($event)" auto name="file[]"
         :pt="{
             buttonbar: {
-                // style: 'display:none'
+                style: `z-index:20; position: absolute; width: 85%; height: 100px; background-color: transparent;padding: 0px; cursor:pointer; border:none; ${selectFile}`
             },
             content: {
                 style: 'padding: 14px'
-            }
+            },
+
         }">
             <template #empty ="{chooseCallback}">
                 
                 <div class="flex items-center justify-content-center flex-col"> 
-                    <span class="pi pi-file-arrow-up align-center cursor-pointer" @click="chooseCallback()" style="font-size: 2.5rem"></span>
-                    <p class="text-xs pt-3 text-slate-400 "  >Drag and drop JSON file to upload</p>
+                    <span class="pi pi-file-arrow-up align-center cursor-pointer" style="font-size: 2.5rem"></span>
+                    <p class="text-xs pt-3 text-slate-400 "  >Click to upload a JSON file</p>
                 </div>
             </template>
 
-            <template #header></template>
+            <template #header={chooseCallback}>
+            <div class="w-full" @click="chooseCallback()"></div></template>
 
             <template #content="{uploadedFiles, files, removeUploadedFileCallback, removeFileCallback }" >
                 <div class="flex flex-col gap-2">
@@ -125,14 +127,15 @@ const errorVisible = ref(false);
 const menuVisible = ref(false);
 const dialogVisible = ref(false)
 
+const selectFile = ref('')
+
 const toast = useToast()
 
 const maxFileSize= 100000000
 
 const files = ref([])
 
-const testFile = ref({name: null, size: 0, data: null})
-const fileData = ref()
+const fileData = ref([])
 
 
 const fetchProject = inject('fetchProject',ref(false))
@@ -155,6 +158,7 @@ const showRemove = (e) => {
     console.log('toast triggered')
     toast.add({severity: 'info', detail: 'The file "'+ e.file.name +'" has been deleted', life: 5000})
     fileData.value=null
+    if (e.files.length == 0 ) selectFile.value=''
     console.log(fileData.value)
 }
 
@@ -169,12 +173,15 @@ const onUploadError = (event) => {
     console.log(event.files[0])
 }
 
+const handleSelect = () => {
+    selectFile.value = 'display: none'
+}
+
 const onUpload = async (event)=> {
     let xhr = new XMLHttpRequest()
     let formData = new FormData()
     let file = event.files[0]
-    testFile.value.name=file.name
-    testFile.value.size = file.size
+  
 
     formData.append("file", file)
     xhr.onreadystatechange = function () {
@@ -183,7 +190,7 @@ const onUpload = async (event)=> {
           }
         };
         xhr.open('POST', '/', true);
-        xhr.send(formData);
+        // xhr.send(formData);
     // fetch('/null', {method: "POST", body: formData}).then((r)=> r.blob());
     // console.log(blob)
     files.value = event.files;
@@ -195,10 +202,10 @@ const onUpload = async (event)=> {
 
 const onReaderLoad = (event) => {
     var obj = JSON.parse(event.target.result);
-    fileData.value = obj
-    testFile.value.data=obj
+    fileData.value.push(obj)
+    
     console.log(fileData.value)
-    console.log(testFile.value)
+   
 }
 
 // const { projectData ,refresh} = inject('project' )
@@ -212,12 +219,12 @@ const createProject = async() => {
 
         const response = ProjectService.createProjectProjectPost({title: titleValue.value, description: descriptionValue.value, created_by: 1})
         
-        response.catch((err) => (toast.add({severiry:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {
-            if (files.value.length > 0) {
+        response.catch((err) => (toast.add({severity:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {
+            fileData.value.every(()=> {
                 console.log(res)
                 TaskService.createTaskTaskPost({name:'test', instruction:'test instruction', data: fileData.value, project_id:res.id}).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
                 files.value = []
-            }
+            })
             dialogVisible.value = false
 
             console.log(fetchProject.value)
