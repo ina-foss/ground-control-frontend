@@ -14,6 +14,7 @@
                 </div>
             </div>
         </div>
+        <Toast />
         <div class="grid grid-cols-9 " >
             <div class="col-span-3  bg-surface-700 px-5 py-5">
                 <video ref="video" controls class="w-full" @seeked="handleSeeking($event)"></video>
@@ -48,6 +49,7 @@
 
     const store = bcStore()
     const route = useRoute()
+    const toast = useToast()
     
     const segmentationRefs = ref([])
 
@@ -82,10 +84,14 @@
 
     const handleSegmentation = (event,index) => {
 
-        // topics.value = topics.value.slice(0,event).concat(topics.value.slice(event+1))
-        !topics.value.includes(event) && colors.value.pop()
+        window.onbeforeunload = function(){
+            return confirm("You didn't saved your progression")
+        }
 
-        console.log(topics.value,colors.value)
+        // topics.value = topics.value.slice(0,event).concat(topics.value.slice(event+1))
+        // !topics.value.includes(event) && colors.value.pop()
+
+        // console.log(topics.value,colors.value)
         // if(event.value == topics.value.length){
         //     var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
         //     topics.value.push(randomColor)
@@ -98,6 +104,8 @@
     var locals =  data.value.data.data.localisation[0].sublocalisations.localisation
 
     const handleSeeking = (seekingEvent) => {
+
+      
         
         let currentTime = video.value.currentTime
 
@@ -156,8 +164,12 @@
 
         console.log(locals[0])
         data.value.data.data.localisation[0].sublocalisations.localisation = locals
-        TaskService.updateDataTaskTaskIdPatch(data.value.id,{data: data.value.data.data}).then( (response) => console.log(response) )
-
+        TaskService.updateDataTaskTaskIdPatch(data.value.id,{data: data.value.data.data}).then( (response) => console.log(response) ).then(() => {
+            window.onbeforeunload = null
+        }).then(()=> {
+            toast.add({severity: 'info', detail: 'Your progression has been saved', life: 5000})
+        })
+        
     }
     
     var videoId = data.value.data.data.id
@@ -207,6 +219,8 @@
         loadTopics()
         
         hlsPlayer()
+
+        
 
     })
 
