@@ -1,6 +1,6 @@
 {
-  "name": "nuxt-app",
-  "private": true,
+  "name": "@ground-countol/front",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "build": "nuxt build",
