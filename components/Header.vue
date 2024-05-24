@@ -223,9 +223,9 @@ const createProject = async() => {
         const response = ProjectService.createProjectProjectPost({title: titleValue.value, description: descriptionValue.value, created_by: 1})
         
         response.catch((err) => (toast.add({severity:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {
-            fileData.value.forEach((file)=> {
+            fileData.value.forEach((file,index)=> {
                 console.log(res)
-                TaskService.createTaskTaskPost({name:'Task #1', instruction:'Instruction', data: file, project_id:res.id}).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
+                TaskService.createTaskTaskPost({name:`Task #${index+1}`, instruction:'Instruction', data: file, project_id:res.id}).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
                 
             })
             dialogVisible.value = false

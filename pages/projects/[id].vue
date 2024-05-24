@@ -1,7 +1,7 @@
 <template>
     <div class="bg-black">
         
-        <DataTable v-if="data.tasks.length > 0" @row-click="handleRowClick($event)"  editMode="cell" :value="data.tasks" :sortOrder=0 tableStyle="background-color: white" breakpoint="300px" :contextMenu=true :row-hover=true columnResizeMode="fit"  :pt="{
+        <DataTable v-if="data.tasks.length > 0" @row-click="handleRowClick($event)"  editMode="cell"  @cell-edit-complete="onCellEditComplete" :value="data.tasks" :sortOrder=0 tableStyle="background-color: white" breakpoint="300px" :contextMenu=true :row-hover=true columnResizeMode="fit"  :pt="{
             column: {
                     bodycell: ({ state }) => ({
                         style:  state['d_editing']
@@ -9,14 +9,17 @@
                 },
             style: 'height:88px'
         }" > 
-            <Column field="name" header="Title" style="width : 8rem ; min-width: 50px; " :pt="{
+            <Column field="name" header="Title"  style="width : 8rem ; min-width: 70px; " :pt="{
                 root:  {
                     test:'test',
                     
                 }
             }">
-                <template #editor=" {data, field} ">
-                    <InputText v-model="data[field]" />
+                <template #editor=" {index} " >
+                    <InputText v-model="data.tasks[index].name" style="width : 100% ; min-width: 70px; " />
+                </template>
+                <template #body="{index}">
+                   <p @click="editMode=true" class="cursor-text	" > {{ data.tasks[index].name }}</p> 
                 </template>
             </Column>
             <Column field="id" header="ID" style="width: 40px;"></Column>
@@ -75,7 +78,11 @@
     const spinnerVisible = ref(true)
     const editingRows= ref([])
 
+    const editMode = ref(false)
+
     const data = ref( await ProjectService.readProjectProjectProjectIdGet(route.params.id) )
+
+    onMounted(()=> console.log(data.value))
 
     const count_validated_task = ((annotations) => {
         let task_count = 0;
@@ -92,9 +99,16 @@
     }
 
     const handleRowClick = (event) => {
+
         clickedRowData.value = event.data;
-        console.log(event.originalEvent)
-        navigateToTask(clickedRowData.value.id)
+        
+        if(editMode.value == false)  navigateToTask(clickedRowData.value.id)
+       
+        
+    }
+
+    const onCellEditComplete = (event) => {
+        editMode.value = false
     }
     
     const openDialog = (data) => {
