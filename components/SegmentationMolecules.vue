@@ -47,7 +47,7 @@ function generatePastelColor(tagNumber) {
   return `rgb(${r}, ${g}, ${b}, 1)`;
 }
 function dynamicStyle(color) {
-  const hexMatch = color.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
+  const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
     if (props.topics[props.index] === props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
       isVisible = true
       if(hexMatch){
@@ -77,7 +77,7 @@ function dynamicStyle(color) {
 
 
  function reduceOpacityOfColor(rgbaColor, opacity) {
-  const rgbaMatch = rgbaColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)/);
+  const rgbaMatch = rgbaColor?.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)/);
   if (rgbaMatch) {
     const r = parseInt(rgbaMatch[1]);
     const g = parseInt(rgbaMatch[2]);
@@ -91,7 +91,7 @@ function dynamicStyle(color) {
 
 function extractRGB(hexColor) {
   const rgbaColor = hexToRgba(hexColor, 0.5);
-  const rgba = rgbaColor.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
+  const rgba = rgbaColor?.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
   return rgba.slice(0, 3);
 }
 
