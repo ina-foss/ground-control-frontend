@@ -213,6 +213,7 @@
         const b = random(7);
     
         return `rgb(${r}, ${g}, ${b}, 1)`;
+
     }
 
     const loadTopics = () => {
