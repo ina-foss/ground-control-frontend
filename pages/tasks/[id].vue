@@ -32,7 +32,7 @@
                 }"
                 />
                 <li class="rounded-lg " v-for="(phrase,index) in data.data.data.localisation[0].sublocalisations.localisation" :ref="el => segmentationRefs.push(el) ">
-                    <SegmentationMolecules :phrase="phrase" v-bind:colors="colors" v-bind:topics="topics" v-bind:index="index" @segmentation="handleSegmentation($event)" @onSegmentClick="handleSegmentClick()" />
+                    <SegmentationMolecules :phrase="phrase" v-bind:colors="colors" v-bind:topics="topics" v-bind:index="index" @segmentation="handleSegmentation($event)" @onSegmentClick="handleSegmentClick($event)" />
                 </li>
             </ol>
             <div></div>

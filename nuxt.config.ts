@@ -18,11 +18,7 @@ export default defineNuxtConfig({
     '@/assets/css/base.css',
   ],
   plugins: ['~/plugins/baseURL'],
-  modules: [
-    'nuxt-primevue',
-    '@nuxtjs/tailwindcss',
-    '@pinia/nuxt'
-  ],
+  modules: ['nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt'],
   primevue: {
     options: {
       unstyled: true
