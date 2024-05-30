@@ -6,10 +6,12 @@ export default defineVitestConfig({
         globals: true,
         reporters: [
             'default',
-            ['junit'],
+            'junit',
+            'html'
         ],
         outputFile: {
             junit: '.test_reports/junit-report.xml',
+            html: '.test_reports/html/html-report.html',
         }
     }
 })
