@@ -49,6 +49,7 @@
     import {bcStore} from '~/stores/breadcrumbs';
     import {Hls} from 'hls.js'
     import { TaskService } from '../../api/generate';
+    
 
     const store = bcStore()
     const route = useRoute()
@@ -77,13 +78,15 @@
         baseURL = 'http://nginx'
     }
 
-    const {data, pending, refresh, error} = await useFetch(`${baseURL}/task/${route.params.id}` ,{ 
-        headers: {
-            Accept: 'application/json',
+    const data = ref(await TaskService.readTaskTaskIdGet(route.params.id))
+    
+    // const {data, pending, refresh, error} = await useFetch(`${baseURL}/task/${route.params.id}` ,{ 
+    //     headers: {
+    //         Accept: 'application/json',
             
-        },
+    //     },
         
-    })
+    // })
 
     const handleSegmentation = (event) => {
 
