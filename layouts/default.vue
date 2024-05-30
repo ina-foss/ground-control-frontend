@@ -13,9 +13,7 @@ import { useService } from '../composables/useService';
 
     const service = useService()
     
-    OpenAPI.HEADERS = service.$application.getDefaultHeader()
-    console.log(service.$application.getDefaultHeader())
-    console.log(OpenAPI)
+    OpenAPI.HEADERS = service.$application.getDefaultHeader() // Add the access token to the header of every OpenAPI calls
 
 </script>
 

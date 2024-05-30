@@ -6,6 +6,4 @@ export default class ApplicationService {
   public getDefaultHeader() {
     return { Authorization: `Bearer ${this.accessToken}` };
   }
-
-  // use this to add to API calls or the like
 }

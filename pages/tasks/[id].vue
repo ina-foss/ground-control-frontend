@@ -80,34 +80,12 @@
 
     const data = ref(await TaskService.readTaskTaskIdGet(route.params.id))
     
-    // const {data, pending, refresh, error} = await useFetch(`${baseURL}/task/${route.params.id}` ,{ 
-    //     headers: {
-    //         Accept: 'application/json',
-            
-    //     },
-        
-    // })
 
     const handleSegmentation = (event) => {
-
-
-       
-
+        
         window.onbeforeunload = function(){
             return confirm("You didn't saved your progression")
         }
-
-        // topics.value = topics.value.slice(0,event).concat(topics.value.slice(event+1))
-        // !topics.value.includes(event) && colors.value.pop()
-
-        // console.log(topics.value,colors.value)
-        // if(event.value == topics.value.length){
-        //     var randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-        //     topics.value.push(randomColor)
-        // }
-        
-        
-        
     }
 
     var locals =  data.value.data.data.localisation[0].sublocalisations.localisation
@@ -123,12 +101,8 @@
             let bestDiff =  100000
             locals.forEach((phrase,index) => {
                 if( ( Math.abs(video.value.currentTime - unixToTimestamp(phrase.tcin)) < bestDiff ) ) {
-                    // console.log(Math.abs(video.value.currentTime - unixToTimestamp(phrase.tcin)))
-                    // console.log( Math.abs(video.value.currentTime  - unixToTimestamp(locals[index+1].tcin) ))
                     bestDiff = video.value.currentTime - unixToTimestamp(phrase.tcin)
                     bestIndex = index
-                    // console.log('focus on index : ' + index)
-                    // console.log(phrase.tcin + '<' +timecode+ '<' +  phrase.tcout)
                     
                 }
             });
@@ -222,7 +196,6 @@
         locals.forEach( (phrase,index) => {
             if ( ![0,undefined].includes(phrase.data.topic) ){
                 topics.value[index] = phrase.data.topic
-                // console.log(topics.value)
                 if( index == 0 || topics.value[index] != topics.value[index-1] ){
                     var randomColor = generatePastelColor(index+1)
                     colors.value.push(randomColor)
@@ -239,9 +212,6 @@
         loadTopics()
         
         hlsPlayer()
-
-        
-
     })
 
     if (store.items.length == 0){
