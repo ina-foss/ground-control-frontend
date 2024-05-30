@@ -28,5 +28,9 @@ describe('import vue components',() =>{
         const cmp = await import('../components/LoadingSpinner.vue')
         expect(cmp).toBeDefined()
     })
+    test('Default imports as expected', async ()=>{
+        const cmp = await import('../layouts/default.vue')
+        expect(cmp).toBeDefined()
+    })
 
 })
