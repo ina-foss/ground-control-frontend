@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-
+import { defineNuxtConfig } from 'nuxt/config';
 import path from 'path';
-
 export default defineNuxtConfig({
   ssr: false,
   app: {
@@ -21,21 +20,23 @@ export default defineNuxtConfig({
   modules: [
     'nuxt-primevue',
     '@nuxtjs/tailwindcss',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@nuxt/test-utils/module',
   ],
-  primevue: {
-    options: {
-      unstyled: true
+    primevue: {
+        options: {
+            unstyled: true
+        },
+        importPT: { from: path.resolve(__dirname, './presets/lara/') },      //import and apply preset
+        components : {
+            include: '*'
+        }
     },
-    importPT: { from: path.resolve(__dirname, './presets/lara/') },      //import and apply preset   
-    components : {
-      include: '*'
-    }
-  },
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {},
+      'postcss-custom-properties': {}
     }
   },
   tailwindcss: {
@@ -73,6 +74,6 @@ export default defineNuxtConfig({
           }
       }
     }
-  }
+  },
   
 })
