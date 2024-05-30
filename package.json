@@ -5,6 +5,8 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -13,17 +15,26 @@
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
     "hls.js": "^1.5.8",
-    "nuxt": "^3.11.1",
-    "oidc-client-ts": "^3.0.1",
+    "nuxt": "^3.11.2",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
+    "primevue": "^3.52.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.42.1",
+    "@nuxt/test-utils": "^3.13.1",
     "@nuxtjs/tailwindcss": "^6.11.4",
+    "@testing-library/vue": "^8.1.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^14.11.2",
     "nuxt-primevue": "^0.3.1",
-    "openapi-typescript-codegen": "^0.26.0"
+    "openapi-typescript-codegen": "^0.26.0",
+    "playwright-core": "^1.44.1",
+    "postcss-custom-properties": "^13.3.10",
+    "vitest": "^1.6.0"
   }
 }
