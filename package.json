@@ -28,6 +28,7 @@
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@testing-library/vue": "^8.1.0",
     "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^14.11.2",
     "nuxt-primevue": "^0.3.1",
