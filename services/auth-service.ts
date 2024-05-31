@@ -36,7 +36,7 @@ export default class AuthService {
     }
 
     public renewToken(): Promise<void> {
-        return this.userManager.signinSilentCallback();
+        return this.userManager.signinSilent();
     }
 
     public logout(): Promise<void> {
