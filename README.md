@@ -52,7 +52,7 @@ The authentication flow of the application is handled by Keycloak. All the varia
 In development mode, you can see all the tokens and user information in Pinia tab of the Nuxt DevTool. These infos are also store in a WebStorageSession which means the user is still connecting after closing the application tabs on its browser.
 
 The global middleware of the application redirect any incoming user who are not logged. After login in the Keycloak page, user gets redirected to `/auth` page where the actual
-sign in function is called. Therefore, he comes back to the root of the application.
+sign in function is called. Finally, he comes back to the root of the application.
 
 The access token, used in every API call to the backend application, may eventually expire during long session. The page `/silent-refresh` allow user to refresh its access token using the refresh token. This route is called automatically upon access token expiration.
 
