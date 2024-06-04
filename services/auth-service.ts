@@ -14,7 +14,6 @@ export default class AuthService {
             const settings = {
                 authority: `${config['authorityUrl']}/realms/${config['realm']}`,
                 client_id: config['clientId'],
-                // client_secret: keycloakConfig.clientSecret,
                 redirect_uri: `${window.location.origin}/auth`,
                 silent_redirect_uri: `${window.location.origin}/silent-refresh`,
                 post_logout_redirect_uri: `${window.location.origin}`,

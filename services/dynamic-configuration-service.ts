@@ -8,8 +8,6 @@ export const initApplicationConfiguration = async () => {
         let configUrl = '../assets/config.json';
         const cbParam = configUrl.indexOf('?') !== -1 ? `&cb=${timeStamp}` : `?cb=${timeStamp}`;
         configUrl = `${configUrl}${cbParam}`;
-        // const response = await fetch(configUrl);
-        // const data = await response.json();
         const runtimeConfig = useRuntimeConfig()
         _.assignInWith(config, data, (objValue, srcValue) => {
             return objValue || srcValue;
