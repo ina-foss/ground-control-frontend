@@ -5,5 +5,12 @@
     </div>
 </template>
 
+<script setup lang="ts" >
+import { OpenAPI } from '../api/generate/core/OpenAPI';
+    
+    
+
+
+</script>
 
 
