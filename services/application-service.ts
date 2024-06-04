@@ -1,5 +1,3 @@
-import { keycloakConfig } from "./keycloak-config";
-
 export default class ApplicationService {
   constructor(private readonly accessToken: string) {}
 

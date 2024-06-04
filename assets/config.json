@@ -1,3 +1,7 @@
 {
-  "apiBasePath": "/api"
+  "apiBasePath": "http://localhost:8000",
+  "authorityUrl" : "http://localhost:9080",
+  "applicationUrl": "http://localhost:3000",
+  "realm": "ground-control",
+  "clientId": "web_app"
 }
