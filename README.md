@@ -38,6 +38,16 @@ yarn dev
 bun run dev
 ```
 
+## Running unit tests
+
+`npm run test` to execute the unit tests via vitest (`vitest`: the default command).
+
+`npm run coverage` to run and get a coverage report of unit tests (`vitest run --coverage`: the default command) .
+ 
+These commands are specified in a script in `package.json` 
+To make your own vitest unit tests configuration , you may use `vitest.config.ts` file to set up various options like environment, outputFile ... 
+
+
 ## Production
 
 Build the application for production:
