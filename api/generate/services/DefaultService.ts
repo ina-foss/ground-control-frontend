@@ -2,33 +2,37 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserDto } from '../models/UserDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class UserService {
+export class DefaultService {
     /**
-     * Read Users
-     * @param skip
-     * @param limit
-     * @returns UserDto Successful Response
+     * Root
+     * @returns any Successful Response
      * @throws ApiError
      */
-    public static readUsersUsersGet(
-        skip?: number,
-        limit: number = 100,
-    ): CancelablePromise<Array<UserDto>> {
+    public static rootTestGet(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/users/',
-            query: {
-                'skip': skip,
-                'limit': limit,
-            },
+            url: '/test',
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,
-                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Info
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static infoManagementHealthGet(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/management/health',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
             },
         });
     }
