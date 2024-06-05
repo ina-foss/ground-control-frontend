@@ -32,7 +32,7 @@
                 }"
                 />
                 <li class="rounded-lg " v-for="(phrase,index) in data.data.data.localisation[0].sublocalisations.localisation" :ref="el => segmentationRefs.push(el) ">
-                    <SegmentationMolecules :phrase="phrase" v-bind:colors="colors" v-bind:topics="topics" v-bind:index="index" @segmentation="handleSegmentation($event)" @onSegmentClick="handleSegmentClick()" />
+                    <SegmentationMolecules :phrase="phrase" v-bind:colors="colors" v-bind:topics="topics" v-bind:index="index" @segmentation="handleSegmentation($event)" @onSegmentClick="handleSegmentClick($event)" />
                 </li>
             </ol>
             <div></div>
@@ -49,6 +49,7 @@
     import {bcStore} from '~/stores/breadcrumbs';
     import {Hls} from 'hls.js'
     import { TaskService } from '../../api/generate';
+    
 
     const store = bcStore()
     const route = useRoute()
@@ -77,13 +78,15 @@
         baseURL = 'http://nginx'
     }
 
-    const {data, pending, refresh, error} = await useFetch(`${baseURL}/task/${route.params.id}` ,{ 
-        headers: {
-            Accept: 'application/json',
+    const data = ref(await TaskService.readTaskTaskIdGet(route.params.id))
+    
+    // const {data, pending, refresh, error} = await useFetch(`${baseURL}/task/${route.params.id}` ,{ 
+    //     headers: {
+    //         Accept: 'application/json',
             
-        },
+    //     },
         
-    })
+    // })
 
     const handleSegmentation = (event) => {
 
@@ -212,8 +215,7 @@
         const g = random(5);
         const b = random(7);
     
-        return `rgb(${r}, ${g}, ${b}, 1)`;
-
+        return `rgb(${r}, ${g}, ${b})`;
     }
 
     const loadTopics = () => {
