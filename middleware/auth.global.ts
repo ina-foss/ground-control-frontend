@@ -1,6 +1,7 @@
 import { User } from "oidc-client-ts";
 import { useAuth } from "@/stores/auth";
 import { initApplicationConfiguration } from "../services/dynamic-configuration-service";
+import {useService} from "~/composables/useService";
 const authFlowRoutes = ["/auth", "/silent-refresh", "/logout"];
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
