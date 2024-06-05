@@ -2,6 +2,11 @@
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
+> **IMPORTANT**  
+> Make sure to have the last version of BOTH repositories locally installed and up to date before running `docker compose up`. 
+> To do that, go to your local develop branch using `git checkout develop` and then `git pull` on both frontend and backend directories.
+> The 2 application needs to interact with each other so you need to work. 
+
 ## Setup
 
 Make sure to install the dependencies:
@@ -48,11 +53,10 @@ To make your own vitest unit tests configuration , you may use `vitest.config.ts
 
 ## About authentication
 
-The authentication flow of the application is handled by Keycloak. All the variable needed for configuration are in the [config.json file](./assets/config.json).
+The authentication flow of the application is handled by Keycloak. All the variable needed for configuration are in the [config.json file](./assets/config.json). It contains the address of the Keycloak container and the one from the API. The file is loaded at the application creation in [this plugin](../plugins/backend-openapi-config.ts)
 In development mode, you can see all the tokens and user information in Pinia tab of the Nuxt DevTool. These infos are also store in a WebStorageSession which means the user is still connecting after closing the application tabs on its browser.
 
-The global middleware of the application redirect any incoming user who are not logged. After login in the Keycloak page, user gets redirected to `/auth` page where the actual
-sign in function is called. Finally, he comes back to the root of the application.
+The global middleware of the application redirect any incoming user who are not logged. After login in the Keycloak page, user gets redirected to `/auth` page where the actual sign in function is called. Finally, he comes back to the root of the application.
 
 The access token, used in every API call to the backend application, may eventually expire during long session. The page `/silent-refresh` allow user to refresh its access token using the refresh token. This route is called automatically upon access token expiration.
 
