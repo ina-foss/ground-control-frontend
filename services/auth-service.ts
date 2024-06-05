@@ -12,7 +12,7 @@ export default class AuthService {
         try {
             const config = getApplicationConfiguration()
             const settings = {
-                authority: `${config['authorityUrl']}/realms/${config['realm']}`,
+                authority: `${config['authorityUrl']}`,
                 client_id: config['clientId'],
                 redirect_uri: `${window.location.origin}/auth`,
                 silent_redirect_uri: `${window.location.origin}/silent-refresh`,
