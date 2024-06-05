@@ -1,5 +1,5 @@
 import { User, UserManager, WebStorageStateStore } from "oidc-client-ts";
-import { keycloakConfig } from "./keycloak-config";
+import { getApplicationConfiguration } from "./dynamic-configuration-service";
 
 export default class AuthService {
     private userManager!: UserManager;
@@ -10,10 +10,10 @@ export default class AuthService {
 
     private initializedOidc() {
         try {
+            const config = getApplicationConfiguration()
             const settings = {
-                authority: `${keycloakConfig.authorityUrl}/realms/${keycloakConfig.realm}`,
-                client_id: keycloakConfig.clientId,
-                // client_secret: keycloakConfig.clientSecret,
+                authority: `${config['authorityUrl']}`,
+                client_id: config['clientId'],
                 redirect_uri: `${window.location.origin}/auth`,
                 silent_redirect_uri: `${window.location.origin}/silent-refresh`,
                 post_logout_redirect_uri: `${window.location.origin}`,
