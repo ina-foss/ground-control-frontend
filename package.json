@@ -10,7 +10,9 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate"
+    "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
@@ -28,13 +30,16 @@
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.42.1",
+    "@nuxt/eslint": "^0.3.13",
     "@nuxt/test-utils": "^3.13.1",
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@testing-library/vue": "^8.1.0",
     "@types/lodash": "^4.17.4",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.6.0",
     "@vue/test-utils": "^2.4.6",
+    "eslint": "^8.57.0",
     "happy-dom": "^14.11.2",
     "jsdom": "^24.1.0",
     "nuxt-lodash": "^2.5.3",
