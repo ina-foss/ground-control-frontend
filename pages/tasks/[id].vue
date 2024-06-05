@@ -49,7 +49,6 @@
     import {bcStore} from '~/stores/breadcrumbs';
     import {Hls} from 'hls.js'
     import { TaskService } from '../../api/generate';
-    
 
     const store = bcStore()
     const route = useRoute()
@@ -79,10 +78,10 @@
     }
 
     const data = ref(await TaskService.readTaskTaskIdGet(route.params.id))
-    
+
 
     const handleSegmentation = (event) => {
-        
+
         window.onbeforeunload = function(){
             return confirm("You didn't saved your progression")
         }
