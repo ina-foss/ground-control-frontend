@@ -6,38 +6,38 @@
                 <p class="inline-block  text-2xl" >
                     <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
                     <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small" @click.stop.prevent="visible=true" />
-                    <Dialog v-model:visible="visible" modal header="Tasks Settings" :style="{ width: '35rem'}" v-on:hide="$emit('refreshData')" v-on:after-hide="deleteDialog=false" class="bg-white">    
+                    <Dialog v-model:visible="visible" modal header="Tasks Settings" :style="{ width: '35rem'}" class="bg-white" @hide="$emit('refreshData')" @after-hide="deleteDialog=false">    
                         <div class=" grid grid-cols-1 grid-rows-3 gap-1">
                             <span class="text-slate-400 " >Modify task informations </span>
                             <div class="flex grid-cols-2 gap-3 align-items-center "> 
                                 <label class="self-center basis-1/4">Task name</label>
-                                <InputText placeholder="Enter a new task name" autocomplete="off" class="flex-auto" size="small" v-model="title"/>
+                                <InputText v-model="title" placeholder="Enter a new task name" autocomplete="off" class="flex-auto" size="small"/>
                             </div>
                             <div class="flex gap-3 "> 
                                 <label class="self-center basis-1/4">Task description</label>
-                                <InputText placeholder="Enter a new task description" autocomplete="off" class="flex-auto" v-model="description"/>
+                                <InputText v-model="description" placeholder="Enter a new task description" autocomplete="off" class="flex-auto"/>
                             </div>
                             <ButtonGroup class="justify-evenly flex items-center pt-6 ">
                                 <Button label="Update" severity="info" class="justify-self-center" @click="updateProject" />
                                 <Button  v-if="deleteDialog == false"label="Delete" severity="danger" @click="deleteDialog=true" />
-                                <Button v-else label="Sure ?" severity="danger" @click="deleteProject" class=""/>
+                                <Button v-else label="Sure ?" severity="danger" class="" @click="deleteProject"/>
                             </ButtonGroup>
                         </div>
                     </Dialog>
                 </p>
             </div>
             <div class="flex justify-between justify-items-stretch pl-2 pt-1 text-sm">
-                <p >0/{{ $props.project.total_tasks }} <i class="pi pi-list-check"></i></p>
+                <p >0/{{ $props.project.total_tasks }} <i class="pi pi-list-check"/></p>
                 <div class="flex justify-between justify-items-stretch gap-3" > 
                     <span>1/{{  }} </span>
-                    <span>2 <i class="pi pi-flag-fill" style="color:red" ></i> </span>
-                    <span>{{ $props.project.total_users_with_annotations }} <i class="pi pi-users"></i></span>
+                    <span>2 <i class="pi pi-flag-fill" style="color:red" /> </span>
+                    <span>{{ $props.project.total_users_with_annotations }} <i class="pi pi-users"/></span>
                 </div>
             </div>
             <hr>
             <div class="text-sm px-2 py-3 text-slate-500"> {{ $props.project.description }} </div>
             <div class="flex justify-between  pl-2 py-2 text-gray-400">
-                <p class="self-center" v-if="$props.project.created_at != null">{{$props.project.created_at.split('T')[0]}}</p>
+                <p v-if="$props.project.created_at != null" class="self-center">{{$props.project.created_at.split('T')[0]}}</p>
                 <Avatar shape="circle" label="PR" />
             </div>
         </NuxtLink>
@@ -45,16 +45,11 @@
    
 </template>
 
-<style>
-    @import url(/assets/css/base.css);
-</style>
-
 <script setup >
 
     import {bcStore} from '~/stores/breadcrumbs';   
-    import { reactive, toRefs } from 'vue';
-    import { defineEmits } from 'vue';
-
+    import { reactive, toRefs , defineEmits } from 'vue';
+    
 
     import { ProjectService } from '~/api/generate';
 
@@ -114,3 +109,7 @@
     }
 
 </script>
+
+<style>
+    @import url(/assets/css/base.css);
+</style>

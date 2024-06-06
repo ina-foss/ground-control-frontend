@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import data from '../assets/config.json'
-let config = {};
+const config = {};
 
 export const initApplicationConfiguration = async () => {
     try {

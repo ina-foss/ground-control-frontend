@@ -1,7 +1,7 @@
 <template>
     <div class=" ">
         <div class="py-8 px-4 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
-            <ProjectCard v-if="data !== undefined" v-for="project in sortDataById(data)" :project=project @refreshData="handleRefresh"/>
+            <ProjectCard v-for="project in sortDataById(data)" v-if="data !== undefined" :project=project @refresh-data="handleRefresh"/>
         </div>
     </div>
 </template>
@@ -14,10 +14,10 @@
     const refreshStore = useRefreshStore()
 
     let baseURL;
-    if (process.client){
+    if (import.meta.client){
         baseURL = 'http://localhost:8000';
     }
-    else if (process.server){
+    else if (import.meta.server){
         baseURL = 'http://nginx'
     }
 
@@ -42,7 +42,7 @@
 
     const testStore = () => {
         console.log(refreshStore.getData)
-        data = refreshStore.getData
+        data.value = refreshStore.getData
         console.log(data)
     }
 

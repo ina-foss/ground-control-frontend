@@ -1,4 +1,5 @@
-import { User, UserManager, WebStorageStateStore } from "oidc-client-ts";
+import type { User} from "oidc-client-ts";
+import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import { getApplicationConfiguration } from "./dynamic-configuration-service";
 
 export default class AuthService {

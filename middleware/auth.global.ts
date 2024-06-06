@@ -1,4 +1,4 @@
-import { User } from "oidc-client-ts";
+import type { User } from "oidc-client-ts";
 import { useAuth } from "@/stores/auth";
 import { initApplicationConfiguration } from "../services/dynamic-configuration-service";
 import {useService} from "~/composables/useService";

@@ -1,13 +1,15 @@
 <template>
-  <div class="bg-gray-300 p-3 pl-3 rounded-lg" v-bind:style="dynamicStyle($props.colors[topicIndex])">
+  <div class="bg-gray-300 p-3 pl-3 rounded-lg" :style="dynamicStyle($props.colors[topicIndex])">
     <div class="flex items-center gap-2">
-      <Button v-bind:icon="iconBool" v-bind:label="topicText" @click="handleSegmentation()"
-              :pt="{
+      <Button
+:icon="iconBool" :label="topicText" :pt="{
                 root: {
                     style: `max-width: 40px; min-width: 40px; background-color:${$props.colors[topicIndex]}; border:none `
                 }
-            }"/>
-      <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
+            }"
+              @click="handleSegmentation()"/>
+      <div
+v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
            class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
            @click="$emit('onSegmentClick',{tcin : phrase.tcin, tcout: phrase.tcout, index: props.index})">
         {{ $props.phrase.data.text[0] }}
@@ -24,11 +26,11 @@ const emit = defineEmits(['segmentation','onSegmentClick'])
 const toast = useToast()
 
 // let bgButtonColor = ref('transparent')
-let topicIndex = ref(0)
+const topicIndex = ref(0)
 if (props.phrase.data.topic != undefined) topicIndex.value = props.phrase.data.topic
-var iconBool = ref('pi pi-tag')
+const iconBool = ref('pi pi-tag')
 
-var topicText = ref(null)
+const topicText = ref(null)
 
 iconBool.value = topicIndex.value == 0 ? 'pi pi-bookmark' : ''
 topicText.value = topicIndex.value == 0 ? null : "#" + topicIndex.value
