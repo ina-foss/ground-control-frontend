@@ -8,7 +8,8 @@ export default withNuxt(
     {
       ignores: [
         'presets',
-        'api'],
+        'api',
+      'html'],
     },
     {
       languageOptions: {
@@ -33,6 +34,7 @@ export default withNuxt(
     {
       rules: {
         '@typescript-eslint/no-explicit-any': 'off',
+        'no-console': ['warn', { allow: ['warn', 'error', 'debug'] }],
       },
 
     }
