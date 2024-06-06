@@ -6,7 +6,9 @@ export default withNuxt(
 )
   .prepend(
     {
-      ignores: [],
+      ignores: [
+        'presets',
+        'api'],
     },
     {
       languageOptions: {
@@ -25,5 +27,13 @@ export default withNuxt(
           },
         },
       },
+    }
+  )
+  .append(
+    {
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+
     }
   )
