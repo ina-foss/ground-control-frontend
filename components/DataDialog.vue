@@ -1,12 +1,11 @@
 <template>
 
-<div>
-    <ProgressSpinner v-if="visible" />
+  <div>
+    <ProgressSpinner v-if="visible"/>
     <p v-else> {{ data.data }} </p>
 
-    
-    
-</div>
+
+  </div>
 
 </template>
 
@@ -14,21 +13,17 @@
 const visible = ref()
 
 onBeforeMount(() => {
-    visible.value = props.visible
-    console.log('before mounted')
+  visible.value = props.visible
 })
 
-const props = defineProps(['data','visible'])
+const props = defineProps(['data', 'visible'])
 
 
-
-const {data, pending, status, error, refresh }= await useFetch(`http://localhost:8000/task/${props.data}`)
-
+const {data} = await useFetch(`http://localhost:8000/task/${props.data}`)
 
 
-onMounted(() => {  
-    visible.value=false
-    console.log('mounted')
+onMounted(() => {
+  visible.value = false
 })
 
 </script>
