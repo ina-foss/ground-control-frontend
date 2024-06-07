@@ -1,11 +1,13 @@
 <template>
-  <div class="dark:bg-gray-700 flex items-center justify-center min-h-screen">
-    <Button v-tooltip="'Tooltip Text'" label="Logout" link @click="handleLogout"/>
-    <Button v-tooltip="'Tooltip Text'" label="Login" link @click="handleLogin"/>
-    <InputText placeholder="text input"/>
-    <Button icon="pi pi-ellipsis-h" severity="secondary" size="small" text @click="visible = true"/>
-    <Dialog v-model:visible="visible" header="Tasks Settings"/>
-
+  <div class=" flex items-center justify-center min-h-screen">
+    <Button v-tooltip="'Tooltip Text'" label="Logout" @click="handleLogout" link />
+    <Button v-tooltip="'Tooltip Text'" label="Login" @click="handleLogin" link />
+    <InputText placeholder="text input" />
+    <Button icon="pi pi-ellipsis-h" severity="secondary" text size="small" @click="visible = true" />
+    <h3 class="dark:text-white text-slate-900">Text light/dark</h3>
+    <Dialog v-model:visible="visible" header="Tasks Settings">
+    </Dialog>
+    <toggleSwitch />
   </div>
 </template>
 
@@ -23,8 +25,5 @@ const handleLogin = () => authService.$auth.signInCallback()
 
 
 <style>
-
 @import url(/assets/css/base.css);
-
-
 </style>
