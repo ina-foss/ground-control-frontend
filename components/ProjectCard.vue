@@ -6,20 +6,24 @@
         <p class="font-semibold self-center">{{ $props.project.title }}</p>
         <p class="inline-block  text-2xl">
           <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
-          <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
+          <Button
+icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
                   @click.stop.prevent="visible=true"/>
-          <Dialog v-model:visible="visible" modal header="Tasks Settings" :style="{ width: '35rem'}" class="bg-white"
+          <Dialog
+v-model:visible="visible" modal header="Tasks Settings" :style="{ width: '35rem'}" class="bg-white"
                   @hide="$emit('refreshData')" @after-hide="deleteDialog=false">
             <div class=" grid grid-cols-1 grid-rows-3 gap-1">
               <span class="text-slate-400 ">Modify task informations </span>
               <div class="flex grid-cols-2 gap-3 align-items-center ">
                 <label class="self-center basis-1/4">Task name</label>
-                <InputText v-model="title" placeholder="Enter a new task name" autocomplete="off" class="flex-auto"
+                <InputText
+v-model="title" placeholder="Enter a new task name" autocomplete="off" class="flex-auto"
                            size="small"/>
               </div>
               <div class="flex gap-3 ">
                 <label class="self-center basis-1/4">Task description</label>
-                <InputText v-model="description" placeholder="Enter a new task description" autocomplete="off"
+                <InputText
+v-model="description" placeholder="Enter a new task description" autocomplete="off"
                            class="flex-auto"/>
               </div>
               <ButtonGroup class="justify-evenly flex items-center pt-6 ">
