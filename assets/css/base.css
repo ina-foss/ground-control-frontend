@@ -24,10 +24,25 @@
     --surface-950: 3 6 23;
 }
 
+:root[class=dark-mode] {
+  --surface-700 : 133 155 141;
+}
+
 @tailwind base;
 
 @layer base {
     html {
         @apply font-customFont leading-snug 
     }
+}
+
+@layer tailwind-base, primevue, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
 }

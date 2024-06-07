@@ -13,6 +13,7 @@
     "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate"
   },
   "dependencies": {
+    "@nuxtjs/color-mode": "^3.4.1",
     "@pinia/nuxt": "^0.5.1",
     "hls.js": "^1.5.8",
     "lodash": "^4.17.21",
