@@ -8,6 +8,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { AnnotationDto } from './models/AnnotationDto';
+export type { ExceptionResponse } from './models/ExceptionResponse';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export type { PredictionDto } from './models/PredictionDto';
 export type { ProjectBaseDto } from './models/ProjectBaseDto';
@@ -21,6 +22,7 @@ export type { UserBaseDto } from './models/UserBaseDto';
 export type { UserDto } from './models/UserDto';
 export type { ValidationError } from './models/ValidationError';
 
+export { DefaultService } from './services/DefaultService';
 export { ProjectService } from './services/ProjectService';
 export { ResourcesService } from './services/ResourcesService';
 export { TaskService } from './services/TaskService';
