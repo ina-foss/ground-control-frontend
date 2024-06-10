@@ -51,6 +51,14 @@ bun run dev
 These commands are specified in a script in `package.json` 
 To make your own vitest unit tests configuration , you may use `vitest.config.ts` file to set up various options like environment, outputFile ... 
 
+## Running eslint
+
+`npm run lint` to execute the lint (`eslint .`: the default command).
+`npm run lint:fix` to run and fix lint warnings and errors (`eslint . --fix`: the default command) .
+
+These commands are specified in a script in `package.json`
+To make your own eslint configuration , you may use `eslint.config.mjs` file to set up desired config.
+
 ## About authentication
 
 The authentication flow of the application is handled by Keycloak. All the variable needed for configuration are in the [config.json file](./assets/config.json). It contains the address of the Keycloak container and the one from the API. The file is loaded at the application creation in [this plugin](../plugins/backend-openapi-config.ts)
