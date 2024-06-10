@@ -27,7 +27,8 @@
 
   </div>
 
-  <Dialog modal v-model:visible="dialogVisible" header="New Project" style="width:20rem;" :pt="{
+  <Dialog
+v-model:visible="dialogVisible" modal header="New Project" style="width:20rem;" :pt="{
         header:{
             class:'bg-surface-0 border-t-0 rounded-tr-lg rounded-tl-lg justify-between items-center shrink-0 flex p-6 pb-2'
         }
@@ -35,13 +36,13 @@
     <InlineMessage v-if="errorVisible==true && !titleValue" class="mb-2" >Title is required</InlineMessage>
     <div class=" pt-5 flex flex-col gap-4">
       <FloatLabel class="py-1" >
-        <InputText id="title" v-model="titleValue" ></InputText>
+        <InputText id="title" v-model="titleValue" />
 
         <label for="title">Title</label>
       </FloatLabel>
 
       <FloatLabel class="py-1" >
-        <InputText id="description" v-model="descriptionValue"></InputText>
+        <InputText id="description" v-model="descriptionValue"/>
         <label for="description">Description</label>
       </FloatLabel>
 
@@ -50,8 +51,8 @@
     </div>
     <div class="pt-8">
       <Toast />
-      <FileUpload accept="application/json" :showUploadButton=false :showCancelButton="false" :maxFileSize=maxFileSize invalidFileTypeMessage="Invalid type" @select="handleSelect()"  @removeUploadedFile="showRemove($event)" @upload="onUpload($event)" @error="onUpload($event)" auto name="file[]"
-                  :pt="{
+      <FileUpload
+accept="application/json" :show-upload-button=false :show-cancel-button="false" :max-file-size=maxFileSize invalid-file-type-message="Invalid type" auto  name="file[]" :pt="{
             buttonbar: {
                 style: `z-index:20; position: absolute; width: 85%; height: 100px; background-color: transparent;padding: 0px; cursor:pointer; border:none; ${selectFile}`
             },
@@ -59,37 +60,39 @@
                 style: 'padding: 14px'
             },
 
-        }">
+        }" @select="handleSelect()" @remove-uploaded-file="showRemove($event)" @upload="onUpload($event)"
+                  @error="onUpload($event)">
         <template #empty ="{chooseCallback}">
 
           <div class="flex items-center justify-content-center flex-col">
-            <span class="pi pi-file-arrow-up align-center cursor-pointer" style="font-size: 2.5rem"></span>
+            <span class="pi pi-file-arrow-up align-center cursor-pointer" style="font-size: 2.5rem"/>
             <p class="text-xs pt-3 text-slate-400 "  >Click to upload a JSON file</p>
           </div>
         </template>
 
         <template #header={chooseCallback}>
-          <div class="w-full" @click="chooseCallback()"></div></template>
+          <div class="w-full" @click="chooseCallback()"/></template>
 
         <template #content="{uploadedFiles, files, removeUploadedFileCallback, removeFileCallback }" >
           <div class="flex flex-col gap-2">
             <div v-for="(file,index) in uploadedFiles" :key="index" class="grid grid-cols-8 gap-2 px-1 items-center">
-              <span class="pi pi-file self-center w-2"></span>
+              <span class="pi pi-file self-center w-2"/>
               <p v-tooltip.top="file.name" class="text-ellipsis text-nowrap col-span-4 overflow-hidden " >{{ file.name }}</p>
               <p v-if="file.size < 1024 " class="text-slate-400 text-xs text-nowrap col-span-2   ">{{ file.size }} B</p>
               <p v-else class="text-slate-400 text-xs text-nowrap col-span-2  ">{{ Math.round(file.size/1024) }} KB</p>
-              <Button icon="pi pi-times" text rounded size="small" severity="danger"  @click="removeUploadedFileCallback(index)"  class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
+              <Button
+icon="pi pi-times" text rounded size="small" severity="danger"  class=" self-center hover:bg-surface-100  hover:cursor-pointer"  style="font-size: 15px;" :pt="{
                             root:{
                                 style: 'justify-content: center; justify-items: center; place-self: center;'
                             },
                             icon:{
                                 style: 'max-width:24px'
                             }
-                        }" />
+                        }" @click="removeUploadedFileCallback(index)" />
             </div>
           </div>
           <div v-for="file in files">
-            <ProgressSpinner style="width: 40px;" strokeWidth=5 />
+            <ProgressSpinner style="width: 40px;" stroke-width=5 />
           </div>
         </template>
 
@@ -102,9 +105,7 @@
     </template>
   </Dialog>
 
-  <Sidebar v-model:visible="menuVisible" class="bg-white">
-
-  </Sidebar>
+  <Sidebar v-model:visible="menuVisible" class="bg-white"/>
 </template>
 
 
@@ -143,26 +144,26 @@ const handleSelect = () => {
 }
 
 const onUpload = async (event)=> {
-  let xhr = new XMLHttpRequest()
-  let formData = new FormData()
-  let file = event.files[0]
+  const xhr = new XMLHttpRequest()
+  const formData = new FormData()
+  const file = event.files[0]
 
 
   formData.append("file", file)
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4) {
-      var _this$uploadedFiles;
+      let _this$uploadedFiles;
     }
   };
   xhr.open('POST', '/', true);
   files.value = event.files;
-  let reader = new FileReader();
+  const reader = new FileReader();
   reader.onloadend= onReaderLoad;
   reader.readAsText(event.files[0])
 }
 
 const onReaderLoad = (event) => {
-  var obj = JSON.parse(event.target.result);
+  const obj = JSON.parse(event.target.result);
   fileData.value.push(obj)
 }
 
