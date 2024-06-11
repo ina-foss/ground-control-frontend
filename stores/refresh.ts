@@ -1,32 +1,25 @@
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 
-import { ProjectService } from '../api/generate'
+import {ProjectService} from '../api/generate'
 
-export const useRefreshStore = defineStore('refresh',{
-    state: () => {
-        return {
-            data: [],
-        }
-    },
-    actions:{
-        setData(newData){
-            console.log("store works")
-            this.data = newData
-            console.log(newData.value)
-        },
-        async fetch() {
-            ProjectService.readProjectsProjectsGet().then( (response) => this.data = response ).then(() =>  console.log( this.data ) ).catch( (error) => console.log(error))
-        }
-    },
-    getters: {
-        getData(state) {
-            console.log(state.data)
-            // if(state.data.length != 0)
-            return state.data
-            // debugger
-            
-        }
+export const useRefreshStore = defineStore('refresh', {
+  state: () => {
+    return {
+      data: [],
     }
-    
-
+  },
+  actions: {
+    setData(newData) {
+      //store works
+      this.data = newData
+    },
+    async fetch() {
+      ProjectService.readProjectsProjectsGet().then((response) => this.data = response).then(() => {}).catch((error) => (error))
+    }
+  },
+  getters: {
+    getData(state) {
+      return state.data
+    }
+  }
 })

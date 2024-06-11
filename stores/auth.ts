@@ -1,5 +1,5 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { User } from "oidc-client-ts";
+import type { User } from "oidc-client-ts";
 
 export const useAuth = defineStore("auth", () => {
   const authUser = ref<User | null>(null);

@@ -1,20 +1,16 @@
-
 <template>
-    <div class="dark:bg-gray-700 flex items-center justify-center min-h-screen">
-        <Button v-tooltip="'Tooltip Text'" label="Logout" @click="handleLogout" link />
-        <Button v-tooltip="'Tooltip Text'" label="Login" @click="handleLogin" link />
-        <InputText placeholder="text input" />
-        <Button  icon="pi pi-ellipsis-h" severity="secondary" text size="small" @click="visible = true" />
-                <Dialog v-model:visible="visible"  header="Tasks Settings">
+  <div class="dark:bg-gray-700 flex items-center justify-center min-h-screen">
+    <Button v-tooltip="'Tooltip Text'" label="Logout" link @click="handleLogout"/>
+    <Button v-tooltip="'Tooltip Text'" label="Login" link @click="handleLogin"/>
+    <InputText placeholder="text input"/>
+    <Button icon="pi pi-ellipsis-h" severity="secondary" size="small" text @click="visible = true"/>
+    <Dialog v-model:visible="visible" header="Tasks Settings"/>
 
-                </Dialog>
-        
-    </div>
+  </div>
 </template>
 
 <script setup>
-import { UserService } from '../api/generate';
-import { useService } from '../composables/useService';
+import {useService} from '../composables/useService';
 
 
 const visible = ref(false)

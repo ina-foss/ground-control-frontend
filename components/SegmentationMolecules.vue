@@ -1,15 +1,17 @@
 <template>
-  <div class="bg-gray-300 p-3 pl-3 rounded-lg" v-bind:style="dynamicStyle($props.colors[topicIndex])">
+  <div :style="dynamicStyle($props.colors[topicIndex])" class="bg-gray-300 p-3 pl-3 rounded-lg">
     <div class="flex items-center gap-2">
-      <Button v-bind:icon="iconBool" v-bind:label="topicText" @click="handleSegmentation()"
-              :pt="{
+      <Button
+        :icon="iconBool" :label="topicText" :pt="{
                 root: {
                     style: `max-width: 40px; min-width: 40px; background-color:${$props.colors[topicIndex]}; border:none `
                 }
-            }"/>
-      <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
-           class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
-           @click="$emit('onSegmentClick',{tcin : phrase.tcin, tcout: phrase.tcout, index: props.index})">
+            }"
+        @click="handleSegmentation()"/>
+      <div
+        v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
+        class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
+        @click="$emit('onSegmentClick',{tcin : phrase.tcin, tcout: phrase.tcout, index: props.index})">
         {{ $props.phrase.data.text[0] }}
       </div>
     </div>
@@ -19,21 +21,21 @@
 <script setup>
 
 const props = defineProps(['phrase', 'colors', 'topics', 'index'])
-const emit = defineEmits(['segmentation','onSegmentClick'])
+const emit = defineEmits(['segmentation', 'onSegmentClick'])
 
 const toast = useToast()
 
 // let bgButtonColor = ref('transparent')
-let topicIndex = ref(0)
+const topicIndex = ref(0)
 if (props.phrase.data.topic != undefined) topicIndex.value = props.phrase.data.topic
-var iconBool = ref('pi pi-tag')
+const iconBool = ref('pi pi-tag')
 
-var topicText = ref(null)
-
+const topicText = ref(null)
+let isVisible = false
 iconBool.value = topicIndex.value == 0 ? 'pi pi-bookmark' : ''
 topicText.value = topicIndex.value == 0 ? null : "#" + topicIndex.value
 
-let isVisible = false
+
 
 function generatePastelColor(tagNumber) {
   // Use tag number to create a seed (this is a basic example, there are better ways to do this)
@@ -46,37 +48,38 @@ function generatePastelColor(tagNumber) {
 
   return `rgb(${r}, ${g}, ${b}, 1)`;
 }
+
 function dynamicStyle(color) {
   const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
-    if (props.topics[props.index] === props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
-      isVisible = true
-      if(hexMatch){
-        const [r, g, b] = extractRGB(color);
-        return {
-          backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
-          marginTop: '-20px'
-        };
-      }
+  if (props.topics[props.index] === props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
+    isVisible = true
+    if (hexMatch) {
+      const [r, g, b] = extractRGB(color);
       return {
-        backgroundColor: reduceOpacityOfColor(color, 0.5),
+        backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
         marginTop: '-20px'
       };
-    } else {
-      isVisible = false
-      if(hexMatch){
-        const [r, g, b] = extractRGB(color);
-        return {
-          backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
-        };
-      }
+    }
+    return {
+      backgroundColor: reduceOpacityOfColor(color, 0.5),
+      marginTop: '-20px'
+    };
+  } else {
+    isVisible = false
+    if (hexMatch) {
+      const [r, g, b] = extractRGB(color);
       return {
-        backgroundColor: reduceOpacityOfColor(color, 0.5),
+        backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
       };
     }
+    return {
+      backgroundColor: reduceOpacityOfColor(color, 0.5),
+    };
+  }
 }
 
 
- function reduceOpacityOfColor(rgbaColor, opacity) {
+function reduceOpacityOfColor(rgbaColor, opacity) {
   const rgbaMatch = rgbaColor?.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)/);
   if (rgbaMatch) {
     const r = parseInt(rgbaMatch[1]);
@@ -117,9 +120,8 @@ const handleSegmentation = () => {
 
   if (props.index == 0) { // Cas particulier de la premiere phrase
     if (topicIndex.value == 0) {
-      var randomColor = generatePastelColor(props.index + 1)
+      const randomColor = generatePastelColor(props.index + 1)
       props.colors.push(randomColor)
-      // emit('segmentation','premier topic')
       props.topics[props.index] = 1
       topicIndex.value = 1
     } else {
@@ -135,11 +137,10 @@ const handleSegmentation = () => {
     } else {
       toast.add({severity: "info", detail: "Can't modify this sentence"})
     }
-    // emit('segmentation','meme topic')
 
   } else if (topicIndex.value == props.colors.length - 1 && (props.topics[props.index - 1] == topicIndex.value)) { // On cree un nouveau topic
-    console.log('new topic')
-    var randomColor = generatePastelColor(props.index + 1)
+    //new topic
+    const randomColor = generatePastelColor(props.index + 1)
     props.colors.push(randomColor)
     props.topics[props.index]++
     topicIndex.value = props.topics[props.index]
@@ -148,19 +149,10 @@ const handleSegmentation = () => {
     props.topics[props.index]++
     topicIndex.value++
   } else if (topicIndex.value != 0) { // Reset du topic a 0
-
-    // let topicArray = props.topics
-    // emit('segmentation', props.index)
     props.topics[props.index] = 0;
     !props.topics.includes(topicIndex.value) && props.colors.pop()
     topicIndex.value = 0
   }
-
-  console.log('TOPCIS :')
-  console.log(props.topics)
-  console.log('index : ' + props.index)
-  console.log('COLORS :')
-  console.log(props.colors)
 
   emit('segmentation', props.index)
 
