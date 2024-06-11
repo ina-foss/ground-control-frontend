@@ -3,6 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { TaskListDto } from './TaskListDto';
+/**
+ * DTO for listing projects, including a list of tasks.
+ */
 export type ProjectListDto = {
     title: (string | null);
     description: (string | null);
