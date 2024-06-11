@@ -3,6 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { TaskBaseDto } from './TaskBaseDto';
+/**
+ * Detailed DTO for project objects, including creation and update timestamps,
+ * a list of tasks, and counts of users with annotations and total tasks.
+ */
 export type ProjectDetailDto = {
     title: (string | null);
     description: (string | null);

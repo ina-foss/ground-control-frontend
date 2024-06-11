@@ -9,6 +9,14 @@ import { request as __request } from '../core/request';
 export class UserService {
     /**
      * Read Users
+     * Retrieve a list of users with pagination support.
+     *
+     * Args:
+     * skip (int): Number of users to skip.
+     * limit (int): Maximum number of users to retrieve.
+     *
+     * Returns:
+     * List[UserDto]: A paginated list of user DTOs.
      * @param skip
      * @param limit
      * @returns UserDto Successful Response

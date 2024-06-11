@@ -2,6 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+/**
+ * Extends ProjectBaseDto with an additional id field.
+ */
 export type ProjectWithIdDto = {
     title: (string | null);
     description: (string | null);
