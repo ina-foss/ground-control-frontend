@@ -23,8 +23,3 @@ const handleLogout = () => authService.$auth.logout()
 const handleLogin = () => authService.$auth.signInCallback()
 
 </script>
-
-
-<style>
-@import url(/assets/css/base.css);
-</style>
