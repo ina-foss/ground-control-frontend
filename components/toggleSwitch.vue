@@ -12,7 +12,6 @@ const toggleDarkMode = () => {
   //document.documentElement.classList.toggle('dark');
   if (colorMode.preference == 'dark') colorMode.preference = 'light'
   else colorMode.preference = 'dark'
-  console.log("test")
 }
 </script>
 
