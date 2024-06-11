@@ -10,18 +10,27 @@ import { request as __request } from '../core/request';
 export class TaskService {
     /**
      * Read Task
-     * @param id
+     * Retrieve a task by its unique identifier.
+     *
+     * Args:
+     * task_id (int): The unique identifier of the task.
+     *
+     * Returns:
+     * TaskListDto: The requested task's details.
+     * Raises:
+     * HTTPException: If the task is not found.
+     * @param taskId
      * @returns TaskListDto Successful Response
      * @throws ApiError
      */
-    public static readTaskTaskIdGet(
-        id: number,
+    public static readTaskTaskTaskIdGet(
+        taskId: number,
     ): CancelablePromise<TaskListDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/task/{id}',
+            url: '/task/{task_id}',
             path: {
-                'id': id,
+                'task_id': taskId,
             },
             errors: {
                 401: `Unauthorized`,
@@ -32,20 +41,30 @@ export class TaskService {
     }
     /**
      * Update Data Task
-     * @param id
+     * Update an existing task by its unique identifier.
+     *
+     * Args:
+     * task_id (int): The unique identifier of the task to update.
+     * data (Dict[str, Any]): The updated task data.
+     *
+     * Returns:
+     * TaskListDto: The updated task's details.
+     * Raises:
+     * HTTPException: If the task is not found.
+     * @param taskId
      * @param requestBody
      * @returns TaskListDto Successful Response
      * @throws ApiError
      */
-    public static updateDataTaskTaskIdPatch(
-        id: number,
+    public static updateDataTaskTaskTaskIdPatch(
+        taskId: number,
         requestBody: Record<string, any>,
     ): CancelablePromise<TaskListDto> {
         return __request(OpenAPI, {
             method: 'PATCH',
-            url: '/task/{id}',
+            url: '/task/{task_id}',
             path: {
-                'id': id,
+                'task_id': taskId,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -58,6 +77,13 @@ export class TaskService {
     }
     /**
      * Create Task
+     * Create a new task.
+     *
+     * Args:
+     * task (TaskCreateDto): The task data to be created.
+     *
+     * Returns:
+     * TaskCreateDto: The newly created task's details.
      * @param requestBody
      * @returns TaskCreateDto Successful Response
      * @throws ApiError

@@ -8,8 +8,9 @@ import { request as __request } from '../core/request';
 export class ResourcesService {
     /**
      * Get Transcription
+     * Get transcriptions from PX
      * @param pluginName
-     * @param format
+     * @param transcriptionFormat
      * @param clientId
      * @param channel
      * @param startDate
@@ -19,7 +20,7 @@ export class ResourcesService {
      */
     public static getTranscriptionTranscriptionGet(
         pluginName: string = 'transcriptions',
-        format: string = 'amalia-mot',
+        transcriptionFormat: string = 'amalia-mot',
         clientId: string = 'transcriptions',
         channel: string = 'TF1',
         startDate: string = '2022-1-25 20:0:0',
@@ -30,7 +31,7 @@ export class ResourcesService {
             url: '/transcription',
             query: {
                 'plugin_name': pluginName,
-                'format': format,
+                'transcription_format': transcriptionFormat,
                 'client_id': clientId,
                 'channel': channel,
                 'start_date': startDate,
