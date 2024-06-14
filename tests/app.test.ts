@@ -1,7 +1,12 @@
 import {expect, describe, it} from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 
+global.fetch = vi.fn();
+
 describe('Nuxt Application', () => {
+    beforeEach(() => {
+        fetch.mockReset()
+    })
     setup({
         browser: true,
     });

@@ -6,7 +6,10 @@ import {useService} from "~/composables/useService";
 const authFlowRoutes = ["/auth", "/silent-refresh", "/logout"];
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  initApplicationConfiguration()
+  let config = useRuntimeConfig()
+  if (config['clientId'] == undefined){
+    await initApplicationConfiguration()
+  }
   const authStore = useAuth();
   const services = useService();
   const user = (await services.$auth.getUser()) as User;

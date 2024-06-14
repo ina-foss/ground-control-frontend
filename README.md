@@ -61,7 +61,7 @@ To make your own eslint configuration , you may use `eslint.config.mjs` file to 
 
 ## About authentication
 
-The authentication flow of the application is handled by Keycloak. All the variable needed for configuration are in the [config.json file](./assets/config.json). It contains the address of the Keycloak container and the one from the API. The file is loaded at the application creation in [this plugin](../plugins/backend-openapi-config.ts)
+The authentication flow of the application is handled by Keycloak. All the variable needed for configuration are in the [config.json file](public/config.json). It contains the address of the Keycloak container and the one from the API. The file is loaded at the application creation in [this plugin](../plugins/backend-openapi-config.ts)
 In development mode, you can see all the tokens and user information in Pinia tab of the Nuxt DevTool. These infos are also store in a WebStorageSession which means the user is still connecting after closing the application tabs on its browser.
 
 The global middleware of the application redirect any incoming user who are not logged. After login in the Keycloak page, user gets redirected to `/auth` page where the actual sign in function is called. Finally, he comes back to the root of the application.

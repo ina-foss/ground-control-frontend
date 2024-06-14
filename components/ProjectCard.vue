@@ -58,7 +58,6 @@ v-model="description" placeholder="Enter a new task description" autocomplete="o
 <script setup>
 
 import {bcStore} from '~/stores/breadcrumbs';
-import {defineEmits} from 'vue';
 import {ProjectService} from '~/api/generate';
 
 const visible = ref(false)
