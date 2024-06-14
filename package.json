@@ -37,7 +37,7 @@
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@testing-library/vue": "^8.1.0",
-    "@types/lodash": "^4.17.4",
+    "@types/lodash": "^4.17.5",
     "@vitest/coverage-v8": "^1.6.0",
     "@vitest/ui": "^1.6.0",
     "@vue/test-utils": "^2.4.6",
