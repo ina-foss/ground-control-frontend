@@ -26,6 +26,8 @@
                 <Button label="Update" severity="info" class="justify-self-center" @click="updateProject" />
                 <Button v-if="deleteDialog == false" label="Delete" severity="danger" @click="deleteDialog = true" />
                 <Button v-else label="Sure ?" severity="danger" @click="deleteProject" class="" />
+              </ButtonGroup>
+            </div>
           </Dialog>
         </p>
       </div>
