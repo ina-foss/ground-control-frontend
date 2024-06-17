@@ -37,18 +37,68 @@ export class AnnotationService {
         });
     }
     /**
+     * Get Annotations By Id
+     * Retrieve a single annotation
+     * @param id
+     * @returns AnnotationDto Successful Response
+     * @throws ApiError
+     */
+    public static getAnnotationsByIdAnnotationIdGet(
+        id: number,
+    ): CancelablePromise<AnnotationDto> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/annotation/{id}',
+            path: {
+                'id': id,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Update Annotation Result
+     * Edit the result of an existing annotation
+     * @param id
+     * @param requestBody
+     * @returns AnnotationDto Successful Response
+     * @throws ApiError
+     */
+    public static updateAnnotationResultAnnotationIdPatch(
+        id: number,
+        requestBody: Record<string, any>,
+    ): CancelablePromise<AnnotationDto> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/annotation/{id}',
+            path: {
+                'id': id,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
      * Get Annotation By Task Id
      * Get a list of annotations that match the task_id attributes
      * @param taskId
      * @returns AnnotationDto Successful Response
      * @throws ApiError
      */
-    public static getAnnotationByTaskIdAnnotationTaskIdGet(
+    public static getAnnotationByTaskIdAnnotationsTaskIdGet(
         taskId: number,
     ): CancelablePromise<AnnotationDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/annotation/{task_id}',
+            url: '/annotations/{task_id}',
             path: {
                 'task_id': taskId,
             },
