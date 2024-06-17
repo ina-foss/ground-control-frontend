@@ -114,8 +114,10 @@ icon="pi pi-times" text rounded size="small" severity="danger"  class=" self-cen
 
 import {bcStore} from '~/stores/breadcrumbs';
 import { ProjectService } from '~/api/generate';
-import { TaskService } from '../api/generate';
+import { AnnotationType, ProjectStatus, TaskService } from '../api/generate';
 import {  useRefreshStore } from '../stores/refresh';
+import {useService} from "~/composables/useService";
+
 const items = bcStore().items
 const refreshStore = useRefreshStore()
 const titleValue = ref(null)
@@ -131,6 +133,10 @@ const files = ref([])
 const fileData = ref([])
 const fetchProject = inject('fetchProject',ref(false))
 const home = {label:'Projects', url: '/dashboard'}
+
+
+// const services = useService();
+// const user = (await services.$auth.getUser()) ;
 
 const showRemove = (e) => {
   toast.add({severity: 'info', detail: 'The file "'+ e.file.name +'" has been deleted', life: 5000})
@@ -174,13 +180,30 @@ const createProject = async() => {
   }
   else{
 
-    const response = ProjectService.createProjectProjectPost({title: titleValue.value, description: descriptionValue.value, created_by: 1})
+    const response = ProjectService.createProjectProjectPost({
+      title: titleValue.value,
+      description: descriptionValue.value,
+      status: ProjectStatus.DRAFT,
+      annotation_type: AnnotationType.SEGMENTATION,
+      is_published: true,
+      empty_annotations: true,
+      allow_skip: true,
+      control_weights: 10,
+      pinned_at: null,
+      // TODO: Add user to User table if he doesn't exist yet
+      // created_by: user.profile.email
+      // To set the author as the connected user
+      created_by: "john@example.com"
+    })
 
     response.catch((err) => (toast.add({severity:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {
       fileData.value.forEach((file,index)=> {
-
-        TaskService.createTaskTaskPost({name:`Task #${index+1}`, instruction:'Instruction', data: file, project_id:res.id}).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
-
+        TaskService.createTaskTaskPost({
+          name:`Task #${index+1}`,
+          instruction:'Instruction',
+          data: file,
+          project_id:res.id
+        }).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
       })
       dialogVisible.value = false
       files.value = []

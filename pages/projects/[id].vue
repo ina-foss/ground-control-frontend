@@ -49,7 +49,7 @@
         <template #body="slotProps">
           <div class="flex justify-around sm:w-20 md:w-10%">
             <Avatar
-              v-for="(annotation,index) in slotProps.data.annotations" :key="index" v-tooltip.top="annotation.user.email" :label=annotation.user.email.charAt(0).toUpperCase()
+              v-for="(annotation,index) in slotProps.data.annotations" :key="index" v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
                     shape="circle"/>
           </div>
         </template>
@@ -100,7 +100,7 @@ onMounted(() => console.log(data.value))
 const count_validated_task = ((annotations) => {
   let task_count = 0;
   annotations.forEach(annotation => {
-    if (annotation.user.status == 'validated') {
+    if (annotation.status == 'validated') {
       task_count++
     }
   })
