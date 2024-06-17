@@ -67,6 +67,7 @@ const segmentationRefs = ref([])
 const colors = ref(['#BEBEBE'])
 const topics = ref([])
 
+const annotation_index = ref(null)
 const annotation_id = ref(null)
 const video = ref(null)
 let lastTimecode = 0
@@ -76,17 +77,19 @@ const topicsLoaded = ref(false)
 
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 
-
-const checkAnnotation = () =>  {
-  data.value.annotations.forEach(annotation => {
+if(data.value.annotations){
+  data.value.annotations.forEach((annotation, index) => {
     if (annotation.user_email == "john@example.com") {
       console.log("annotation found")
-      annotation.created_at
+      annotation_index.value = index
       annotation_id.value = annotation.id
+      console.log('annotation_index = ' + annotation_index.value)
+
+
     }
   })
-}
 
+}
 
 const handleSegmentation = () => {
 
@@ -95,15 +98,14 @@ const handleSegmentation = () => {
   }
 }
 
+console.log(data.value)
 
-// const locals = data.value.data.data.localisation[0].sublocalisations.localisation
-
-// TODO: Changer pour utiliser Annotation plutot
-const locals = (annotation_id.value == null)
+const locals = (annotation_index.value == null)
   ? data.value.data.data.localisation[0].sublocalisations.localisation
-  : data.value.annotations.result.localisation[0].sublocalisations.localisation
+  : data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation
 
-console.log(locals.value)
+console.log(annotation_index.value )
+console.log(data.value.annotations)
 
 const handleSeeking = () => {
 
@@ -158,33 +160,30 @@ const handleSubmit = () => {
       phrase.data.topic = topics.value[index]
     }
   })
-  data.value.data.data.localisation[0].sublocalisations.localisation = locals
+  // data.value.data.data.localisation[0].sublocalisations.localisation = locals
 
-  checkAnnotation()
   // TaskService.updateDataTaskTaskTaskIdPatch(data.value.id, { data: data.value.data.data }).then((response) => console.log(response)).then(() => {
   //   window.onbeforeunload = null
   // }).then(() => {
   //   toast.add({ severity: 'info', detail: 'Your progression has been saved', life: 5000 })
   // })
 
-  console.log("annotation Id " + annotation_id.value)
 
-  if (annotation_id.value != null) {
+  if (annotation_index.value != null) {
 
     // L'utilisateur a déjà une annotation associée à cette tâche
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotation_id.value,
-      { "data": data.value.data }
+      // FIX: ecrire au meme format que dans task
+      { "data": data.value.data.data }
     ) .then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
-      .then((response) =>{
-        if (response.status == 200){
+      .then(() =>{
           toast.add({
             severity: 'info',
             detail: 'Annotation has been updated',
             life: 4000
           })
-        }
       })
     }
 
@@ -251,19 +250,29 @@ const loadTopics = () => {
       if (index == 0 || topics.value[index] != topics.value[index - 1]) {
         const randomColor = generatePastelColor(index + 1)
         colors.value.push(randomColor)
-        console.log(index)
       }
     }
-  })
 
+  })
+  console.log(colors.value)
   topicsLoaded.value = true
 }
 
 
-onMounted(() => { // Une fois la page chargee, on stream la video
+onMounted( async () => { // Une fois la page chargee, on stream la video
+  // data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
   loadTopics()
   hlsPlayer()
 })
+
+// watch(data, (newValue) => {
+//   if (newValue && newValue.annotations) {
+//     checkAnnotation()
+//
+//   console.log("locals : "+ locals)
+//   }
+// })
+//
 
 if (store.items.length == 0) {
   store.addCrumb({ label: data.value.project.title, url: `/projects/${data.value.project_id}` })
