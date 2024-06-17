@@ -6,7 +6,7 @@
  * DTO to create an annotation object
  */
 export type AnnotationCreate = {
-    user_id: number;
+    user_email: string;
     task_id: number;
     project_id: number;
     result: (Record<string, any> | null);

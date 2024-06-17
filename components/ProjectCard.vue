@@ -83,14 +83,22 @@ const updateProject = async () => {
     const response = await ProjectService.updateProjectProjectProjectIdPut(project.value.id, {
       title: title.value,
       description: description.value,
-      created_by: 1
+      status: project.value.status,
+      annotation_type : project.value.annotation_type,
+      is_published : project.value.is_published,
+      empty_annotations : project.value.empty_annotations,
+      allow_skip : project.value.allow_skip,
+      control_weights : project.value.control_weights,
+      pinned_at : project.value.pinned_at,
+      created_by: "john@example.com",
+
     })
     visible.value = false
   }
 }
 
 const deleteProject = async () => {
-  const response = await ProjectService.deleteProjectProjectProjectIdDelete(project.value.id)
+  await ProjectService.deleteProjectProjectProjectIdDelete(project.value.id)
   visible.value = false
 }
 
