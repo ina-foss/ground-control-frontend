@@ -155,7 +155,6 @@ const handleSegmentation = () => {
   }
 
   emit('segmentation', props.index)
-
   iconBool.value = topicIndex.value == 0 ? 'pi pi-bookmark' : ''
   topicText.value = topicIndex.value == 0 ? null : "#" + topicIndex.value
 }
