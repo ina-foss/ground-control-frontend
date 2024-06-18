@@ -35,7 +35,7 @@
             style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black'
           }
         }" :threshold=100 :unstyled="true" class="absolute" target="parent" />
-        <li v-for="(phrase, index) in data.data.data.localisation[0].sublocalisations.localisation" :key="index"
+        <li v-for="(phrase, index) in locals" :key="index"
           :ref="el => segmentationRefs.push(el)" class="rounded-lg ">
           <SegmentationMolecules :colors="colors" :index="index" :phrase="phrase" :topics="topics"
             @segmentation="handleSegmentation()" @on-segment-click="handleSegmentClick($event)" />
