@@ -161,7 +161,6 @@ const handleSubmit = () => {
     }
   })
   // data.value.data.data.localisation[0].sublocalisations.localisation = locals
-
   // TaskService.updateDataTaskTaskTaskIdPatch(data.value.id, { data: data.value.data.data }).then((response) => console.log(response)).then(() => {
   //   window.onbeforeunload = null
   // }).then(() => {
@@ -170,12 +169,12 @@ const handleSubmit = () => {
 
 
   if (annotation_index.value != null) {
-
     // L'utilisateur a déjà une annotation associée à cette tâche
+
+    data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation = locals
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotation_id.value,
-      // FIX: ecrire au meme format que dans task
-      { "data": data.value.data.data }
+        data.value.annotations[annotation_index.value].result
     ) .then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
       .then(() =>{
