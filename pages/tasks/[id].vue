@@ -77,15 +77,17 @@ const topicsLoaded = ref(false)
 
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 
+const refreshTaskData = async () => {
+  data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
+  console.log(data.value)
+}
+
+
 if(data.value.annotations){
   data.value.annotations.forEach((annotation, index) => {
     if (annotation.user_email == "john@example.com") {
-      console.log("annotation found")
       annotation_index.value = index
       annotation_id.value = annotation.id
-      console.log('annotation_index = ' + annotation_index.value)
-
-
     }
   })
 
@@ -156,35 +158,29 @@ const handleSegmentClick = (event) => {
 
 const handleSubmit = () => {
   locals.forEach((phrase, index) => {
-    if (![0, undefined].includes(topics.value[index])) {
+    if (![undefined].includes(topics.value[index])) {
       phrase.data.topic = topics.value[index]
     }
   })
-  // data.value.data.data.localisation[0].sublocalisations.localisation = locals
-  // TaskService.updateDataTaskTaskTaskIdPatch(data.value.id, { data: data.value.data.data }).then((response) => console.log(response)).then(() => {
-  //   window.onbeforeunload = null
-  // }).then(() => {
-  //   toast.add({ severity: 'info', detail: 'Your progression has been saved', life: 5000 })
-  // })
-
 
   if (annotation_index.value != null) {
     // L'utilisateur a déjà une annotation associée à cette tâche
-
     data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation = locals
+
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotation_id.value,
         data.value.annotations[annotation_index.value].result
     ) .then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
-      .then(() =>{
-          toast.add({
-            severity: 'info',
-            detail: 'Annotation has been updated',
-            life: 4000
-          })
+      .then(() => {
+        toast.add({
+          severity: 'info',
+          detail: 'Annotation has been updated',
+          life: 4000
+        })
       })
-    }
+      .then(() => refreshTaskData())
+  }
 
   else {
     // L'utilisateur n'a jamais annoté cette tâche
@@ -194,7 +190,8 @@ const handleSubmit = () => {
       project_id: data.value.project_id,
       result: data.value.data.data,
       status: "In progress"
-    }).then((response) => console.log(response))
+    }).then(() => refreshTaskData())
+      .then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add(
@@ -251,7 +248,6 @@ const loadTopics = () => {
         colors.value.push(randomColor)
       }
     }
-
   })
   console.log(colors.value)
   topicsLoaded.value = true
