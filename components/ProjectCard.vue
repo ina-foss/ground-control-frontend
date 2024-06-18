@@ -97,6 +97,7 @@ const updateProject = async () => {
 }
 
 const deleteProject = async () => {
+  // FIX: When there are annotation on the project, it won't delete
   await ProjectService.deleteProjectProjectProjectIdDelete(project.value.id)
   visible.value = false
 }
