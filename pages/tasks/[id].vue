@@ -35,8 +35,7 @@
             style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black'
           }
         }" :threshold=100 :unstyled="true" class="absolute" target="parent" />
-        <li v-for="(phrase, index) in locals" :key="index"
-          :ref="el => segmentationRefs.push(el)" class="rounded-lg ">
+        <li v-for="(phrase, index) in locals" :key="index" :ref="el => segmentationRefs.push(el)" class="rounded-lg ">
           <SegmentationMolecules :colors="colors" :index="index" :phrase="phrase" :topics="topics"
             @segmentation="handleSegmentation()" @on-segment-click="handleSegmentClick($event)" />
         </li>
@@ -55,6 +54,7 @@ import { ref } from 'vue';
 import { bcStore } from '~/stores/breadcrumbs';
 import { Hls } from 'hls.js'
 import { TaskService, AnnotationService } from '../../api/generate';
+import { useService } from "../composables/useService";
 
 
 const store = bcStore()
@@ -76,6 +76,8 @@ let lastIndex = 0
 const topicsLoaded = ref(false)
 
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
+const services = useService();
+const user = await (services.$auth.getUser());
 
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
@@ -83,9 +85,9 @@ const refreshTaskData = async () => {
 }
 
 
-if(data.value.annotations){
+if (data.value.annotations) {
   data.value.annotations.forEach((annotation, index) => {
-    if (annotation.user_email == "john@example.com") {
+    if (annotation.user_email == user.profile.email) {
       annotation_index.value = index
       annotation_id.value = annotation.id
     }
@@ -106,7 +108,7 @@ const locals = (annotation_index.value == null)
   ? data.value.data.data.localisation[0].sublocalisations.localisation
   : data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation
 
-console.log(annotation_index.value )
+console.log(annotation_index.value)
 console.log(data.value.annotations)
 
 const handleSeeking = () => {
@@ -169,8 +171,8 @@ const handleSubmit = () => {
 
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotation_id.value,
-        data.value.annotations[annotation_index.value].result
-    ) .then((response) => console.log(response))
+      data.value.annotations[annotation_index.value].result
+    ).then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add({
@@ -185,7 +187,8 @@ const handleSubmit = () => {
   else {
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({
-      user_email: "john@example.com",
+      // TODO: replace by the user email address
+      user_email: user.profile.email,
       task_id: data.value.id,
       project_id: data.value.project_id,
       result: data.value.data.data,
@@ -254,7 +257,7 @@ const loadTopics = () => {
 }
 
 
-onMounted( async () => { // Une fois la page chargee, on stream la video
+onMounted(async () => { // Une fois la page chargee, on stream la video
   // data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
   loadTopics()
   hlsPlayer()

@@ -21,6 +21,7 @@ export type { ProjectWithIdDto } from './models/ProjectWithIdDto';
 export type { TaskBaseDto } from './models/TaskBaseDto';
 export type { TaskCreateDto } from './models/TaskCreateDto';
 export type { TaskListDto } from './models/TaskListDto';
+export type { UserBaseDto } from './models/UserBaseDto';
 export type { UserDto } from './models/UserDto';
 export type { ValidationError } from './models/ValidationError';
 
