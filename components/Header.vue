@@ -22,7 +22,7 @@
       <Button v-else label="Settings" severity="secondary" outlined  size="small"/>
     </div>
     <div class="self-center">
-      <Avatar shape="circle" label="PR" />
+      <Avatar shape="circle" icon="pi pi-user" v-tooltip.left="user.profile.email"/>
     </div>
 
   </div>
@@ -135,8 +135,8 @@ const fetchProject = inject('fetchProject',ref(false))
 const home = {label:'Projects', url: '/dashboard'}
 
 
-// const services = useService();
-// const user = (await services.$auth.getUser()) ;
+const services = useService();
+const user = ref (await services.$auth.getUser()) ;
 
 const showRemove = (e) => {
   toast.add({severity: 'info', detail: 'The file "'+ e.file.name +'" has been deleted', life: 5000})
@@ -190,10 +190,7 @@ const createProject = async() => {
       allow_skip: true,
       control_weights: 10,
       pinned_at: null,
-      // TODO: Add user to User table if he doesn't exist yet
-      // created_by: user.profile.email
-      // To set the author as the connected user
-      created_by: "john@example.com"
+      created_by: user.value.profile.email
     })
 
     response.catch((err) => (toast.add({severity:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {

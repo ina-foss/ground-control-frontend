@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { UserBaseDto } from '../models/UserBaseDto';
 import type { UserDto } from '../models/UserDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -32,6 +33,50 @@ export class UserService {
             query: {
                 'skip': skip,
                 'limit': limit,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Create User
+     * Create a new User object in database
+     * @param requestBody
+     * @returns UserDto Successful Response
+     * @throws ApiError
+     */
+    public static createUserUserPost(
+        requestBody: UserBaseDto,
+    ): CancelablePromise<UserDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/user/',
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Get User By Email
+     * @param email
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static getUserByEmailUserGet(
+        email: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/user/',
+            query: {
+                'email': email,
             },
             errors: {
                 401: `Unauthorized`,

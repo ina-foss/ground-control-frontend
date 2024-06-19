@@ -1,7 +1,8 @@
-import type {User} from "oidc-client-ts";
-import {useAuth} from "@/stores/auth";
-import {initApplicationConfiguration} from "../services/dynamic-configuration-service";
-import {useService} from "~/composables/useService";
+import type { User } from "oidc-client-ts";
+import { useAuth } from "../stores/auth";
+import { initApplicationConfiguration } from "../services/dynamic-configuration-service";
+import { useService } from "../composables/useService";
+import { UserService } from "../api/generate/services/UserService"
 
 const authFlowRoutes = ["/auth", "/silent-refresh", "/logout"];
 
