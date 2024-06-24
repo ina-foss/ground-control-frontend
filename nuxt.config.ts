@@ -17,7 +17,9 @@ export default defineNuxtConfig({
     css: [
         '@/assets/css/base.css',
     ],
-    plugins: [ '~/plugins/backend-openapi-config'],
+    plugins: [
+    // '~/plugins/01.backend-openapi-config',
+  ],
     runtimeConfig: {
         public: {
             apiBasePath: process.env.API_BASE_PATH || 'http://localhost:8001',

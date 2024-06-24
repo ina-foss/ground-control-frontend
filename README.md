@@ -43,6 +43,7 @@ yarn dev
 bun run dev
 ```
 
+
 ## Running unit tests
 
 `npm run test` to execute the unit tests via vitest (`vitest`: the default command).
@@ -61,6 +62,26 @@ To make your own eslint configuration , you may use `eslint.config.mjs` file to 
 
 ## About authentication
 
+<div align="center">
+
+```mermaid
+---
+title: Authentication Flow
+---
+flowchart TD;
+  Z["import config"] --> A[Middleware];
+  A --> B{Is sign In ?};
+  B-->|No| C[Redirect Keycloak] ;
+  B--->|Yes| D[Store token in AuthStore];
+  D --> E["setup OpenAPI Header"]
+  C --> Z;
+  E --> F["Check if user is in DB"];
+  F --> G{Is alreday registered ?};
+  G --> |Yes| H[🥳 Access Ground Control 🥳];
+  G --> |No| I[Create new user];
+  I --> H;
+```
+</div>
 The authentication flow of the application is handled by Keycloak. All the variable needed for configuration are in the [config.json file](./assets/config.json). It contains the address of the Keycloak container and the one from the API. The file is loaded at the application creation in [this plugin](../plugins/backend-openapi-config.ts)
 In development mode, you can see all the tokens and user information in Pinia tab of the Nuxt DevTool. These infos are also store in a WebStorageSession which means the user is still connecting after closing the application tabs on its browser.
 
@@ -72,3 +93,4 @@ The access token, used in every API call to the backend application, may eventua
 ## Production
 
 Pour compiler le projet, utilisez la commande `npm run build`. Celle-ci génère un répertoire dist contenant les fichiers à déployer avec Nginx
+
