@@ -7,7 +7,7 @@
 
 <script setup>
 
-import {useService} from "@/composables/useService";
+import { useService } from "@/composables/useService";
 
 
 const services = useService()
@@ -17,7 +17,7 @@ const authenticateOidc = async () => {
 
   try {
     await services.$auth.signInCallback()
-    await router.push("/")
+    router.push("/")
   } catch (error) {
     console.error(error)
   }

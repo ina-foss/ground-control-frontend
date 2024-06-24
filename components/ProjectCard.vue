@@ -44,7 +44,7 @@
       <div class="flex justify-between  pl-2 py-2 text-gray-400">
         <p v-if="$props.project.created_at != null" class="self-center">
           {{ $props.project.created_at.split('T')[0] }}</p>
-      <Avatar shape="circle" icon="pi pi-user" v-tooltip.left="user.profile.email"/>
+        <Avatar shape="circle" icon="pi pi-user" v-tooltip.left="userEmail" />
       </div>
     </NuxtLink>
   </div>
@@ -57,14 +57,17 @@ import { bcStore } from '~/stores/breadcrumbs';
 import { defineEmits } from 'vue';
 import { ProjectService } from '~/api/generate';
 import { useService } from '../composables/useService';
+import { useAuth } from '../stores/auth';
+import { storeToRefs } from 'pinia';
 
 const visible = ref(false)
 const deleteDialog = ref(false)
 const store = bcStore()
 const props = defineProps(['project'])
 const project = ref(props.project)
-const services = useService();
-const user = ref(await (services.$auth.getUser()))
+const authStore = useAuth()
+const { userEmail } = storeToRefs(authStore)
+
 
 // allow props to be reactive when there are changes from parent component
 watchEffect(() => {
