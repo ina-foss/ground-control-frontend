@@ -9,6 +9,6 @@ import { createPinia } from "pinia";
 export default defineNuxtPlugin({
   name: 'openapi-configuration',
   enforce: 'pre',
-  async setup(nuxtApp) { initApplicationConfiguration() }
+  async setup(nuxtApp) { await initApplicationConfiguration() }
 
 })
