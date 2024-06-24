@@ -55,11 +55,14 @@ import { bcStore } from '~/stores/breadcrumbs';
 import { Hls } from 'hls.js'
 import { TaskService, AnnotationService } from '../../api/generate';
 import { useService } from "../composables/useService";
+import { useAuth } from '../../stores/auth';
+import { storeToRefs } from 'pinia';
 
 
 const store = bcStore()
 const route = useRoute()
 const toast = useToast()
+const authStore = useAuth()
 
 const segmentationRefs = ref([])
 
@@ -76,8 +79,7 @@ let lastIndex = 0
 const topicsLoaded = ref(false)
 
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
-const services = useService();
-const user = await (services.$auth.getUser());
+const { userEmail } = storeToRefs(authStore)
 
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
@@ -87,7 +89,7 @@ const refreshTaskData = async () => {
 
 if (data.value.annotations) {
   data.value.annotations.forEach((annotation, index) => {
-    if (annotation.user_email == user.profile.email) {
+    if (annotation.user_email == userEmail.value) {
       annotation_index.value = index
       annotation_id.value = annotation.id
     }
@@ -187,8 +189,7 @@ const handleSubmit = () => {
   else {
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({
-      // TODO: replace by the user email address
-      user_email: user.profile.email,
+      user_email: userEmail.value,
       task_id: data.value.id,
       project_id: data.value.project_id,
       result: data.value.data.data,

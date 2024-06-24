@@ -22,7 +22,7 @@
       <Button v-else label="Settings" severity="secondary" outlined  size="small"/>
     </div>
     <div class="self-center">
-      <Avatar shape="circle" icon="pi pi-user" v-tooltip.left="user.profile.email"/>
+      <Avatar shape="circle" icon="pi pi-user" v-tooltip.left="userEmail"/>
     </div>
 
   </div>
@@ -117,6 +117,8 @@ import { ProjectService } from '~/api/generate';
 import { AnnotationType, ProjectStatus, TaskService } from '../api/generate';
 import {  useRefreshStore } from '../stores/refresh';
 import {useService} from "~/composables/useService";
+import { useAuth } from '../stores/auth';
+import { storeToRefs } from 'pinia';
 
 const items = bcStore().items
 const refreshStore = useRefreshStore()
@@ -135,8 +137,8 @@ const fetchProject = inject('fetchProject',ref(false))
 const home = {label:'Projects', url: '/dashboard'}
 
 
-const services = useService();
-const user = ref (await services.$auth.getUser()) ;
+const authStore = useAuth()
+const {userEmail}= storeToRefs(authStore) ;
 
 const showRemove = (e) => {
   toast.add({severity: 'info', detail: 'The file "'+ e.file.name +'" has been deleted', life: 5000})
@@ -190,7 +192,7 @@ const createProject = async() => {
       allow_skip: true,
       control_weights: 10,
       pinned_at: null,
-      created_by: user.value.profile.email
+      created_by: userEmail.value
     })
 
     response.catch((err) => (toast.add({severity:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {

@@ -1,10 +1,14 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import type { User } from "oidc-client-ts";
+import { computed } from "vue";
+import { useService } from "../composables/useService";
 
 export const useAuth = defineStore("auth", () => {
   const authUser = ref<User | null>(null);
 
   const access_token = computed(() => authUser.value?.access_token ?? "");
+
+  const userEmail = computed(()  => authUser.value?.profile?.email ?? "");
 
   const isLoggedIn = computed(() => !!authUser.value);
 
@@ -22,6 +26,7 @@ export const useAuth = defineStore("auth", () => {
 
   return {
     access_token,
+    userEmail,
     isLoggedIn,
     tenantId,
     setUpUserCredentials,
