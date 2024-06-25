@@ -3,17 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * DTO representing an annotation object, including association with task and project.
+ * DTO to create an annotation object
  */
-export type AnnotationDto = {
+export type AnnotationCreate = {
     user_email: string;
     task_id: number;
     project_id: number;
     result: (Record<string, any> | null);
     status: string;
-    id: number;
-    created_at: (string | null);
-    updated_at: (string | null);
-    validated_at: (string | null);
 };
 

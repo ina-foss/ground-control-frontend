@@ -22,7 +22,7 @@
       <Button v-else label="Settings" severity="secondary" outlined  size="small"/>
     </div>
     <div class="self-center">
-      <Avatar shape="circle" label="PR" />
+      <Avatar shape="circle" icon="pi pi-user" v-tooltip.left="userEmail"/>
     </div>
 
   </div>
@@ -114,8 +114,12 @@ icon="pi pi-times" text rounded size="small" severity="danger"  class=" self-cen
 
 import {bcStore} from '~/stores/breadcrumbs';
 import { ProjectService } from '~/api/generate';
-import { TaskService } from '../api/generate';
+import { AnnotationType, ProjectStatus, TaskService } from '../api/generate';
 import {  useRefreshStore } from '../stores/refresh';
+import {useService} from "~/composables/useService";
+import { useAuth } from '../stores/auth';
+import { storeToRefs } from 'pinia';
+
 const items = bcStore().items
 const refreshStore = useRefreshStore()
 const titleValue = ref(null)
@@ -131,6 +135,10 @@ const files = ref([])
 const fileData = ref([])
 const fetchProject = inject('fetchProject',ref(false))
 const home = {label:'Projects', url: '/dashboard'}
+
+
+const authStore = useAuth()
+const {userEmail}= storeToRefs(authStore) ;
 
 const showRemove = (e) => {
   toast.add({severity: 'info', detail: 'The file "'+ e.file.name +'" has been deleted', life: 5000})
@@ -174,13 +182,27 @@ const createProject = async() => {
   }
   else{
 
-    const response = ProjectService.createProjectProjectPost({title: titleValue.value, description: descriptionValue.value, created_by: 1})
+    const response = ProjectService.createProjectProjectPost({
+      title: titleValue.value,
+      description: descriptionValue.value,
+      status: ProjectStatus.DRAFT,
+      annotation_type: AnnotationType.SEGMENTATION,
+      is_published: true,
+      empty_annotations: true,
+      allow_skip: true,
+      control_weights: 10,
+      pinned_at: null,
+      created_by: userEmail.value
+    })
 
     response.catch((err) => (toast.add({severity:'danger', detail:'Project could not be created', summary:'Something went wrong'}))).then((res)=> {
       fileData.value.forEach((file,index)=> {
-
-        TaskService.createTaskTaskPost({name:`Task #${index+1}`, instruction:'Instruction', data: file, project_id:res.id}).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
-
+        TaskService.createTaskTaskPost({
+          name:`Task #${index+1}`,
+          instruction:'Instruction',
+          data: file,
+          project_id:res.id
+        }).catch((err)=> console.error(err)).then( (res) =>console.log(res) )
       })
       dialogVisible.value = false
       files.value = []

@@ -12,6 +12,7 @@ import { request as __request } from '../core/request';
 export class ProjectService {
     /**
      * Read Projects
+     * Retrieve a list of projects with pagination support.
      * @param skip
      * @param limit
      * @returns ProjectDetailDto Successful Response
@@ -37,6 +38,7 @@ export class ProjectService {
     }
     /**
      * Create Project
+     * Create a new project.
      * @param requestBody
      * @returns ProjectDetailDto Successful Response
      * @throws ApiError
@@ -58,6 +60,7 @@ export class ProjectService {
     }
     /**
      * Read Project
+     * Get details of a single project by ID.
      * @param projectId
      * @returns ProjectListDto Successful Response
      * @throws ApiError
@@ -80,6 +83,7 @@ export class ProjectService {
     }
     /**
      * Update Project
+     * Update an existing project by ID.
      * @param projectId
      * @param requestBody
      * @returns ProjectWithIdDto Successful Response
@@ -106,6 +110,7 @@ export class ProjectService {
     }
     /**
      * Delete Project
+     * Delete a project by ID.
      * @param projectId
      * @returns ProjectWithIdDto Successful Response
      * @throws ApiError
