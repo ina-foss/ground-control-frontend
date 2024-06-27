@@ -29,13 +29,16 @@
         </p>
 
       </div>
-      <ol class="flex flex-col gap-5 overflow-y-auto h-[calc(100vh-51px)] col-span-4 pl-4 py-4">
+      <div class="w-full h-full col-span-1">
+        <ProgressBar :colors='colors' :topicOccurence="topicOccurence" :topics="topics" :total_length="locals.length" />
+      </div>
+      <ol class="flex flex-col gap-5 overflow-y-auto overflow-hidden h-[calc(100vh-51px)] col-span-4 pl-4 py-4 ">
         <ScrollTop :pt="{
           root: {
             style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black'
           }
         }" :threshold=100 :unstyled="true" class="absolute" target="parent" />
-        <li v-for="(phrase, index) in locals" :key="index" :ref="el => segmentationRefs.push(el)" class="rounded-lg ">
+        <li v-for="(phrase, index) in locals" :key="index" :ref="el => segmentationRefs.push(el)" class="rounded-lg  ">
           <SegmentationMolecules :colors="colors" :index="index" :phrase="phrase" :topics="topics"
             @segmentation="handleSegmentation()" @on-segment-click="handleSegmentClick($event)" />
         </li>
@@ -81,6 +84,26 @@ const topicsLoaded = ref(false)
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 const { userEmail } = storeToRefs(authStore)
 
+
+const countTopics = () => {
+  let topicOccurence = ref([])
+  let counter = 0
+  topics.value.forEach((topic, index) => {
+    if (index != 0 && topic != topics.value[index - 1]) {
+      topicOccurence.value[topic - 2] = counter;
+      counter = 1
+
+    }
+    else {
+      counter++
+    }
+
+  });
+  topicOccurence.value.push(counter)
+  console.log(topicOccurence.value)
+
+}
+
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
   console.log(data.value)
@@ -104,14 +127,14 @@ const handleSegmentation = () => {
   }
 }
 
-console.log(data.value)
+// console.log(data.value)sole.log(data.value)
 
 const locals = (annotation_index.value == null)
   ? data.value.data.data.localisation[0].sublocalisations.localisation
   : data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation
 
-console.log(annotation_index.value)
-console.log(data.value.annotations)
+// console.log(annotation_index.value)
+// console.log(data.value.annotations)console.log(locals)
 
 const handleSeeking = () => {
 
@@ -262,6 +285,8 @@ onMounted(async () => { // Une fois la page chargee, on stream la video
   // data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
   loadTopics()
   hlsPlayer()
+  // countTopics()
+
 })
 
 // watch(data, (newValue) => {
