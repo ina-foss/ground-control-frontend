@@ -30,7 +30,7 @@
 
       </div>
       <div class="w-full h-full col-span-1">
-        <ProgressBar :colors='colors' :topicOccurence="topicOccurence" :topics="topics" :total_length="locals.length" />
+        <ProgressBar :colors='colors' :topics="topics" :total_length="locals.length" @progressBarJump=jumpToTopic($event) />
       </div>
       <ol class="flex flex-col gap-5 overflow-y-auto overflow-hidden h-[calc(100vh-51px)] col-span-4 pl-4 py-4 ">
         <ScrollTop :pt="{
@@ -84,25 +84,6 @@ const topicsLoaded = ref(false)
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 const { userEmail } = storeToRefs(authStore)
 
-
-const countTopics = () => {
-  let topicOccurence = ref([])
-  let counter = 0
-  topics.value.forEach((topic, index) => {
-    if (index != 0 && topic != topics.value[index - 1]) {
-      topicOccurence.value[topic - 2] = counter;
-      counter = 1
-
-    }
-    else {
-      counter++
-    }
-
-  });
-  topicOccurence.value.push(counter)
-  console.log(topicOccurence.value)
-
-}
 
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
@@ -181,6 +162,15 @@ const handleSegmentClick = (event) => {
 
   segmentationRefs.value[event.index].scrollIntoView({ behavior: "smooth" });
   video.value.currentTime = unixToTimestamp(event.tcin)
+}
+
+const jumpToTopic= (event) => {
+  console.log(event)
+  console.log(locals[0].data.topic == event.topic)
+  let firstIndex = locals.findIndex((local) =>  local.data.topic == event.topic )
+  console.log(firstIndex)
+  segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth"})
+
 }
 
 const handleSubmit = () => {
@@ -285,7 +275,6 @@ onMounted(async () => { // Une fois la page chargee, on stream la video
   // data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
   loadTopics()
   hlsPlayer()
-  // countTopics()
 
 })
 
