@@ -170,7 +170,7 @@ const handleSegmentClick = (event) => {
 const jumpToTopic= (event) => {
   console.log(event)
   console.log(locals[0].data.topic == event.topic)
-  let firstIndex = locals.findIndex((local) =>  local.data.topic == event.topic )
+  let firstIndex = topics.value.findIndex((topic) =>  topic == event.topic )
   console.log(firstIndex)
   segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth"})
 
@@ -203,6 +203,7 @@ const handleSubmit = () => {
   }
 
   else {
+    // TODO: Recalculer la valeur `annotation_index`
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({
       user_email: userEmail.value,
