@@ -29,21 +29,24 @@
         </p>
 
       </div>
-      <div class="w-full h-full col-span-1">
-        <ProgressBar :colors='colors' :topics="topics" :total_length="locals.length" @progressBarJump=jumpToTopic($event) />
+      <!-- Plugin de Segmentation avec Progress Bar -->
+      <div class=" flex flex-row w-full h-full justify-center col-span-5">
+        <ProgressBar :colors='colors' :topics="topics" :total_length="locals.length"
+          @progressBarJump=jumpToTopic($event) />
+        <ol class="flex flex-col gap-5 overflow-y-auto overflow-hidden h-[calc(100vh-51px)] py-4 ">
+          <ScrollTop :pt="{
+            root: {
+              style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black'
+            }
+          }" :threshold=100 :unstyled="true" class="absolute" target="parent" />
+          <li v-for="(phrase, index) in locals" :key="index" :ref="el => segmentationRefs.push(el)"
+            class="rounded-lg  ">
+            <SegmentationMolecules :colors="colors" :index="index" :phrase="phrase" :topics="topics"
+              @segmentation="handleSegmentation()" @on-segment-click="handleSegmentClick($event)" />
+          </li>
+        </ol>
+        <div />
       </div>
-      <ol class="flex flex-col gap-5 overflow-y-auto overflow-hidden h-[calc(100vh-51px)] col-span-4 pl-4 py-4 ">
-        <ScrollTop :pt="{
-          root: {
-            style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black'
-          }
-        }" :threshold=100 :unstyled="true" class="absolute" target="parent" />
-        <li v-for="(phrase, index) in locals" :key="index" :ref="el => segmentationRefs.push(el)" class="rounded-lg  ">
-          <SegmentationMolecules :colors="colors" :index="index" :phrase="phrase" :topics="topics"
-            @segmentation="handleSegmentation()" @on-segment-click="handleSegmentClick($event)" />
-        </li>
-      </ol>
-      <div />
 
     </div>
 
