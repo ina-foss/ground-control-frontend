@@ -6,7 +6,7 @@
     <div class="fixed bottom-10 right-20 ">
       <Button label="Submit" size="large" @click="handleSubmit" />
     </div>
-    <div class="fixed right-20 top-40">
+    <div class="z-10 fixed right-20 top-40">
       <div v-for="(color, index) in colors" :key="index">
         <div v-if="index != 0" class="flex items-center gap-2">
           <div :style="`background-color: ${color}`" class="w-7 h-7 " />
