@@ -2,6 +2,7 @@
   <div v-if="data.data.data == null || locals == undefined">
     <span>data is not in the right format</span>
   </div>
+  <!-- TODO: Refactor into a Segmentation Component -->
   <div v-else>
     <div class="fixed bottom-10 right-20 ">
       <Button label="Submit" size="large" @click="handleSubmit" />
@@ -50,7 +51,7 @@
 
 <script setup>
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { bcStore } from '~/stores/breadcrumbs';
 import { Hls } from 'hls.js'
 import { TaskService, AnnotationService } from '../../api/generate';
@@ -70,7 +71,6 @@ const segmentationRefs = ref([])
 const colors = ref(['#BEBEBE'])
 const topics = ref([])
 
-const annotation_index = ref(null)
 const annotation_id = ref(null)
 const video = ref(null)
 let lastTimecode = 0
@@ -80,6 +80,25 @@ const topicsLoaded = ref(false)
 
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 const { userEmail } = storeToRefs(authStore)
+const annotationInfo = computed(() => {
+  console.log(data.value.annotations)
+  let info = null
+  if (data.value.annotations) {
+    data.value.annotations.forEach((annotation, index) => {
+      if (annotation.user_email == userEmail.value) {
+        info = { index: index, id: annotation.id }
+      }
+    })
+    console.log(info)
+    return info
+  }
+});
+
+const locals = computed(() => {
+  return (annotationInfo.value == null)
+    ? data.value.data.data.localisation[0].sublocalisations.localisation
+    : data.value.annotations[annotationInfo.value.index].result.localisation[0].sublocalisations.localisation
+})
 
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
@@ -87,15 +106,6 @@ const refreshTaskData = async () => {
 }
 
 
-if (data.value.annotations) {
-  data.value.annotations.forEach((annotation, index) => {
-    if (annotation.user_email == userEmail.value) {
-      annotation_index.value = index
-      annotation_id.value = annotation.id
-    }
-  })
-
-}
 
 const handleSegmentation = () => {
 
@@ -106,11 +116,7 @@ const handleSegmentation = () => {
 
 console.log(data.value)
 
-const locals = (annotation_index.value == null)
-  ? data.value.data.data.localisation[0].sublocalisations.localisation
-  : data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation
 
-console.log(annotation_index.value)
 console.log(data.value.annotations)
 
 const handleSeeking = () => {
@@ -121,7 +127,7 @@ const handleSeeking = () => {
   if (Math.abs(video.value.currentTime - lastTimecode) > 1) {
     let bestIndex = null
     let bestDiff = 100000
-    locals.forEach((phrase, index) => {
+    locals.value.forEach((phrase, index) => {
       if ((Math.abs(video.value.currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
         bestDiff = video.value.currentTime - unixToTimestamp(phrase.tcin)
         bestIndex = index
@@ -161,19 +167,18 @@ const handleSegmentClick = (event) => {
 }
 
 const handleSubmit = () => {
-  locals.forEach((phrase, index) => {
+  locals.value.forEach((phrase, index) => {
     if (![undefined].includes(topics.value[index])) {
       phrase.data.topic = topics.value[index]
     }
   })
 
-  if (annotation_index.value != null) {
+  if (annotationInfo.value != null) {
     // L'utilisateur a déjà une annotation associée à cette tâche
-    data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation = locals
-
+    data.value.annotations[annotationInfo.value.index].result.localisation[0].sublocalisations.localisation = locals.value
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
-      annotation_id.value,
-      data.value.annotations[annotation_index.value].result
+      annotationInfo.value.id,
+      data.value.annotations[annotationInfo.value.index].result
     ).then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
       .then(() => {
@@ -244,7 +249,7 @@ function generatePastelColor(tagNumber) {
 }
 
 const loadTopics = () => {
-  locals.forEach((phrase, index) => {
+  locals.value.forEach((phrase, index) => {
     if (![0, undefined].includes(phrase.data.topic)) {
       topics.value[index] = phrase.data.topic
       if (index == 0 || topics.value[index] != topics.value[index - 1]) {
