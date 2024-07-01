@@ -7,8 +7,8 @@
  */
 export type PredictionDto = {
     id: number;
-    model_name: (string | null);
-    model_version: (string | null);
+    name: (string | null);
+    version: (string | null);
     result: (Record<string, any> | null);
     score: (number | null);
     created_at: (string | null);

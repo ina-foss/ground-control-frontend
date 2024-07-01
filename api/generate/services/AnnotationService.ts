@@ -16,7 +16,7 @@ export class AnnotationService {
      * annotation (AnnotationCreate): The annotation data
      *
      * Returns:
-     * AnnotationDTO : The newly created annotation
+     * AnnotationDTO: The newly created annotation
      * @param requestBody
      * @returns AnnotationDto Successful Response
      * @throws ApiError
@@ -39,18 +39,18 @@ export class AnnotationService {
     /**
      * Get Annotations By Id
      * Retrieve a single annotation
-     * @param id
+     * @param annotationId
      * @returns AnnotationDto Successful Response
      * @throws ApiError
      */
     public static getAnnotationsByIdAnnotationIdGet(
-        id: number,
+        annotationId: number,
     ): CancelablePromise<AnnotationDto> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/annotation/{id}',
-            path: {
-                'id': id,
+            query: {
+                'annotation_id': annotationId,
             },
             errors: {
                 401: `Unauthorized`,
@@ -62,20 +62,20 @@ export class AnnotationService {
     /**
      * Update Annotation Result
      * Edit the result of an existing annotation
-     * @param id
+     * @param annotationId
      * @param requestBody
      * @returns AnnotationDto Successful Response
      * @throws ApiError
      */
     public static updateAnnotationResultAnnotationIdPatch(
-        id: number,
+        annotationId: number,
         requestBody: Record<string, any>,
     ): CancelablePromise<AnnotationDto> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/annotation/{id}',
-            path: {
-                'id': id,
+            query: {
+                'annotation_id': annotationId,
             },
             body: requestBody,
             mediaType: 'application/json',
