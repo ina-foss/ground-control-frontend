@@ -1,17 +1,14 @@
 <template>
   <div :style="dynamicStyle($props.colors[topicIndex])" class="bg-gray-300 p-3 pl-3 rounded-lg">
     <div class="flex items-center gap-2">
-      <Button
-        :icon="iconBool" :label="topicText" :pt="{
-                root: {
-                    style: `max-width: 40px; min-width: 40px; background-color:${$props.colors[topicIndex]}; border:none `
-                }
-            }"
-        @click="handleSegmentation()"/>
-      <div
-        v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
+      <Button :icon="iconBool" :label="topicText" :pt="{
+        root: {
+          style: `max-width: 40px; min-width: 40px; background-color:${$props.colors[topicIndex]}; border:none `
+        }
+      }" @click="handleSegmentation()" />
+      <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
         class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
-        @click="$emit('onSegmentClick',{tcin : phrase.tcin, tcout: phrase.tcout, index: props.index})">
+        @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: props.index })">
         {{ $props.phrase.data.text[0] }}
       </div>
     </div>
@@ -135,7 +132,7 @@ const handleSegmentation = () => {
       topicIndex.value = props.topics[props.index]
 
     } else {
-      toast.add({severity: "info", detail: "Can't modify this sentence"})
+      toast.add({ severity: "info", detail: "Can't modify this sentence" })
     }
 
   } else if (topicIndex.value == props.colors.length - 1 && (props.topics[props.index - 1] == topicIndex.value)) { // On cree un nouveau topic

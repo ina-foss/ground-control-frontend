@@ -6,7 +6,7 @@
     <div class="fixed bottom-10 right-20 ">
       <Button label="Submit" size="large" @click="handleSubmit" />
     </div>
-    <div class="fixed right-20 top-40">
+    <div class="z-10 fixed right-20 top-40">
       <div v-for="(color, index) in colors" :key="index">
         <div v-if="index != 0" class="flex items-center gap-2">
           <div :style="`background-color: ${color}`" class="w-7 h-7 " />
@@ -29,18 +29,24 @@
         </p>
 
       </div>
-      <ol class="flex flex-col gap-5 overflow-y-auto h-[calc(100vh-51px)] col-span-4 pl-4 py-4">
-        <ScrollTop :pt="{
-          root: {
-            style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black'
-          }
-        }" :threshold=100 :unstyled="true" class="absolute" target="parent" />
-        <li v-for="(phrase, index) in locals" :key="index" :ref="el => segmentationRefs.push(el)" class="rounded-lg ">
-          <SegmentationMolecules :colors="colors" :index="index" :phrase="phrase" :topics="topics"
-            @segmentation="handleSegmentation()" @on-segment-click="handleSegmentClick($event)" />
-        </li>
-      </ol>
-      <div />
+      <!-- Plugin de Segmentation avec Progress Bar -->
+      <div class=" flex flex-row w-full h-full justify-center col-span-5">
+        <ProgressBar :colors='colors' :topics="topics" :total_length="locals.length"
+          @progressBarJump=jumpToTopic($event) />
+        <ol class="flex flex-col gap-5 overflow-y-auto overflow-hidden h-[calc(100vh-51px)] py-4 ">
+          <ScrollTop :pt="{
+            root: {
+              style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black'
+            }
+          }" :threshold=100 :unstyled="true" class="absolute" target="parent" />
+          <li v-for="(phrase, index) in locals" :key="index" :ref="el => segmentationRefs.push(el)"
+            class="rounded-lg  ">
+            <SegmentationMolecules :colors="colors" :index="index" :phrase="phrase" :topics="topics"
+              @segmentation="handleSegmentation()" @on-segment-click="handleSegmentClick($event)" />
+          </li>
+        </ol>
+        <div />
+      </div>
 
     </div>
 
@@ -81,9 +87,9 @@ const topicsLoaded = ref(false)
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 const { userEmail } = storeToRefs(authStore)
 
+
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
-  console.log(data.value)
 }
 
 
@@ -104,14 +110,11 @@ const handleSegmentation = () => {
   }
 }
 
-console.log(data.value)
 
 const locals = (annotation_index.value == null)
   ? data.value.data.data.localisation[0].sublocalisations.localisation
   : data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation
 
-console.log(annotation_index.value)
-console.log(data.value.annotations)
 
 const handleSeeking = () => {
 
@@ -160,6 +163,12 @@ const handleSegmentClick = (event) => {
   video.value.currentTime = unixToTimestamp(event.tcin)
 }
 
+const jumpToTopic= (event) => {
+  let firstIndex = topics.value.findIndex((topic) =>  topic == event.topic )
+  segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth"})
+
+}
+
 const handleSubmit = () => {
   locals.forEach((phrase, index) => {
     if (![undefined].includes(topics.value[index])) {
@@ -174,8 +183,7 @@ const handleSubmit = () => {
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotation_id.value,
       data.value.annotations[annotation_index.value].result
-    ).then((response) => console.log(response))
-      .then(() => { window.onbeforeunload = null })
+    ).then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add({
           severity: 'info',
@@ -187,6 +195,7 @@ const handleSubmit = () => {
   }
 
   else {
+    // TODO: Recalculer la valeur `annotation_index`
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({
       user_email: userEmail.value,
@@ -195,7 +204,6 @@ const handleSubmit = () => {
       result: data.value.data.data,
       status: "In progress"
     }).then(() => refreshTaskData())
-      .then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add(
@@ -253,25 +261,15 @@ const loadTopics = () => {
       }
     }
   })
-  console.log(colors.value)
   topicsLoaded.value = true
 }
 
 
 onMounted(async () => { // Une fois la page chargee, on stream la video
-  // data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
   loadTopics()
   hlsPlayer()
 })
 
-// watch(data, (newValue) => {
-//   if (newValue && newValue.annotations) {
-//     checkAnnotation()
-//
-//   console.log("locals : "+ locals)
-//   }
-// })
-//
 
 if (store.items.length == 0) {
   store.addCrumb({ label: data.value.project.title, url: `/projects/${data.value.project_id}` })
@@ -280,7 +278,5 @@ if (store.items[store.items.length - 1].url != `/tasks/${data.value.id}`) {
   store.addCrumb({ label: data.value.name, url: `/tasks/${data.value.id}` })
 
 }
-console.log(store.items)
-console.log(data.value.data)
 
 </script>
