@@ -86,7 +86,7 @@ const topicsLoaded = ref(false)
 
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 const { userEmail } = storeToRefs(authStore)
-const annotationInfo = computed(() => {
+const annotationInfo = $computed(() => {
   console.log(data.value.annotations)
   let info = null
   if (data.value.annotations) {
@@ -101,9 +101,9 @@ const annotationInfo = computed(() => {
 });
 
 const locals = computed(() => {
-  return (annotationInfo.value == null)
+  return (annotationInfo == null)
     ? data.value.data.data.localisation[0].sublocalisations.localisation
-    : data.value.annotations[annotationInfo.value.index].result.localisation[0].sublocalisations.localisation
+    : data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation
 })
 
 
@@ -183,12 +183,12 @@ const handleSubmit = () => {
     }
   })
 
-  if (annotationInfo.value != null) {
+  if (annotationInfo != null) {
     // L'utilisateur a déjà une annotation associée à cette tâche
-    data.value.annotations[annotationInfo.value.index].result.localisation[0].sublocalisations.localisation = locals.value
+    data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation = locals.value
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
-      annotationInfo.value.id,
-      data.value.annotations[annotationInfo.value.index].result
+      annotationInfo.id,
+      data.value.annotations[annotationInfo.index].result
     ).then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
       .then(() => {
