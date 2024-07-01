@@ -90,7 +90,6 @@ const { userEmail } = storeToRefs(authStore)
 
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
-  console.log(data.value)
 }
 
 
@@ -111,14 +110,11 @@ const handleSegmentation = () => {
   }
 }
 
-// console.log(data.value)sole.log(data.value)
 
 const locals = (annotation_index.value == null)
   ? data.value.data.data.localisation[0].sublocalisations.localisation
   : data.value.annotations[annotation_index.value].result.localisation[0].sublocalisations.localisation
 
-// console.log(annotation_index.value)
-// console.log(data.value.annotations)console.log(locals)
 
 const handleSeeking = () => {
 
@@ -168,10 +164,7 @@ const handleSegmentClick = (event) => {
 }
 
 const jumpToTopic= (event) => {
-  console.log(event)
-  console.log(locals[0].data.topic == event.topic)
   let firstIndex = topics.value.findIndex((topic) =>  topic == event.topic )
-  console.log(firstIndex)
   segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth"})
 
 }
@@ -190,8 +183,7 @@ const handleSubmit = () => {
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotation_id.value,
       data.value.annotations[annotation_index.value].result
-    ).then((response) => console.log(response))
-      .then(() => { window.onbeforeunload = null })
+    ).then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add({
           severity: 'info',
@@ -212,7 +204,6 @@ const handleSubmit = () => {
       result: data.value.data.data,
       status: "In progress"
     }).then(() => refreshTaskData())
-      .then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add(
@@ -270,26 +261,15 @@ const loadTopics = () => {
       }
     }
   })
-  console.log(colors.value)
   topicsLoaded.value = true
 }
 
 
 onMounted(async () => { // Une fois la page chargee, on stream la video
-  // data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
   loadTopics()
   hlsPlayer()
-
 })
 
-// watch(data, (newValue) => {
-//   if (newValue && newValue.annotations) {
-//     checkAnnotation()
-//
-//   console.log("locals : "+ locals)
-//   }
-// })
-//
 
 if (store.items.length == 0) {
   store.addCrumb({ label: data.value.project.title, url: `/projects/${data.value.project_id}` })
@@ -298,7 +278,5 @@ if (store.items[store.items.length - 1].url != `/tasks/${data.value.id}`) {
   store.addCrumb({ label: data.value.name, url: `/tasks/${data.value.id}` })
 
 }
-console.log(store.items)
-console.log(data.value.data)
 
 </script>

@@ -14,7 +14,6 @@
 </template>
 
 <script setup lang="js">
-// test
 const {topics, colors, total_length} = defineProps(['topics', 'colors', 'total_length'])
 const emits = defineEmits(['progressBarJump']);
 
@@ -34,7 +33,6 @@ const groupedTopics = computed(() => {
   }));
 });
 
-console.log(groupedTopics)
 </script>
 
 <style></style>
