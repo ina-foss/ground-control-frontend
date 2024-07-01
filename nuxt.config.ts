@@ -26,7 +26,7 @@ export default defineNuxtConfig({
             version: process.env.VERSION || '1.0.0'
         }
     },
-    modules: ['@nuxtjs/color-mode','nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
+    modules: ['~/node_modules/@vue-macros/nuxt','@nuxtjs/color-mode','nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
     primevue: {
         options: {
             unstyled: true
