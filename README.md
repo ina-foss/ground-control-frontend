@@ -7,6 +7,15 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 > To do that, go to your local develop branch using `git checkout develop` and then `git pull` on both frontend and backend directories.
 > The 2 application needs to interact with each other so you need to work. 
 
+## Deployment
+All the variables are initialize from the [config.json](./public/config.json) file.
+List of variables that can be override in production:
+
+- apiBasePath : API address for the browser. In dev it's `localhost:8000`
+- authorityUrl : Keycloak realm url to setup authentication. In dev it's `http://localhost:9080/realms/ground-control`
+- cliendId : Identifier for Keycloak to know it's the frontend that reache it. In dev it's `web_app`
+- version : Actual version of Ground Control. By default set to `1.0.0`
+
 ## Setup
 
 Make sure to install the dependencies:
