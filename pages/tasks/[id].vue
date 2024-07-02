@@ -106,7 +106,6 @@ const locals = computed(() => {
     : data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation
 })
 
-
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
 }
