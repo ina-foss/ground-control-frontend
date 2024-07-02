@@ -100,7 +100,7 @@ const annotationInfo = $computed(() => {
   }
 });
 
-const locals = computed(() => {
+const locals = $computed(() => {
   return (annotationInfo == null)
     ? data.value.data.data.localisation[0].sublocalisations.localisation
     : data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation
@@ -130,7 +130,7 @@ const handleSeeking = () => {
   if (Math.abs(video.value.currentTime - lastTimecode) > 1) {
     let bestIndex = null
     let bestDiff = 100000
-    locals.value.forEach((phrase, index) => {
+    locals.forEach((phrase, index) => {
       if ((Math.abs(video.value.currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
         bestDiff = video.value.currentTime - unixToTimestamp(phrase.tcin)
         bestIndex = index
@@ -176,7 +176,7 @@ const jumpToTopic= (event) => {
 }
 
 const handleSubmit = () => {
-  locals.value.forEach((phrase, index) => {
+  locals.forEach((phrase, index) => {
     if (![undefined].includes(topics.value[index])) {
       phrase.data.topic = topics.value[index]
     }
@@ -184,7 +184,7 @@ const handleSubmit = () => {
 
   if (annotationInfo != null) {
     // L'utilisateur a déjà une annotation associée à cette tâche
-    data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation = locals.value
+    data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation = locals
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotationInfo.id,
       data.value.annotations[annotationInfo.index].result
@@ -258,7 +258,7 @@ function generatePastelColor(tagNumber) {
 }
 
 const loadTopics = () => {
-  locals.value.forEach((phrase, index) => {
+  locals.forEach((phrase, index) => {
     if (![0, undefined].includes(phrase.data.topic)) {
       topics.value[index] = phrase.data.topic
       if (index == 0 || topics.value[index] != topics.value[index - 1]) {
