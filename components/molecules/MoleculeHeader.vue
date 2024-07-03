@@ -1,53 +1,32 @@
 <!-- TODO: Copy the header from Oddity and put login and logout in their -->
 <template>
-    <div class="h-[52px] flex items-stretch gap-3 px-4 bg-white border-b-2  border-gray-400" >
+    <div class="h-[52px] flex items-stretch gap-3 px-4 bg-white border-b-2  border-gray-400">
         <AtomLogo size="sm" />
         <NuxtLink class="self-center font-bold text-lg " to="/">Ground Control</NuxtLink>
         <AtomIcon class="self-center" />
-        <Button icon="pi pi-align-justify" severity="secondary" text outlined @click="menuVisible=true" />
+        <Button icon="pi pi-align-justify" severity="secondary" text outlined @click="menuVisible = true" />
         <div class="flex-grow">
-            <Breadcrumb :home="home" :model="items">
-                <template #item="{ item, props }">
-                    <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-                        <a :href="href" v-bind="props.action" @click="navigate">
-                            <span :class="[item.icon, 'text-color']" />
-                            <span class="text-primary font-semibold">{{ item.label }}</span>
-                        </a>
-                    </router-link>
-                    <a v-else :href="item.url" :target="item.target" v-bind="props.action">
-                        <span class="text-color">{{ item.label }}</span>
-                    </a>
-                </template>
-            </Breadcrumb>
+            <AtomBreadcrumbs />
         </div>
         <div class="self-center">
-            <Button v-if="$route.name == 'dashboard'" label="Create Project" size="small" @click="dialogVisible=true" />
+            <Button
+v-if="$route.name == 'dashboard'" label="Create Project" size="small"
+                @click="dialogVisible = true" />
             <Button v-else label="Settings" severity="secondary" outlined size="small" />
         </div>
         <div class="self-center">
-            <Avatar
-                v-tooltip.left="userEmail" class="cursor-pointer" icon="pi pi-user" shape="circle" @click="requireConfirmation($event)" />
+            <AtomAvatarHeader />
         </div>
     </div>
 
-    <ConfirmPopup group="headless" unstyled="true">
-        <template #container="{ message, acceptCallback }">
-            <div class="rounded-4 flex flex-col w-[80px]">
-                <span>{{ message.message }}</span>
-                <div class="flex items-center gap-2 mt-4">
-                    <Button size="small" label="Logout" @click="acceptCallback" />
-                </div>
-            </div>
-        </template>
-    </ConfirmPopup>
 
 
     <Dialog
 v-model:visible="dialogVisible" modal header="New Project" style="width:20rem;" :pt="{
-    header: {
-      class: 'bg-surface-0 border-t-0 rounded-tr-lg rounded-tl-lg justify-between items-center shrink-0 flex p-6 pb-2'
-    }
-  }">
+        header: {
+            class: 'bg-surface-0 border-t-0 rounded-tr-lg rounded-tl-lg justify-between items-center shrink-0 flex p-6 pb-2'
+        }
+    }">
         <InlineMessage v-if="errorVisible == true && !titleValue" class="mb-2">Title is required</InlineMessage>
         <div class=" pt-5 flex flex-col gap-4">
             <FloatLabel class="py-1">
@@ -72,14 +51,14 @@ v-model="selectedType"
             <FileUpload
 accept="application/json" :show-upload-button=false :show-cancel-button="false"
                 :max-file-size=maxFileSize invalid-file-type-message="Invalid type" auto name="file[]" :pt="{
-          buttonbar: {
-            style: `z-index:20; position: absolute; width: 85%; height: 100px; background-color: transparent;padding: 0px; cursor:pointer; border:none; ${selectFile}`
-          },
-          content: {
-            style: 'padding: 14px'
-          },
+                    buttonbar: {
+                        style: `z-index:20; position: absolute; width: 85%; height: 100px; background-color: transparent;padding: 0px; cursor:pointer; border:none; ${selectFile}`
+                    },
+                    content: {
+                        style: 'padding: 14px'
+                    },
 
-        }" @select="handleSelect()" @remove-uploaded-file="showRemove($event)" @upload="onUpload($event)"
+                }" @select="handleSelect()" @remove-uploaded-file="showRemove($event)" @upload="onUpload($event)"
                 @error="onUpload($event)">
                 <template #empty="{ chooseCallback }">
 
@@ -107,13 +86,13 @@ v-for="(file, index) in uploadedFiles" :key="index"
 icon="pi pi-times" text rounded size="small" severity="danger"
                                 class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;"
                                 :pt="{
-                  root: {
-                    style: 'justify-content: center; justify-items: center; place-self: center;'
-                  },
-                  icon: {
-                    style: 'max-width:24px'
-                  }
-                }" @click="removeUploadedFileCallback(index)" />
+                                    root: {
+                                        style: 'justify-content: center; justify-items: center; place-self: center;'
+                                    },
+                                    icon: {
+                                        style: 'max-width:24px'
+                                    }
+                                }" @click="removeUploadedFileCallback(index)" />
                         </div>
                     </div>
                     <div v-for="file in files">
@@ -144,13 +123,14 @@ import { useRefreshStore } from '../stores/refresh';
 import { useService } from "~/composables/useService";
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';
-import AtomLogo from '../atoms/AtomLogo.vue';
-import AtomIcon from '../atoms/AtomIcon.vue'
-import message from '~/presets/lara/message';
 import { reject } from 'lodash';
+import AtomLogo from '../atoms/AtomLogo.vue';
+import AtomIcon from '../atoms/AtomIcon.vue';
+import AtomBreadcrumbs from '../atoms/AtomBreadcrumbs.vue';
+import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
+
 
 const authService = useService()
-const items = bcStore().items
 const refreshStore = useRefreshStore()
 const titleValue = ref(null)
 const descriptionValue = ref(null)
@@ -165,7 +145,6 @@ const maxFileSize = 100000000
 const files = ref([])
 const fileData = ref([])
 const fetchProject = inject('fetchProject', ref(false))
-const home = { label: 'Projects', url: '/dashboard' }
 
 const handleLogout = () => authService.$auth.logout()
 
@@ -174,96 +153,96 @@ const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore);
 
 const showRemove = (e) => {
-  toast.add({ severity: 'info', detail: 'The file "' + e.file.name + '" has been deleted', life: 5000 })
-  fileData.value = null
-  if (e.files.length == 0) selectFile.value = ''
+    toast.add({ severity: 'info', detail: 'The file "' + e.file.name + '" has been deleted', life: 5000 })
+    fileData.value = null
+    if (e.files.length == 0) selectFile.value = ''
 }
 
 const requireConfirmation = (event) => {
-  confirm.require({
-    target: event.currentTarget,
-    group: "headless",
-    message: '',
-    accept: () => {
-      handleLogout()
-    },
-    reject:() => {
+    confirm.require({
+        target: event.currentTarget,
+        group: "headless",
+        message: '',
+        accept: () => {
+            handleLogout()
+        },
+        reject: () => {
 
-    }
-  })
+        }
+    })
 }
 
 
 const handleSelect = () => {
-  selectFile.value = 'display: none'
+    selectFile.value = 'display: none'
 }
 
 const onUpload = async (event) => {
-  const xhr = new XMLHttpRequest()
-  const formData = new FormData()
-  const file = event.files[0]
+    const xhr = new XMLHttpRequest()
+    const formData = new FormData()
+    const file = event.files[0]
 
 
-  formData.append("file", file)
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      let _this$uploadedFiles;
-    }
-  };
-  xhr.open('POST', '/', true);
-  files.value = event.files;
-  const reader = new FileReader();
-  reader.onloadend = onReaderLoad;
-  reader.readAsText(event.files[0])
+    formData.append("file", file)
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            let _this$uploadedFiles;
+        }
+    };
+    xhr.open('POST', '/', true);
+    files.value = event.files;
+    const reader = new FileReader();
+    reader.onloadend = onReaderLoad;
+    reader.readAsText(event.files[0])
 }
 
 const onReaderLoad = (event) => {
-  const obj = JSON.parse(event.target.result);
-  fileData.value.push(obj)
+    const obj = JSON.parse(event.target.result);
+    fileData.value.push(obj)
 }
 
 
 const createProject = async () => {
-  if (titleValue.value == null) {
-    errorVisible.value = true;
-  }
-  else {
+    if (titleValue.value == null) {
+        errorVisible.value = true;
+    }
+    else {
 
-    const response = ProjectService.createProjectProjectPost({
-      title: titleValue.value,
-      description: descriptionValue.value,
-      status: ProjectStatus.DRAFT,
-      annotation_type: AnnotationType.SEGMENTATION,
-      is_published: true,
-      empty_annotations: true,
-      allow_skip: true,
-      control_weights: 10,
-      pinned_at: null,
-      created_by: userEmail.value
-    })
+        const response = ProjectService.createProjectProjectPost({
+            title: titleValue.value,
+            description: descriptionValue.value,
+            status: ProjectStatus.DRAFT,
+            annotation_type: AnnotationType.SEGMENTATION,
+            is_published: true,
+            empty_annotations: true,
+            allow_skip: true,
+            control_weights: 10,
+            pinned_at: null,
+            created_by: userEmail.value
+        })
 
-    response.catch((err) => (toast.add({ severity: 'danger', detail: 'Project could not be created', summary: 'Something went wrong' }))).then((res) => {
-      fileData.value.forEach((file, index) => {
-        TaskService.createTaskTaskPost({
-          name: `Task #${index + 1}`,
-          instruction: 'Instruction',
-          data: file,
-          project_id: res.id
-        }).catch((err) => console.error(err)).then((res) => console.log(res))
-      })
-      dialogVisible.value = false
-      files.value = []
-
-
-      refreshStore.fetch()
+        response.catch((err) => (toast.add({ severity: 'danger', detail: 'Project could not be created', summary: 'Something went wrong' }))).then((res) => {
+            fileData.value.forEach((file, index) => {
+                TaskService.createTaskTaskPost({
+                    name: `Task #${index + 1}`,
+                    instruction: 'Instruction',
+                    data: file,
+                    project_id: res.id
+                }).catch((err) => console.error(err)).then((res) => console.log(res))
+            })
+            dialogVisible.value = false
+            files.value = []
 
 
-      refreshStore
-      navigateTo(`/dashboard`, {
-        replace: true
-      })
-    })
-  }
+            refreshStore.fetch()
+
+
+            refreshStore
+            navigateTo(`/dashboard`, {
+                replace: true
+            })
+        })
+    }
 }
 
 
