@@ -62,3 +62,13 @@ const toggleDarkMode = () => {
 
 const handleLogout = () => authService.$auth.logout()
 </script>
+
+<style>
+.toggle-icon:before {
+    content: "\e9c7";
+}
+
+:root[class="dark"] .toggle-icon:before {
+    content: "\e9c8";
+}
+</style>
