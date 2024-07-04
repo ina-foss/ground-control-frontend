@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-w-fit bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-transform tansition-shadow hover:shadow-xl">
+    class="  w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-transform tansition-shadow hover:shadow-xl">
     <NuxtLink :to="{ name: 'projects-id', params: { id: $props.project.id } }">
       <div class="flex justify-between align-middle pl-2">
         <p class="font-semibold self-center">{{ $props.project.title }}</p>
