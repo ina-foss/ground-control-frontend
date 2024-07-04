@@ -1,5 +1,5 @@
 {
-  "name": "@ground-countol/front",
+  "name": "ground-control-frontend",
   "version": "0.0.1",
   "type": "module",
   "scripts": {
