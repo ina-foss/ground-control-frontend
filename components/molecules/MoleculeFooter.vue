@@ -1,11 +1,6 @@
 <template>
-  <div class=" flex flex-col justify-center items-center pb-6 gap-4 ">
-    <div class="w-full h-[1px] bg-surface-300 mb-3"></div>
-    <AtomLogo size="md"  />
-    <div class="flex gap-5 justify-center text-sm" >
-      <p>Ground Control</p>
-      <p>{{ runtimeConfig.public.version }} </p>
-    </div>
+  <div class=" bottom-0 z-40 text-sm fixed bg-primary-600 text-white h-[20px] w-full pl-3  ">
+    <p>© 2024 Institut national de l'audiovisuel V{{ runtimeConfig.public.version }} </p>
   </div>
 
 </template>
