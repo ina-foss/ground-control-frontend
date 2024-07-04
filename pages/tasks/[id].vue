@@ -7,6 +7,7 @@
     <div class="fixed bottom-10 right-20 ">
       <Button label="Submit" size="large" @click="handleSubmit" />
     </div>
+    <!-- TODO: Put under the video player like Label Studio -->
     <div class="z-10 fixed right-20 top-40">
       <div v-for="(color, index) in colors" :key="index">
         <div v-if="index != 0" class="flex items-center gap-2">
@@ -57,11 +58,10 @@
 
 <script setup>
 
-import { computed, ref } from 'vue';
+import {  ref } from 'vue';
 import { bcStore } from '~/stores/breadcrumbs';
 import { Hls } from 'hls.js'
 import { TaskService, AnnotationService } from '../../api/generate';
-import { useService } from "../composables/useService";
 import { useAuth } from '../../stores/auth';
 import { storeToRefs } from 'pinia';
 
@@ -77,7 +77,6 @@ const segmentationRefs = ref([])
 const colors = ref(['#BEBEBE'])
 const topics = ref([])
 
-const annotation_id = ref(null)
 const video = ref(null)
 let lastTimecode = 0
 let lastIndex = 0
@@ -87,7 +86,6 @@ const topicsLoaded = ref(false)
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 const { userEmail } = storeToRefs(authStore)
 const annotationInfo = $computed(() => {
-  console.log(data.value.annotations)
   let info = null
   if (data.value.annotations) {
     data.value.annotations.forEach((annotation, index) => {
@@ -95,7 +93,6 @@ const annotationInfo = $computed(() => {
         info = { index: index, id: annotation.id }
       }
     })
-    console.log(info)
     return info
   }
 });
@@ -170,7 +167,7 @@ const handleSegmentClick = (event) => {
 }
 
 const jumpToTopic= (event) => {
-  let firstIndex = topics.value.findIndex((topic) =>  topic == event.topic )
+  const firstIndex = topics.value.findIndex((topic) =>  topic == event.topic )
   segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth"})
 
 }
@@ -201,7 +198,6 @@ const handleSubmit = () => {
   }
 
   else {
-    // TODO: Recalculer la valeur `annotation_index`
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({
       user_email: userEmail.value,
@@ -230,10 +226,8 @@ const hlsPlayer = () => {
       const hls = new Hls();
       hls.attachMedia(video.value);
       hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-        console.log("video and hls.js are now bound together !");
         hls.loadSource(src);
         hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-          console.log("manifest loaded, found " + data.levels.length + " quality level");
         });
       });
 
