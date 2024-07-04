@@ -1,5 +1,5 @@
 <template>
-  <div class=" bottom-0 z-40 text-sm fixed bg-primary-600 text-white h-[20px] w-full pl-3  ">
+  <div class="bottom-0 text-sm fixed bg-primary-600 text-white h-[20px] w-full pl-3" >
     <p>© 2024 Institut national de l'audiovisuel V{{ runtimeConfig.public.version }} </p>
   </div>
 
