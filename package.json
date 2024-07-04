@@ -1,5 +1,5 @@
 {
-  "name": "@ground-countol/front",
+  "name": "ground-control-frontend",
   "version": "0.0.1",
   "type": "module",
   "scripts": {
@@ -25,7 +25,7 @@
     "oidc-client-ts": "^3.0.1",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
-    "primevue": "^3.52.0",
+    "primevue": "^3.53.0",
     "vue": "^3.4.21",
     "vue-lodash": "^2.1.2",
     "vue-router": "^4.3.0"
@@ -36,6 +36,7 @@
     "@nuxt/test-utils": "^3.13.1",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/tailwindcss": "^6.11.4",
+    "@primevue/nuxt-module": "^4.0.0",
     "@testing-library/vue": "^8.1.0",
     "@types/lodash": "^4.17.5",
     "@vitest/coverage-v8": "^1.6.0",
