@@ -1,4 +1,3 @@
-<!-- TODO: Copy the header from Oddity and put login and logout in their -->
 <template>
   <div class="h-[60px] z-30 w-full fixed flex items-center gap-3 px-4 bg-white border-b-2  border-gray-400">
     <AtomLogo size="sm" />
