@@ -22,8 +22,6 @@ export default defineNuxtConfig({
   ],
     runtimeConfig: {
         public: {
-            apiBasePath: process.env.API_BASE_PATH || 'http://localhost:8001',
-            version: process.env.VERSION || '1.0.0'
         }
     },
     modules: ['@nuxtjs/color-mode','nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
