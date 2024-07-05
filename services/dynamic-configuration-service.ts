@@ -4,7 +4,7 @@ let config = {};
 export const initApplicationConfiguration = async () => {
     try {
         const timeStamp = new Date().getTime();
-        let configUrl = '/_nuxt/public/config.json';
+        let configUrl = '/public/config.json';
         const cbParam = configUrl.indexOf('?') !== -1 ? `&cb=${timeStamp}` : `?cb=${timeStamp}`;
         configUrl = `${configUrl}${cbParam}`;
         const response = await fetch(configUrl)
