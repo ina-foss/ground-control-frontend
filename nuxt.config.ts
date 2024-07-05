@@ -24,7 +24,7 @@ export default defineNuxtConfig({
         public: {
         }
     },
-    modules: ['@nuxtjs/color-mode','nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
+    modules: ['~/node_modules/@vue-macros/nuxt','@nuxtjs/color-mode','nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
     primevue: {
         options: {
             unstyled: true
