@@ -109,21 +109,17 @@ icon="pi pi-times" text rounded size="small" severity="danger"
 
 <script setup>
 
-import { bcStore } from '~/stores/breadcrumbs';
 import { ProjectService } from '~/api/generate';
 import { AnnotationType, ProjectStatus, TaskService } from '../api/generate';
 import { useRefreshStore } from '../stores/refresh';
-import { useService } from "~/composables/useService";
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';
-import { reject } from 'lodash';
 import AtomLogo from '../atoms/AtomLogo.vue';
 import AtomIcon from '../atoms/AtomIcon.vue';
 import AtomBreadcrumbs from '../atoms/AtomBreadcrumbs.vue';
 import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
 
 
-const authService = useService()
 const refreshStore = useRefreshStore()
 const titleValue = ref(null)
 const descriptionValue = ref(null)
@@ -133,13 +129,10 @@ const dialogVisible = ref(false)
 const selectedType = ref('')
 const selectFile = ref('')
 const toast = useToast()
-const confirm = useConfirm()
 const maxFileSize = 100000000
 const files = ref([])
 const fileData = ref([])
-const fetchProject = inject('fetchProject', ref(false))
 
-const handleLogout = () => authService.$auth.logout()
 
 
 const authStore = useAuth()
@@ -149,20 +142,6 @@ const showRemove = (e) => {
   toast.add({ severity: 'info', detail: 'The file "' + e.file.name + '" has been deleted', life: 5000 })
   fileData.value = null
   if (e.files.length == 0) selectFile.value = ''
-}
-
-const requireConfirmation = (event) => {
-  confirm.require({
-    target: event.currentTarget,
-    group: "headless",
-    message: '',
-    accept: () => {
-      handleLogout()
-    },
-    reject: () => {
-
-    }
-  })
 }
 
 
