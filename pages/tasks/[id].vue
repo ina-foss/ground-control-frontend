@@ -12,14 +12,7 @@
     <div class="grid grid-cols-9 ">
       <div class="col-span-3  bg-surface-700 px-5 py-5">
         <video ref="video" class="w-full" controls @seeked="handleSeeking()" />
-        <div class="flex justify-center gap-3 p-3 ">
-          <div v-for="(color, index) in colors" :key="index">
-            <div v-if="index != 0" class="flex items-center bg-white rounded border-black border-[1px]" >
-              <div :style="`background-color: ${color}`" class="w-7 h-7 rounded-sm flex justify-center items-center text-white font-bold text-sm ">#{{index}}</div>
-              <h2 class="px-1" >Topic</h2>
-            </div>
-          </div>
-        </div>
+        <AtomTopicList :colors=colors />
         <h2 class="text-white text-3xl p-3 font-semibold">Segmentation</h2>
         <p class=" text-white p-3 "> Dans le cadre d'une segmentation par thématique, une transcription est découpée en
           segment.<br> Chaque segment correspond à une thématique différente de la précédente.<br> Chaque changement de
@@ -63,6 +56,7 @@ import { Hls } from 'hls.js'
 import { TaskService, AnnotationService } from '../../api/generate';
 import { useAuth } from '../../stores/auth';
 import { storeToRefs } from 'pinia';
+import AtomTopicList from '~/components/atoms/AtomTopicList.vue';
 
 
 const store = bcStore()
