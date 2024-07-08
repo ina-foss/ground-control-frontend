@@ -1,7 +1,7 @@
 <template>
   <div>
     <MoleculeHeader />
-    <main class="max-h-[calc(100vh)] fixed w-full pt-[60px]">
+    <main class="h-[calc(100vh)] fixed w-full pt-[60px] pb-5 ">
       <slot />
     </main>
     <MoleculeFooter />

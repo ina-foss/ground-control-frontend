@@ -3,47 +3,8 @@
     <span>data is not in the right format</span>
   </div>
   <!-- TODO: Refactor into a Segmentation Component -->
-  <div v-else>
-    <div class="fixed bottom-10 right-20 ">
-      <Button label="Submit" size="large" @click="handleSubmit" />
-    </div>
-    <!-- TODO: Put under the video player like Label Studio -->
-    <Toast />
-    <div class="grid grid-cols-9 ">
-      <div class="col-span-3  bg-surface-700 px-5 py-5">
-        <video ref="video" class="w-full" controls @seeked="handleSeeking()" />
-        <AtomTopicList :colors=colors />
-        <h2 class="text-white text-3xl p-3 font-semibold">Segmentation</h2>
-        <p class=" text-white p-3 "> Dans le cadre d'une segmentation par thématique, une transcription est découpée en
-          segment.<br> Chaque segment correspond à une thématique différente de la précédente.<br> Chaque changement de
-          segment correspond à un changement d'interlocuteur ou de sujet. <br><span class="underline">Exemple </span> :
-          <br>si on souhaite retranscrire le contenu d'une émission qui dure 1h, grâce à la segmentation, nous pouvons
-          avoir un "résumé" du contenu de l'émission grâce aux différents segments. Ces derniers retracent les divers
-          sujets ayant été traités, différencie les interlocuteurs.
-        </p>
-
-      </div>
-      <!-- Plugin de Segmentation avec Progress Bar -->
-      <div class=" flex flex-row w-full h-full justify-center col-span-5">
-        <ProgressBar :colors='colors' :topics="topics" :total_length="locals.length"
-          @progressBarJump=jumpToTopic($event) />
-        <ol class="flex flex-col gap-5 overflow-y-auto overflow-hidden h-[calc(100vh-51px)] py-4 ">
-          <ScrollTop :pt="{
-            root: {
-              style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black'
-            }
-          }" :threshold=100 :unstyled="true" class="absolute" target="parent" />
-          <li v-for="(phrase, index) in locals" :key="index" :ref="el => segmentationRefs.push(el)"
-            class="rounded-lg  ">
-            <SegmentationMolecules :colors="colors" :index="index" :phrase="phrase" :topics="topics"
-              @segmentation="handleSegmentation()" @on-segment-click="handleSegmentClick($event)" />
-          </li>
-        </ol>
-        <div />
-      </div>
-
-    </div>
-
+  <div v-else class="h-full">
+    <OrganismSegmentation :data="data" class="overflow-y-hidden" @refresh-data="refreshTaskData()" />
   </div>
 </template>
 
@@ -57,6 +18,7 @@ import { TaskService, AnnotationService } from '../../api/generate';
 import { useAuth } from '../../stores/auth';
 import { storeToRefs } from 'pinia';
 import AtomTopicList from '~/components/atoms/AtomTopicList.vue';
+import OrganismSegmentation from '~/components/organisms/OrganismSegmentation.vue';
 
 
 const store = bcStore()
@@ -67,7 +29,7 @@ const authStore = useAuth()
 const segmentationRefs = ref([])
 
 
-const colors = ref(['#BEBEBE'])
+const colors = $ref(['#BEBEBE'])
 const topics = ref([])
 
 const video = ref(null)
@@ -77,6 +39,7 @@ let lastIndex = 0
 const topicsLoaded = ref(false)
 
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
+
 const { userEmail } = storeToRefs(authStore)
 const annotationInfo = $computed(() => {
   let info = null
@@ -102,47 +65,11 @@ const refreshTaskData = async () => {
 
 
 
-const handleSegmentation = () => {
-
-  window.onbeforeunload = function () {
-    return confirm("You didn't saved your progression")
-  }
-}
 
 
 
 
-const handleSeeking = () => {
 
-
-  const currentTime = video.value.currentTime
-
-  if (Math.abs(video.value.currentTime - lastTimecode) > 1) {
-    let bestIndex = null
-    let bestDiff = 100000
-    locals.forEach((phrase, index) => {
-      if ((Math.abs(video.value.currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
-        bestDiff = video.value.currentTime - unixToTimestamp(phrase.tcin)
-        bestIndex = index
-
-      }
-    });
-
-    segmentationRefs.value[lastIndex].style.border = "none"
-    segmentationRefs.value[bestIndex].scrollIntoView({ behavior: "smooth" });
-    segmentationRefs.value[bestIndex].style.border = "solid black"
-    lastIndex = bestIndex
-  }
-  lastTimecode = currentTime
-
-}
-
-async function fetchVideoStream(url) {
-  const response = await fetch(url);
-  const videoHls = response.text();
-
-  return videoHls;
-}
 
 
 
@@ -153,22 +80,12 @@ function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le t
   return videoTime
 }
 
-const handleSegmentClick = (event) => {
 
-  segmentationRefs.value[event.index].scrollIntoView({ behavior: "smooth" });
-  video.value.currentTime = unixToTimestamp(event.tcin)
-}
-
-const jumpToTopic= (event) => {
-  const firstIndex = topics.value.findIndex((topic) =>  topic == event.topic )
-  segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth"})
-
-}
 
 const handleSubmit = () => {
   locals.forEach((phrase, index) => {
-    if (![undefined].includes(topics.value[index])) {
-      phrase.data.topic = topics.value[index]
+    if (![undefined].includes(topics[index])) {
+      phrase.data.topic = topics[index]
     }
   })
 
@@ -212,55 +129,10 @@ const handleSubmit = () => {
 const videoId = data.value.data.data.id
 const videoSrc = `https://front.wsmedia.p.sas.ina/wsmedia/${videoId}?type=stream&protocol=hls&typemedia=video`
 
-const hlsPlayer = () => {
-  fetchVideoStream(videoSrc).then((content) => {
-    const src = `data:application/vnd.apple.mpegurl;base64,${content}`
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.attachMedia(video.value);
-      hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-        hls.loadSource(src);
-        hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-        });
-      });
 
-
-    } else if (video.value.canPlayType('application/vnd.apple.mpegurl')) {
-      video.value.src = videoSrc;
-    }
-  })
-}
-
-function generatePastelColor(tagNumber) {
-  // Use tag number to create a seed (this is a basic example, there are better ways to do this)
-  const seed = tagNumber * 123456789;
-  const random = s => ((seed * s) % 155) + 100;  // Between 100 and 255
-
-  const r = random(3);
-  const g = random(5);
-  const b = random(7);
-
-  return `rgb(${r}, ${g}, ${b}, 1)`;
-
-}
-
-const loadTopics = () => {
-  locals.forEach((phrase, index) => {
-    if (![0, undefined].includes(phrase.data.topic)) {
-      topics.value[index] = phrase.data.topic
-      if (index == 0 || topics.value[index] != topics.value[index - 1]) {
-        const randomColor = generatePastelColor(index + 1)
-        colors.value.push(randomColor)
-      }
-    }
-  })
-  topicsLoaded.value = true
-}
 
 
 onMounted(async () => { // Une fois la page chargee, on stream la video
-  loadTopics()
-  hlsPlayer()
 })
 
 
