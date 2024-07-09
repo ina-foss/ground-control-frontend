@@ -50,12 +50,10 @@
 
 <script setup >
   import { useAuth } from "../../stores/auth"
-  import { TaskService, AnnotationService } from '../../api/generate';
   import AtomTopicList from "../atoms/AtomTopicList.vue";
   import { Hls } from 'hls.js'
 
   const authStore = useAuth()
-  const toast = useToast()
 
   const { data } = defineProps(['data'])
 
@@ -66,7 +64,6 @@
   const segmentationRefs = $ref([])
   const { userEmail } = storeToRefs(authStore)
   const video = $ref(null)
-  const topicsLoaded = $ref(false)
   let lastTimecode = 0
   let lastIndex = 0
 
@@ -116,10 +113,10 @@
 
         }
       });
-
-      segmentationRefs[lastIndex].style.border = "none"
+      console.log(segmentationRefs[bestIndex])
+      segmentationRefs[lastIndex].classList.remove('selected-segment')
+      segmentationRefs[bestIndex].classList.add('selected-segment')
       segmentationRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
-      segmentationRefs[bestIndex].style.border = "solid black"
       lastIndex = bestIndex
     }
     lastTimecode = currentTime
@@ -219,3 +216,10 @@
 
 
 </script>
+
+<style scoped lang="postcss">
+.selected-segment{
+  @apply border-black border-2;
+}
+
+</style>
