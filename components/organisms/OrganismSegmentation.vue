@@ -17,33 +17,7 @@
           avoir un "résumé" du contenu de l'émission grâce aux différents segments. Ces derniers retracent les divers sujets ayant été traités, différencie les interlocuteurs.
         </p>
       </div>
-      <div class="col-span-5 flex flex-row w-full max-h-full justify-center overflow-y-hidden" >
-        <ProgressBar :colors="colors" :topics="topics" :total_length="locals.length" @progress-bar-jump="jumpToTopic($event)" />
-        <ol class="flex flex-col gap-5 overflow-y-auto h-full py-4">
-          <ScrollTop
-            :pt="{ root: { style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
-            :threshold="100"
-            :unstyled="true"
-            class="absolute"
-            target="parent"
-          />
-          <li
-            v-for="(phrase, index) in locals"
-            :key="index"
-            :ref="el => segmentationRefs.push(el)"
-            class="rounded-lg scroll-mt-5"
-          >
-            <SegmentationMolecules
-              :colors="colors"
-              :index="index"
-              :phrase="phrase"
-              :topics="topics"
-              @segmentation="handleSegmentation()"
-              @on-segment-click="handleSegmentClick($event)"
-            />
-          </li>
-        </ol>
-      </div>
+      <MoleculeSegmentation :colors="colors" :topics="topics" :locals="locals" />
     </div>
   </div>
 </template>
@@ -51,6 +25,7 @@
 <script setup >
   import { useAuth } from "../../stores/auth"
   import AtomTopicList from "../atoms/AtomTopicList.vue";
+  import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
   import { Hls } from 'hls.js'
 
   const authStore = useAuth()
