@@ -59,7 +59,7 @@
 
   const { data } = defineProps(['data'])
 
-  const emits = defineEmits([ 'submitAnnotation', 'refreshData' ]);
+  const emits = defineEmits([ 'submit-annotation', 'refresh-data' ]);
 
   const colors = $ref(['#BEBEBE'])
   const topics = $ref([])
@@ -160,41 +160,7 @@
         phrase.data.topic = topics[index]
       }
     })
-
-    if (annotationInfo != null) {
-      // L'utilisateur a déjà une annotation associée à cette tâche
-      data.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation = locals
-      AnnotationService.updateAnnotationResultAnnotationIdPatch(
-        annotationInfo.id,
-        data.annotations[annotationInfo.index].result
-      ).then((response) => console.log(response))
-        .then(() => { window.onbeforeunload = null })
-        .then(() => {
-          toast.add({
-            severity: 'info',
-            detail: 'Annotation has been updated',
-            life: 4000
-          })
-        })
-        .then(() => emits('refreshData'))
-    }
-
-    else {
-      // L'utilisateur n'a jamais annoté cette tâche
-      AnnotationService.createAnnotationAnnotationPost({
-        user_email: userEmail.value,
-        task_id: data.id,
-        project_id: data.project_id,
-        result: data.data.data,
-        status: "In progress"
-      }).then(() => emits('refreshData'))
-        .then(() => { window.onbeforeunload = null })
-        .then(() => {
-          toast.add(
-            { severity: 'info', detail: 'Annotation created', life: 5000 })
-        })
-    }
-
+    emits('submitAnnotation',{ locals: locals })
   }
 
 

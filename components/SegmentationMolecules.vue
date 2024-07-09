@@ -1,5 +1,5 @@
 <template>
-  <div :style="dynamicStyle($props.colors[topicIndex])" class="bg-gray-300 p-3 pl-3 rounded-lg">
+  <div :style="dynamicStyle($props.colors[topicIndex])" class="bg-gray-300 p-3 pl-3 rounded-lg" >
     <div class="flex items-center gap-2">
       <Button :icon="iconBool" :label="topicText" :pt="{
         root: {
@@ -46,6 +46,7 @@ function generatePastelColor(tagNumber) {
   return `rgb(${r}, ${g}, ${b}, 1)`;
 }
 
+// FIX: Border and scroll doesn't work well
 function dynamicStyle(color) {
   const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
   if (props.topics[props.index] === props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {

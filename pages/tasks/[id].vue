@@ -1,10 +1,9 @@
 <template>
-  <div v-if="data.data.data == null || locals == undefined">
+  <div v-if="data.data.data == null" >
     <span>data is not in the right format</span>
   </div>
-  <!-- TODO: Refactor into a Segmentation Component -->
   <div v-else class="h-full">
-    <OrganismSegmentation :data="data" class="overflow-y-hidden" @refresh-data="refreshTaskData()" />
+    <OrganismSegmentation :data="data" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   />
   </div>
 </template>
 
@@ -13,11 +12,9 @@
 
 import {  ref } from 'vue';
 import { bcStore } from '~/stores/breadcrumbs';
-import { Hls } from 'hls.js'
 import { TaskService, AnnotationService } from '../../api/generate';
 import { useAuth } from '../../stores/auth';
 import { storeToRefs } from 'pinia';
-import AtomTopicList from '~/components/atoms/AtomTopicList.vue';
 import OrganismSegmentation from '~/components/organisms/OrganismSegmentation.vue';
 
 
@@ -25,18 +22,6 @@ const store = bcStore()
 const route = useRoute()
 const toast = useToast()
 const authStore = useAuth()
-
-const segmentationRefs = ref([])
-
-
-const colors = $ref(['#BEBEBE'])
-const topics = ref([])
-
-const video = ref(null)
-let lastTimecode = 0
-let lastIndex = 0
-
-const topicsLoaded = ref(false)
 
 const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
 
@@ -53,41 +38,12 @@ const annotationInfo = $computed(() => {
   }
 });
 
-const locals = $computed(() => {
-  return (annotationInfo == null)
-    ? data.value.data.data.localisation[0].sublocalisations.localisation
-    : data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation
-})
-
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
 }
 
-
-
-
-
-
-
-
-
-
-
-function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
-  const millisecond = tc.split('.')[1]
-  const timeArray = tc.split('.')[0].split(':')
-  const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
-  return videoTime
-}
-
-
-
-const handleSubmit = () => {
-  locals.forEach((phrase, index) => {
-    if (![undefined].includes(topics[index])) {
-      phrase.data.topic = topics[index]
-    }
-  })
+const handleSubmit = (event) => {
+  const locals = event.locals
 
   if (annotationInfo != null) {
     // L'utilisateur a déjà une annotation associée à cette tâche
@@ -124,12 +80,6 @@ const handleSubmit = () => {
   }
 
 }
-
-
-const videoId = data.value.data.data.id
-const videoSrc = `https://front.wsmedia.p.sas.ina/wsmedia/${videoId}?type=stream&protocol=hls&typemedia=video`
-
-
 
 
 onMounted(async () => { // Une fois la page chargee, on stream la video
