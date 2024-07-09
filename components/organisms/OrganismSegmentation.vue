@@ -1,7 +1,7 @@
 <template>
   <div class="h-full" >
     <div class="fixed bottom-10 right-20 ">
-      <Button label="Submit" size="large" @click="handleSubmit" />
+      <Button label="Submit" size="large" @click="handleSubmit()" />
     </div>
     <Toast />
     <div class="grid grid-cols-9 h-full">
@@ -31,7 +31,7 @@
             v-for="(phrase, index) in locals"
             :key="index"
             :ref="el => segmentationRefs.push(el)"
-            class="rounded-lg"
+            class="rounded-lg scroll-mt-5"
           >
             <SegmentationMolecules
               :colors="colors"
@@ -48,15 +48,16 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup >
   import { useAuth } from "../../stores/auth"
   import { TaskService, AnnotationService } from '../../api/generate';
   import AtomTopicList from "../atoms/AtomTopicList.vue";
+  import { Hls } from 'hls.js'
 
   const authStore = useAuth()
   const toast = useToast()
 
-  const { data } = defineProps<{data:any}>()
+  const { data } = defineProps(['data'])
 
   const emits = defineEmits([ 'submitAnnotation', 'refreshData' ]);
 
