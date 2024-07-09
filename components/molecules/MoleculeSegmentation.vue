@@ -33,6 +33,8 @@
 
   const { colors, topics, locals } =  defineProps(['colors','topics','locals'])
 
+  const emits = defineEmits([ 'on-segment-click' ]);
+
   const segmentationRefs = $ref([])
 
   const handleSegmentation = () => {
@@ -43,7 +45,7 @@
 
   const handleSegmentClick = (event) => {
     segmentationRefs[event.index].scrollIntoView({ behavior: "smooth" });
-    video.currentTime = unixToTimestamp(event.tcin)
+    emits('on-segment-click', {tcin: event.tcin})
   }
 
   const jumpToTopic= (event) => {
@@ -51,13 +53,7 @@
     segmentationRefs[firstIndex].scrollIntoView({ behavior: "smooth"})
   }
 
-  function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
-    const millisecond = tc.split('.')[1]
-    const timeArray = tc.split('.')[0].split(':')
-    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
-    return videoTime
-  }
-
+  defineExpose( {segmentationRefs: $$(segmentationRefs) })
 </script>
 
 <style scoped lang="postcss">

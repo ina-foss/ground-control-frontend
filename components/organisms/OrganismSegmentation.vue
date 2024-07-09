@@ -6,7 +6,7 @@
     <Toast />
     <div class="grid grid-cols-9 h-full">
       <div class="col-span-3 bg-surface-700 px-5 py-5 h-full" >
-        <video ref="video" class="w-full" controls @seeked="handleSeeking()" />
+        <AtomVideoHls ref="AtomVideoHlsRef" :data="data" :locals="locals" @timecode-update="scrollToSegment" />
         <AtomTopicList :colors="colors" />
         <h2 class="text-white text-3xl p-3 font-semibold">Segmentation</h2>
         <p class="text-white p-3">
@@ -17,7 +17,7 @@
           avoir un "résumé" du contenu de l'émission grâce aux différents segments. Ces derniers retracent les divers sujets ayant été traités, différencie les interlocuteurs.
         </p>
       </div>
-      <MoleculeSegmentation :colors="colors" :topics="topics" :locals="locals" />
+      <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
 </template>
@@ -25,6 +25,7 @@
 <script setup >
   import { useAuth } from "../../stores/auth"
   import AtomTopicList from "../atoms/AtomTopicList.vue";
+  import AtomVideoHls from "../atoms/AtomVideoHls.vue";
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
   import { Hls } from 'hls.js'
 
@@ -36,9 +37,10 @@
 
   const colors = $ref(['#BEBEBE'])
   const topics = $ref([])
-  const segmentationRefs = $ref([])
+  const moleculeSegmentationRef = $ref()
   const { userEmail } = storeToRefs(authStore)
   const video = $ref(null)
+  const AtomVideoHlsRef = $ref()
   let lastTimecode = 0
   let lastIndex = 0
 
@@ -60,18 +62,22 @@
       : data.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation
   })
 
-
-
-
-  const handleSegmentation = () => {
-
-    window.onbeforeunload = function () {
-      return confirm("You didn't saved your progression")
-    }
+  function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
+    const millisecond = tc.split('.')[1]
+    const timeArray = tc.split('.')[0].split(':')
+    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
+    return videoTime
   }
 
+  const updateVideoTimecode = (event) => {
+    AtomVideoHlsRef.videoRef.currentTime = unixToTimestamp(event.tcin)
+  }
 
-
+  const scrollToSegment = (event) => {
+    moleculeSegmentationRef.segmentationRefs[event.lastIndex].classList.remove('selected-segment')
+    moleculeSegmentationRef.segmentationRefs[event.bestIndex].classList.add('selected-segment')
+    moleculeSegmentationRef.segmentationRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
+  }
 
   const handleSeeking = () => {
 
@@ -103,27 +109,6 @@
     const videoHls = response.text();
 
     return videoHls;
-  }
-
-
-
-  function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
-    const millisecond = tc.split('.')[1]
-    const timeArray = tc.split('.')[0].split(':')
-    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
-    return videoTime
-  }
-
-  const handleSegmentClick = (event) => {
-
-    segmentationRefs[event.index].scrollIntoView({ behavior: "smooth" });
-    video.currentTime = unixToTimestamp(event.tcin)
-  }
-
-  const jumpToTopic= (event) => {
-    const firstIndex = topics.findIndex((topic) =>  topic == event.topic )
-    segmentationRefs[firstIndex].scrollIntoView({ behavior: "smooth"})
-
   }
 
   const handleSubmit = () => {
@@ -185,8 +170,8 @@
 
 
   onMounted(async () => { // Une fois la page chargee, on stream la video
-    loadTopics()
     hlsPlayer()
+    loadTopics()
   })
 
 
