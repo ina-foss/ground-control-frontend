@@ -24,13 +24,13 @@ const toast = useToast()
 
 // let bgButtonColor = ref('transparent')
 const topicIndex = ref(0)
-if (props.phrase.data.topic != undefined) topicIndex.value = props.phrase.data.topic
+if (props.phrase.data.topic !== undefined) topicIndex.value = props.phrase.data.topic
 const iconBool = ref('pi pi-tag')
 
 const topicText = ref(null)
 let isVisible = false
-iconBool.value = topicIndex.value == 0 ? 'pi pi-bookmark' : ''
-topicText.value = topicIndex.value == 0 ? null : "#" + topicIndex.value
+iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
+topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 
 
 
@@ -49,6 +49,7 @@ function generatePastelColor(tagNumber) {
 // FIX: Border and scroll doesn't work well ( à revoir le scroll si on decale les elts )
 // TODO: essayer de retirer le flex gap et de le remplacer par un padding par elts
 function dynamicStyle(color) {
+
   const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
   if (props.topics[props.index] === props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
     isVisible = true
@@ -117,8 +118,8 @@ function hexToRgba(hex, opacity) {
 // FIX: take all case in account
 const handleSegmentation = () => {
 
-  if (props.index == 0) { // Cas particulier de la premiere phrase
-    if (topicIndex.value == 0) {
+  if (props.index === 0) { // Cas particulier de la premiere phrase
+    if (topicIndex.value === 0) {
       const randomColor = generatePastelColor(props.index + 1)
       props.colors.push(randomColor)
       props.topics[props.index] = 1
@@ -129,7 +130,7 @@ const handleSegmentation = () => {
       topicIndex.value = 0
     }
   } else if (topicIndex.value < props.topics[props.index - 1]) { //On rattrape le topic precedent
-    if (props.topics[props.index - 1] != undefined) {
+    if (props.topics[props.index - 1] !== undefined) {
       props.topics[props.index] = props.topics[props.index - 1]
       topicIndex.value = props.topics[props.index]
 
@@ -137,7 +138,7 @@ const handleSegmentation = () => {
       toast.add({ severity: "info", detail: "Can't modify this sentence" })
     }
 
-  } else if (topicIndex.value == props.colors.length - 1 && (props.topics[props.index - 1] == topicIndex.value)) { // On cree un nouveau topic
+  } else if (topicIndex.value === props.colors.length - 1 && (props.topics[props.index - 1] === topicIndex.value)) { // On cree un nouveau topic
     //new topic
     const randomColor = generatePastelColor(props.index + 1)
     props.colors.push(randomColor)
@@ -147,36 +148,16 @@ const handleSegmentation = () => {
   } else if (topicIndex.value < props.topics[props.index + 1]) { // On itere parmi les topics existants
     props.topics[props.index]++
     topicIndex.value++
-  } else if (topicIndex.value != 0) { // Reset du topic a 0
+  } else if (topicIndex.value !== 0) { // Reset du topic a 0
     props.topics[props.index] = 0;
     !props.topics.includes(topicIndex.value) && props.colors.pop()
     topicIndex.value = 0
   }
 
   emit('segmentation', props.index)
-  iconBool.value = topicIndex.value == 0 ? 'pi pi-bookmark' : ''
-  topicText.value = topicIndex.value == 0 ? null : "#" + topicIndex.value
+  iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
+  topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 }
 
 
 </script>
-<style scoped>
-.lineDown {
-  position: absolute;
-  width: 2px;
-  height: calc(16% - 29px);
-  top: 131px;
-  left: 36%;
-  z-index: 0;
-  background-color: red;
-}
-
-.lineUp {
-  position: absolute;
-  width: 2px;
-  height: calc(19% - 29px);
-  top: 169px;
-  left: 36%;
-  z-index: 0;
-}
-</style>
