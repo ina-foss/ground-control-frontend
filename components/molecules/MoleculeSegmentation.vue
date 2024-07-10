@@ -1,6 +1,6 @@
 <template>
   <div class="col-span-5 flex flex-row w-full max-h-full justify-center overflow-y-hidden" >
-    <ProgressBar :colors="colors" :topics="topics" :total_length="locals.length" @progress-bar-jump="jumpToTopic($event)" />
+    <AtomProgressBar :colors="colors" :topics="topics" :total_length="locals.length" @progress-bar-jump="jumpToTopic($event)" />
     <ol class="flex flex-col gap-5 overflow-y-auto h-full py-4">
       <ScrollTop
         :pt="{ root: { style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
@@ -31,6 +31,7 @@
 
 <script setup>
   import AtomSegmentation from '../atoms/AtomSegmentation.vue'
+  import AtomProgressBar from '../atoms/AtomProgressBar.vue';
 
   const { colors, topics, locals } =  defineProps(['colors','topics','locals'])
 
