@@ -17,6 +17,7 @@
 const {topics, colors, total_length} = defineProps(['topics', 'colors', 'total_length'])
 const emits = defineEmits(['progressBarJump']);
 
+// FIX: Should not display topic = 0
 const groupedTopics = computed(() => {
   const grouped = {};
 

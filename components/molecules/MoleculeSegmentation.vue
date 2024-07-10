@@ -9,6 +9,7 @@
         class="absolute"
         target="parent"
       />
+      <!-- TODO: use VitualScroller -->
       <li
         v-for="(phrase, index) in locals"
         :key="index"

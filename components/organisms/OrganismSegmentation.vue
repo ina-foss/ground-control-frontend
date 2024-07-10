@@ -5,18 +5,8 @@
     </div>
     <Toast />
     <div class="grid grid-cols-9 h-full">
-      <div class="col-span-3 bg-surface-700 px-5 py-5 h-full" >
-        <AtomVideoHls ref="AtomVideoHlsRef" :data="data" :locals="locals" @timecode-update="scrollToSegment" />
-        <AtomTopicList :colors="colors" />
-        <h2 class="text-white text-3xl p-3 font-semibold">Segmentation</h2>
-        <p class="text-white p-3">
-          Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br >
-          Chaque segment correspond à une thématique différente de la précédente.<br >
-          Chaque changement de segment correspond à un changement d'interlocuteur ou de sujet.<br ><span class="underline">Exemple</span> :
-          <br >si on souhaite retranscrire le contenu d'une émission qui dure 1h, grâce à la segmentation, nous pouvons
-          avoir un "résumé" du contenu de l'émission grâce aux différents segments. Ces derniers retracent les divers sujets ayant été traités, différencie les interlocuteurs.
-        </p>
-      </div>
+      <!-- TODO: Put in MoleculeLeftPanelVideo or smth like this -->
+      <MoleculeAnnotationLeftPanel :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
       <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
@@ -26,6 +16,7 @@
   import { useAuth } from "../../stores/auth"
   import AtomTopicList from "../atoms/AtomTopicList.vue";
   import AtomVideoHls from "../atoms/AtomVideoHls.vue";
+import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
   import { Hls } from 'hls.js'
 

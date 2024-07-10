@@ -113,8 +113,8 @@ function hexToRgba(hex, opacity) {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
+// FIX: take all case in account
 const handleSegmentation = () => {
-
 
   if (props.index == 0) { // Cas particulier de la premiere phrase
     if (topicIndex.value == 0) {
