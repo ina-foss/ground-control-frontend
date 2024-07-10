@@ -71,6 +71,20 @@ To make your own vitest unit tests configuration , you may use `vitest.config.ts
 These commands are specified in a script in `package.json`
 To make your own eslint configuration , you may use `eslint.config.mjs` file to set up desired config.
 
+## Updating OpenAPI services & models
+
+```bash
+npm run update-api
+```
+This project uses a fastAPI backend which expose `openapi.json` file in its uvicorn server.
+
+The [@hey-api/openapi-ts](https://heyapi.vercel.app/openapi-ts/get-started.html) dependency use this exposed file to create all services and models, and store them in the [/api/generate/](./api/generate/) directory.
+The content of the directory is update each time the projet docker image of the project is built but if you want to run it mannualy, use the above command.
+
+
+
+
+
 ## About authentication
 
 <div align="center">
