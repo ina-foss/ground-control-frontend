@@ -46,7 +46,8 @@ function generatePastelColor(tagNumber) {
   return `rgb(${r}, ${g}, ${b}, 1)`;
 }
 
-// FIX: Border and scroll doesn't work well
+// FIX: Border and scroll doesn't work well ( à revoir le scroll si on decale les elts )
+// TODO: essayer de retirer le flex gap et de le remplacer par un padding par elts
 function dynamicStyle(color) {
   const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
   if (props.topics[props.index] === props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
