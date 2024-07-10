@@ -21,8 +21,8 @@ export default defineVitestConfig({
             'html'
         ],
         outputFile: {
-            junit: '.test_reports/junit-report.xml',
-            html: '.test_reports/html/html-report.html',
+            junit: './test-results/junit/junit-report.xml',
+            html: './test-results/junit/html/html-report.html',
         },
         exclude: [
             '**/node_modules/**',
