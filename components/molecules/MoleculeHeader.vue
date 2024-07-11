@@ -209,10 +209,6 @@ const createProject = async () => {
       refreshStore.fetch()
 
 
-      refreshStore
-      navigateTo(`/dashboard`, {
-        replace: true
-      })
     })
   }
 }

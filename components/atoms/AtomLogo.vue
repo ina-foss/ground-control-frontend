@@ -41,16 +41,23 @@ enum LogoSize {
 }
 
 /**
- * Props interface for the component.
+ * Props interface for the AtomLogo component.
  *
  * @property {LogoSize} size - Size for the INA logo.
  */
-interface Props {
-  size: LogoSize
+interface AtomLogoProps {
+  /**
+   * Size for the logo.
+   *
+   * @defaultValue 'md'
+   * @description Can be one of 'sm' (40px), 'md' (50px), or 'lg' (80px).
+   */
+  size?: keyof typeof LogoSize
 }
 
-const props = defineProps<Props>()
+const props = defineProps<AtomLogoProps>()
 const sizeInPx = computed(() => {
-  return LogoSize[props.size] || LogoSize.md
+  return LogoSize[props.size || 'md']
 })
+
 </script>
