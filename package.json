@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "nuxt generate",
     "dev": "nuxt dev",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "generate": "nuxt generate",
+    "generate": "nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate",
