@@ -5,8 +5,7 @@
     </div>
     <Toast />
     <div class="grid grid-cols-9 h-full">
-      <!-- TODO: Put in MoleculeLeftPanelVideo or smth like this -->
-      <MoleculeAnnotationLeftPanel :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
       <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
@@ -14,9 +13,7 @@
 
 <script setup >
   import { useAuth } from "../../stores/auth"
-  import AtomTopicList from "../atoms/AtomTopicList.vue";
-  import AtomVideoHls from "../atoms/AtomVideoHls.vue";
-import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
+  import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
   import { Hls } from 'hls.js'
 
@@ -29,11 +26,9 @@ import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPane
   const colors = $ref(['#BEBEBE'])
   const topics = $ref([])
   const moleculeSegmentationRef = $ref()
+  const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
   const video = $ref(null)
-  const AtomVideoHlsRef = $ref()
-  let lastTimecode = 0
-  let lastIndex = 0
 
   const annotationInfo = $computed(() => {
     let info = null
@@ -53,46 +48,15 @@ import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPane
       : data.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation
   })
 
-  function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
-    const millisecond = tc.split('.')[1]
-    const timeArray = tc.split('.')[0].split(':')
-    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
-    return videoTime
-  }
 
   const updateVideoTimecode = (event) => {
-    AtomVideoHlsRef.videoRef.currentTime = unixToTimestamp(event.tcin)
+    moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
   }
 
   const scrollToSegment = (event) => {
     moleculeSegmentationRef.segmentationRefs[event.lastIndex].classList.remove('selected-segment')
     moleculeSegmentationRef.segmentationRefs[event.bestIndex].classList.add('selected-segment')
     moleculeSegmentationRef.segmentationRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
-  }
-
-  const handleSeeking = () => {
-
-
-    const currentTime = video.currentTime
-
-    if (Math.abs(video.currentTime - lastTimecode) > 1) {
-      let bestIndex = null
-      let bestDiff = 100000
-      locals.forEach((phrase, index) => {
-        if ((Math.abs(video.currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
-          bestDiff = video.currentTime - unixToTimestamp(phrase.tcin)
-          bestIndex = index
-
-        }
-      });
-      console.log(segmentationRefs[bestIndex])
-      segmentationRefs[lastIndex].classList.remove('selected-segment')
-      segmentationRefs[bestIndex].classList.add('selected-segment')
-      segmentationRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
-      lastIndex = bestIndex
-    }
-    lastTimecode = currentTime
-
   }
 
   async function fetchVideoStream(url) {
