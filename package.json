@@ -2,6 +2,9 @@
   "name": "ground-control-frontend",
   "version": "0.0.1",
   "type": "module",
+   "files": [
+    ".output"
+  ],
   "scripts": {
     "build": "nuxt generate",
     "dev": "nuxt dev",
