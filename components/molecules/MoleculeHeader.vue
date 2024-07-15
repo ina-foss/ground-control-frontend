@@ -110,7 +110,7 @@ icon="pi pi-times" text rounded size="small" severity="danger"
 <script setup>
 
 import { ProjectService } from '~/api/generate';
-import { AnnotationType, ProjectStatus, TaskService } from '../api/generate';
+import { ProjectStatus, TaskService } from '../api/generate';
 import { useRefreshStore } from '../stores/refresh';
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';

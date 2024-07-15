@@ -3,22 +3,29 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AnnotationDto } from './AnnotationDto';
-import type { PredictionDto } from './PredictionDto';
 import type { ProjectBaseDto } from './ProjectBaseDto';
+import type { TaskCreateDto } from './TaskCreateDto';
+import type { TaskDataType } from './TaskDataType';
+import type { TaskStatus } from './TaskStatus';
 /**
  * DTO for listing tasks, extending TaskCreateDto with additional
  * fields relevant for listing tasks.
  */
 export type TaskListDto = {
-    name?: (string | null);
+    name: string;
     instruction?: (string | null);
     project_id: number;
     data?: (Record<string, any> | null);
+    data_type: TaskDataType;
+    status: TaskStatus;
+    lead_time: (number | null);
+    step_id: number;
+    media_id: number;
     id: number;
     project?: (ProjectBaseDto | null);
     created_at: (string | null);
     updated_at: (string | null);
     annotations?: Array<AnnotationDto>;
-    predictions?: Array<PredictionDto>;
+    taskComments?: Array<TaskCreateDto>;
 };
 
