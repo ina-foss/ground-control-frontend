@@ -2,17 +2,18 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AnnotationType } from './AnnotationType';
+import type { MediaCreate } from './MediaCreate';
 import type { ProjectStatus } from './ProjectStatus';
-import type { TaskListDto } from './TaskListDto';
+import type { StepDetailDto } from './StepDetailDto';
 /**
  * DTO for listing projects, including a list of tasks.
+ *
+ * Used in `/{project_id}` view
  */
 export type ProjectListDto = {
     title: (string | null);
     description: (string | null);
     status: (ProjectStatus | null);
-    annotation_type: (AnnotationType | null);
     is_published: (boolean | null);
     empty_annotations: (boolean | null);
     allow_skip: (boolean | null);
@@ -20,6 +21,9 @@ export type ProjectListDto = {
     pinned_at: (string | null);
     created_by: string;
     id: number;
-    tasks?: Array<TaskListDto>;
+    created_at: (string | null);
+    updated_at: (string | null);
+    steps: Array<StepDetailDto>;
+    medias: Array<MediaCreate>;
 };
 

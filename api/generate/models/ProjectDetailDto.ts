@@ -2,18 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AnnotationType } from './AnnotationType';
+import type { MediaCreate } from './MediaCreate';
 import type { ProjectStatus } from './ProjectStatus';
-import type { TaskBaseDto } from './TaskBaseDto';
+import type { StepDto } from './StepDto';
 /**
  * Detailed DTO for project objects, including creation and update timestamps,
  * a list of tasks, and counts of users with annotations and total tasks.
+ *
+ * Used in `/dashboard` view
  */
 export type ProjectDetailDto = {
     title: (string | null);
     description: (string | null);
     status: (ProjectStatus | null);
-    annotation_type: (AnnotationType | null);
     is_published: (boolean | null);
     empty_annotations: (boolean | null);
     allow_skip: (boolean | null);
@@ -23,8 +24,7 @@ export type ProjectDetailDto = {
     id: number;
     created_at: (string | null);
     updated_at: (string | null);
-    tasks?: Array<TaskBaseDto>;
-    total_users_with_annotations: number;
-    total_tasks: number;
+    steps: Array<StepDto>;
+    medias: Array<MediaCreate>;
 };
 
