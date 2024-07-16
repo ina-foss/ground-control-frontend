@@ -2,7 +2,7 @@
   <div class="bg-black">
 
     <DataTable
-      v-if="data.tasks.length > 0" :context-menu=true :pt="{
+      v-if="data.tasks?.length > 0" :context-menu=true :pt="{
             column: {
                     bodycell: ({ state }) => ({
                         style:  state['d_editing']
