@@ -7,8 +7,9 @@
         <p class="inline-block  text-2xl">
           <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
           <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
-            @click.stop.prevent="visible = true" />
-          <Dialog v-model:visible="visible" modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
+            @click.stop.prevent="visible=true" />
+          <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false" />
+          <Dialog  modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
             @hide="$emit('refreshData')" @after-hide="deleteDialog = false">
             <div class=" grid grid-cols-1 grid-rows-3 gap-1">
               <span class="text-slate-400 ">Modify task informations </span>
@@ -59,6 +60,7 @@ import { ProjectService } from '~/api/generate';
 import { useService } from '../composables/useService';
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';
+import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
 
 const visible = ref(false)
 const deleteDialog = ref(false)
@@ -67,7 +69,6 @@ const props = defineProps(['project'])
 const project = ref(props.project)
 const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore)
-
 
 // allow props to be reactive when there are changes from parent component
 watchEffect(() => {
