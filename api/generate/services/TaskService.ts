@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { TaskCreateDto } from '../models/TaskCreateDto';
+import type { TaskBaseDto } from '../models/TaskBaseDto';
 import type { TaskListDto } from '../models/TaskListDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -80,17 +80,17 @@ export class TaskService {
      * Create a new task.
      *
      * Args:
-     * task (TaskCreateDto): The task data to be created.
+     * task (TaskBaseDto): The task data to be created.
      *
      * Returns:
-     * TaskCreateDto: The newly created task's details.
+     * TaskBaseDto: The newly created task's details.
      * @param requestBody
-     * @returns TaskCreateDto Successful Response
+     * @returns TaskBaseDto Successful Response
      * @throws ApiError
      */
     public static createTaskTaskPost(
-        requestBody: TaskCreateDto,
-    ): CancelablePromise<TaskCreateDto> {
+        requestBody: TaskBaseDto,
+    ): CancelablePromise<TaskBaseDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/task/',
