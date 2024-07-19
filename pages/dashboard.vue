@@ -19,7 +19,7 @@ const fetchHappened = ref(true)
 provide('fetchProject', fetchHappened)
 
 
-refreshStore.fetch()
+refreshStore.fetchProject()
 
 const {getData} = storeToRefs(refreshStore)
 
