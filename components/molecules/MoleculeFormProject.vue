@@ -8,11 +8,11 @@
             <span class="text-slate-400 ">Enter project configuration</span>
             <div class="flex grid-cols-2 gap-3 align-items-center ">
               <label class="self-center basis-1/4">Title</label>
-              <InputText v-model="title" placeholder="Enter a new task name" autocomplete="off" class="flex-auto" />
+              <InputText v-model="title" placeholder="Enter a new project name" autocomplete="off" class="flex-auto" />
             </div>
             <div class="flex gap-3 ">
               <label class="self-center basis-1/4">Description</label>
-              <InputText v-model="description" placeholder="Enter a new task description" autocomplete="off"
+              <InputText v-model="description" placeholder="Enter a new project description" autocomplete="off"
                 class="flex-auto" />
             </div>
             <div class="flex gap-3 ">
@@ -38,17 +38,6 @@
           </div>
         </template>
       </StepperPanel>
-      <StepperPanel header="Medias">
-        <template #content="{ prevCallback, nextCallback }">
-          <div class="flex justify-center min-w-[70vh]">
-            <p>CHOIX DES MEDIAS WIP</p>
-          </div>
-          <div class="flex justify-between pt-8">
-            <Button label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback" />
-            <Button label="Next" icon="pi pi-arrow-right" icon-pos="right" size="small" @click="nextCallback" />
-          </div>
-        </template>
-      </StepperPanel>
       <StepperPanel header="Steps">
         <template #content="{ prevCallback, nextCallback }">
           <div class="w-[70vh] grid-cols-3 flex">
@@ -67,65 +56,6 @@
           </div>
           <div class="flex justify-between pt-8">
             <Button label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback" />
-            <Button label="Next" icon="pi pi-arrow-right" icon-pos="right" size="small" @click="nextCallback" />
-          </div>
-        </template>
-      </StepperPanel>
-      <StepperPanel header="Annotations">
-        <template #content="{ prevCallback, nextCallback }">
-          <div class="w-[70vh]">
-            <FileUpload accept="application/json" :show-upload-button=false :show-cancel-button="false"
-              invalid-file-type-message="Invalid type" auto name="file[]" :pt="{
-                buttonbar: {
-                  style: `z-index:20; padding-top: 10px; padding-bottom: 10px; `
-                },
-                content: {
-                  style: ''
-                },
-
-              }" @upload="onUpload($event)" @error="onUpload($event)">
-              <template #empty="{ chooseCallback }">
-
-                <div class="flex items-center justify-content-center flex-col">
-                  <span class="pi pi-file-arrow-up align-center " style="font-size: 2.5rem" />
-                  <p class="text-xs pt-3 text-slate-400 ">Upload a JSON file</p>
-                </div>
-              </template>
-
-              <template #content="{ uploadedFiles, files, removeUploadedFileCallback, removeFileCallback }">
-                <div class="flex flex-col gap-2">
-                  <div v-for="(file, index) in uploadedFiles" :key="index"
-                    class="grid grid-cols-8 gap-2 px-1 items-center">
-                    <span class="pi pi-file self-center w-2" />
-                    <p v-tooltip.top="file.name" class="text-ellipsis text-nowrap col-span-4 overflow-hidden ">
-                      {{ file.name }}
-                    </p>
-                    <p v-if="file.size < 1024" class="text-slate-400 text-xs text-nowrap col-span-2   ">{{
-                      file.size }} B</p>
-                    <p v-else class="text-slate-400 text-xs text-nowrap col-span-2  ">{{ Math.round(file.size /
-                      1024) }} KB
-                    </p>
-                    <Button icon="pi pi-times" text rounded size="small" severity="danger"
-                      class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
-                        root: {
-                          style: 'justify-content: center; justify-items: center; place-self: center;'
-                        },
-                        icon: {
-                          style: 'max-width:24px'
-                        }
-                      }" @click="removeUploadedFileCallback(index)" />
-                  </div>
-                </div>
-                <div v-for="file in files">
-                  <ProgressSpinner style="width: 40px;" stroke-width=5 />
-                </div>
-              </template>
-
-            </FileUpload>
-
-          </div>
-          <div class="flex justify-between pt-8">
-            <Button label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback" />
             <Button label="Create" severity="success" icon="pi pi-check" size="small" @click="createProject" />
           </div>
         </template>
@@ -138,8 +68,7 @@
 
 
 import InputSwitch from 'primevue/inputswitch';
-import { ProjectStatus, AnnotationType } from '~/api/generate';
-import { ProjectService } from '~/api/generate';
+import { ProjectStatus, AnnotationType, ProjectService, StepService, StepStatus } from '~/api/generate';
 import { useRefreshStore } from '#imports';
 import { useAuth } from '#imports';
 
@@ -151,7 +80,7 @@ const visible = computed(() => dialogVisible)
 const deleteDialog = $ref(false)
 
 const title = $ref(project?.title || '')
-const description = $ref(project?.descriptio || '')
+const description = $ref(project?.description || '')
 const status = $ref(project?.status)
 const isPublished = $ref(project?.is_published || false)
 const allowSkip = $ref(project?.allow_skip || false)
@@ -208,24 +137,21 @@ const createProject = async () => {
     })
 
     response.catch(() => (toast.add({ severity: 'danger', detail: 'Project could not be created', summary: 'Something went wrong' }))).then((res) =>{
-      // fileData.value.forEach((file, index) => {
-      //   TaskService.createTaskTaskPost({
-      //     name: `Task #${index + 1}`,
-      //     instruction: 'Instruction',
-      //     data: file,
-      //     project_id: res.id
-      //   }).catch((err) => console.error(err)).then((res) => console.log(res))
-      // })
-      // TODO: Implement the step creation by iteratiing throught selectedType
-      selectedType.forEach((type) => {
-        return true
-
+      selectedType.forEach((type,index) => {
+        StepService.createStepStepPost({
+          title: `Step #${index +1 }`,
+          description: 'Step description',
+          annotation_type: type,
+          pinned_at: null,
+          status: StepStatus.DRAFT,
+          project_id: res.id
+        }).catch((err) => console.error(err)).then((res) => console.log(res))
       })
       files = []
       fileData = []
       emits('toggle-dialog')
 
-      refreshStore.fetch()
+      refreshStore.fetchProject()
 
     })
   }
