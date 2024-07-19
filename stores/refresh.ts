@@ -13,8 +13,11 @@ export const useRefreshStore = defineStore('refresh', {
       //store works
       this.data = newData
     },
-    async fetch() {
+    async fetchProject() {
       ProjectService.readProjectsProjectsGet().then((response) => this.data = response).then(() => {}).catch((error) => (error))
+    },
+    async fetchTasks(projectid: number) {
+      ProjectService.readProjectProjectProjectIdGet(projectid).then((response) => this.data = response).then(() => {}).catch((error) => (error))
     }
   },
   getters: {
