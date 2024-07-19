@@ -1,9 +1,10 @@
 <template>
   <div
-    class="  w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-transform tansition-shadow hover:shadow-xl">
+    class="  w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl">
     <NuxtLink :to="{ name: 'projects-id', params: { id: $props.project.id } }">
       <div class="flex justify-between align-middle pl-2">
-        <p class="font-semibold self-center">{{ $props.project.title }}</p>
+          <p class="font-semibold self-center ">
+            {{ $props.project.title }} </p>
         <p class="inline-block  text-2xl">
           <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
           <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
@@ -32,8 +33,11 @@
           </Dialog>
         </p>
       </div>
-      <div class="flex justify-between justify-items-stretch pl-2 pt-1 text-sm">
-        <p>0/{{ $props.project.total_tasks }} <i class="pi pi-list-check" /></p>
+      <div class="flex justify-between justify-items-stretch pl-2 pt-1 items-center text-sm">
+        <div class="flex justify-between items-center  justify-items-stretch gap-3">
+          <span class="">{{ project.steps.length }} <i class="pi pi-list-check " /></span>
+          <Tag :severity="statusSeverity" class="mb-1 scale-90 ">{{ project.status}}</Tag>
+        </div>
         <div class="flex justify-between justify-items-stretch gap-3">
           <span>1/{{ }} </span>
           <span>2 <i class="pi pi-flag-fill" style="color:red" /> </span>
@@ -53,7 +57,7 @@
 </template>
 
 <script setup>
-
+import Badge from 'primevue/badge';
 import { bcStore } from '~/stores/breadcrumbs';
 import { defineEmits } from 'vue';
 import { ProjectService } from '~/api/generate';
@@ -65,19 +69,27 @@ import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
 const visible = ref(false)
 const deleteDialog = ref(false)
 const store = bcStore()
-const props = defineProps(['project'])
-const project = ref(props.project)
+const { project } = defineProps(['project'])
 const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore)
 
-// allow props to be reactive when there are changes from parent component
-watchEffect(() => {
-  project.value = props.project
+const statusSeverity = computed(() =>{
+  switch (project.status) {
+    case 'pending':
+      return 'warning'
+
+    case 'draft':
+      return 'info'
+
+    case 'ended':
+      return 'success'
+
+  }
 })
 
-const title = ref(project.value.title)
+const title = ref(project.title)
 
-const description = ref(project.value.description)
+const description = ref(project.description)
 
 const emit = defineEmits(['refreshData']);
 
