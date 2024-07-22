@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-black">
+  <div  class="bg-black">
 
     <DataTable
 v-if="data.steps?.length > 0" v-model:expanded-rows="expandedRows" :context-menu=true :pt="{
       column: {
-        bodycell: ({ state }) => ({
+        bodycell:({ state }) => ({
           style: state['d_editing']
         })
       },
@@ -78,10 +78,10 @@ v-tooltip="'Nbr annotations remplies'"
               </template>
             </Column>
             <Column header="Annoted by" style="width: 12rem">
-              <template #body="slotProps">
+              <template #body="{data: nestedData}">
                 <div class="flex justify-around sm:w-20 md:w-10%">
                   <Avatar
-v-for="(annotation, index) in slotProps.data.annotations" :key="index"
+v-for="(annotation, index) in nestedData.annotations" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
                     shape="circle" />
                 </div>
@@ -101,8 +101,9 @@ v-for="(annotation, index) in slotProps.data.annotations" :key="index"
 
     </DataTable>
     <div v-else class="min-h-[calc(100vh-52px)] bg-white items-center justify-center flex flex-col">
-      <span class="pi pi-folder-open" style="font-size: 20rem; opacity: 25% ;" />
-      <p class="text-slate-500">No tasks in this project</p>
+      <!-- <span class="pi pi-folder-open" style="font-size: 20rem; opacity: 25% ;" /> -->
+      <!-- <p class="text-slate-500">No tasks in this project</p> -->
+      <LoadingSpinner />
     </div>
     <Dialog v-model:visible="visible" modal @hide="visible = false">
       <DataDialog :data="dialogContent" :visible="spinnerVisible" />
@@ -128,6 +129,7 @@ v-for="(annotation, index) in slotProps.data.annotations" :key="index"
 
   const { getData } = storeToRefs(refreshStore )
   const { fetchTasks } = refreshStore
+  const { getItems } = storeToRefs(store)
 
   const dialogVisible = ref(false)
   const visible = ref(false)
@@ -140,10 +142,23 @@ v-for="(annotation, index) in slotProps.data.annotations" :key="index"
 
   const editMode = ref(false)
   const expandMode = $ref(false)
-
-  fetchTasks(route.params.id)
-
   const data = ref(getData)
+
+  // // On attend que tout charge
+  // const response = await fetchTasks(route.params.id).
+  // console.log(response)
+  // store.addCrumb({ label: response.title, url: `/projects/${response.id}` })
+
+  // On affiche meme si c'es pas fini
+  fetchTasks(route.params.id).then((res)=> {
+    if (store.items.length == 0 ) { //reloading the page
+      store.addCrumb({ label: data.value.title, url: `/projects/${data.value.id}` })
+    }
+    else if(getItems.value.length == 2){
+      store.removeLastCrumb()
+    }
+  })
+
 
 onMounted(() => console.log(data.value))
 
@@ -171,6 +186,7 @@ const navigateToTask = (id) => {
 const handleRowClick = (event) => {
 
   clickedRowData.value = event.data;
+    store.addCrumb({label: clickedRowData.value.name, url: `/tasks/${clickedRowData.value.id}`})
   console.log(event.data)
   if (editMode.value == false) navigateToTask(clickedRowData.value.id)
 
@@ -205,10 +221,7 @@ const openDialog = (data) => {
   visible.value = true;
 }
 
-if (store.items.length != 0 && store.items[store.items.length - 1].url != `/projects/${data.value.id}`) { // When coming from Task
-  store.removeLastCrumb()
-}
-if (store.items.length == 0) { // When coming from dashboard
+if (store.items.length == 0 && data.value.title) { //reloading the page
   store.addCrumb({ label: data.value.title, url: `/projects/${data.value.id}` })
 }
 
