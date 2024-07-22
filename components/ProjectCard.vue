@@ -1,7 +1,8 @@
 <template>
   <div
     class="  w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl">
-    <NuxtLink :to="{ name: 'projects-id', params: { id: $props.project.id } }">
+    <NuxtLink
+      @click="navigate" :to="{ name: 'projects-id', params: { id: $props.project.id } }">
       <div class="flex justify-between align-middle pl-2">
           <p class="font-semibold self-center ">
             {{ $props.project.title }} </p>
@@ -69,9 +70,15 @@ import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
 const visible = ref(false)
 const deleteDialog = ref(false)
 const store = bcStore()
+const { addcrumb } = store
 const { project } = defineProps(['project'])
 const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore)
+
+const navigate = () =>{
+  console.log(project)
+  store.addCrumb({ label: project.title, url: `/projects/${project.id}` })
+}
 
 const statusSeverity = computed(() =>{
   switch (project.status) {
