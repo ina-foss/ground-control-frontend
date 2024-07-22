@@ -1,5 +1,5 @@
 <template>
-    <div v-if="$props.loading" class="p-d-flex p-jc-center p-ai-center" style="height: 100vh;">
+    <div  class="flex w-full h-full flex justify-center items-center" style="height: 100vh;">
       <ProgressSpinner />
     </div>
   </template>
