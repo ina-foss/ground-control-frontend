@@ -2,12 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { MediaType } from './MediaType';
 import type { TaskBaseDto } from './TaskBaseDto';
 /**
  * DTO representing a media object, including association with task and project.
  */
 export type MediaDto = {
     url: string;
+    type: MediaType;
     id: number;
     tasks: (Array<TaskBaseDto> | null);
 };

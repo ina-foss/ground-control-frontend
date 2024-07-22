@@ -2,10 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { MediaType } from './MediaType';
 /**
  * DTO to create a media object
  */
 export type MediaCreate = {
     url: string;
+    type: MediaType;
 };
 

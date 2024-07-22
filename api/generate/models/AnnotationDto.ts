@@ -9,7 +9,7 @@ import type { AnnotationStatus } from './AnnotationStatus';
 export type AnnotationDto = {
     user_email: string;
     task_id: number;
-    result: string;
+    result: (Record<string, any> | null);
     annotation_status: AnnotationStatus;
     version: number;
     id: number;
