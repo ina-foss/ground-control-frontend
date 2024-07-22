@@ -2,76 +2,112 @@
   <div class="bg-black">
 
     <DataTable
-      v-if="data.tasks?.length > 0" :context-menu=true :pt="{
-            column: {
-                    bodycell: ({ state }) => ({
-                        style:  state['d_editing']
-                    })
-                },
-            style: 'height:88px'
-        }" :row-hover=true
-      :sort-order=0 :value="data.tasks" breakpoint="300px" column-resize-mode="fit"
-      edit-mode="cell" table-style="background-color: white" @row-click="handleRowClick($event)" @cell-edit-complete="onCellEditComplete">
+v-if="data.steps?.length > 0" v-model:expanded-rows="expandedRows" :context-menu=true :pt="{
+      column: {
+        bodycell: ({ state }) => ({
+          style: state['d_editing']
+        })
+      },
+      style: 'height:88px'
+    }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit" edit-mode="cell"
+      table-style="background-color: white" @row-expand="expandMode = true" @cell-edit-complete="onCellEditComplete">
+      <Column expander style="width: 5rem;" />
       <Column
-        :pt="{
-                root:  {
-                    test:'test',
+:pt="{
+        root: {
+          test: 'test',
 
-                }
-            }" field="name" header="Title" style="width : 8rem ; min-width: 70px; ">
-        <template #editor=" {index} ">
-          <InputText v-model="data.tasks[index].name" style="width : 100% ; min-width: 70px; "/>
+        }
+      }" field="name" header="Name" style="width : 8rem ; min-width: 70px; ">
+        <template #editor="{ index }">
+          <InputText v-model="data.tasks[index].name" style="width : 100% ; min-width: 70px; " />
         </template>
-        <template #body="{index}">
-          <p class="cursor-text	" @click="editMode=true"> {{ data.tasks[index].name }}</p>
-        </template>
-      </Column>
-      <Column field="id" header="ID" style="width: 40px;"/>
-      <Column field="annotations.length" sortable style="width: 3rem;">
-        <template #header><i v-tooltip="'Nbr total annotation'" class="pi pi-star cursor-help"/></template>
         <template #body="slotProps">
-          <div class="flex-1 text-center"> {{ slotProps.data.annotations.length }}</div>
+          <p class="cursor-text	" @click="editMode = true"> {{ slotProps.data.title }}</p>
         </template>
       </Column>
-      <Column field="predictions.length" sortable style="width: 3rem">
-        <template #header><i v-tooltip="'Nbr annotations remplies'" class="pi pi-star-fill cursor-help"/></template>
+      <Column field="id" header="ID" style="width: 40px;" />
+      <Column field="annotation_type" header="Type" />
+      <Column header="Status">
+        <template #body>
+          <Tag :severity="statusSeverity" class="mb-1 scale-90 ">{{ data.status }}</Tag>
+        </template>
+      </Column>
+      <Column field="description" header="Description" />
+      <Column header=" " style="width: 200px;">
         <template #body="slotProps">
-          <div class="flex-1 text-center"> {{ count_validated_task(slotProps.data.annotations) }}</div>
+          <Button label="Create Task" size="small" severity="info" @click="stepCreate(slotProps.data.id)" />
         </template>
       </Column>
-      <Column field="predictions.length" style="width: 12px">
-        <template #header><i v-tooltip="'Nbr de prédictions'" class="pi pi-lightbulb cursor-help"/></template>
-        <template #body="slotProps">
-          <div class="flex-1 text-center"> {{ slotProps.data.predictions.length }}</div>
-        </template>
-      </Column>
-      <Column header="Annoted by" style="width: 12rem">
-        <template #body="slotProps">
-          <div class="flex justify-around sm:w-20 md:w-10%">
-            <Avatar
-              v-for="(annotation,index) in slotProps.data.annotations" :key="index" v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
-                    shape="circle"/>
-          </div>
-        </template>
-      </Column>
-      <Column field="instruction" header="Instruction"/>
+      <Column :row-editor.value="true" body-style="text-align:center" style="width: 10%; min-width: 8rem" />
+      <template #expansion="slotProps">
+        <div class="p-6 border-surface-200 border-2">
+          <DataTable
+            unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
+            @row-click="handleRowClick($event)"
+            edit-mode="cell" table-style="background-color: white" @cell-edit-complete="onCellEditComplete">
+            <Column field="name" header="Name" style="width : 8rem ; min-width: 70px; ">
+              <template #editor="{ index: nestedIndex, data: nestedData }">
+                <InputText
+v-model="data.steps[slotProps.index].tasks[nestedIndex].name"
+                  style="width : 100% ; min-width: 70px; " />
+              </template>
+              <template #body="{ data: nestedData }">
+                <p class="cursor-text	" @click="editMode = true"> {{ nestedData.name }}</p>
+              </template>
+            </Column>
+            <Column field="id" header="ID" style="width: 40px;" />
+            <Column field="annotations.length" sortable style="width: 3rem;">
+              <template #header><i v-tooltip="'Nbr total annotation'" class="pi pi-star cursor-help" /></template>
+              <template #body="{ data: nestedData }">
+                <div class="flex-1 text-center"> {{ nestedData.annotations?.length || 0 }}</div>
+              </template>
+            </Column>
+            <Column field="predictions.length" sortable style="width: 3rem">
+              <template #header><i
+v-tooltip="'Nbr annotations remplies'"
+                  class="pi pi-star-fill cursor-help" /></template>
+              <template #body="slotProps">
+                <div class="flex-1 text-center"> {{ }}</div>
+              </template>
+            </Column>
+            <Column field="predictions.length" style="width: 12px">
+              <template #header><i v-tooltip="'Nbr de prédictions'" class="pi pi-lightbulb cursor-help" /></template>
+              <template #body="slotProps">
+                <div class="flex-1 text-center"> {{ }}</div>
+              </template>
+            </Column>
+            <Column header="Annoted by" style="width: 12rem">
+              <template #body="slotProps">
+                <div class="flex justify-around sm:w-20 md:w-10%">
+                  <Avatar
+v-for="(annotation, index) in slotProps.data.annotations" :key="index"
+                    v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
+                    shape="circle" />
+                </div>
+              </template>
+            </Column>
+            <Column field="instruction" header="Instruction" />
 
-      <Column header="Data">
-        <template #body="slotProps">
-          <Button icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
+            <Column header="Data">
+              <template #body="slotProps">
+                <Button icon="pi pi-code" @click="openDialog(slotProps.data.id)" />
 
-        </template>
-      </Column>
-      <Column :row-editor.value="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"/>
+              </template>
+            </Column>
+          </DataTable>
+        </div>
+      </template>
 
     </DataTable>
     <div v-else class="min-h-[calc(100vh-52px)] bg-white items-center justify-center flex flex-col">
-      <span class="pi pi-folder-open" style="font-size: 20rem; opacity: 25% ;"/>
+      <span class="pi pi-folder-open" style="font-size: 20rem; opacity: 25% ;" />
       <p class="text-slate-500">No tasks in this project</p>
     </div>
     <Dialog v-model:visible="visible" modal @hide="visible = false">
-      <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
+      <DataDialog :data="dialogContent" :visible="spinnerVisible" />
     </Dialog>
+    <MoleculeFormTask :dialogVisible="dialogVisible" :stepObject="formStepClick" @toggle-dialog="dialogVisible=false" />
   </div>
 
 </template>
@@ -79,21 +115,35 @@
 
 <script setup>
 
-import {ref} from 'vue';
-import {bcStore} from '~/stores/breadcrumbs';
-import {ProjectService} from '../../api/generate';
+  import _ from 'lodash';
+  import { ref } from 'vue';
+  import { bcStore } from '~/stores/breadcrumbs';
+  import { ProjectService } from '../../api/generate';
+  import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
+  import {useRefreshStore} from '../stores/refresh';
 
-const store = bcStore()
-const route = useRoute()
+  const store = bcStore()
+  const route = useRoute()
+  const refreshStore = useRefreshStore()
 
-const visible = ref(false)
-const dialogContent = ref('')
-const clickedRowData = ref(null)
-const spinnerVisible = ref(true)
+  const { getData } = storeToRefs(refreshStore )
+  const { fetchTasks } = refreshStore
 
-const editMode = ref(false)
+  const dialogVisible = ref(false)
+  const visible = ref(false)
+  const dialogContent = ref('')
+  const clickedRowData = ref(null)
+  const spinnerVisible = ref(true)
+  let formStepClick = $ref()
 
-const data = ref(await ProjectService.readProjectProjectProjectIdGet(route.params.id))
+  const expandedRows = ref()
+
+  const editMode = ref(false)
+  const expandMode = $ref(false)
+
+  fetchTasks(route.params.id)
+
+  const data = ref(getData)
 
 onMounted(() => console.log(data.value))
 
@@ -111,14 +161,37 @@ const navigateToTask = (id) => {
   navigateTo(`/tasks/${id}`)
 }
 
+  const stepCreate = (stepId) => {
+
+    formStepClick = _.find(data.value.steps,['id', stepId], 0 )
+
+    dialogVisible.value = true
+  }
+
 const handleRowClick = (event) => {
 
   clickedRowData.value = event.data;
-
+  console.log(event.data)
   if (editMode.value == false) navigateToTask(clickedRowData.value.id)
 
 
+
 }
+
+const statusSeverity = computed(() => {
+  switch (data.value.status) {
+    case 'pending':
+      return 'warning'
+
+    case 'draft':
+      return 'info'
+
+    case 'ended':
+      return 'success'
+
+  }
+})
+
 
 const onCellEditComplete = () => {
   editMode.value = false
@@ -136,7 +209,7 @@ if (store.items.length != 0 && store.items[store.items.length - 1].url != `/proj
   store.removeLastCrumb()
 }
 if (store.items.length == 0) { // When coming from dashboard
-  store.addCrumb({label: data.value.title, url: `/projects/${data.value.id}`})
+  store.addCrumb({ label: data.value.title, url: `/projects/${data.value.id}` })
 }
 
 </script>
