@@ -3,5 +3,16 @@
 </template>
 
 <script setup>
+import { bcStore } from '~/stores/breadcrumbs';
+
+const store = bcStore()
+const { removeLastCrumb } = store
+const { getItems } = storeToRefs(store)
+
+const length = getItems.value.length
+
+for (let index = 0; index < length; index++) {
+    removeLastCrumb()
+}
 
 </script>

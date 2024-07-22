@@ -3,9 +3,10 @@ import { defineStore } from 'pinia'
 type Crumb = { label : string, url: string }
 
 export const bcStore = defineStore('breadcrumbs', {
-  state: () => ({
+  state: () => {
+    return {
     items: [] as Crumb[]
-  }),
+  }},
   actions: {
     addCrumb(crumb: Crumb) {
       this.items.push(crumb)
@@ -14,7 +15,9 @@ export const bcStore = defineStore('breadcrumbs', {
       this.items.pop()
     }
   },
-  getter: {
-    
+  getters: {
+    getItems(state ){
+      return state.items
+    }
   }
 })
