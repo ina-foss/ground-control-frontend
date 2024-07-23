@@ -33,8 +33,6 @@ export class MediaService {
                 'media_id': mediaId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -45,20 +43,20 @@ export class MediaService {
      *
      * Args:
      * media_id (int): The unique identifier of the media to update.
-     * data (str): The updated media data (url).
+     * data (MediaDto): The updated media data.
      * s
      * Returns:
      * MediaDto: The updated media's details.
      * Raises:
      * HTTPException: If the media is not found.
      * @param mediaId
-     * @param data
+     * @param requestBody
      * @returns MediaDto Successful Response
      * @throws ApiError
      */
     public static updateDataMediaMediaMediaIdPatch(
         mediaId: number,
-        data: string,
+        requestBody: MediaCreate,
     ): CancelablePromise<MediaDto> {
         return __request(OpenAPI, {
             method: 'PATCH',
@@ -66,12 +64,9 @@ export class MediaService {
             path: {
                 'media_id': mediaId,
             },
-            query: {
-                'data': data,
-            },
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -92,8 +87,6 @@ export class MediaService {
                 'media_id': mediaId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -120,8 +113,6 @@ export class MediaService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -146,8 +137,6 @@ export class MediaService {
                 'limit': limit,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

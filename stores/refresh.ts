@@ -1,11 +1,11 @@
 import {defineStore} from 'pinia'
 
-import {ProjectService} from '../api/generate'
+import {ProjectService, TaskService} from '../api/generate'
 
 export const useRefreshStore = defineStore('refresh', {
   state: () => {
     return {
-      data: [],
+      data: [] as Record<string,any>,
     }
   },
   actions: {
@@ -14,10 +14,22 @@ export const useRefreshStore = defineStore('refresh', {
       this.data = newData
     },
     async fetchProject() {
-      ProjectService.readProjectsProjectsGet().then((response) => this.data = response).then(() => {}).catch((error) => (error))
+      const res = await ProjectService.readProjectsProjectsGet()
+      const data =  res
+      this.data = data;
+
+      return data
     },
     async fetchTasks(projectid: number) {
-      ProjectService.readProjectProjectProjectIdGet(projectid).then((response) => this.data = response).then(() => {}).catch((error) => (error))
+      const res = await ProjectService.readProjectProjectProjectIdGet(projectid)
+      const data =  res
+      this.data = data;
+
+      return data
+    },
+    async fetchAnnotations(taskid: number){
+      const res = await TaskService.readTaskTaskTaskIdGet(taskid)
+      this.data = res
     }
   },
   getters: {

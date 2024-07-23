@@ -1,6 +1,22 @@
 <template>
-  <div v-if="data.data.data == null || locals == undefined">
-    <span>data is not in the right format</span>
+  <div v-if="data.data?.data == null || locals == undefined">
+    <div class="grid grid-cols-9  ">
+      <div class="col-span-3  bg-surface-700 gap-3 px-5 py-5">
+        <Skeleton height="220px" />
+        <Skeleton class="m-3" height="3rem" width="70%" />
+        <Skeleton height="500px" />
+      </div>
+      <div class=" p-4 flex flex-row w-full gap-5  justify-center col-span-5">
+        <Skeleton  height="100%" width="28px" />
+      <div class="flex flex-col w-full gap-5 col-span-5">
+          <Skeleton height="150px" />
+          <Skeleton height="100px"/>
+          <Skeleton height="70px" />
+          <Skeleton height="150px"/>
+          <Skeleton height="75px"/>
+        </div>
+      </div>
+    </div>
   </div>
   <!-- TODO: Refactor into a Segmentation Component -->
   <div v-else>
@@ -61,17 +77,24 @@
 import {  ref } from 'vue';
 import { bcStore } from '~/stores/breadcrumbs';
 import { Hls } from 'hls.js'
-import { TaskService, AnnotationService } from '../../api/generate';
+import { TaskService, AnnotationService, AnnotationStatus } from '../../api/generate';
 import { useAuth } from '../../stores/auth';
 import { storeToRefs } from 'pinia';
+import { useRefreshStore } from '#imports';
 
-
+const refresh = useRefreshStore()
 const store = bcStore()
 const route = useRoute()
 const toast = useToast()
 const authStore = useAuth()
 
 const segmentationRefs = ref([])
+const { getData } = storeToRefs(refresh)
+const { getItems } = storeToRefs(store)
+const { userEmail } = storeToRefs(authStore)
+const { fetchAnnotations } = refresh
+const { addCrumb } = store
+
 
 
 const colors = ref(['#BEBEBE'])
@@ -83,8 +106,16 @@ let lastIndex = 0
 
 const topicsLoaded = ref(false)
 
-const data = ref(await TaskService.readTaskTaskTaskIdGet(route.params.id))
-const { userEmail } = storeToRefs(authStore)
+const data = ref(getData)
+
+fetchAnnotations(route.params.id).then((res) => {
+  if (getItems.value.length == 0){
+    addCrumb({label: '...',url: '' })
+    addCrumb({label: data.value.name, url: `/tasks/${data.value.id}`})
+  }
+  loadTopics()
+} )
+
 const annotationInfo = $computed(() => {
   let info = null
   if (data.value.annotations) {
@@ -99,8 +130,8 @@ const annotationInfo = $computed(() => {
 
 const locals = $computed(() => {
   return (annotationInfo == null)
-    ? data.value.data.data.localisation[0].sublocalisations.localisation
-    : data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation
+    ? data.value.data?.data.localisation[0].sublocalisations.localisation
+    : data.value.annotations[annotationInfo.index]?.result.localisation[0].sublocalisations.localisation
 })
 
 const refreshTaskData = async () => {
@@ -202,9 +233,9 @@ const handleSubmit = () => {
     AnnotationService.createAnnotationAnnotationPost({
       user_email: userEmail.value,
       task_id: data.value.id,
-      project_id: data.value.project_id,
       result: data.value.data.data,
-      status: "In progress"
+      annotation_status: AnnotationStatus.DRAFT,
+      version: 1
     }).then(() => refreshTaskData())
       .then(() => { window.onbeforeunload = null })
       .then(() => {
@@ -216,7 +247,7 @@ const handleSubmit = () => {
 }
 
 
-const videoId = data.value.data.data.id
+const videoId = data.value.data?.data?.id
 const videoSrc = `https://front.wsmedia.p.sas.ina/wsmedia/${videoId}?type=stream&protocol=hls&typemedia=video`
 
 const hlsPlayer = () => {
@@ -266,17 +297,16 @@ const loadTopics = () => {
 
 
 onMounted(async () => { // Une fois la page chargee, on stream la video
-  loadTopics()
   hlsPlayer()
 })
 
 
-if (store.items.length == 0) {
-  store.addCrumb({ label: data.value.project.title, url: `/projects/${data.value.project_id}` })
-}
-if (store.items[store.items.length - 1].url != `/tasks/${data.value.id}`) {
-  store.addCrumb({ label: data.value.name, url: `/tasks/${data.value.id}` })
-
-}
-
+// if (store.items.length == 0) {
+//   store.addCrumb({ label: data.value.project.title, url: `/projects/${data.value.project_id}` })
+// }
+// if (store.items[store.items.length - 1].url != `/tasks/${data.value.id}`) {
+//   store.addCrumb({ label: data.value.name, url: `/tasks/${data.value.id}` })
+//
+// }
+//
 </script>

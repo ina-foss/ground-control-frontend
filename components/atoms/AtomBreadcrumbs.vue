@@ -3,7 +3,7 @@
         <Breadcrumb :home="home" :model="items">
             <template #item="{ item, props }">
                 <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-                    <a :href="href" v-bind="props.action" @click="navigate">
+                    <a :href="href" v-bind="props.action" @click="handleNavigation(navigate)">
                         <span :class="[item.icon, 'text-color']" />
                         <span class="text-primary font-semibold">{{ item.label }}</span>
                     </a>
@@ -20,7 +20,16 @@
 <script setup>
 
 import { bcStore } from '../../stores/breadcrumbs.ts';
+const store = bcStore()
 
 const home = { label: 'Projects', url: '/dashboard' }
-const { items } = bcStore()
+
+const { getItems } = storeToRefs(store)
+
+const items = ref(getItems)
+
+const handleNavigation = (navigate) => {
+  navigate()
+}
+
 </script>
