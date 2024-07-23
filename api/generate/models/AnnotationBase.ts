@@ -4,13 +4,12 @@
 /* eslint-disable */
 import type { AnnotationStatus } from './AnnotationStatus';
 /**
- * DTO to create an annotation object
+ * DTO containing all basic informations about Task except result
  */
-export type AnnotationCreate = {
+export type AnnotationBase = {
     user_email: string;
     task_id: number;
     annotation_status: AnnotationStatus;
     version: number;
-    result: (Record<string, any> | null);
 };
 
