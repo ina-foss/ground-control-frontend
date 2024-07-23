@@ -15,11 +15,12 @@ import {storeToRefs} from 'pinia'
 
 const refreshStore = useRefreshStore()
 const fetchHappened = ref(true)
+const { fetchProject } = refreshStore
 
 provide('fetchProject', fetchHappened)
 
 
-refreshStore.fetchProject()
+fetchProject()
 
 const {getData} = storeToRefs(refreshStore)
 
@@ -32,7 +33,7 @@ const handleRefresh = async () => {
 }
 
 const sortDataById = (array) => {
-  return array.sort((a, b) => a.id - b.id)
+  return array?.sort((a, b) => a.id - b.id)
 }
 
 
