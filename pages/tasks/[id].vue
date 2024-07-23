@@ -23,6 +23,7 @@ const route = useRoute()
 const toast = useToast()
 const authStore = useAuth()
 
+const segmentationRefs = ref([])
 const { getData } = storeToRefs(refresh)
 const { getItems } = storeToRefs(store)
 const { userEmail } = storeToRefs(authStore)
