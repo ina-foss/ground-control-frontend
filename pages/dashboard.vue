@@ -22,12 +22,15 @@ const data = ref(getData)
 fetchProject()
 
 const handleRefresh = async () => {
-  refreshStore.fetch()
+  await fetchProject()
 }
 
-const sortDataById = (array) => {
-  return array?.sort((a, b) => a.id - b.id)
-}
+const sortDataById = computed( () => {
+  // Check if data is an array and not just an object
+  if(Array.isArray(data.value)) return data?.value?.sort((a, b) => a.id - b.id)
+  return []
+  }
+)
 
 
 </script>
