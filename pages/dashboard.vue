@@ -27,7 +27,7 @@ const handleRefresh = async () => {
 
 const sortDataById = computed( () => {
   // Check if data is an array and not just an object
-  if(Array.isArray(data.value)) return data.value.sort((a, b) => a.id - b.id)
+  if(Array.isArray(data.value)) return data?.value?.sort((a, b) => a.id - b.id)
   return []
   }
 )
