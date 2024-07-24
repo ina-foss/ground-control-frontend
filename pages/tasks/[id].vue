@@ -6,7 +6,7 @@
         <Skeleton class="m-3" height="3rem" width="70%" />
         <Skeleton height="500px" />
       </div>
-      <div class=" p-4 flex flex-row w-full gap-5  justify-center col-span-5">
+      <div class=" p-4 flex flex-row w-full gap-5 justify-center col-span-5">
         <Skeleton  height="100%" width="28px" />
       <div class="flex flex-col w-full gap-5 col-span-5">
           <Skeleton height="150px" />
@@ -62,7 +62,7 @@ const data = ref(getData)
 
 fetchAnnotations(route.params.id).then((res) => {
   if (getItems.value.length == 0){
-    addCrumb({label: '...',url: '' })
+    addCrumb({label: data.value.step.project.title, url:`/projects/${data.value.step.project.id}`})
     addCrumb({label: data.value.name, url: `/tasks/${data.value.id}`})
   }
   loadTopics()
