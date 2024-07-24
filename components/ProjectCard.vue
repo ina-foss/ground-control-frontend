@@ -2,10 +2,10 @@
   <div
     class="  w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl">
     <NuxtLink
-      @click="navigate" :to="{ name: 'projects-id', params: { id: $props.project.id } }">
+      @click="navigate" :to="{ name: 'projects-id', params: { id: project.id } }">
       <div class="flex justify-between align-middle pl-2">
           <p class="font-semibold self-center ">
-            {{ $props.project.title }} </p>
+            {{ project.title }} </p>
         <p class="inline-block  text-2xl">
           <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
           <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
