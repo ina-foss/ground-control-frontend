@@ -1,8 +1,12 @@
 <template>
   <div v-if="data.data?.data == null || locals == undefined">
     <div class="grid grid-cols-9  ">
-      <div class="col-span-3  bg-surface-700 gap-3 px-5 py-5">
-        <Skeleton height="220px" />
+      <div class="col-span-3 h-screen  bg-surface-700 gap-3 px-5 py-5">
+        <Skeleton :pt="{
+          root: {
+             style: 'height: auto'
+          }
+        }"  class="aspect-video"/>
         <Skeleton class="m-3" height="3rem" width="70%" />
         <Skeleton height="500px" />
       </div>
