@@ -10,7 +10,7 @@
     <div class="self-center">
       <Button v-if="$route.name == 'dashboard'" label="Create Project" size="small" @click="dialogVisible = true" />
       <Button v-else label="Settings" severity="secondary" outlined size="small" />
-      <MoleculeFormProject :dialogVisible="dialogVisible" @toggle-dialog="dialogVisible=false" />
+      <MoleculeFormProject :dialogVisible="dialogVisible" @toggle-dialog="dialogVisible=false"/>
     </div>
     <div class="self-center">
       <AtomAvatarHeader />

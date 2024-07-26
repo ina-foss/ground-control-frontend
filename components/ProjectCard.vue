@@ -4,14 +4,13 @@
     <NuxtLink
       @click="navigate" :to="{ name: 'projects-id', params: { id: project.id } }">
       <div class="flex justify-between align-middle pl-2">
-          <p class="font-semibold self-center ">
+          <p class="font-semibold self-center exeeded_text">
             {{ project.title }} </p>
         <p class="inline-block  text-2xl">
           <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
           <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
             @click.stop.prevent="visible=true" />
-          <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false"
-          :selectedTypes="project?.steps"/>
+          <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false"/>
           <Dialog  modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
             @hide="$emit('refreshData')" @after-hide="deleteDialog = false">
             <div class=" grid grid-cols-1 grid-rows-3 gap-1">
@@ -102,4 +101,9 @@ const deleteProject = async () => {
 }
 
 </script>
-
+<style>
+.exeeded_text{
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+</style>
