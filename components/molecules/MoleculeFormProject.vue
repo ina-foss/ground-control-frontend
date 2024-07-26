@@ -1,5 +1,6 @@
 <template>
-  <Dialog :visible="dialogVisible" modal header="Your Project" :style="{ width: 'fit-content' }" class="bg-white "
+  <Toast />
+  <Dialog :visible="dialogVisible" modal :header="headerTitle" :style="{ width: 'fit-content' }" class="bg-white "
     @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
     <Stepper class="transition-all">
       <StepperPanel class="transition-all" header="Infos">
@@ -54,14 +55,17 @@
               </ol>
             </div>
           </div>
+
           <div class="flex justify-between pt-8">
             <Button label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback" />
-            <Button label="Create" severity="success" icon="pi pi-check" size="small" @click="createProject" />
+            <Button v-if="!project" label="Create" severity="success" icon="pi pi-check" size="small" @click="createProject" />
+            <Button v-else label="Update" severity="success" icon="pi pi-check" size="small" @click="updateProject" />
           </div>
         </template>
       </StepperPanel>
     </Stepper>
   </Dialog>
+
 </template>
 
 <script setup>
@@ -72,7 +76,7 @@ import { ProjectStatus, AnnotationType, ProjectService, StepService, StepStatus 
 import { useRefreshStore } from '#imports';
 import { useAuth } from '#imports';
 
-const { dialogVisible, project } = defineProps(['dialogVisible', 'project'])
+const { dialogVisible, project, selectedTypes } = defineProps(['dialogVisible', 'project','selectedTypes'])
 
 
 const emits = defineEmits(['toggle-dialog', 'refreshData'])
@@ -85,42 +89,120 @@ const status = $ref(project?.status)
 const isPublished = $ref(project?.is_published || false)
 const allowSkip = $ref(project?.allow_skip || false)
 const emptyAnnotations = $ref(project?.empty_annotations || false)
-
-
 let files = $ref([])
 let fileData = $ref([])
 
 const availableType = $ref(Object.values(AnnotationType))
 const selectedType = $ref([])
-
+console.log("P:", project)
+//console.log("types",selectedTypes)
+if(selectedTypes !== null && selectedTypes !== undefined) {
+  selectedTypes.forEach((type, index) => {
+    //console.log("type",type.annotation_type)
+    selectedType.push(type.annotation_type)
+    //console.log("typePushed",selectedType)
+  })
+}
 const refreshStore = useRefreshStore()
-const { userEmail, user } = useAuth()
+const { userEmail } = useAuth()
 const toast = useToast()
 
+const headerTitle = !project? 'New Project':'Edit ' +project?.title
 
-const updateProject = async () => {
-  if (title.value == project.value.title && description.value == project.value.description) {
-  } else {
-    const response = await ProjectService.updateProjectProjectProjectIdPut(project.value.id, {
-      title: title.value,
-      description: description.value,
-      status: project.value.status,
-      annotation_type: project.value.annotation_type,
-      is_published: project.value.is_published,
-      empty_annotations: project.value.empty_annotations,
-      allow_skip: project.value.allow_skip,
-      control_weights: project.value.control_weights,
-      pinned_at: project.value.pinned_at,
-      created_by: "john@example.com",
+/*const updateProject = async () => {
+
+  //if (title.value == project.value.title && description.value == project.value.description)
+  if(title === "")
+  {
+    toast.add({ severity: 'danger', detail: 'Project could not be created', summary: 'Something went wrong' })
+  }
+  else {
+    const response = ProjectService.updateProjectProjectProjectIdPut(project?.id, {
+      title: title,
+      description: description,
+      status: status,
+      is_published: isPublished,
+      empty_annotations: emptyAnnotations,
+      allow_skip: allowSkip,
+      control_weights: 10,
+      pinned_at: null,
+      created_by: userEmail //a verifier si c'est la meme ou elle doit etre changé
 
     })
-    visible.value = false
-  }
-}
+    response.catch(() => (toast.add({ severity: 'danger', detail: 'Project could not be updated', summary: 'Something went wrong' }))).then((res) => {
+      selectedType.forEach((type, index) => {
+        const exists = project?.steps?.find(element => element.annotation_type === type);
+         console.log(exists)
+        if(!exists){
+          StepService.createStepStepPost({
+            title: `Step #${index +1 }`,
+            description: 'Step description',
+            annotation_type: type,
+            pinned_at: null,
+            status: StepStatus.DRAFT,
+            project_id: res.id
+          }).catch((err) => console.error(err)).then((res) => console.log(res))
+        }
 
+        }).catch((err) => console.error(err)).then((res) => console.log(res))
+      })
+
+      files = []
+      fileData = []
+  // doit-on faire un catch
+    visible.value = true // ça sert à quoi exactement
+  files = []
+  fileData = []
+  emits('toggle-dialog')
+
+  refreshStore.fetchProject()
+  }
+}*/
+
+const updateProject = async () => {
+  if (title === "") {
+    toast.add({ severity: "error", detail: 'Project could not be created', summary: 'Something went wrong' });
+  } else {
+    try {
+      const response = await ProjectService.updateProjectProjectProjectIdPut(project?.id, {
+        title: title,
+        description: description,
+        status: status,
+        is_published: isPublished,
+        empty_annotations: emptyAnnotations,
+        allow_skip: allowSkip,
+        control_weights: 10,
+        pinned_at: null,
+        created_by: userEmail
+      });
+
+      // Assuming response is a promise
+      selectedType.forEach((type, index) => {
+        const exists = project?.steps?.find(element => element.annotation_type === type);
+        if (!exists) {
+          StepService.createStepStepPost({
+            title: `Step #${index + 1}`,
+            description: 'Step description',
+            annotation_type: type,
+            pinned_at: null,
+            status: StepStatus.DRAFT,
+            project_id: response.id
+          }).catch((err) => console.error(err)).then((res) => console.log(res));
+        }
+      });
+      emits('toggle-dialog');
+
+      refreshStore.fetchProject();
+    } catch (error) {
+      toast.add({ severity: 'danger', detail: 'Project could not be updated', summary: 'Something went wrong' });
+      console.error(error);
+    }
+  }
+};
 const createProject = async () => {
-  if (title == null) {
-    errorVisible.value = true;
+  if (title === '') {
+    //errorVisible.value = true;
+    toast.add({severity:"error", detail:"Project could not be created", summary:"Something went wrong"})
   }
   else {
 
@@ -133,7 +215,7 @@ const createProject = async () => {
       allow_skip: allowSkip,
       control_weights: 10,
       pinned_at: null,
-      created_by: userEmail
+      created_by: userEmail,
     })
 
     response.catch(() => (toast.add({ severity: 'danger', detail: 'Project could not be created', summary: 'Something went wrong' }))).then((res) =>{
@@ -147,8 +229,6 @@ const createProject = async () => {
           project_id: res.id
         }).catch((err) => console.error(err)).then((res) => console.log(res))
       })
-      files = []
-      fileData = []
       emits('toggle-dialog')
 
       refreshStore.fetchProject()
@@ -157,40 +237,4 @@ const createProject = async () => {
   }
 }
 
-const deleteProject = async () => {
-  await ProjectService.deleteProjectProjectProjectIdDelete(project.value.id)
-  visible.value = false
-}
-
-const onUpload = async (event) => {
-  const xhr = new XMLHttpRequest()
-  const formData = new FormData()
-  const file = event.files[0]
-
-
-  formData.append("file", file)
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      let _this$uploadedFiles;
-    }
-  };
-  xhr.open('POST', '/', true);
-  files.push(event.files);
-  const reader = new FileReader();
-  reader.onloadend = onReaderLoad;
-  reader.readAsText(event.files[0])
-}
-
-const onReaderLoad = (event) => {
-  const obj = JSON.parse(event.target.result);
-  fileData.push(obj)
-}
-
-
 </script>
-
-<style scoped>
-.p-steplist {
-  transition: "all 1s ease-in-out"
-}
-</style>

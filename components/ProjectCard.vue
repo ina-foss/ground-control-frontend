@@ -10,7 +10,8 @@
           <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
           <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
             @click.stop.prevent="visible=true" />
-          <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false" />
+          <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false"
+          :selectedTypes="project?.steps"/>
           <Dialog  modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
             @hide="$emit('refreshData')" @after-hide="deleteDialog = false">
             <div class=" grid grid-cols-1 grid-rows-3 gap-1">
@@ -58,11 +59,9 @@
 </template>
 
 <script setup>
-import Badge from 'primevue/badge';
 import { bcStore } from '~/stores/breadcrumbs';
 import { defineEmits } from 'vue';
 import { ProjectService } from '~/api/generate';
-import { useService } from '../composables/useService';
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';
 import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
@@ -70,13 +69,11 @@ import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
 const visible = ref(false)
 const deleteDialog = ref(false)
 const store = bcStore()
-const { addcrumb } = store
 const { project } = defineProps(['project'])
 const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore)
 
 const navigate = () =>{
-  console.log(project)
   store.addCrumb({ label: project.title, url: `/projects/${project.id}` })
 }
 
@@ -97,43 +94,11 @@ const statusSeverity = computed(() =>{
 const title = ref(project.title)
 
 const description = ref(project.description)
-
 const emit = defineEmits(['refreshData']);
-
-
-const updateProject = async () => {
-
-  if (title.value == project.value.title && description.value == project.value.description) {
-  } else {
-    const response = await ProjectService.updateProjectProjectProjectIdPut(project.value.id, {
-      title: title.value,
-      description: description.value,
-      status: project.value.status,
-      annotation_type: project.value.annotation_type,
-      is_published: project.value.is_published,
-      empty_annotations: project.value.empty_annotations,
-      allow_skip: project.value.allow_skip,
-      control_weights: project.value.control_weights,
-      pinned_at: project.value.pinned_at,
-      created_by: "john@example.com",
-
-    })
-    visible.value = false
-  }
-}
 
 const deleteProject = async () => {
   await ProjectService.deleteProjectProjectProjectIdDelete(project.value.id)
   visible.value = false
-}
-
-
-const updateBreadcrumd = () => {
-  store.addCrumb({ label: project.value.title, url: `/projects/${project.value.id}` })
-}
-
-const optionTrigger = () => {
-  window.alert("Setting for task " + props.project.id)
 }
 
 </script>
