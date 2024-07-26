@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-if="data !== undefined" class="py-8 px-4 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2">
+    <div class="py-8 px-4 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2">
       <ProjectCard
-                   v-for="(project,index) in sortDataById(data)" :key="index" :project=project
+                   v-for="(project,index) in sortDataById" :key="index" :project=project
                    @refresh-data="handleRefresh"/>
     </div>
   </div>
@@ -14,27 +14,23 @@ import {storeToRefs} from 'pinia'
 
 
 const refreshStore = useRefreshStore()
-const fetchHappened = ref(true)
 const { fetchProject } = refreshStore
-
-provide('fetchProject', fetchHappened)
-
-
-fetchProject()
-
 const {getData} = storeToRefs(refreshStore)
-
 
 const data = ref(getData)
 
+fetchProject()
 
 const handleRefresh = async () => {
-  refreshStore.fetch()
+  await fetchProject()
 }
 
-const sortDataById = (array) => {
-  return array?.sort((a, b) => a.id - b.id)
-}
+const sortDataById = computed( () => {
+  // Check if data is an array and not just an object
+  if(Array.isArray(data.value)) return data?.value?.sort((a, b) => a.id - b.id)
+  return []
+  }
+)
 
 
 </script>
