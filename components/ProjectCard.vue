@@ -9,7 +9,9 @@
           <p class="inline-block  text-2xl">
           <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
             <Button v-if="deleteDialog === false" icon="pi pi-trash" severity="danger" text rounded size="small"
-                    @click="deleteProject" />
+                    @click="deleteProject" @click.stop.prevent="deleteDialog=true" />
+
+
 
 <!--            <Button v-else label="Sure ?" severity="danger" class="" @click="deleteProject" />-->
 
@@ -107,11 +109,8 @@ const refreshStore = useRefreshStore()
 const deleteProject = async () => {
   try {
     const res = await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
-    console.log(res);
     navigateTo(`/dashboard`);
-    //visible.value = false
-    //await refreshStore.fetchProject();
-    console.log("project deleted");
+    await refreshStore.fetchProject();
   } catch (err) {
     console.error("Error deleting project:", err);
   }
