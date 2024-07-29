@@ -1,15 +1,22 @@
 <template>
   <div
-    class="  w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl">
+    class="w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl">
     <NuxtLink
       @click="navigate" :to="{ name: 'projects-id', params: { id: project.id } }">
-      <div class="flex justify-between align-middle pl-2">
+      <div class="inline-block flex justify-between align-middle pl-2">
           <p class="font-semibold self-center exeeded_text">
             {{ project.title }} </p>
-        <p class="inline-block  text-2xl">
+          <p class="inline-block  text-2xl">
           <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
-          <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
+            <Button v-if="deleteDialog === false" icon="pi pi-trash" severity="danger" text rounded size="small"
+                    @click="deleteProject" />
+
+<!--            <Button v-else label="Sure ?" severity="danger" class="" @click="deleteProject" />-->
+
+            <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
             @click.stop.prevent="visible=true" />
+          <!--<Button v-if="deleteDialog === false" label="Delete" severity="danger" @click="deleteDialog = true" />-->
+
           <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false"/>
           <Dialog  modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
             @hide="$emit('refreshData')" @after-hide="deleteDialog = false">
@@ -60,10 +67,11 @@
 <script setup>
 import { bcStore } from '~/stores/breadcrumbs';
 import { defineEmits } from 'vue';
-import { ProjectService } from '~/api/generate';
+import {ProjectService, StepService, StepStatus} from '~/api/generate';
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';
 import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
+import {useRefreshStore} from '#imports';
 
 const visible = ref(false)
 const deleteDialog = ref(false)
@@ -94,10 +102,19 @@ const title = ref(project.title)
 
 const description = ref(project.description)
 const emit = defineEmits(['refreshData']);
+const refreshStore = useRefreshStore()
 
 const deleteProject = async () => {
-  await ProjectService.deleteProjectProjectProjectIdDelete(project.value.id)
-  visible.value = false
+  try {
+    const res = await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
+    console.log(res);
+    navigateTo(`/dashboard`);
+    //visible.value = false
+    //await refreshStore.fetchProject();
+    console.log("project deleted");
+  } catch (err) {
+    console.error("Error deleting project:", err);
+  }
 }
 
 </script>

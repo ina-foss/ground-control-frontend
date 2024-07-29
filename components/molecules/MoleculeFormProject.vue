@@ -10,7 +10,7 @@
             <div class="flex grid-cols-2 gap-3 align-items-center ">
               <label class="self-center basis-1/4">Title</label>
               <InputText v-model="title" placeholder="Enter a new project name" autocomplete="off" class="flex-auto"/>
-              <InlineMessage v-if="errorVisible === true && !title" >Title is required</InlineMessage>
+              <InlineMessage v-if="errorVisible === true && !title">Title is required</InlineMessage>
             </div>
             <div class="flex gap-3 ">
               <label class="self-center basis-1/4">Description</label>
@@ -78,19 +78,20 @@ import InputSwitch from 'primevue/inputswitch';
 import {ProjectStatus, AnnotationType, ProjectService, StepService, StepStatus} from '~/api/generate';
 import {useRefreshStore} from '#imports';
 import {useAuth} from '#imports';
+
 const errorVisible = ref(true);
 const {dialogVisible, project} = defineProps(['dialogVisible', 'project'])
 const emits = defineEmits(['toggle-dialog', 'refreshData'])
 const visible = computed(() => dialogVisible)
 const deleteDialog = $ref(false)
-const title = $ref(project?.title || '')
-const description = $ref(project?.description || '')
-const status = $ref(project?.status || ProjectStatus.DRAFT)
-const isPublished = $ref(project?.is_published || false)
-const allowSkip = $ref(project?.allow_skip || false)
-const emptyAnnotations = $ref(project?.empty_annotations || false)
+let title = $ref(project?.title || '')
+let description = $ref(project?.description || '')
+let status = $ref(project?.status || ProjectStatus.DRAFT)
+let isPublished = $ref(project?.is_published || false)
+let allowSkip = $ref(project?.allow_skip || false)
+let emptyAnnotations = $ref(project?.empty_annotations || false)
 const availableType = $ref(Object.values(AnnotationType))
-const selectedType = $ref([])
+let selectedType = $ref([])
 const refreshStore = useRefreshStore()
 const {userEmail} = useAuth()
 const toast = useToast()
@@ -169,6 +170,15 @@ const createProject = async () => {
           project_id: res.id
         }).catch((err) => console.error(err)).then((res) => console.log(res))
       })
+      // reset dialog values of create new
+      title = '',
+        description = '',
+        status = ProjectStatus.DRAFT,
+        isPublished = false,
+        allowSkip = false,
+        emptyAnnotations = false,
+        selectedType = []
+
       emits('toggle-dialog')
 
       refreshStore.fetchProject()
