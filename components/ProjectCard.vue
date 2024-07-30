@@ -7,17 +7,22 @@
           <p class="font-semibold self-center exeeded_text">
             {{ project.title }} </p>
           <p class="inline-block  text-2xl">
-          <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
-            <Button v-if="deleteDialog === false" icon="pi pi-trash" severity="danger" text rounded size="small"
-                    @click="deleteProject" @click.stop.prevent="deleteDialog=true" />
-
-
-
-<!--            <Button v-else label="Sure ?" severity="danger" class="" @click="deleteProject" />-->
+            <Button icon="pi pi-trash" severity="danger" text rounded size="small"
+                     @click.stop.prevent="deleteDialog=true" />
+<!--Confirmation dialog to delete-->
+            <Dialog v-model:visible="deleteDialog" modal header="Are you sure you want to delete this project?" :style="{ width: '35rem' }" class="bg-white"
+                     @after-hide="deleteDialog = false">
+              <div class=" grid grid-cols-1 gap-1">
+                <ButtonGroup class="justify-evenly flex items-center pt-6 ">
+                  <Button label="No" severity="info" class="justify-self-center" @click="deleteDialog = false" />
+                  <Button v-if="deleteDialog === false" label="Delete" severity="danger" @click="deleteDialog = true" />
+                  <Button v-else label="Yes" severity="danger" class="" @click="deleteProject" />
+                </ButtonGroup>
+              </div>
+            </Dialog>
 
             <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
             @click.stop.prevent="visible=true" />
-          <!--<Button v-if="deleteDialog === false" label="Delete" severity="danger" @click="deleteDialog = true" />-->
 
           <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false"/>
           <Dialog  modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
@@ -69,7 +74,7 @@
 <script setup>
 import { bcStore } from '~/stores/breadcrumbs';
 import { defineEmits } from 'vue';
-import {ProjectService, StepService, StepStatus} from '~/api/generate';
+import {ProjectService} from '~/api/generate';
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';
 import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
