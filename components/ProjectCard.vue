@@ -81,7 +81,7 @@ import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
 import {useRefreshStore} from '#imports';
 
 const visible = ref(false)
-const deleteDialog = ref(false)
+let deleteDialog = ref(false)
 const store = bcStore()
 const { project } = defineProps(['project'])
 const authStore = useAuth()
@@ -116,6 +116,7 @@ const deleteProject = async () => {
     const res = await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
     navigateTo(`/dashboard`);
     await refreshStore.fetchProject();
+    deleteDialog.value= false
   } catch (err) {
     console.error("Error deleting project:", err);
   }
