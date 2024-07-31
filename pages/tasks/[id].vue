@@ -29,8 +29,18 @@ const { fetchAnnotations } = refresh
 const { addCrumb } = store
 
 const data = ref(getData)
+const savedItems = localStorage.getItem('breadcrumbItems');
 
-await fetchAnnotations(route.params.id)
+await fetchAnnotations(route.params.id).then((res)=> {
+  if (store.items.length === 0 ) { //reloading the page
+    if (savedItems) {
+      const parsedItems = JSON.parse(savedItems);
+    parsedItems.forEach((item) => {
+      store.addCrumb({ label: item.label, url: item.url })
+    });
+    }
+  }
+})
 
 const annotations_out = ref(await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out'))
 const annotations_in = ref(await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'in'))
