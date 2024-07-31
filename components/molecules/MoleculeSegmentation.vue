@@ -1,7 +1,7 @@
 <template>
   <div class="col-span-5 flex flex-row w-full max-h-full justify-center overflow-y-hidden" >
     <AtomProgressBar :colors="colors" :topics="topics" :total_length="locals.length" @progress-bar-jump="jumpToTopic($event)" />
-    <ol class="flex flex-col gap-5 overflow-y-auto h-full py-4">
+    <ol class="flex flex-col overflow-y-auto h-full ">
       <ScrollTop
         :pt="{ root: { style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
@@ -60,8 +60,8 @@
 
 <style scoped lang="postcss">
 
-.selected-segment{
-  @apply border-black border-2;
+.selected-segment div{
+  @apply border-surface-500 border-2 ;
 }
 
 </style>
