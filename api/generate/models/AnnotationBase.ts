@@ -8,7 +8,6 @@ import type { AnnotationStatus } from './AnnotationStatus';
  */
 export type AnnotationBase = {
     user_email: string;
-    task_id: number;
     annotation_status: AnnotationStatus;
     version: number;
 };

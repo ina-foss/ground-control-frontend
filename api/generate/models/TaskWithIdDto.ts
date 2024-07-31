@@ -11,7 +11,6 @@ import type { TaskStatus } from './TaskStatus';
 export type TaskWithIdDto = {
     name: string;
     instruction?: (string | null);
-    data: (Record<string, any> | null);
     data_type: TaskDataType;
     status: TaskStatus;
     lead_time: (number | null);

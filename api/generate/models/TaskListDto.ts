@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AnnotationDto } from './AnnotationDto';
+import type { StepProjectDto } from './StepProjectDto';
 import type { TaskCommentDto } from './TaskCommentDto';
 import type { TaskDataType } from './TaskDataType';
 import type { TaskStatus } from './TaskStatus';
@@ -13,7 +14,6 @@ import type { TaskStatus } from './TaskStatus';
 export type TaskListDto = {
     name: string;
     instruction?: (string | null);
-    data: (Record<string, any> | null);
     data_type: TaskDataType;
     status: TaskStatus;
     lead_time: (number | null);
@@ -24,5 +24,6 @@ export type TaskListDto = {
     updated_at: (string | null);
     annotations?: Array<AnnotationDto>;
     taskComments?: Array<TaskCommentDto>;
+    step: (StepProjectDto | null);
 };
 

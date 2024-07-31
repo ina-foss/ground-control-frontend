@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { TaskBaseDto } from '../models/TaskBaseDto';
 import type { TaskListDto } from '../models/TaskListDto';
+import type { TaskWithIdDto } from '../models/TaskWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -81,12 +82,12 @@ export class TaskService {
      * Returns:
      * TaskBaseDto: The newly created task's details.
      * @param requestBody
-     * @returns TaskBaseDto Successful Response
+     * @returns TaskWithIdDto Successful Response
      * @throws ApiError
      */
     public static createTaskTaskPost(
         requestBody: TaskBaseDto,
-    ): CancelablePromise<TaskBaseDto> {
+    ): CancelablePromise<TaskWithIdDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/task/',
