@@ -1,6 +1,6 @@
 <template>
   <div class="col-span-3 bg-surface-700 px-5 py-5 h-full overflow-auto">
-    <AtomVideoHls ref="AtomVideoHlsRef" :data="data" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoHls ref="AtomVideoHlsRef" :data="data" :videoSrc="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
     <AtomTopicList :colors="colors" />
     <h2 class="text-white text-3xl p-3 font-semibold">Segmentation</h2>
       <p class="text-white p-3 ">
@@ -20,7 +20,7 @@
   import AtomVideoHls from '../atoms/AtomVideoHls'
   import AtomTopicList from '../atoms/AtomTopicList'
 
-  const { data, locals, colors } = defineProps(['data', 'locals', 'colors'])
+  const { data, locals, colors, videoSrc} = defineProps(['data', 'locals', 'colors', 'videoSrc'])
 
   const AtomVideoHlsRef = $ref()
 

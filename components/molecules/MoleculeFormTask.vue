@@ -102,14 +102,18 @@
 
 <script setup>
 
-  import { TaskStatus, TaskService,TaskDataType, MediaService} from '~/api/generate';
+  import { TaskStatus, TaskService,TaskDataType, MediaService, AnnotationService, AnnotationStatus} from '~/api/generate';
   import { useRefreshStore } from '#imports';
+  import { useAuth } from '#imports';
 
   const refreshStore = useRefreshStore()
+  const authStore = useAuth()
   const emits = defineEmits(['toggle-dialog', 'refreshData'])
   const { dialogVisible, stepObject } = defineProps(['dialogVisible','stepObject' ])
   const { fetchTasks } = refreshStore
+  const { userEmail } = storeToRefs(authStore)
   const route = useRoute()
+
 
   const name = $ref()
   const instruction = $ref()
@@ -156,15 +160,29 @@
         TaskService.createTaskTaskPost({
           name: name,
           instruction: instruction,
-          data: file,
           data_type: dataType,
           status: status,
           lead_time: null,
           step_id: stepObject.id,
           media_id: res.id
-        }).catch((err) => console.error(err)) .then(() => fetchTasks(stepObject.id))
-      })
+          }).catch((err) => console.error(err)).then((res) => {
+        AnnotationService.createAnnotationAnnotationPost({
+            annotation: {
+              user_email : userEmail.value,
+              annotation_status: AnnotationStatus.DRAFT,
+              version: 0,
+              result: file,
+              task_id: res.id
+            },
+            association: {
+              annotation_id : 0,
+              task_id: res.id,
+              direction: 'in'
+            }
+          })
+         }).then(() => fetchTasks(stepObject.project_id))
     })
     emits('toggle-dialog')
+  })
   }
 </script>

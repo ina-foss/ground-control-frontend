@@ -1,11 +1,34 @@
 <template>
-  <div class="h-full" >
+  <div v-if=" !locals ">
+    <div class="grid grid-cols-9  ">
+      <div class="col-span-3 h-screen  bg-surface-700 gap-3 px-5 py-5">
+        <Skeleton :pt="{
+          root: {
+             style: 'height: auto'
+          }
+        }"  class="aspect-video"/>
+        <Skeleton class="m-3" height="3rem" width="70%" />
+        <Skeleton height="500px" />
+      </div>
+      <div class=" p-4 flex flex-row w-full gap-5 justify-center col-span-5">
+        <Skeleton  height="100%" width="28px" />
+      <div class="flex flex-col w-full gap-5 col-span-5">
+          <Skeleton height="150px" />
+          <Skeleton height="100px"/>
+          <Skeleton height="70px" />
+          <Skeleton height="150px"/>
+          <Skeleton height="75px"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-else class="h-full" >
     <div class="fixed bottom-10 right-20 ">
       <Button label="Submit" size="large" @click="handleSubmit()" />
     </div>
     <Toast />
     <div class="grid grid-cols-9 h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc" :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
       <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
@@ -15,16 +38,21 @@
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
+  import { TaskService, AnnotationService, AnnotationStatus } from '../../api/generate';
   import { Hls } from 'hls.js'
 
   const authStore = useAuth()
 
-  const { data } = defineProps(['data'])
+
+  const { data, annotations_in, annotations_out } = defineProps(['data','annotations_in','annotations_out'])
+
+
 
   const emits = defineEmits([ 'submit-annotation', 'refresh-data' ]);
 
   const colors = $ref(['#BEBEBE'])
   const topics = $ref([])
+  const videoSrc = $ref(annotations_in[0].result.asset.url)
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
@@ -32,20 +60,20 @@
 
   const annotationInfo = $computed(() => {
     let info = null
-    if (data.annotations) {
-      data.annotations.forEach((annotation, index) => {
+    if (annotations_out) {
+      annotations_out.forEach((annotation, index) => {
         if (annotation.user_email == userEmail.value) {
           info = { index: index, id: annotation.id }
         }
       })
       return info
-      }
+    }
   });
 
   const locals = $computed(() => {
     return (annotationInfo == null)
-      ? data.data.data.localisation[0].sublocalisations.localisation
-      : data.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation
+      ? annotations_in[0]?.result.data.localisation[0].sublocalisations.localisation
+      : annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation
   })
 
 
@@ -59,12 +87,6 @@
     moleculeSegmentationRef.segmentationRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
   }
 
-  async function fetchVideoStream(url) {
-    const response = await fetch(url);
-    const videoHls = response.text();
-
-    return videoHls;
-  }
 
   const handleSubmit = () => {
     locals.forEach((phrase, index) => {
@@ -73,29 +95,6 @@
       }
     })
     emits('submitAnnotation',{ locals: locals })
-  }
-
-
-  const videoId = data.data.data.id
-  const videoSrc = `https://front.wsmedia.p.sas.ina/wsmedia/${videoId}?type=stream&protocol=hls&typemedia=video`
-
-  const hlsPlayer = () => {
-    fetchVideoStream(videoSrc).then((content) => {
-      const src = `data:application/vnd.apple.mpegurl;base64,${content}`
-      if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-          hls.loadSource(src);
-          hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-          });
-        });
-
-
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = videoSrc;
-      }
-    })
   }
 
   function generatePastelColor(tagNumber) {
@@ -125,7 +124,6 @@
 
 
   onMounted(async () => { // Une fois la page chargee, on stream la video
-    hlsPlayer()
     loadTopics()
   })
 
