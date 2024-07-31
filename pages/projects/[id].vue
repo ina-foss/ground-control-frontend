@@ -160,7 +160,6 @@ v-for="(annotation, index) in nestedData.annotations" :key="index"
   })
 
 
-onMounted(() => console.log(data.value))
 
 const count_validated_task = ((annotations) => {
   let task_count = 0;

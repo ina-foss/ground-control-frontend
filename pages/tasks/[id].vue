@@ -1,29 +1,7 @@
 <template>
-  <div v-if="data.data?.data == null || locals == undefined">
-    <div class="grid grid-cols-9  ">
-      <div class="col-span-3 h-screen  bg-surface-700 gap-3 px-5 py-5">
-        <Skeleton :pt="{
-          root: {
-             style: 'height: auto'
-          }
-        }"  class="aspect-video"/>
-        <Skeleton class="m-3" height="3rem" width="70%" />
-        <Skeleton height="500px" />
-      </div>
-      <div class=" p-4 flex flex-row w-full gap-5 justify-center col-span-5">
-        <Skeleton  height="100%" width="28px" />
-      <div class="flex flex-col w-full gap-5 col-span-5">
-          <Skeleton height="150px" />
-          <Skeleton height="100px"/>
-          <Skeleton height="70px" />
-          <Skeleton height="150px"/>
-          <Skeleton height="75px"/>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div v-else class="h-full">
-    <OrganismSegmentation :data="data" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   />
+  <!-- TODO: Find a way to render this while aynchronous calls -->
+  <div  class="h-full">
+    <OrganismSegmentation :data="data" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   />
   </div>
 </template>
 
@@ -44,38 +22,25 @@ const route = useRoute()
 const toast = useToast()
 const authStore = useAuth()
 
-const segmentationRefs = ref([])
 const { getData } = storeToRefs(refresh)
 const { getItems } = storeToRefs(store)
 const { userEmail } = storeToRefs(authStore)
 const { fetchAnnotations } = refresh
 const { addCrumb } = store
 
-
-
-const colors = ref(['#BEBEBE'])
-const topics = ref([])
-
-const video = ref(null)
-let lastTimecode = 0
-let lastIndex = 0
-
-const topicsLoaded = ref(false)
-
 const data = ref(getData)
 
-fetchAnnotations(route.params.id).then((res) => {
-  if (getItems.value.length == 0){
-    addCrumb({label: data.value.step.project.title, url:`/projects/${data.value.step.project.id}`})
-    addCrumb({label: data.value.name, url: `/tasks/${data.value.id}`})
-  }
-  loadTopics()
-} )
+await fetchAnnotations(route.params.id)
+
+const annotations_out = ref(await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out'))
+const annotations_in = ref(await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'in'))
+
+
 
 const annotationInfo = $computed(() => {
   let info = null
-  if (data.value.annotations) {
-    data.value.annotations.forEach((annotation, index) => {
+  if (annotations_out.value) {
+    annotations_out.value.forEach((annotation, index) => {
       if (annotation.user_email == userEmail.value) {
         info = { index: index, id: annotation.id }
       }
@@ -83,12 +48,6 @@ const annotationInfo = $computed(() => {
     return info
   }
 });
-
-const locals = $computed(() => {
-  return (annotationInfo == null)
-    ? data.value.data?.data.localisation[0].sublocalisations.localisation
-    : data.value.annotations[annotationInfo.index]?.result.localisation[0].sublocalisations.localisation
-})
 
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
@@ -99,10 +58,9 @@ const handleSubmit = (event) => {
 
   if (annotationInfo != null) {
     // L'utilisateur a déjà une annotation associée à cette tâche
-    data.value.annotations[annotationInfo.index].result.localisation[0].sublocalisations.localisation = locals
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotationInfo.id,
-      data.value.annotations[annotationInfo.index].result
+      annotations_out.value[annotationInfo.index].result
     ).then((response) => console.log(response))
       .then(() => { window.onbeforeunload = null })
       .then(() => {
@@ -118,11 +76,18 @@ const handleSubmit = (event) => {
   else {
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({
-      user_email: userEmail.value,
-      task_id: data.value.id,
-      result: data.value.data.data,
-      annotation_status: AnnotationStatus.DRAFT,
-      version: 1
+      annotation: {
+        user_email: userEmail.value,
+        task_id: data.value.id,
+        result: annotations_in.value[0].result,
+        annotation_status: AnnotationStatus.DRAFT,
+        version: 1
+      },
+      association: {
+        annotation_id : 0,
+        task_id: data.value.id,
+        direction: 'out'
+      }
     }).then(() => refreshTaskData())
       .then(() => { window.onbeforeunload = null })
       .then(() => {
@@ -131,29 +96,6 @@ const handleSubmit = (event) => {
       })
   }
 
-}
-
-
-const videoId = data.value.data?.data?.id
-const videoSrc = `https://front.wsmedia.p.sas.ina/wsmedia/${videoId}?type=stream&protocol=hls&typemedia=video`
-
-const hlsPlayer = () => {
-  fetchVideoStream(videoSrc).then((content) => {
-    const src = `data:application/vnd.apple.mpegurl;base64,${content}`
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.attachMedia(video.value);
-      hls.on(Hls.Events.MEDIA_ATTACHED, function () {
-        hls.loadSource(src);
-        hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-        });
-      });
-
-
-    } else if (video.value.canPlayType('application/vnd.apple.mpegurl')) {
-      video.value.src = videoSrc;
-    }
-  })
 }
 
 function generatePastelColor(tagNumber) {
@@ -169,23 +111,6 @@ function generatePastelColor(tagNumber) {
 
 }
 
-const loadTopics = () => {
-  locals.forEach((phrase, index) => {
-    if (![0, undefined].includes(phrase.data.topic)) {
-      topics.value[index] = phrase.data.topic
-      if (index == 0 || topics.value[index] != topics.value[index - 1]) {
-        const randomColor = generatePastelColor(index + 1)
-        colors.value.push(randomColor)
-      }
-    }
-  })
-  topicsLoaded.value = true
-}
-
-
-onMounted(async () => { // Une fois la page chargee, on stream la video
-  hlsPlayer()
-})
 
 
 // if (store.items.length == 0) {
