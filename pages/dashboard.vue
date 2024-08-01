@@ -17,12 +17,13 @@ import {bcStore} from "~/stores/breadcrumbs";
 const refreshStore = useRefreshStore()
 const {fetchProject} = refreshStore
 const {getData} = storeToRefs(refreshStore)
+const store = bcStore()
+const { getItems } = storeToRefs(store)
 
 const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
 const savedItems = localStorage.getItem('breadcrumbItems');
 const parsedItems = JSON.parse(savedItems);
-const store = bcStore()
 
 fetchProject().then((res) => {
   if (parsedItems === null) {
@@ -41,5 +42,6 @@ const sortDataById = computed(() => {
   }
 )
 
+while(getItems.value.length > 0) store.removeLastCrumb()
 
 </script>

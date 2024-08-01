@@ -6,6 +6,7 @@ export const useRefreshStore = defineStore('refresh', {
   state: () => {
     return {
       data: [] as Record<string,any>,
+      project: [] as Record<string,any>,
     }
   },
   actions: {
@@ -23,7 +24,7 @@ export const useRefreshStore = defineStore('refresh', {
     async fetchTasks(projectid: number) {
       const res = await ProjectService.readProjectProjectProjectIdGet(projectid)
       const data =  res
-      this.data = data;
+      this.project = data;
 
       return data
     },
@@ -35,6 +36,9 @@ export const useRefreshStore = defineStore('refresh', {
   getters: {
     getData(state) {
       return state.data
+    },
+    getProject(state){
+      return state.project
     }
   }
 })

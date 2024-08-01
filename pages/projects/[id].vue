@@ -116,43 +116,53 @@
 
 <script setup>
 
-import _ from 'lodash';
-import {ref} from 'vue';
-import {bcStore} from '~/stores/breadcrumbs';
-import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
-import {useRefreshStore} from '../stores/refresh';
+  import _ from 'lodash';
+  import { ref } from 'vue';
+  import { bcStore } from '~/stores/breadcrumbs';
+  import { ProjectService } from '../../api/generate';
+  import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
+  import {useRefreshStore} from '../stores/refresh';
 
-const store = bcStore()
-const route = useRoute()
-const refreshStore = useRefreshStore()
+  const store = bcStore()
+  const route = useRoute()
+  const refreshStore = useRefreshStore()
 
-const {getData} = storeToRefs(refreshStore)
-const {fetchTasks} = refreshStore
-const {getItems} = storeToRefs(store)
+  const { getProject } = storeToRefs(refreshStore )
+  const { fetchTasks } = refreshStore
+  const { getItems } = storeToRefs(store)
 
-const dialogVisible = ref(false)
-const visible = ref(false)
-const dialogContent = ref('')
-const clickedRowData = ref(null)
-const spinnerVisible = ref(true)
-let formStepClick = $ref()
+  const dialogVisible = ref(false)
+  const visible = ref(false)
+  const dialogContent = ref('')
+  const clickedRowData = ref(null)
+  const spinnerVisible = ref(true)
+  let formStepClick = $ref()
 
-const expandedRows = ref()
+  const expandedRows = ref()
 
-const editMode = ref(false)
-const expandMode = $ref(false)
-const data = ref(getData)
+  const editMode = ref(false)
+  const expandMode = $ref(false)
+  const data = ref(getProject)
+
+  // // On attend que tout charge
+  // const response = await fetchTasks(route.params.id).
+  // console.log(response)
+  // store.addCrumb({ label: response.title, route: `/projects/${response.id}` })
+
+  // On affiche meme si c'es pas fini
+  fetchTasks(route.params.id).then((res)=> {
+    if(getItems.value.length == 2){
+      store.removeLastCrumb()
+    }
+  })
 
 const savedItems = localStorage.getItem('breadcrumbItems');
 
 // On affiche meme si c'es pas fini
 fetchTasks(route.params.id).then((res) => {
-  if (store.items.length === 0) { //reloading the page
-
-    const parsedItems = JSON.parse(savedItems);
-    store.addCrumb({label: parsedItems[0].label, url: parsedItems[0].url})
-
-  } else if (getItems.value.length === 2) {
+  if (store.items.length === 0) { // When coming from dashboard
+      store.addCrumb({label: data.value.title, route: data.value.id})
+  } else while (getItems.value.length > 2) { // When coming from task view
     store.removeLastCrumb()
   }
 })
@@ -168,8 +178,10 @@ const count_validated_task = ((annotations) => {
   return task_count
 })
 
-const navigateToTask = (id) => {
-  navigateTo(`/tasks/${id}`)
+const navigateToTask = async (id) => {
+    await navigateTo({
+      path:'/tasks/'+id
+    })
 }
 
 const stepCreate = (stepId) => {
@@ -182,7 +194,7 @@ const stepCreate = (stepId) => {
 const handleRowClick = (event) => {
 
   clickedRowData.value = event.data;
-  store.addCrumb({label: clickedRowData.value.name, url: `/tasks/${clickedRowData.value.id}`})
+    store.addCrumb({label: clickedRowData.value.name, route: `/tasks/${clickedRowData.value.id}`})
   console.log(event.data)
   if (editMode.value == false) navigateToTask(clickedRowData.value.id)
 
@@ -215,4 +227,9 @@ const openDialog = (data) => {
   // Open the dialog
   visible.value = true;
 }
+
+// if (store.items.length == 0 && data.value.title) { //reloading the page
+//   store.addCrumb({ label: data.value.title, route: `/projects/${data.value.id}` })
+// }
+
 </script>
