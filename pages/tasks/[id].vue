@@ -1,16 +1,18 @@
 <template>
   <!-- TODO: Find a way to render this while aynchronous calls -->
   <div  class="h-full">
-    <OrganismSegmentation :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   />
+    <component :is="annotationComponent" :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"></component>
+    <!-- <OrganismSegmentation :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   /> -->
   </div>
 </template>
 
 
 <script setup>
 
-import {  ref } from 'vue';
+import { ref } from 'vue';
 import { bcStore } from '~/stores/breadcrumbs';
 import OrganismSegmentation from '~/components/organisms/OrganismSegmentation.vue';
+import OrganismTranscription from '~/components/organisms/OrganismTranscription.vue'
 import { TaskService, AnnotationService, AnnotationStatus } from '../../api/generate';
 import { useAuth } from '../../stores/auth';
 import { storeToRefs } from 'pinia';
@@ -31,6 +33,20 @@ const { addCrumb } = store
 const data = ref(getData)
 const savedItems = localStorage.getItem('breadcrumbItems');
 
+const annotationComponent = $computed(()=> {
+  switch (data.value.step.annotation_type) {
+    case 'segmentation':
+      return OrganismSegmentation
+
+    case 'transcription':
+      return OrganismTranscription
+
+  }
+
+})
+
+
+
 await fetchAnnotations(route.params.id)
 
 if (getItems.value.length === 0 && JSON.parse(savedItems).length==0 ){ // When coming from dashboard
@@ -46,7 +62,7 @@ const annotation_bool = reactive({
 })
 const annotations_out = ref([])
 const annotations_in = ref([])
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out=true)
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
 AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'in').then((res)=> annotations_in.value = res).then(()=> annotation_bool.in = true  )
 
 const allFetched = $computed(() => {
