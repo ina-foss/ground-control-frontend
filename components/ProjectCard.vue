@@ -88,7 +88,7 @@ const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore)
 
 const navigate = () =>{
-  store.addCrumb({ label: project.title, url: `/projects/${project.id}` })
+  store.addCrumb({ label: project.title, route: `/projects/${project.id}` })
 }
 
 const statusSeverity = computed(() =>{

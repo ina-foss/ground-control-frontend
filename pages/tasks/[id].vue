@@ -1,7 +1,7 @@
 <template>
   <!-- TODO: Find a way to render this while aynchronous calls -->
   <div  class="h-full">
-    <OrganismSegmentation :data="data" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   />
+    <OrganismSegmentation :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   />
   </div>
 </template>
 
@@ -29,13 +29,29 @@ const { fetchAnnotations } = refresh
 const { addCrumb } = store
 
 const data = ref(getData)
+const savedItems = localStorage.getItem('breadcrumbItems');
 
 await fetchAnnotations(route.params.id)
 
-const annotations_out = ref(await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out'))
-const annotations_in = ref(await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'in'))
+if (getItems.value.length === 0 && JSON.parse(savedItems).length==0 ){ // When coming from dashboard
+  store.addCrumb({ label: data.value.step.project.title, route: `/projects/${data.value.step.project.id}` })
+}
+if (getItems.value.length === 1 && JSON.parse(savedItems).length==1 ){ // When coming from project view
+  store.addCrumb({ label: data.value.name, route: `/tasks/${data.value.id}` })
+}
 
+const annotation_bool = reactive({
+  in : false,
+  out : false
+})
+const annotations_out = ref([])
+const annotations_in = ref([])
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out=true)
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'in').then((res)=> annotations_in.value = res).then(()=> annotation_bool.in = true  )
 
+const allFetched = $computed(() => {
+  return annotation_bool.in && annotation_bool.out
+})
 
 const annotationInfo = $computed(() => {
   let info = null
@@ -110,15 +126,4 @@ function generatePastelColor(tagNumber) {
   return `rgb(${r}, ${g}, ${b}, 1)`;
 
 }
-
-
-
-// if (store.items.length == 0) {
-//   store.addCrumb({ label: data.value.project.title, url: `/projects/${data.value.project_id}` })
-// }
-// if (store.items[store.items.length - 1].url != `/tasks/${data.value.id}`) {
-//   store.addCrumb({ label: data.value.name, url: `/tasks/${data.value.id}` })
-//
-// }
-//
 </script>
