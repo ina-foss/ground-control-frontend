@@ -36,7 +36,7 @@
         <template #content="{prevCallback}" >
             <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Upload tasks </span>
-              <FileUpload accept="application/json" :show-upload-button=false :show-cancel-button="false"
+              <FileUpload ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
                 invalid-file-type-message="Invalid type" auto name="file[]" :pt="{
                   buttonbar: {
                     style: `z-index:20; padding-top: 10px; padding-bottom: 10px; `
@@ -54,8 +54,8 @@
                   </div>
                 </template>
 
-                <template #content="{ uploadedFiles, files, removeUploadedFileCallback, removeFileCallback }">
-                  <div class="flex flex-col gap-2">
+                <template #content="{ uploadedFiles, files, removeUploadedFileCallback, removeFileCallback }"  >
+                  <div  class="flex flex-col gap-2">
                     <div v-for="(file, index) in uploadedFiles" :key="index"
                       class="grid grid-cols-8 gap-2 px-1 items-center">
                       <span class="pi pi-file self-center w-2" />
@@ -75,7 +75,11 @@
                           icon: {
                             style: 'max-width:24px'
                           }
-                        }" @click="removeUploadedFileCallback(index)" />
+                        }" @click="()=>{
+                        removeUploadedFileCallback(index)
+                        _.remove(fileData,(file,indexFile) => indexFile != index )
+                        }
+                        " />
                     </div>
                   </div>
                   <div v-for="file in files">
@@ -95,7 +99,7 @@
 
         </StepperPanel>
       </Stepper>
-
+      <Toast />
     </Dialog>
 </template>
 
@@ -105,6 +109,7 @@
   import { TaskStatus, TaskService,TaskDataType, MediaService, AnnotationService, AnnotationStatus} from '~/api/generate';
   import { useRefreshStore } from '#imports';
   import { useAuth } from '#imports';
+  import _ from 'lodash';
 
   const refreshStore = useRefreshStore()
   const authStore = useAuth()
@@ -113,7 +118,9 @@
   const { fetchTasks } = refreshStore
   const { userEmail } = storeToRefs(authStore)
   const route = useRoute()
+  const toast = useToast()
 
+  const templateRef= ref()
 
   const name = $ref()
   const instruction = $ref()
@@ -132,13 +139,14 @@
     const file = event.files[0]
 
 
+
     formData.append("file", file)
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
         let _this$uploadedFiles;
       }
     };
-    xhr.open('POST', '/', true);
+    // xhr.open('POST', '/', true);
     files.push(event.files);
     const reader = new FileReader();
     reader.onloadend = onReaderLoad;
@@ -146,16 +154,29 @@
     console.log(fileData)
   }
 
+  watchEffect(() => {
+    if (fileData.length > 1) {
+    console.log(templateRef.value)
+      for (let i = 1; i < fileData.length; i++) {
+        if (fileData[i].asset?.url !== fileData[i-1].asset.url) {
+          toast.add({life: 5000, severity: 'error', detail:'attention pas les meme medias', summary:"Oula bro t'es down bad ou quoi ?" } );
+          templateRef.value.removeUploadedFile(i)
+          fileData.pop()
+        }
+      }
+    }
+  });
+
   const onReaderLoad = (event) => {
     const obj = JSON.parse(event.target.result);
     fileData.push(obj)
   }
 
   const createTask = async () => {
-      fileData.forEach((file, index) => {
+    let taskCreated = false
         MediaService.createMediaMediaPost({
-          url: file.asset.url,
-          type: file.asset.media_type
+          url: fileData[0].asset.url,
+          type: fileData[0].asset.media_type
       }).then((res)=> {
         TaskService.createTaskTaskPost({
           name: name,
@@ -166,23 +187,25 @@
           step_id: stepObject.id,
           media_id: res.id
           }).catch((err) => console.error(err)).then((res) => {
-        AnnotationService.createAnnotationAnnotationPost({
-            annotation: {
-              user_email : userEmail.value,
-              annotation_status: AnnotationStatus.DRAFT,
-              version: 0,
-              result: file,
-              task_id: res.id
-            },
-            association: {
-              annotation_id : 0,
-              task_id: res.id,
-              direction: 'in'
-            }
-          })
+            fileData.forEach(file => {
+              AnnotationService.createAnnotationAnnotationPost({
+                annotation: {
+                  user_email : userEmail.value,
+                  annotation_status: AnnotationStatus.DRAFT,
+                  version: 0,
+                  result: file,
+                  task_id: res.id
+                },
+                association: {
+                  annotation_id : 0,
+                  task_id: res.id,
+                  direction: 'in'
+                }
+              })
+            })
          }).then(() => fetchTasks(stepObject.project_id))
     })
     emits('toggle-dialog')
-  })
   }
+
 </script>
