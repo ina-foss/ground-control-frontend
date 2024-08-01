@@ -1,5 +1,5 @@
 <template>
-  <div v-if=" !locals ">
+  <div v-if=" !allFetched ">
     <div class="grid grid-cols-9  ">
       <div class="col-span-3 h-screen  bg-surface-700 gap-3 px-5 py-5">
         <Skeleton :pt="{
@@ -44,15 +44,15 @@
   const authStore = useAuth()
 
 
-  const { data, annotations_in, annotations_out } = defineProps(['data','annotations_in','annotations_out'])
+  const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
 
 
 
   const emits = defineEmits([ 'submit-annotation', 'refresh-data' ]);
 
-  const colors = $ref(['#BEBEBE'])
+  let colors = $ref(['#BEBEBE'])
   const topics = $ref([])
-  const videoSrc = $ref(annotations_in[0].result.asset.url)
+  let videoSrc = $ref(annotations_in[0]?.result.asset.url)
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
@@ -60,7 +60,7 @@
 
   const annotationInfo = $computed(() => {
     let info = null
-    if (annotations_out) {
+    if (allFetched ) {
       annotations_out.forEach((annotation, index) => {
         if (annotation.user_email == userEmail.value) {
           info = { index: index, id: annotation.id }
@@ -71,9 +71,12 @@
   });
 
   const locals = $computed(() => {
+    if(allFetched){
     return (annotationInfo == null)
       ? annotations_in[0]?.result.data.localisation[0].sublocalisations.localisation
       : annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation
+    }
+    return []
   })
 
 
@@ -111,6 +114,7 @@
   }
 
   const loadTopics = () => {
+    colors = ['#BEBEBE'] // reset colors before loading
     locals.forEach((phrase, index) => {
       if (![0, undefined].includes(phrase.data.topic)) {
         topics[index] = phrase.data.topic
@@ -122,10 +126,10 @@
     })
   }
 
+  watchEffect(() => {if(allFetched)
+    videoSrc = annotations_in[0]?.result.asset.url
+    loadTopics() })
 
-  onMounted(async () => { // Une fois la page chargee, on stream la video
-    loadTopics()
-  })
 
 
 </script>
