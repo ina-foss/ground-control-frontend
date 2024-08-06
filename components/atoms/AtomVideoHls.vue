@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <video ref="videoRef" class="w-full" controls @seeked="handleSeeking()" />
+  <div class=" xs:h-full w-auto md:h-auto xs:flex xs:justify-center ">
+    <video ref="videoRef" class=" xs:h-full xs:w-auto md:h-auto aspect-video" controls @seeked="handleSeeking()" />
   </div>
 </template>
 
