@@ -27,7 +27,7 @@
       <Button label="Submit" size="large" @click="handleSubmit()" />
     </div>
     <Toast />
-    <div class="grid grid-cols-9 h-full">
+    <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc" :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
       <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
     </div>
