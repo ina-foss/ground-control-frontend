@@ -34,10 +34,10 @@
         </template>
       </Column>
       <Column field="description" header="Description"/>
-      <Column header=" " style="width: 300px;">
+      <Column header=" " style="width: 18%; ">
         <template #body="slotProps">
-          <div class="flex justify-between gap-3">
-            <Button label="Create Task" size="small" severity="info" @click="stepCreate(slotProps.data.id)"/>
+          <div class="flex justify-between min-w-[203px] gap-3">
+            <Button label="Create Task"  size="small" severity="info" @click="stepCreate(slotProps.data.id)"/>
             <Button icon="pi pi-angle-down" label="Export"  size="small" severity="secondary" text :loading="loadingExport"  @click="clickButtonMenu($event,slotProps.data) "/>
             <Menu :model="buttonItems" :popup="true" ref="buttonMenu"  >
               <template #item = "{ item, props }">
