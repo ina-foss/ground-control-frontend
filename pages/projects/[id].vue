@@ -34,11 +34,18 @@
         </template>
       </Column>
       <Column field="description" header="Description"/>
-      <Column header=" " style="width: 200px;">
+      <Column header=" " style="width: 300px;">
         <template #body="slotProps">
           <div class="flex justify-between gap-3">
             <Button label="Create Task" size="small" severity="info" @click="stepCreate(slotProps.data.id)"/>
-            <Button icon="pi pi-download"  size="small" severity="secondary" text :loading="loadingExport"  @click="exportOut(slotProps.data.tasks)"/>
+            <Button icon="pi pi-angle-down" label="Export"  size="small" severity="secondary" text :loading="loadingExport"  @click="clickButtonMenu($event,slotProps.data) "/>
+            <Menu :model="buttonItems" :popup="true" ref="buttonMenu"  >
+              <template #item = "{ item, props }">
+                <a v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-items-center" v-bind="props.action">
+                 <p  @click="item.command(event,selectedRow.value)" >{{ item.label }}</p>
+                </a>
+              </template>
+            </Menu>
           </div>
         </template>
       </Column>
@@ -143,12 +150,39 @@
   const spinnerVisible = ref(true)
   let formStepClick = $ref()
   let loadingExport = $ref(false)
+  const buttonMenu = ref()
+  const selectedRow = ref()
+
 
   const expandedRows = ref()
 
   const editMode = ref(false)
   const expandMode = $ref(false)
   const data = ref(getProject)
+
+  const buttonItems = [
+    {
+      label: 'One file',
+      command: () => {
+        exportOut(selectedRow.value,'one')
+      },
+      tooltip: "Export all the step's annotations in one file"
+    },
+    {
+      label: 'Grp. by Task',
+      command: () => {
+        exportOut(selectedRow.value,'task')
+      },
+      tooltip: "Export annotations by grouping them by task"
+    },
+    {
+      label: 'Seperate',
+      command: () => {
+        exportOut(selectedRow.value,'all')
+      },
+      tooltip: "Export all annotations in a dedicated file"
+    }
+  ]
 
   // // On attend que tout charge
   // const response = await fetchTasks(route.params.id).
@@ -185,44 +219,56 @@ const count_validated_task = ((annotations) => {
   return task_count
 })
 
-  const exportOut = async (tasks)=> {
-    loadingExport = true
-    let annos = []
-    for (const task of tasks) {
-      try {
-        // Fetch annotation data
-        const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id, 'out');
+const clickButtonMenu = (event, step) => {
+  selectedRow.value = step
+  buttonMenu.value.toggle(event)
+}
 
-        // Convert annotations to a format suitable for Blob (assuming JSON)
-        const annotationsBlob = new Blob([JSON.stringify(annotations)], { type: 'application/json' });
+const exportOut = async (step, group)=> {
+  const tasks = step.tasks
+  loadingExport = true
+  let annos = {}
+  for (const task of tasks) {
+    try {
+      // Fetch annotation data
+      const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id, 'out');
 
-        // Create a download link
-        const url = window.URL.createObjectURL(annotationsBlob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        // a.download = prompt("Enter filename and extension (e.g. myAnnotations.json):", 'annotations.json');
-        a.download = task.name
-
-
-        // Ensure filename is not null or empty
-        if (a.download) {
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          // alert('Your file ' + a.download + ' has downloaded!');
-          toast.add({severity: 'success', summary: "Export done",detail:` Your file "${a.download}" has been downloaded`, life:5000})
-        }
-
-        // Clean up
-        window.URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error('Error downloading file for task', task.id, error);
-      }
+      if(group == 'task') triggerDownload(annotations, task.name)
+      else if (group == 'all') annotations.forEach((annotation)=> triggerDownload(annotation, task.name +' by ' + annotation.user_email.split('@')[0] ) )
+      else if (group == 'one') annos[task.name] = (annotations)
     }
-    loadingExport = false
+    catch (error){
+      console.error('Error downloading file for task', task.id, error);
+    }
   }
+  if(group == 'one') triggerDownload(annos, step.title)
+  loadingExport = false
+}
 
+  function triggerDownload(data,name) {
+    const annotationsBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+
+    // Create a download link
+    const url = window.URL.createObjectURL(annotationsBlob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    // a.download = prompt("Enter filename and extension (e.g. myAnnotations.json):", 'annotations.json');
+    a.download = name || 'test'
+
+
+    // Ensure filename is not null or empty
+    if (a.download) {
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // alert('Your file ' + a.download + ' has downloaded!');
+      toast.add({severity: 'success', summary: "Export done",detail:` Your file "${a.download}" has been downloaded`, life:5000})
+    }
+
+    // Clean up
+    window.URL.revokeObjectURL(url);
+  }
 
 const navigateToTask =  (id) => {
     console.log(id)
