@@ -1,5 +1,5 @@
 <template>
-  <div ref="test" class="bg-surface-100 flex flex-col p-4 gap-1 drop-shadow-lg transition-max-height " >
+  <div ref="test" class="bg-surface-200 flex hover:scale-[1.005] hover:mb-2 hover:mt-[8px]   flex-col p-4 gap-1 drop-shadow-lg rounded transition-all " >
     <div class="flex justify-between pb-2  ">
       <Tag :severity="tcColor">
         <div class="flex justify-center items-center gap-3">
@@ -22,7 +22,7 @@
       <div class="w-full bg-white flex-col items-center p-2 ">
         <div class="flex justify-between pb-2  ">
           <h2>Result</h2>
-          <Tag v-if="selectedTranscription.index" severity="info" :value="algos[selectedTranscription.index]" />
+          <Tag v-if="selectedTranscription.index != null" severity="info" :value="algos[selectedTranscription.index]" />
           <p  >edit</p>
         </div>
         <div class="flex justify-center">
@@ -48,7 +48,7 @@
 <script setup>
   import Textarea from 'primevue/textarea';
 
-  const { transcriptions,algos } = defineProps({
+  const { transcriptions, algos } = defineProps({
     transcriptions: {
       type: Array
     },
