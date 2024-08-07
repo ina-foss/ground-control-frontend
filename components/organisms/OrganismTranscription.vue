@@ -4,7 +4,7 @@
       <Button label="Submit" size="large" @click="handleSubmit()" />
     </div>
     <Toast />
-    <div class="md:grid md:grid-cols-9 h-full">
+    <div class="grid grid-cols-9 xs:block h-full">
       <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc" :locals="locals" :data="data" />
       <MoleculeTranscription class="overflow-y-auto" :transcriptions="transcriptions" :algos="algos" />
     </div>
