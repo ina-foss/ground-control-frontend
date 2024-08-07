@@ -36,7 +36,10 @@
       <Column field="description" header="Description"/>
       <Column header=" " style="width: 200px;">
         <template #body="slotProps">
-          <Button label="Create Task" size="small" severity="info" @click="stepCreate(slotProps.data.id)"/>
+          <div class="flex justify-between gap-3">
+            <Button label="Create Task" size="small" severity="info" @click="stepCreate(slotProps.data.id)"/>
+            <Button icon="pi pi-download"  size="small" severity="secondary" text :loading="loadingExport"  @click="exportOut(slotProps.data.tasks)"/>
+          </div>
         </template>
       </Column>
       <Column :row-editor.value="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"/>
@@ -79,7 +82,7 @@
             </Column>
             <Column header="Annoted by" style="width: 12rem">
               <template #body="{data: nestedData}">
-                <div class="flex justify-around sm:w-20 md:w-10%">
+                <div class="flex justify-start gap-2 sm:w-20 md:w-10%">
                   <Avatar
                     v-for="(annotation, index) in nestedData.annotations" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
@@ -119,6 +122,7 @@
   import _ from 'lodash';
   import { ref } from 'vue';
   import { bcStore } from '~/stores/breadcrumbs';
+  import { AnnotationService } from '../../api/generate';
   import { ProjectService } from '../../api/generate';
   import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
   import {useRefreshStore} from '../stores/refresh';
@@ -126,6 +130,7 @@
   const store = bcStore()
   const route = useRoute()
   const refreshStore = useRefreshStore()
+  const toast = useToast()
 
   const { getProject } = storeToRefs(refreshStore )
   const { fetchTasks } = refreshStore
@@ -137,6 +142,7 @@
   const clickedRowData = ref(null)
   const spinnerVisible = ref(true)
   let formStepClick = $ref()
+  let loadingExport = $ref(false)
 
   const expandedRows = ref()
 
@@ -155,6 +161,7 @@
       store.removeLastCrumb()
     }
   })
+
 
 const savedItems = localStorage.getItem('breadcrumbItems');
 
@@ -178,9 +185,49 @@ const count_validated_task = ((annotations) => {
   return task_count
 })
 
-const navigateToTask = async (id) => {
-    await navigateTo({
-      path:'/tasks/'+id
+  const exportOut = async (tasks)=> {
+    loadingExport = true
+    let annos = []
+    for (const task of tasks) {
+      try {
+        // Fetch annotation data
+        const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id, 'out');
+
+        // Convert annotations to a format suitable for Blob (assuming JSON)
+        const annotationsBlob = new Blob([JSON.stringify(annotations)], { type: 'application/json' });
+
+        // Create a download link
+        const url = window.URL.createObjectURL(annotationsBlob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        // a.download = prompt("Enter filename and extension (e.g. myAnnotations.json):", 'annotations.json');
+        a.download = task.name
+
+
+        // Ensure filename is not null or empty
+        if (a.download) {
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          // alert('Your file ' + a.download + ' has downloaded!');
+          toast.add({severity: 'success', summary: "Export done",detail:` Your file "${a.download}" has been downloaded`, life:5000})
+        }
+
+        // Clean up
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error('Error downloading file for task', task.id, error);
+      }
+    }
+    loadingExport = false
+  }
+
+
+const navigateToTask =  (id) => {
+    console.log(id)
+     navigateTo({
+      path:`/tasks/${id}`
     })
 }
 
@@ -191,12 +238,11 @@ const stepCreate = (stepId) => {
   dialogVisible.value = true
 }
 
-const handleRowClick = (event) => {
-
+const handleRowClick =  (event) => {
   clickedRowData.value = event.data;
     store.addCrumb({label: clickedRowData.value.name, route: `/tasks/${clickedRowData.value.id}`})
-  console.log(event.data)
-  if (editMode.value == false) navigateToTask(clickedRowData.value.id)
+    console.log(event.data)
+  if (editMode.value == false) navigateToTask( clickedRowData.value.id)
 
 
 }
