@@ -2,7 +2,7 @@
   <div class="flex flex-col p-[10%] gap-3 justify-center items-center h-screen">
     <Toast />
     <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
-    <div @mouseup="handleSelection"  id="text">{{text}}</div>
+    <div @mouseup="handleSelection"   id="text">{{text}}</div>
     <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
     <Button label="Clear all" @click="deleteSelection" />
 
@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { random } from 'lodash';
 import { useToast } from 'primevue/usetoast';
-import {createApp} from 'vue'
+import {createApp, createTextVNode} from 'vue'
 import AtomSpan from '~/components/atoms/AtomSpan.vue';
 
 const app = createApp()
@@ -32,6 +32,10 @@ const selectionText = computed(() => {
   return ''
 })
 
+const handleDelete = (event) => {
+  console.log(event)
+}
+
 function generatePastelColor(tagNumber) {
   // Use tag number to create a seed (this is a basic example, there are better ways to do this)
   const seed = tagNumber * 123456789;
@@ -50,6 +54,7 @@ const handleSelection = () => {
     state.selection = currentSelection
     state.range = currentSelection.getRangeAt(0)
     let selectionTextString = selectionText.value
+    state.selection.removeAllRanges()
     let span = document.createElement('span')
 
     state.range.deleteContents()
@@ -63,7 +68,15 @@ const handleSelection = () => {
         return h(AtomSpan , {
            label: labelSelected.value,
            text: selectionTextString,
-            color: generatePastelColor(random(0,15,true))
+            color: generatePastelColor(random(0,15,true)),
+          onDeleteSpan: ({element, text}) => {
+            console.log(element,text)
+              if (element && element.parentNode){
+                element.parentNode.insertBefore(document.createTextNode(text),element)
+                element.parentNode.removeChild(element)
+
+              }
+            }
 
 
          }
@@ -71,8 +84,13 @@ const handleSelection = () => {
       }
     })
 
-    app.mount(span)
+    const instance = app.mount(span)
 
+    const fragment = document.createDocumentFragment()
+    Array.from(span.childNodes).forEach(node => {
+      fragment.appendChild(node)
+    });
+    state.range.insertNode(fragment)
   }
 }
 

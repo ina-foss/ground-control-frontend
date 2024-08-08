@@ -1,5 +1,5 @@
 <template>
-  <div ref="span" class="inline hover:border-blue-400 hover:border-1 hover:scale(1.005) cursor-pointer highlighted-text">
+  <div ref="span" @click="handleClick" class="inline border-blue-400 hover:border-2   cursor-pointer highlighted-text">
     {{ text }}
   </div>
 </template>
@@ -9,7 +9,12 @@
 import { Fragment } from 'vue/jsx-runtime';
 
 const {label, text, color } = defineProps(['label','text','color'])
+const emit = defineEmits(['deleteSpan'])
 const span= ref()
+
+const handleClick = () => {
+  emit('deleteSpan',{element: span.value, text: text})
+}
 onMounted(()=>{
 
   span.value.setAttribute('label',label)
