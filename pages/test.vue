@@ -3,9 +3,8 @@
     <Toast />
     <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
     <div @mouseup="handleSelection"  id="text">{{text}}</div>
-    <InputText v-model="state.range" class="border-black border-3"/>
-    <Button label="button" @click="deleteSelection" />
-    <InputSwitch />
+    <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
+    <Button label="Clear all" @click="deleteSelection" />
 
 </div>
 </template>
@@ -13,7 +12,10 @@
 <script setup lang="ts">
 import { random } from 'lodash';
 import { useToast } from 'primevue/usetoast';
+import {createApp} from 'vue'
+import AtomSpan from '~/components/atoms/AtomSpan.vue';
 
+const app = createApp()
 const toast = useToast()
 const labelSelected = ref('Person')
 const labels = ['Person','Citation','Verbe']
@@ -25,7 +27,7 @@ const state = reactive({
 
 const selectionText = computed(() => {
   if (state.range != null) {
-    return state.range.extractContents()
+    return state.range.toString()
   }
   return ''
 })
@@ -47,26 +49,34 @@ const handleSelection = () => {
   if (currentSelection && currentSelection.toString() !== '') {
     state.selection = currentSelection
     state.range = currentSelection.getRangeAt(0)
-    // console.log(state.election.focusNode)
-    // console.log(state.range)
-    // console.log(selectionText.value)
+    let selectionTextString = selectionText.value
     let span = document.createElement('span')
-    span.style.backgroundColor = generatePastelColor(random(0,15,true))
-    span.setAttribute('label', labelSelected.value );
-    span.style.overflow
-    // span.classList= "p-1 fit-content inline-flex  after:content-[attr(label)] relative  after:box-border after:pl-2 after:leading-none after:h-[10px] after:self-start after:top-0 after:right-0 after:text-xs "
-    span.classList = "highlighted-text";
-    span.appendChild(selectionText.value)
+
+    state.range.deleteContents()
     state.range.insertNode(span)
     state.selection.empty()
     state.selection = null
 
+    console.log(selectionTextString)
+    const app = createApp({
+      render () {
+        return h(AtomSpan , {
+           label: labelSelected.value,
+           text: selectionTextString,
+            color: generatePastelColor(random(0,15,true))
+
+
+         }
+        )
+      }
+    })
+
+    app.mount(span)
 
   }
 }
 
 const deleteSelection = () => {
-  toast.add({severity:"error", detail:"Project could not be created", summary:"Something went wrong"})
   if (state.selection) {
     let span = document.createElement('sup')
     span.style.backgroundColor = "red"
@@ -79,17 +89,3 @@ const deleteSelection = () => {
 
 </script>
 
-<style >
-.highlighted-text {
-  display: inline;
-  position: relative;
-}
-
-.highlighted-text::after {
-  display: inline;
-  content: attr(label);
-  vertical-align:super;
-  padding-left: 0.5rem;
-  font-size: 0.70rem;
-}
-</style>
