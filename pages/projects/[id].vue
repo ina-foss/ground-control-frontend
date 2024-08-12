@@ -89,7 +89,7 @@
             </Column>
             <Column header="Annoted by" style="width: 12rem">
               <template #body="{data: nestedData}">
-                <div class="flex justify-start gap-2 sm:w-20 md:w-10%">
+                <div class="flex justify-start gap-2 ">
                   <Avatar
                     v-for="(annotation, index) in nestedData.annotations" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
