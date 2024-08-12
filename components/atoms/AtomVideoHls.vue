@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <video ref="videoRef" class="w-full" controls @seeked="handleSeeking()" />
+  <div class=" xs:h-full w-full h-auto xs:flex xs:justify-center ">
+    <video ref="videoRef" class=" xs:h-full xs:w-auto w-full aspect-video" controls @seeked="handleSeeking()" />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 
   import { Hls } from 'hls.js'
 
-  const { locals, data } = defineProps(['locals','data'])
+  const { locals, data, videoSrc } = defineProps(['locals','data','videoSrc'])
 
   const emits = defineEmits([ 'timecode-update' ]);
 
@@ -17,8 +17,6 @@
   const video = $(videoRef)
   let lastTimecode = 0
   let lastIndex = 0
-  const videoId = data.data.data.id
-  const videoSrc = `https://front.wsmedia.p.sas.ina/wsmedia/${videoId}?type=stream&protocol=hls&typemedia=video`
 
   const handleSeeking = () => {
 

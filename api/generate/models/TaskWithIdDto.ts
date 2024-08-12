@@ -2,12 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AnnotationBase } from './AnnotationBase';
 import type { TaskDataType } from './TaskDataType';
 import type { TaskStatus } from './TaskStatus';
 /**
- * Base DTO for task objects.
+ * Extends TaskBaseDto with an additional id field.
  */
-export type TaskBaseDto = {
+export type TaskWithIdDto = {
     name: string;
     instruction?: (string | null);
     data_type: TaskDataType;
@@ -15,5 +16,7 @@ export type TaskBaseDto = {
     lead_time: (number | null);
     step_id: number;
     media_id: number;
+    id: number;
+    annotations: Array<AnnotationBase>;
 };
 

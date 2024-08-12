@@ -1,14 +1,31 @@
 <template>
   <div
-    class="  w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-transform tansition-shadow hover:shadow-xl">
-    <NuxtLink :to="{ name: 'projects-id', params: { id: $props.project.id } }">
-      <div class="flex justify-between align-middle pl-2">
-        <p class="font-semibold self-center">{{ $props.project.title }}</p>
-        <p class="inline-block  text-2xl">
-          <!-- <Button type="button" icon="pi pi-ellipsis-v" @click="toggle" aria-haspopup="true" aria-controls="overlay_menu" label= /> -->
-          <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
-            @click.stop.prevent="visible = true" />
-          <Dialog v-model:visible="visible" modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
+    class="w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl">
+    <NuxtLink
+      @click="navigate" :to="{ name: 'projects-id', params: { id: project.id } }">
+      <div class="inline-block flex justify-between align-middle pl-2">
+          <p class="font-semibold self-center exeeded_text">
+            {{ project.title }} </p>
+          <p class="inline-block  text-2xl">
+            <Button icon="pi pi-trash" severity="danger" text rounded size="small"
+                     @click.stop.prevent="deleteDialog=true" />
+<!--Confirmation dialog to delete-->
+            <Dialog v-model:visible="deleteDialog" modal header="Are you sure you want to delete this project?" :style="{ width: '35rem' }" class="bg-white"
+                     @after-hide="deleteDialog = false">
+              <div class=" grid grid-cols-1 gap-1">
+                <ButtonGroup class="justify-evenly flex items-center pt-6 ">
+                  <Button label="No" severity="info" class="justify-self-center" @click="deleteDialog = false" />
+                  <Button v-if="deleteDialog === false" label="Delete" severity="danger" @click="deleteDialog = true" />
+                  <Button v-else label="Yes" severity="danger" class="" @click="deleteProject" />
+                </ButtonGroup>
+              </div>
+            </Dialog>
+
+            <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
+            @click.stop.prevent="visible=true" />
+
+          <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false"/>
+          <Dialog  modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
             @hide="$emit('refreshData')" @after-hide="deleteDialog = false">
             <div class=" grid grid-cols-1 grid-rows-3 gap-1">
               <span class="text-slate-400 ">Modify task informations </span>
@@ -31,8 +48,11 @@
           </Dialog>
         </p>
       </div>
-      <div class="flex justify-between justify-items-stretch pl-2 pt-1 text-sm">
-        <p>0/{{ $props.project.total_tasks }} <i class="pi pi-list-check" /></p>
+      <div class="flex justify-between justify-items-stretch pl-2 pt-1 items-center text-sm">
+        <div class="flex justify-between items-center  justify-items-stretch gap-3">
+          <span class="">{{ project.steps.length }} <i class="pi pi-list-check " /></span>
+          <Tag :severity="statusSeverity" class="mb-1 scale-90 ">{{ project.status}}</Tag>
+        </div>
         <div class="flex justify-between justify-items-stretch gap-3">
           <span>1/{{ }} </span>
           <span>2 <i class="pi pi-flag-fill" style="color:red" /> </span>
@@ -52,69 +72,60 @@
 </template>
 
 <script setup>
-
 import { bcStore } from '~/stores/breadcrumbs';
 import { defineEmits } from 'vue';
-import { ProjectService } from '~/api/generate';
-import { useService } from '../composables/useService';
+import {ProjectService} from '~/api/generate';
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';
+import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
+import {useRefreshStore} from '#imports';
 
 const visible = ref(false)
-const deleteDialog = ref(false)
+let deleteDialog = ref(false)
 const store = bcStore()
-const props = defineProps(['project'])
-const project = ref(props.project)
+const { project } = defineProps(['project'])
 const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore)
 
+const navigate = () =>{
+  store.addCrumb({ label: project.title, route: `/projects/${project.id}` })
+}
 
-// allow props to be reactive when there are changes from parent component
-watchEffect(() => {
-  project.value = props.project
+const statusSeverity = computed(() =>{
+  switch (project.status) {
+    case 'pending':
+      return 'warning'
+
+    case 'draft':
+      return 'info'
+
+    case 'ended':
+      return 'success'
+
+  }
 })
 
-const title = ref(project.value.title)
+const title = ref(project.title)
 
-const description = ref(project.value.description)
-
+const description = ref(project.description)
 const emit = defineEmits(['refreshData']);
+const refreshStore = useRefreshStore()
 
-
-const updateProject = async () => {
-
-  if (title.value == project.value.title && description.value == project.value.description) {
-  } else {
-    const response = await ProjectService.updateProjectProjectProjectIdPut(project.value.id, {
-      title: title.value,
-      description: description.value,
-      status: project.value.status,
-      annotation_type: project.value.annotation_type,
-      is_published: project.value.is_published,
-      empty_annotations: project.value.empty_annotations,
-      allow_skip: project.value.allow_skip,
-      control_weights: project.value.control_weights,
-      pinned_at: project.value.pinned_at,
-      created_by: "john@example.com",
-
-    })
-    visible.value = false
+const deleteProject = async () => {
+  try {
+    const res = await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
+    navigateTo(`/dashboard`);
+    await refreshStore.fetchProject();
+    deleteDialog.value= false
+  } catch (err) {
+    console.error("Error deleting project:", err);
   }
 }
 
-const deleteProject = async () => {
-  await ProjectService.deleteProjectProjectProjectIdDelete(project.value.id)
-  visible.value = false
-}
-
-
-const updateBreadcrumd = () => {
-  store.addCrumb({ label: project.value.title, url: `/projects/${project.value.id}` })
-}
-
-const optionTrigger = () => {
-  window.alert("Setting for task " + props.project.id)
-}
-
 </script>
-
+<style>
+.exeeded_text{
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+</style>

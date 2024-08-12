@@ -3,9 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Schema used to describe an exception response
+ * DTO to create a tag object
  */
-export type ExceptionResponse = {
-    detail?: (string | null);
+export type TagCreate = {
+    key: string;
+    value: string;
 };
 

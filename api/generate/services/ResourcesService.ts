@@ -38,8 +38,6 @@ export class ResourcesService {
                 'end_date': endDate,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

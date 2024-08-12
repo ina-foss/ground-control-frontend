@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AnnotationCreate } from '../models/AnnotationCreate';
 import type { AnnotationDto } from '../models/AnnotationDto';
+import type { AnnotationFullCreate } from '../models/AnnotationFullCreate';
+import type { InOutEnum } from '../models/InOutEnum';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -22,7 +23,7 @@ export class AnnotationService {
      * @throws ApiError
      */
     public static createAnnotationAnnotationPost(
-        requestBody: AnnotationCreate,
+        requestBody: AnnotationFullCreate,
     ): CancelablePromise<AnnotationDto> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -30,8 +31,6 @@ export class AnnotationService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -53,8 +52,6 @@ export class AnnotationService {
                 'annotation_id': annotationId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -80,8 +77,6 @@ export class AnnotationService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -90,21 +85,24 @@ export class AnnotationService {
      * Get Annotation By Task Id
      * Get a list of annotations that match the task_id attributes
      * @param taskId
+     * @param direction Direction of the annotation ('in' or 'out')
      * @returns AnnotationDto Successful Response
      * @throws ApiError
      */
     public static getAnnotationByTaskIdAnnotationsTaskIdGet(
         taskId: number,
-    ): CancelablePromise<AnnotationDto> {
+        direction?: InOutEnum,
+    ): CancelablePromise<Array<AnnotationDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/annotations/{task_id}',
             path: {
                 'task_id': taskId,
             },
+            query: {
+                'direction': direction,
+            },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

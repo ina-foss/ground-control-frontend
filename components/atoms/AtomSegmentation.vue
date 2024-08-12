@@ -1,5 +1,5 @@
 <template>
-  <div :style="dynamicStyle($props.colors[topicIndex])" class="bg-gray-300 p-3 pl-3 rounded-lg" >
+  <div :style="dynamicStyle($props.colors[topicIndex])" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg " >
     <div class="flex items-center gap-2">
       <Button :icon="iconBool" :label="topicText" :pt="{
         root: {
@@ -46,8 +46,6 @@ function generatePastelColor(tagNumber) {
   return `rgb(${r}, ${g}, ${b}, 1)`;
 }
 
-// FIX: Border and scroll doesn't work well ( à revoir le scroll si on decale les elts )
-// TODO: essayer de retirer le flex gap et de le remplacer par un padding par elts
 function dynamicStyle(color) {
 
   const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
@@ -57,12 +55,12 @@ function dynamicStyle(color) {
       const [r, g, b] = extractRGB(color);
       return {
         backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
-        marginTop: '-20px'
+        margintop: '0px',
       };
     }
     return {
       backgroundColor: reduceOpacityOfColor(color, 0.5),
-      marginTop: '-20px'
+      marginTop: '0px'
     };
   } else {
     isVisible = false
