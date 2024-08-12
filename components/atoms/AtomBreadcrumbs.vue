@@ -5,7 +5,7 @@
                 <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
                     <a :href="href" v-bind="props.action" @click.prevent="navigate()">
                         <span :class="[item.icon, 'text-color']" />
-                        <span class="text-primary font-semibold">{{ item.label }}</span>
+                        <span class="text-primary text-ellipsis text-nowrap font-semibold">{{ item.label }}</span>
                     </a>
                 </router-link>
                 <a v-else :href="item.url" :target="item.target" v-bind="props.action">

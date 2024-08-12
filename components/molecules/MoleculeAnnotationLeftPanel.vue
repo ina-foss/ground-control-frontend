@@ -1,9 +1,9 @@
 <template>
-  <div class="col-span-3 bg-surface-700 px-5 py-5 h-full overflow-auto">
+  <div class="col-span-3 bg-surface-700 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
     <AtomVideoHls ref="AtomVideoHlsRef" :data="data" :videoSrc="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
     <AtomTopicList :colors="colors" />
-    <h2 class="text-white text-3xl p-3 font-semibold">Segmentation</h2>
-      <p class="text-white p-3 ">
+    <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">Segmentation</h2>
+      <p class="text-white p-3 md:block xs:hidden ">
         Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
         Chaque segment correspond à une thématique différente de la précédente.<br>
         Chaque changement de segment correspond à un changement d'interlocuteur ou de sujet.<br><span
@@ -20,7 +20,17 @@
   import AtomVideoHls from '../atoms/AtomVideoHls'
   import AtomTopicList from '../atoms/AtomTopicList'
 
-  const { data, locals, colors, videoSrc} = defineProps(['data', 'locals', 'colors', 'videoSrc'])
+const props = defineProps({
+  data: null,
+  locals: null,
+  colors: {
+    type: Array,
+    default: () => []
+  },
+  videoSrc: String
+});
+
+const { data, locals, colors, videoSrc } = props;
 
   const AtomVideoHlsRef = $ref()
 
