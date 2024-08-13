@@ -8,7 +8,7 @@
           <p class="text-sm">{{transcriptions[0].tcin}}</p>
         </div>
       </Tag>
-      <Tag v-if="selectedTranscription.index != null" severity="info" class="h-7 self-center "  :value="transcriptionTag" />
+      <Tag v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-center "  :value="transcriptionTag" />
       </div>
       <Button icon="pi pi-pencil" size="small" severity="contrast" @click="onExpand()"/>
     </div>
@@ -25,23 +25,23 @@
       <div class="w-full bg-white flex-col items-center rounded p-2 ">
         <div class="flex justify-between pb-2  ">
           <h2>Result</h2>
-          <Tag v-if="selectedTranscription.index != null" severity="info" :value="transcriptionTag" />
+          <Tag v-if="editedTranscription.index != null" severity="info" :value="transcriptionTag" />
           <p  >edit</p>
         </div>
         <div class="flex justify-center">
-          <Textarea :auto-resize="true" style="width: 95%;" v-model="selectedTranscription.text" />
+          <Textarea :auto-resize="true" style="width: 95%;" v-model="editedTranscription.text" />
         </div>
       </div>
       <div  class="flex justify-end gap-2">
-          <Button label="Cancel" severity="secondary" size="small" @click="isExpand=false" />
+          <Button label="Cancel" severity="secondary" size="small" @click="onCancel()" />
           <Button label="Confirm" severity="info" size="small" @click=" onFinished()"/>
       </div>
     </div>
     <span v-else :class="`rounded-lg  scroll-mt-5 bg-white p-2 ${textColor} `">
-      <p v-if="selectedTranscription.text == ''">
+      <p v-if="editedTranscription.text == ''">
         {{ transcriptions[0].data.text[0] }}
       </p>
-      <p v-else >{{ selectedTranscription.text}}</p>
+      <p v-else >{{ editedTranscription.text}}</p>
       </span>
 
   </div>
@@ -50,6 +50,9 @@
 
 <script setup>
   import Textarea from 'primevue/textarea';
+
+  const emits = defineEmits( ['confirm'])
+  const toast = useToast()
 
   const { transcriptions, algos } = defineProps({
     transcriptions: {
@@ -63,15 +66,16 @@
   let isExpand = $ref(false) // Describe atom render
   let isFinished = $ref(false) // If the transcription has been corrected
   const test = ref()
-  const selectedTranscription = reactive({text: '', index: null})
 
-  const isEdited = computed(() => (selectedTranscription.text == '' || selectedTranscription.text == transcriptions[selectedTranscription.index].data.text[0]) ? false : true )
+  const confirmedTranscription = reactive({phrase: {}, index: null})
+  const editedTranscription = reactive({text: '', index: null})
+
+  const isEdited = computed(() => (editedTranscription.text == '' || editedTranscription.text == transcriptions[editedTranscription.index].data.text[0]) ? false : true )
   const transcriptionTag = computed(() => {
     const editedTag =  isEdited.value ? 'custom' : ''
-    if (selectedTranscription.index != null ) return algos[selectedTranscription.index]+' '+ editedTag
+    if (editedTranscription.index != null ) return algos[editedTranscription.index]+' '+ editedTag
     else return ''
   })
-  watchEffect(()=> console.log(transcriptionTag.value))
 
   const tcColor = computed(()=>{
     return isFinished ?
@@ -89,14 +93,28 @@
     isExpand = true
   }
 
+  const onCancel = () => {
+   isExpand=false
+    editedTranscription.index = confirmedTranscription.index
+    editedTranscription.text = confirmedTranscription.text
+  }
+
   const onFinished = () => {
-    isFinished=true
-    isExpand = false
+    if(editedTranscription.index == null) toast.add({summary:'Warning', detail:"You must choose one of the transcription", life: 3000, severity:'warn' })
+    else{
+      confirmedTranscription.index = editedTranscription.index
+      confirmedTranscription.phrase = transcriptions[confirmedTranscription.index]
+      confirmedTranscription.phrase.data.text[0] = editedTranscription.text
+      confirmedTranscription.edited = isEdited.value
+      isFinished=true
+      emits('confirm', confirmedTranscription)
+      isExpand = false
+    }
   }
 
   const selectTrancription = (phrase, index) => {
-    selectedTranscription.text = phrase.data.text[0]
-    selectedTranscription.index = index
+    editedTranscription.text = phrase.data.text[0]
+    editedTranscription.index = index
   }
 
 

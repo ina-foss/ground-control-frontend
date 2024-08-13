@@ -10,7 +10,7 @@
           target="parent"
         />
         <div  class=" rounded flex flex-col gap-2 p-3 " >
-          <AtomTrancription v-for="(transcription, index) in transcriptions" :algos="algos" :transcriptions="transcription"/>
+          <AtomTrancription  @confirm="handleConfirm($event, index)" v-for="(transcription, index) in transcriptions" :algos="algos" :transcriptions="transcription"/>
         </div>
       </ol>
   </div>
@@ -29,6 +29,15 @@ const { transcriptions,algos } = defineProps({
     required: true
   }
 })
+
+const localChanges = ref([])
+
+const handleConfirm = (event,index) => {
+  event.algos = algos[event.index]
+  localChanges.value[index] = event
+}
+
+defineExpose({locals: localChanges })
 
 console.log(algos)
 </script>

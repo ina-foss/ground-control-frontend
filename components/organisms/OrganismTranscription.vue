@@ -1,12 +1,12 @@
 <template>
   <div v-if=" allFetched " class="h-full" >
-    <div class="fixed bottom-10 right-20 ">
+    <div class="fixed z-10 bottom-10 right-20 ">
       <Button label="Submit" size="large" @click="handleSubmit()" />
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:block h-full">
       <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc" :locals="locals" :data="data" />
-      <MoleculeTranscription class="overflow-y-auto" :transcriptions="transcriptions" :algos="algos" />
+      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :algos="algos" />
     </div>
   </div>
 </template>
@@ -18,7 +18,12 @@
 
   const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
 
+  const emits = defineEmits([ 'submitAnnotation' ]);
+
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
+  const MoleculeTranscriptionRef = ref()
+
+  watch(()=> MoleculeTranscriptionRef.value?.locals, ()=> console.log(MoleculeTranscriptionRef.value.locals),{deep: true})
 
   const annotationInfo = $computed(() => {
     let info = null
@@ -44,6 +49,16 @@
     }
     return res
   })
+
+  const handleSubmit = () =>{
+
+    let locals = []
+    MoleculeTranscriptionRef.value.locals.forEach((el,index)=>{
+      locals[index] = el.phrase
+    })
+
+    emits('submitAnnotation',{ locals: locals })
+  }
 
   const algos = $computed(()=> {
     const res = []
