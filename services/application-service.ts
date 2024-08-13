@@ -28,12 +28,12 @@ export default class ApplicationService {
 
   public async checkUser() {
     const { userEmail, user } = storeToRefs(this.authStore)
-
+    let role = user.value.profile.roles ? user.value.profile.roles[2] : 'default'
     const response = ref(await UserService.getUserByEmailUserGet(userEmail.value))
     if (response.value == null) {
       UserService.createUserUserPost({
         email: userEmail.value,
-        role: user.value.profile.roles[2],
+        role: role
       })
         .then((response) => console.log(response))
     }
