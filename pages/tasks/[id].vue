@@ -86,9 +86,11 @@ const refreshTaskData = async () => {
 }
 
 const handleSubmit = (event) => {
-  const locals = event.locals
+  const locals = JSON.parse(JSON.stringify(event.locals))
 
   if (annotationInfo != null) {
+    let result = annotations_out.value[annotationInfo.index].result
+    result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur a déjà une annotation associée à cette tâche
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotationInfo.id,
@@ -106,6 +108,8 @@ const handleSubmit = (event) => {
   }
 
   else {
+    let result = annotations_in.value[0].result
+    result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({
       annotation: {
