@@ -65,6 +65,7 @@ const annotations_in = ref([])
 AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
 AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'in').then((res)=> annotations_in.value = res).then(()=> annotation_bool.in = true  )
 
+
 const allFetched = $computed(() => {
   return annotation_bool.in && annotation_bool.out
 })
@@ -104,18 +105,20 @@ const handleSubmit = (event) => {
           life: 4000
         })
       })
-      .then(() => refreshTaskData())
+      .then(() => {
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> console.log(annotations_out.value)).then(()=> annotation_bool.out = true)
+      })
   }
 
   else {
-    let result = annotations_in.value[0].result
+    let result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
     result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({
       annotation: {
         user_email: userEmail.value,
         task_id: data.value.id,
-        result: annotations_in.value[0].result,
+        result: result,
         annotation_status: AnnotationStatus.DRAFT,
         version: 1
       },
@@ -124,7 +127,10 @@ const handleSubmit = (event) => {
         task_id: data.value.id,
         direction: 'out'
       }
-    }).then(() => refreshTaskData())
+    })
+      .then(() => {
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> console.log(annotations_out.value)).then(()=> annotation_bool.out = true)
+      })
       .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add(
