@@ -41,7 +41,7 @@
       <p v-if="editedTranscription.text == ''">
         {{ transcriptions[0].data.text[0] }}
       </p>
-      <p v-else >{{ editedTranscription.text}}</p>
+      <p v-else >{{ editedTranscription.text }}</p>
       </span>
 
   </div>
@@ -54,11 +54,14 @@
   const emits = defineEmits( ['confirm'])
   const toast = useToast()
 
-  const { transcriptions, algos } = defineProps({
+  const { transcriptions, algos, userAnnotation } = defineProps({
     transcriptions: {
       type: Array
     },
     algos: {
+      type: Array
+    },
+    userAnnotation: {
       type: Array
     }
   })
@@ -70,6 +73,15 @@
   const confirmedTranscription = reactive({phrase: {}, index: null})
   const editedTranscription = reactive({text: '', index: null})
 
+  if(userAnnotation != null){
+
+    confirmedTranscription.phrase =  userAnnotation
+    confirmedTranscription.index = userAnnotation.data.algoIndex
+    editedTranscription.text = userAnnotation.data.text[0]
+    editedTranscription.index = userAnnotation.data.algoIndex
+
+  }
+
   const isEdited = computed(() => (editedTranscription.text == '' || editedTranscription.text == transcriptions[editedTranscription.index].data.text[0]) ? false : true )
   const transcriptionTag = computed(() => {
     const editedTag =  isEdited.value ? 'custom' : ''
@@ -78,7 +90,7 @@
   })
 
   const tcColor = computed(()=>{
-    return isFinished ?
+    return isFinished || (!isExpand && confirmedTranscription.index!=null) ?
       'success' :
       'danger'
   })
@@ -94,19 +106,22 @@
   }
 
   const onCancel = () => {
-   isExpand=false
-    editedTranscription.index = confirmedTranscription.index
-    editedTranscription.text = confirmedTranscription.text
+    isExpand=false
+    if(confirmedTranscription.index != null){
+      editedTranscription.index = confirmedTranscription.index
+      editedTranscription.text = confirmedTranscription.phrase.data.text[0]
+    }
   }
 
   const onFinished = () => {
     if(editedTranscription.index == null) toast.add({summary:'Warning', detail:"You must choose one of the transcription", life: 3000, severity:'warn' })
     else{
       confirmedTranscription.index = editedTranscription.index
-      confirmedTranscription.phrase = transcriptions[confirmedTranscription.index]
+      confirmedTranscription.phrase = JSON.parse(JSON.stringify(transcriptions[confirmedTranscription.index]))
       confirmedTranscription.phrase.data.text[0] = editedTranscription.text
       confirmedTranscription.edited = isEdited.value
       isFinished=true
+
       emits('confirm', confirmedTranscription)
       isExpand = false
     }

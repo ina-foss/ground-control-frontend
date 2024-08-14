@@ -6,7 +6,7 @@
     <Toast />
     <div class="grid grid-cols-9 xs:block h-full">
       <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc" :locals="locals" :data="data" />
-      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :algos="algos" />
+      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :userAnnotation="userAnnotation" :algos="algos" />
     </div>
   </div>
 </template>
@@ -16,7 +16,10 @@
   import MoleculeAnnotationLeftPanel from '../molecules/MoleculeAnnotationLeftPanel.vue';
   import MoleculeTranscription from '../molecules/MoleculeTranscription.vue';
 
+  const authStore = useAuth()
+
   const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
+  const { userEmail } = storeToRefs(authStore)
 
   const emits = defineEmits([ 'submitAnnotation' ]);
 
@@ -50,15 +53,29 @@
     return res
   })
 
+  const userAnnotation = $computed(()=>{
+    let response = []
+    if(allFetched  && annotationInfo != null ) {
+      response = annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation
+    }
+    return response
+  })
+
+
   const handleSubmit = () =>{
 
-    let locals = []
-    MoleculeTranscriptionRef.value.locals.forEach((el,index)=>{
+  let locals = []
+  MoleculeTranscriptionRef.value.locals.forEach((el, index) => {
+    if (el == null) locals[index] = null
+    else {
+      el.phrase.data.algo = el.algo
+      el.phrase.data.edited = el.edited
+      el.phrase.data.algoIndex = el.index
       locals[index] = el.phrase
-    })
-
-    emits('submitAnnotation',{ locals: locals })
-  }
+    }
+  })
+  emits('submitAnnotation', { locals: locals })
+}
 
   const algos = $computed(()=> {
     const res = []
