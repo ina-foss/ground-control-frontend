@@ -48,6 +48,9 @@ watchEffect(()=>{
     })
 })
 const handleConfirm = (event,index) => {
+  window.onbeforeunload = function () {
+    return confirm("You didn't saved your progression")
+  }
   event.algo = algos[event.index]
   localChanges.value[index] = event
 }
