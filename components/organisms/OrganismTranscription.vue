@@ -55,7 +55,7 @@
   const MoleculeTranscriptionRef = ref()
 
 
-  const annotationInfo = $computed(() => {
+  const annotationInfo = $computed(() => { // get user annotation position
     let info = null
     if (allFetched ) {
       annotations_out.forEach((annotation, index) => {
@@ -67,7 +67,7 @@
     }
   });
 
-  const transcriptions = $computed(() => {
+  const transcriptions = $computed(() => { // format array to have all transcription version in the same array element
     const res = []
     if(allFetched){
       annotations_in[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index)=>{
@@ -80,7 +80,7 @@
     return res
   })
 
-  const userAnnotation = $computed(()=>{
+  const userAnnotations = $computed(()=>{ // return array of users annotations
     let response = []
     if(allFetched  && annotationInfo != null ) {
       response = [...annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation]
@@ -88,12 +88,11 @@
     return response
   })
 
-  watchEffect(()=> console.log(userAnnotation))
 
   const handleSubmit = () =>{
 
   let locals = []
-  MoleculeTranscriptionRef.value.locals.forEach((el, index) => {
+  MoleculeTranscriptionRef.value.locals.forEach((el, index) => { // format data sent to DB
     if (el == null) locals[index] = null
     else {
       el.phrase.data.algo = el.algo
@@ -105,7 +104,7 @@
   emits('submitAnnotation', { locals: locals })
 }
 
-  const algos = $computed(()=> {
+  const algos = $computed(()=> { // List the name of the algorithm
     const res = []
     if (allFetched){
       annotations_in.forEach((annotation)=>{

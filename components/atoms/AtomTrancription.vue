@@ -1,5 +1,7 @@
 <template>
-  <div ref="test" class="bg-surface-200 flex  flex-col p-4 gap-1 drop-shadow-lg rounded transition-all " >
+  <div  class="bg-surface-200 flex  flex-col p-4 gap-1 drop-shadow-lg rounded transition-all " >
+
+    <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
       <div class="flex  flex-start gap-2 ">
       <Tag :severity="tcColor">
@@ -12,8 +14,11 @@
       </div>
       <Button icon="pi pi-pencil" size="small" severity="contrast" @click="onExpand()"/>
     </div>
+
+    <!-- In EDIT Mode -->
     <div v-if="isExpand == true" class="flex flex-col gap-2 " >
       <div  class="flex flex-row gap-3 w-full ">
+        <!-- List of available transcriptions -->
         <span v-for="(phrase, index) in transcriptions" :key="index" class="rounded bg-gray-500 text-gray-100 relative p-2 scroll-mt-5 ">
           <Tag severity="secondary" :value="algos[index] " />
           <p>{{ phrase.data.text[0] }}</p>
@@ -22,21 +27,24 @@
           </div>
         </span>
       </div>
+      <!-- Selected transcription and Result  -->
       <div class="w-full bg-white flex-col items-center rounded p-2 ">
         <div class="flex justify-between pb-2  ">
           <h2>Result</h2>
           <Tag v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag" />
-          <p  >edit</p>
         </div>
         <div class="flex justify-center">
           <Textarea :auto-resize="true" style="width: 95%;" v-model="editedTranscription.text" />
         </div>
       </div>
+      <!-- Footer with Buttons -->
       <div  class="flex justify-end gap-2">
           <Button label="Cancel" severity="secondary" size="small" @click="onCancel()" />
           <Button label="Confirm" severity="info" size="small" @click=" onFinished()"/>
       </div>
     </div>
+
+    <!-- In READING mode  -->
     <span v-else :class="`rounded-lg  scroll-mt-5 bg-white p-2 ${textColor} `">
       <p v-if="editedTranscription.text == ''">
         {{ transcriptions[0].data.text[0] }}
@@ -68,12 +76,11 @@
 
   let isExpand = $ref(false) // Describe atom render
   let isFinished = $ref(false) // If the transcription has been corrected
-  const test = ref()
 
-  const confirmedTranscription = reactive({phrase: {}, index: null})
-  const editedTranscription = reactive({text: '', index: null})
+  const confirmedTranscription = reactive({phrase: {}, index: null}) // store the whole amalia lvl 1, update when user confirm
+  const editedTranscription = reactive({text: '', index: null}) // store just the text, update for every change
 
-  if(userAnnotation != null){
+  if(userAnnotation != null){ // Update values if user had already annoted this transcription
 
     confirmedTranscription.phrase =  userAnnotation
     confirmedTranscription.index = userAnnotation.data.algoIndex
@@ -82,15 +89,16 @@
 
   }
 
+  // if the selectedTranscriptoin has been edited
   const isEdited = computed(() => (editedTranscription.text == '' || editedTranscription.text == transcriptions[editedTranscription.index].data.text[0]) ? false : true )
 
-  const editTranscriptionTag = computed(() =>{
+  const editTranscriptionTag = computed(() =>{ // Value to display in edit Tag
     const editedTag =  isEdited.value ? 'custom' : ''
     if (editedTranscription.index != null ) return algos[editedTranscription.index]+' '+ editedTag
     else return ''
   })
 
-  let transcriptionTag = toValue(editTranscriptionTag)
+  let transcriptionTag = toValue(editTranscriptionTag) // non-reactive version of editTranscriptionTag
 
   const tcColor = computed(()=>{
     return isFinished || (!isExpand && confirmedTranscription.index!=null) ?
@@ -110,7 +118,7 @@
 
   const onCancel = () => {
     isExpand=false
-    if(confirmedTranscription.index != null){
+    if(confirmedTranscription.index != null){ // reset the edited value to previous confirmed value
       editedTranscription.index = confirmedTranscription.index
       editedTranscription.text = confirmedTranscription.phrase.data.text[0]
     }
