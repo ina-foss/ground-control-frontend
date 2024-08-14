@@ -6,7 +6,35 @@
     <Toast />
     <div class="grid grid-cols-9 xs:block h-full">
       <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"  :data="data" />
-      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :userAnnotation="userAnnotation" :algos="algos" />
+      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :userAnnotations="userAnnotations" :algos="algos" />
+    </div>
+  </div>
+  <div v-else class="h-full">
+    <div class="grid grid-cols-9 xs:block h-full overflow-y-auto">
+      <div class="col-span-3 bg-surface-700 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
+        <div class=" xs:h-full w-full h-auto xs:flex xs:justify-center ">
+          <Skeleton :pt="{
+            root: {
+              style: 'height: 100%; width:auto'
+            }
+          }"  class="aspect-video"/>
+        </div>
+        <div class="xs:hidden ">
+          <Skeleton class="m-3" height="3rem" width="70%" />
+          <Skeleton height="500px" />
+        </div>
+      </div>
+    <div class="col-span-5 flex flex-row w-full max-h-full justify-center overflow-y-auto" >
+        <div  class=" rounded flex flex-col w-full gap-2 p-3 " >
+          <Skeleton height="127px" />
+          <Skeleton height="150px" />
+          <Skeleton height="175px" />
+          <Skeleton height="150px" />
+          <Skeleton height="127px" />
+          <Skeleton height="150px" />
+          <Skeleton height="150px" />
+        </div>
+    </div>
     </div>
   </div>
 </template>
