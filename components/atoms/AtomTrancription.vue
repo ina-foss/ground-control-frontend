@@ -19,7 +19,7 @@
     <div v-if="isExpand == true" class="flex flex-col gap-2 " >
       <div  class="flex flex-row gap-3 w-full ">
         <!-- List of available transcriptions -->
-        <span v-for="(phrase, index) in transcriptions" :key="index" class="rounded bg-gray-500 text-gray-100 relative p-2 scroll-mt-5 ">
+        <span v-for="(phrase, index) in transcriptions" :key="index" class="rounded bg-gray-500 w-full text-gray-100 relative p-2 scroll-mt-5 ">
           <Tag severity="secondary" :value="algos[index] " />
           <p>{{ phrase.data.text[0] }}</p>
           <div class="flex justify-end">
@@ -107,7 +107,7 @@
   })
 
   const textColor = computed(() => {
-      return isFinished ?
+    return isFinished || (!isExpand && confirmedTranscription.index!=null) ?
         'text-black' :
         'text-gray-500'
   })
