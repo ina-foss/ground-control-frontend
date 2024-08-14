@@ -23,7 +23,7 @@
     </div>
   </div>
   <div v-else class="h-full" >
-    <div class="fixed bottom-10 right-20 ">
+    <div class="fixed bottom-10 z-10 right-20 ">
       <Button label="Submit" size="large" @click="handleSubmit()" />
     </div>
     <Toast />

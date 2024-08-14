@@ -1,12 +1,40 @@
 <template>
   <div v-if=" allFetched " class="h-full" >
-    <div class="fixed bottom-10 right-20 ">
+    <div class="fixed z-10 bottom-10 right-20 ">
       <Button label="Submit" size="large" @click="handleSubmit()" />
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:block h-full">
-      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc" :locals="locals" :data="data" />
-      <MoleculeTranscription class="overflow-y-auto" :transcriptions="transcriptions" :algos="algos" />
+      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"  :data="data" />
+      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :userAnnotations="userAnnotations" :algos="algos" />
+    </div>
+  </div>
+  <div v-else class="h-full">
+    <div class="grid grid-cols-9 xs:block h-full overflow-y-auto">
+      <div class="col-span-3 bg-surface-700 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
+        <div class=" xs:h-full w-full h-auto xs:flex xs:justify-center ">
+          <Skeleton :pt="{
+            root: {
+              style: 'height: 100%; width:auto'
+            }
+          }"  class="aspect-video"/>
+        </div>
+        <div class="xs:hidden ">
+          <Skeleton class="m-3" height="3rem" width="70%" />
+          <Skeleton height="500px" />
+        </div>
+      </div>
+    <div class="col-span-5 flex flex-row w-full max-h-full justify-center overflow-y-auto" >
+        <div  class=" rounded flex flex-col w-full gap-2 p-3 " >
+          <Skeleton height="127px" />
+          <Skeleton height="150px" />
+          <Skeleton height="175px" />
+          <Skeleton height="150px" />
+          <Skeleton height="127px" />
+          <Skeleton height="150px" />
+          <Skeleton height="150px" />
+        </div>
+    </div>
     </div>
   </div>
 </template>
@@ -16,11 +44,18 @@
   import MoleculeAnnotationLeftPanel from '../molecules/MoleculeAnnotationLeftPanel.vue';
   import MoleculeTranscription from '../molecules/MoleculeTranscription.vue';
 
+  const authStore = useAuth()
+
   const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
+  const { userEmail } = storeToRefs(authStore)
+
+  const emits = defineEmits([ 'submitAnnotation' ]);
 
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
+  const MoleculeTranscriptionRef = ref()
 
-  const annotationInfo = $computed(() => {
+
+  const annotationInfo = $computed(() => { // get user annotation position
     let info = null
     if (allFetched ) {
       annotations_out.forEach((annotation, index) => {
@@ -32,7 +67,7 @@
     }
   });
 
-  const transcriptions = $computed(() => {
+  const transcriptions = $computed(() => { // format array to have all transcription version in the same array element
     const res = []
     if(allFetched){
       annotations_in[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index)=>{
@@ -45,7 +80,31 @@
     return res
   })
 
-  const algos = $computed(()=> {
+  const userAnnotations = $computed(()=>{ // return array of users annotations
+    let response = []
+    if(allFetched  && annotationInfo != null ) {
+      response = [...annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation]
+    }
+    return response
+  })
+
+
+  const handleSubmit = () =>{
+
+  let locals = []
+  MoleculeTranscriptionRef.value.locals.forEach((el, index) => { // format data sent to DB
+    if (el == null) locals[index] = null
+    else {
+      el.phrase.data.algo = el.algo
+      el.phrase.data.edited = el.edited
+      el.phrase.data.algoIndex = el.index
+      locals[index] = el.phrase
+    }
+  })
+  emits('submitAnnotation', { locals: locals })
+}
+
+  const algos = $computed(()=> { // List the name of the algorithm
     const res = []
     if (allFetched){
       annotations_in.forEach((annotation)=>{
