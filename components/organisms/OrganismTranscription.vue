@@ -5,7 +5,7 @@
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:block h-full">
-      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc" :locals="locals" :data="data" />
+      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"  :data="data" />
       <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :userAnnotation="userAnnotation" :algos="algos" />
     </div>
   </div>
@@ -26,7 +26,6 @@
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
   const MoleculeTranscriptionRef = ref()
 
-  watch(()=> MoleculeTranscriptionRef.value?.locals, ()=> console.log(MoleculeTranscriptionRef.value.locals),{deep: true})
 
   const annotationInfo = $computed(() => {
     let info = null
@@ -56,11 +55,12 @@
   const userAnnotation = $computed(()=>{
     let response = []
     if(allFetched  && annotationInfo != null ) {
-      response = annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation
+      response = [...annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation]
     }
     return response
   })
 
+  watchEffect(()=> console.log(userAnnotation))
 
   const handleSubmit = () =>{
 

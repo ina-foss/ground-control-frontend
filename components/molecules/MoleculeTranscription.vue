@@ -33,23 +33,22 @@ const { transcriptions,algos,userAnnotation } = defineProps({
   }
 })
 
-console.log(userAnnotation)
 
 const localChanges = ref([])
 
-if(userAnnotation =! null){
-  userAnnotation.forEach( (change,index)  => {
-    if (change == null) localChanges.value[index] = null
-    else{
-      localChanges.value[index] = {}
-      localChanges.value[index].index = change.data.algoIndex
-      localChanges.value[index].algo = change.data.algo
-      localChanges.value[index].edited = change.data.edited
-      localChanges.value[index].phrase = change
-    }
-  })
-}
+watchEffect(()=>{
 
+    userAnnotation.forEach( (change,index)  => {
+      if (change == null) localChanges.value[index] = null
+      else{
+        localChanges.value[index] = {}
+        localChanges.value[index].index = change.data.algoIndex
+        localChanges.value[index].algo = change.data.algo
+        localChanges.value[index].edited = change.data.edited
+        localChanges.value[index].phrase = change
+      }
+    })
+})
 const handleConfirm = (event,index) => {
   event.algo = algos[event.index]
   localChanges.value[index] = event

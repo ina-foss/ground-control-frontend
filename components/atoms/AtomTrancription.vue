@@ -25,7 +25,7 @@
       <div class="w-full bg-white flex-col items-center rounded p-2 ">
         <div class="flex justify-between pb-2  ">
           <h2>Result</h2>
-          <Tag v-if="editedTranscription.index != null" severity="info" :value="transcriptionTag" />
+          <Tag v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag" />
           <p  >edit</p>
         </div>
         <div class="flex justify-center">
@@ -62,7 +62,7 @@
       type: Array
     },
     userAnnotation: {
-      type: Array
+      type: Object
     }
   })
 
@@ -83,11 +83,14 @@
   }
 
   const isEdited = computed(() => (editedTranscription.text == '' || editedTranscription.text == transcriptions[editedTranscription.index].data.text[0]) ? false : true )
-  const transcriptionTag = computed(() => {
+
+  const editTranscriptionTag = computed(() =>{
     const editedTag =  isEdited.value ? 'custom' : ''
     if (editedTranscription.index != null ) return algos[editedTranscription.index]+' '+ editedTag
     else return ''
   })
+
+  let transcriptionTag = toValue(editTranscriptionTag)
 
   const tcColor = computed(()=>{
     return isFinished || (!isExpand && confirmedTranscription.index!=null) ?
@@ -116,6 +119,7 @@
   const onFinished = () => {
     if(editedTranscription.index == null) toast.add({summary:'Warning', detail:"You must choose one of the transcription", life: 3000, severity:'warn' })
     else{
+      transcriptionTag = toValue(editTranscriptionTag)
       confirmedTranscription.index = editedTranscription.index
       confirmedTranscription.phrase = JSON.parse(JSON.stringify(transcriptions[confirmedTranscription.index]))
       confirmedTranscription.phrase.data.text[0] = editedTranscription.text
