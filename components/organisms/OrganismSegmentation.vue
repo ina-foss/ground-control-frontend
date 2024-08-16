@@ -126,9 +126,15 @@
     })
   }
 
-  watchEffect(() => {if(allFetched)
+  onMounted(()=>
+    loadTopics())
+
+  watch(()=> allFetched,() => {
+    if(allFetched)
     videoSrc = annotations_in[0]?.result.asset.url
-    loadTopics() })
+
+    loadTopics()
+  })
 
 
 
