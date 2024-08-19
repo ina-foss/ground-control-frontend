@@ -2,7 +2,7 @@
   <div class="flex flex-col p-[10%] gap-3 justify-center items-center h-screen">
     <Toast />
     <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
-    <div @mouseup="handleSelection"   id="text">{{text}}</div>
+    <div @mouseup="handleSelection" id="text">{{text}}</div>
     <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
     <Button label="Clear all" @click="deleteSelection" />
 
@@ -11,12 +11,16 @@
 
 <script setup lang="ts">
 import { random } from 'lodash';
+import BadgeDirective from 'primevue/badgedirective';
 import { useToast } from 'primevue/usetoast';
 import {createApp, createTextVNode} from 'vue'
 import AtomSpan from '~/components/atoms/AtomSpan.vue';
 
 const app = createApp()
+app.directive('badge', BadgeDirective)
 const toast = useToast()
+let spanClicked = $ref(false)
+let currentFunction = $ref()
 const labelSelected = ref('Person')
 const labels = ['Person','Citation','Verbe']
 const text = ref('Mercredi soir, le chef d’Etat a évacué l’idée d’adouber Lucie Castets, candidate officielle de la coalition de gauche : "Le sujet n’est pas un nom donné par une formation politique. La question est quelle majorité peut se dégager à l’Assemblée pour que le gouvernement de la France puisse passer des réformes."')
@@ -25,6 +29,7 @@ const state = reactive({
   range: null as Range | null
 })
 
+watchEffect(()=> console.log(spanClicked))
 const selectionText = computed(() => {
   if (state.range != null) {
     return state.range.toString()
@@ -52,17 +57,24 @@ const handleSelection = () => {
   const currentSelection = document.getSelection()
   if (currentSelection && currentSelection.toString() !== '') {
     state.selection = currentSelection
+    console.log(currentSelection)
+    state.selection.modify('extend','left','word') // Move the selection at the beginning of the word
+    state.selection.modify('extend','right','word') // Extend the selection to the whole word
+    if( state.selection.extentNode.data[state.selection.extentOffset-1] === ' '){ // Delete the last characted if it's a space
+      state.selection.modify('extend','backward','character')
+    }
+    return
     state.range = currentSelection.getRangeAt(0)
     let selectionTextString = selectionText.value
     state.selection.removeAllRanges()
     let span = document.createElement('span')
-
     state.range.deleteContents()
-    state.range.insertNode(span)
     state.selection.empty()
     state.selection = null
 
     console.log(selectionTextString)
+    console.log(spanClicked)
+    if (!spanClicked){
     const app = createApp({
       render () {
         return h(AtomSpan , {
@@ -76,21 +88,29 @@ const handleSelection = () => {
                 element.parentNode.removeChild(element)
 
               }
-            }
+            },
+      onEditSpan: ({addLeft}) => {
+            spanClicked = true
+            currentFunction = addLeft
+          },
 
 
          }
         )
       }
     })
-
     const instance = app.mount(span)
-
     const fragment = document.createDocumentFragment()
     Array.from(span.childNodes).forEach(node => {
       fragment.appendChild(node)
     });
     state.range.insertNode(fragment)
+    }
+    else{
+      currentFunction(selectionTextString)
+      spanClicked = false
+    }
+
   }
 }
 
