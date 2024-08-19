@@ -5,7 +5,18 @@ import path from 'path';
 export default defineNuxtConfig({
     ssr: false,
     app: {
-        pageTransition: {name: 'page', mode: 'in-out'}
+        pageTransition: {name: 'page', mode: 'in-out'},
+        head:{
+            link: [
+              { rel: 'stylesheet', href: '/_nuxt/app/node_modules/amalia.js-full-1.3.3/full/build/js/amalia.js.min.css', type: 'text/css' }
+            ],
+            script: [
+              { src: '/_nuxt/app/node_modules/amalia.js-full-1.3.3/full/bower_components/jquery/dist/jquery.js', type: 'text/javascript' },
+              { src: '/_nuxt/app/node_modules/amalia.js-full-1.3.3/full/bower_components/jquery-ui/jquery-ui.min.js', type: 'text/javascript' },
+              { src: '/_nuxt/app/node_modules/amalia.js-full-1.3.3/full/bower_components/raphael/raphael.js', type: 'text/javascript' },
+              { src: '/_nuxt/app/node_modules/amalia.js-full-1.3.3/full/build/js/amalia.js.min.js', type: 'text/javascript' },
+            ],
+        },
     },
     devtools: {
         enabled: true,
