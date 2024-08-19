@@ -21,6 +21,9 @@ app.directive('badge', BadgeDirective)
 const toast = useToast()
 let spanClicked = $ref(false)
 let currentFunction = $ref()
+const spanRefArray = ref([])
+const spanCount = ref(spanRefArray.value.length)
+let spanIndex = $ref()
 const labelSelected = ref('Person')
 const labels = ['Person','Citation','Verbe']
 const text = ref('Mercredi soir, le chef d’Etat a évacué l’idée d’adouber Lucie Castets, candidate officielle de la coalition de gauche : "Le sujet n’est pas un nom donné par une formation politique. La question est quelle majorité peut se dégager à l’Assemblée pour que le gouvernement de la France puisse passer des réformes."')
@@ -28,6 +31,8 @@ const state = reactive({
   selection: null as Selection | null,
   range: null as Range | null
 })
+
+watchEffect(()=> console.log(spanIndex))
 
 watchEffect(()=> console.log(spanClicked))
 const selectionText = computed(() => {
@@ -57,13 +62,21 @@ const handleSelection = () => {
   const currentSelection = document.getSelection()
   if (currentSelection && currentSelection.toString() !== '') {
     state.selection = currentSelection
+    let index = markRaw(spanCount.value)
+    let direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
     console.log(currentSelection)
-    state.selection.modify('extend','left','word') // Move the selection at the beginning of the word
-    state.selection.modify('extend','right','word') // Extend the selection to the whole word
-    if( state.selection.extentNode.data[state.selection.extentOffset-1] === ' '){ // Delete the last characted if it's a space
-      state.selection.modify('extend','backward','character')
+    console.log(direction)
+    state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
+    if(direction == 'forward'){
+       if( state.selection.extentNode.data[state.selection.extentOffset-1] == ' '){ // Delete the last characted if it's a space
+        state.selection.modify('extend','backward','character')
+        }
     }
-    return
+    else {
+        if( state.selection.extentNode.data[state.selection.extentOffset+1] === ' '){ // Delete the last characted if it's a space
+          state.selection.modify('extend','backward','character')
+        }
+    }
     state.range = currentSelection.getRangeAt(0)
     let selectionTextString = selectionText.value
     state.selection.removeAllRanges()
@@ -81,24 +94,26 @@ const handleSelection = () => {
            label: labelSelected.value,
            text: selectionTextString,
             color: generatePastelColor(random(0,15,true)),
-          onDeleteSpan: ({element, text}) => {
-            console.log(element,text)
-              if (element && element.parentNode){
-                element.parentNode.insertBefore(document.createTextNode(text),element)
-                element.parentNode.removeChild(element)
+            index: index,
+            ref: el => spanRefArray.value.push(el),
+            onDeleteSpan: ({element, text}) => {
+              console.log(element,text)
+                if (element && element.parentNode){
+                  element.parentNode.insertBefore(document.createTextNode(text),element)
+                  element.parentNode.removeChild(element)
 
-              }
+                }
             },
-      onEditSpan: ({addLeft}) => {
-            spanClicked = true
-            currentFunction = addLeft
-          },
+            onEditSpan: ({index}) => {
+              spanClicked = true
+              spanIndex = index
+            },
 
 
-         }
-        )
+        })
       }
     })
+      spanCount.value++
     const instance = app.mount(span)
     const fragment = document.createDocumentFragment()
     Array.from(span.childNodes).forEach(node => {
@@ -107,7 +122,8 @@ const handleSelection = () => {
     state.range.insertNode(fragment)
     }
     else{
-      currentFunction(selectionTextString)
+      console.log(spanIndex)
+      direction == 'forward' ? spanRefArray.value[spanIndex].addRight(selectionTextString) : spanRefArray.value[spanIndex].addLeft(selectionTextString)
       spanClicked = false
     }
 
