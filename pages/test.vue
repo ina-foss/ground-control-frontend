@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-import { random } from 'lodash';
+import { clamp, random } from 'lodash';
 import BadgeDirective from 'primevue/badgedirective';
 import { useToast } from 'primevue/usetoast';
 import {createApp, createTextVNode} from 'vue'
@@ -63,20 +63,21 @@ const handleSelection = () => {
   if (currentSelection && currentSelection.toString() !== '') {
     state.selection = currentSelection
     let index = markRaw(spanCount.value)
+    let label = markRaw(labelSelected.value)
     let direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
     console.log(currentSelection)
     console.log(direction)
     state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
-    if(direction == 'forward'){
-       if( state.selection.extentNode.data[state.selection.extentOffset-1] == ' '){ // Delete the last characted if it's a space
-        state.selection.modify('extend','backward','character')
-        }
-    }
-    else {
-        if( state.selection.extentNode.data[state.selection.extentOffset+1] === ' '){ // Delete the last characted if it's a space
-          state.selection.modify('extend','backward','character')
-        }
-    }
+    // if(direction == 'forward'){
+    //    if( state.selection.extentNode.data[state.selection.extentOffset-1] == ' '){ // Delete the last characted if it's a space
+    //     state.selection.modify('extend','backward','character')
+    //     }
+    // }
+    // else {
+    //     if( state.selection.extentNode.data[state.selection.extentOffset+1] === ' '){ // Delete the last characted if it's a space
+    //       state.selection.modify('extend','forward','character')
+    //     }
+    // }
     state.range = currentSelection.getRangeAt(0)
     let selectionTextString = selectionText.value
     state.selection.removeAllRanges()
@@ -91,16 +92,17 @@ const handleSelection = () => {
     const app = createApp({
       render () {
         return h(AtomSpan , {
-           label: labelSelected.value,
+           label: label,
            text: selectionTextString,
             color: generatePastelColor(random(0,15,true)),
             index: index,
             ref: el => spanRefArray.value.push(el),
             onDeleteSpan: ({element, text}) => {
-              console.log(element,text)
+              spanClicked = false
                 if (element && element.parentNode){
-                  element.parentNode.insertBefore(document.createTextNode(text),element)
-                  element.parentNode.removeChild(element)
+                  let parent = element.parentNode // on recupere la div contenant la phrase
+                  parent.replaceChild(document.createTextNode(text),element) // on remplave le span par du text
+                  parent.normalize(); // On fusionne les 3 textes
 
                 }
             },
