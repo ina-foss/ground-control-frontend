@@ -15,7 +15,7 @@ import { Fragment } from 'vue/jsx-runtime';
 import { createApp } from 'vue';
 
 const {label, text, color, index } = defineProps(['label','text','color','index'])
-const emit = defineEmits(['deleteSpan','editSpan','focusSpan'])
+const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
 const newText = ref(text)
 const focus = ref(false)
@@ -31,12 +31,14 @@ const handleDrag = () =>{
 }
 onMounted(()=>{
   watchEffect(()=>{
+    if(span.value) emit('spanReady', {element: span.value, index: index})
+  })
+  watchEffect(()=>{
     if( focus.value == false){
-    span.value.style.backgroundColor = color + " 0.4)"
+      span.value.style.backgroundColor = color + " 0.4)"
     }
   })
   span.value.style.backgroundColor = color + " 0.4)"
-  console.log(color)
 })
 
 const addLeftText = (editText) => {
@@ -46,7 +48,7 @@ const addRightText = (editText) => {
   newText.value =  newText.value + editText
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText, label:label, color: color})
 
 </script>
 

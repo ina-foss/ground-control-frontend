@@ -1,12 +1,18 @@
 <template>
-  <div class="flex flex-col p-[10%] gap-3 justify-center items-center h-screen">
-    <Toast />
-    <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
-    <div @mouseup="handleSelection" id="text">{{text}}</div>
-    <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
-    <Button label="Clear all" @click="deleteSelection" />
+  <div class="flex flex-row justify-evenly h-screen items-center w-full">
+    <div class="flex flex-col p-6  gap-3 justify-center items-center h-screen">
+      <Toast />
+      <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
+      <div @mouseup="handleSelection" id="text">{{text}}</div>
+      <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
+      <Button label="Clear all" @click="deleteSelection" />
 
-</div>
+
+    </div>
+  <div>
+    <AtomSpanDetail @deleteSpan="onDeleteSpan($event)"  :focusSpan="lastFocus" :spanRefArray="spanRefArray" />
+  </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -15,6 +21,7 @@ import BadgeDirective from 'primevue/badgedirective';
 import { useToast } from 'primevue/usetoast';
 import {createApp, createTextVNode} from 'vue'
 import AtomSpan from '~/components/atoms/AtomSpan.vue';
+import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
 
 const app = createApp()
 app.directive('badge', BadgeDirective)
@@ -22,6 +29,7 @@ const toast = useToast()
 let spanClicked = $ref(false)
 let currentFunction = $ref()
 const spanRefArray = ref([])
+const elementArray = ref([])
 const spanCount = ref(spanRefArray.value.length)
 let spanIndex = $ref()
 let lastFocus = $ref(undefined)
@@ -55,6 +63,21 @@ function generatePastelColor(tagNumber) {
   const b = random(7);
 
   return `rgb(${r}, ${g}, ${b}, `;
+}
+
+const onDeleteSpan = ({index}) => {
+  let element = elementArray.value[index]
+  let text = spanRefArray.value[index].text
+  console.log(element)
+    if (element && element.parentNode){
+      let parent = element.parentNode // on recupere la div contenant la phrase
+      parent.replaceChild(document.createTextNode(text),element) // on remplave le span par du text
+      parent.normalize(); // On fusionne les 3 textes
+
+    }
+  spanRefArray.value.splice(index,1)
+  lastFocus = undefined
+  console.log(spanRefArray.value)
 }
 
 const handleSelection = () => {
@@ -94,13 +117,8 @@ const handleSelection = () => {
             color: generatePastelColor(random(0,15,true)),
             index: index,
             ref: el => spanRefArray.value.push(el),
-            onDeleteSpan: ({element, text}) => {
-                if (element && element.parentNode){
-                  let parent = element.parentNode // on recupere la div contenant la phrase
-                  parent.replaceChild(document.createTextNode(text),element) // on remplave le span par du text
-                  parent.normalize(); // On fusionne les 3 textes
-
-                }
+            onSpanReady: ({element, index}) => {
+              elementArray.value[index] = element
             },
             onEditSpan: ({index}) => {
               spanClicked = true
