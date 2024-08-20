@@ -24,6 +24,7 @@ let currentFunction = $ref()
 const spanRefArray = ref([])
 const spanCount = ref(spanRefArray.value.length)
 let spanIndex = $ref()
+let lastFocus = $ref(undefined)
 const labelSelected = ref('Person')
 const labels = ['Person','Citation','Verbe']
 const text = ref('Mercredi soir, le chef d’Etat a évacué l’idée d’adouber Lucie Castets, candidate officielle de la coalition de gauche : "Le sujet n’est pas un nom donné par une formation politique. La question est quelle majorité peut se dégager à l’Assemblée pour que le gouvernement de la France puisse passer des réformes."')
@@ -32,9 +33,7 @@ const state = reactive({
   range: null as Range | null
 })
 
-watchEffect(()=> console.log(spanIndex))
 
-watchEffect(()=> console.log(spanClicked))
 const selectionText = computed(() => {
   if (state.range != null) {
     return state.range.toString()
@@ -55,7 +54,7 @@ function generatePastelColor(tagNumber) {
   const g = random(5);
   const b = random(7);
 
-  return `rgb(${r}, ${g}, ${b}, 1)`;
+  return `rgb(${r}, ${g}, ${b}, `;
 }
 
 const handleSelection = () => {
@@ -65,19 +64,19 @@ const handleSelection = () => {
     let index = markRaw(spanCount.value)
     let label = markRaw(labelSelected.value)
     let direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
-    console.log(currentSelection)
-    console.log(direction)
-    state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
-    // if(direction == 'forward'){
-    //    if( state.selection.extentNode.data[state.selection.extentOffset-1] == ' '){ // Delete the last characted if it's a space
-    //     state.selection.modify('extend','backward','character')
-    //     }
-    // }
-    // else {
-    //     if( state.selection.extentNode.data[state.selection.extentOffset+1] === ' '){ // Delete the last characted if it's a space
-    //       state.selection.modify('extend','forward','character')
-    //     }
-    // }
+    if( state.selection.extentNode.data[state.selection.extentOffset-1] != ' '){
+      state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
+    }
+    if(direction == 'forward'){
+       if( state.selection.extentNode.data[state.selection.extentOffset-1] == ' '){ // Delete the last characted if it's a space
+        state.selection.modify('extend','backward','character')
+        }
+    }
+    else {
+        if( state.selection.extentNode.data[state.selection.extentOffset] === ' '){ // Delete the last characted if it's a space
+          state.selection.modify('extend','forward','character')
+        }
+    }
     state.range = currentSelection.getRangeAt(0)
     let selectionTextString = selectionText.value
     state.selection.removeAllRanges()
@@ -86,8 +85,6 @@ const handleSelection = () => {
     state.selection.empty()
     state.selection = null
 
-    console.log(selectionTextString)
-    console.log(spanClicked)
     if (!spanClicked){
     const app = createApp({
       render () {
@@ -98,7 +95,6 @@ const handleSelection = () => {
             index: index,
             ref: el => spanRefArray.value.push(el),
             onDeleteSpan: ({element, text}) => {
-              spanClicked = false
                 if (element && element.parentNode){
                   let parent = element.parentNode // on recupere la div contenant la phrase
                   parent.replaceChild(document.createTextNode(text),element) // on remplave le span par du text
@@ -110,6 +106,15 @@ const handleSelection = () => {
               spanClicked = true
               spanIndex = index
             },
+            onFocusSpan: ({index}) =>{
+              spanClicked = false
+              console.log(lastFocus)
+              if( typeof lastFocus == 'number') spanRefArray.value[lastFocus].focus = false
+              console.log(lastFocus ? spanRefArray.value[lastFocus].focus : lastFocus)
+              lastFocus = index
+              spanRefArray.value[lastFocus].focus = true
+              console.log(spanRefArray.value[index].focus)
+            }
 
 
         })
