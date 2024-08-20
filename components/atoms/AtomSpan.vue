@@ -15,18 +15,28 @@ import { Fragment } from 'vue/jsx-runtime';
 import { createApp } from 'vue';
 
 const {label, text, color, index } = defineProps(['label','text','color','index'])
-const emit = defineEmits(['deleteSpan','editSpan'])
+const emit = defineEmits(['deleteSpan','editSpan','focusSpan'])
 const span= ref()
 const newText = ref(text)
+const focus = ref(false)
+
 
 const handleClick = () => {
-  emit('deleteSpan',{element: span.value, text: newText.value})
+  span.value.style.backgroundColor = color + " 1)"
+  emit('focusSpan', {index: index })
+  // emit('deleteSpan',{element: span.value, text: newText.value})
 }
 const handleDrag = () =>{
-  emit('editSpan', ({index: index }))
+  emit('editSpan', {index: index })
 }
 onMounted(()=>{
-  span.value.style.backgroundColor = color
+  watchEffect(()=>{
+    if( focus.value == false){
+    span.value.style.backgroundColor = color + " 0.4)"
+    }
+  })
+  span.value.style.backgroundColor = color + " 0.4)"
+  console.log(color)
 })
 
 const addLeftText = (editText) => {
@@ -36,7 +46,7 @@ const addRightText = (editText) => {
   newText.value =  newText.value + editText
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus})
 
 </script>
 
