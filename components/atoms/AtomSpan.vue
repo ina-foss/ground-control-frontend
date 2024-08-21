@@ -1,11 +1,12 @@
 <template>
-  <div ref="span" @mousedown="handleDrag" class="inline border-blue-400 highlighted-text cursor-pointer hover:border-2 ">
+  <div  ref="span" @mousedown="handleDrag" class="inline border-blue-400 highlighted-text cursor-pointer  ">
     <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-l-2"></span> -->
     <div  @click="handleClick"  class="inline ">
       {{ (newText == '') ? text : newText }}
     </div>
     <span class=" align-super text-[0.70rem] pl-[0.5rem] ">{{label}}</span>
     <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-r-2"></span> -->
+    <p class="inline"> {{newIndex}}</p>
   </div>
 </template>
 
@@ -14,28 +15,31 @@
 import { Fragment } from 'vue/jsx-runtime';
 import { createApp } from 'vue';
 
-const {label, text, color, index } = defineProps(['label','text','color','index'])
+const {label, text, color, index: index } = defineProps(['label','text','color','index'])
 const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
 const newText = ref(text)
+let newIndex = $ref(index)
 const focus = ref(false)
 
-
 const handleClick = () => {
-  span.value.style.backgroundColor = color + " 1)"
-  emit('focusSpan', {index: index })
+  emit('focusSpan', {index: newIndex })
   // emit('deleteSpan',{element: span.value, text: newText.value})
 }
 const handleDrag = () =>{
-  emit('editSpan', {index: index })
+  emit('editSpan', {index: newIndex })
 }
 onMounted(()=>{
   watchEffect(()=>{
-    if(span.value) emit('spanReady', {element: span.value, index: index})
+    if(span.value) emit('spanReady', {element: span.value, index: newIndex})
   })
   watchEffect(()=>{
     if( focus.value == false){
+      console.log("span :"+newIndex+" is unfocused")
       span.value.style.backgroundColor = color + " 0.4)"
+    }
+    else{
+      span.value.style.backgroundColor = color + " 1)"
     }
   })
   span.value.style.backgroundColor = color + " 0.4)"
@@ -48,7 +52,7 @@ const addRightText = (editText) => {
   newText.value =  newText.value + editText
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText, label:label, color: color})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText, label:label, color: color, index:$$(newIndex)})
 
 </script>
 
@@ -65,7 +69,7 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
   bottom: -2px;
   rigth: 2px;
   cursor: ew-resize;
-  width: 2px;
+  width: 8px;
 }
 
 .highlighted-text::before {
@@ -75,6 +79,6 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
   bottom: -2px;
   left: -2px;
   cursor: ew-resize;
-  width: 2px;
+  width: 8px;
 }
 </style>

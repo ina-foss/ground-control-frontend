@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-row justify-evenly h-screen items-center w-full">
-    <div class="flex flex-col p-6  gap-3 justify-center items-center h-screen">
+  <div class="flex flex-row justify-around h-screen items-center w-full">
+    <div class="flex flex-col p-6 max-w-[70%] gap-3 justify-center items-center h-screen">
       <Toast />
       <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
       <div @mouseup="handleSelection" id="text">{{text}}</div>
@@ -10,9 +10,14 @@
 
     </div>
   <div>
-    <AtomSpanDetail @deleteSpan="onDeleteSpan($event)"  :focusSpan="lastFocus" :spanRefArray="spanRefArray" />
+    <AtomSpanDetail @deleteSpan="onDeleteSpan($event)" @unselect="handleUnselect()"  :focusSpan="currentFocus" :spanRefArray="spanRefArray" />
   </div>
+    <div v-if="lastFocus">
+      {{ lastFocus.value }}
+    </div>
+
   </div>
+
 </template>
 
 <script setup lang="ts">
@@ -33,6 +38,7 @@ const elementArray = ref([])
 const spanCount = ref(spanRefArray.value.length)
 let spanIndex = $ref()
 let lastFocus = $ref(undefined)
+let currentFocus = $ref(undefined)
 const labelSelected = ref('Person')
 const labels = ['Person','Citation','Verbe']
 const text = ref('Mercredi soir, le chef d’Etat a évacué l’idée d’adouber Lucie Castets, candidate officielle de la coalition de gauche : "Le sujet n’est pas un nom donné par une formation politique. La question est quelle majorité peut se dégager à l’Assemblée pour que le gouvernement de la France puisse passer des réformes."')
@@ -48,6 +54,16 @@ const selectionText = computed(() => {
   }
   return ''
 })
+
+watch(()=>currentFocus,(newFocus, oldFocus)=>{
+  lastFocus = oldFocus
+  console.log("oldFocus: " + oldFocus)
+  console.log("currentFocus: " + newFocus)
+  if( typeof lastFocus == 'number' && spanRefArray.value[oldFocus]) spanRefArray.value[oldFocus].focus = false
+  if( typeof currentFocus == 'number') spanRefArray.value[newFocus].focus = true
+  spanRefArray.value.forEach((span)=>console.log(span.focus))
+
+},{immediate:true})
 
 const handleDelete = (event) => {
   console.log(event)
@@ -76,8 +92,17 @@ const onDeleteSpan = ({index}) => {
 
     }
   spanRefArray.value.splice(index,1)
-  lastFocus = undefined
+  spanRefArray.value.forEach((span,index)=>{
+    span.index = index
+  })
+  currentFocus = undefined
+  spanCount.value--
   console.log(spanRefArray.value)
+}
+
+const handleUnselect = () => {
+  spanRefArray.value[currentFocus].focus = false
+  currentFocus=undefined
 }
 
 const handleSelection = () => {
@@ -126,12 +151,7 @@ const handleSelection = () => {
             },
             onFocusSpan: ({index}) =>{
               spanClicked = false
-              console.log(lastFocus)
-              if( typeof lastFocus == 'number') spanRefArray.value[lastFocus].focus = false
-              console.log(lastFocus ? spanRefArray.value[lastFocus].focus : lastFocus)
-              lastFocus = index
-              spanRefArray.value[lastFocus].focus = true
-              console.log(spanRefArray.value[index].focus)
+              currentFocus = index
             }
 
 
