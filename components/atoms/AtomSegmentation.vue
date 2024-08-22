@@ -22,9 +22,11 @@ const emit = defineEmits(['segmentation', 'onSegmentClick'])
 
 const toast = useToast()
 
+
 // let bgButtonColor = ref('transparent')
-const topicIndex = ref(0)
-if (props.phrase.data.topic !== undefined) topicIndex.value = props.phrase.data.topic
+// const topicIndex = ref(0)
+// if (props.phrase.data.topic !== undefined) topicIndex.value = props.phrase.data.topic
+const topicIndex = computed(()=> props.topics[props.index] ? props.topics[props.index] : 0)
 const iconBool = ref('pi pi-tag')
 
 const topicText = ref(null)
@@ -113,17 +115,17 @@ function hexToRgba(hex, opacity) {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 
-// FIX: take all case in account
 const handleSegmentation = () => {
 
   if (props.index === 0) { // Cas particulier de la premiere phrase
     if (topicIndex.value === 0) {
       const randomColor = generatePastelColor(props.index + 1)
-      props.colors.push(randomColor)
+      props.colors[1] = (randomColor)
       props.topics[props.index] = 1
       topicIndex.value = 1
     } else {
-      !props.topics.includes(props.index) && props.colors.pop()
+      console.log(topicIndex.value)
+      // !props.topics.includes(props.index) && props.colors.splice(topicIndex.value,1);
       props.topics[props.index] = 0;
       topicIndex.value = 0
     }
@@ -141,15 +143,12 @@ const handleSegmentation = () => {
     const randomColor = generatePastelColor(props.index + 1)
     props.colors.push(randomColor)
     props.topics[props.index]++
-    topicIndex.value = props.topics[props.index]
 
-  } else if (topicIndex.value < props.topics[props.index + 1]) { // On itere parmi les topics existants
+  } else if (topicIndex.value < props.colors.length - 1  &&  topicIndex.value !=  props.topics[props.index+ 1] ) { // On itere parmi les topics existants
     props.topics[props.index]++
-    topicIndex.value++
   } else if (topicIndex.value !== 0) { // Reset du topic a 0
+    // if( _.findIndex(props.topics, (topic)=> topic == topicIndex.value ) == 1) props.colors.slice(topicIndex,1)
     props.topics[props.index] = 0;
-    !props.topics.includes(topicIndex.value) && props.colors.pop()
-    topicIndex.value = 0
   }
 
   emit('segmentation', props.index)

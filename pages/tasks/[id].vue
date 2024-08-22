@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: Find a way to render this while aynchronous calls -->
   <div  class="h-full">
     <component :is="annotationComponent" :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"></component>
     <!-- <OrganismSegmentation :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   /> -->
