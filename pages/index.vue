@@ -9,10 +9,12 @@ const store = bcStore()
 const { removeLastCrumb } = store
 const { getItems } = storeToRefs(store)
 
-const length = getItems.value.length
 
-for (let index = 0; index < length; index++) {
+onMounted(()=>{
+  let length = getItems.value.length // get breadcrumb list's length
+  for (let index = 0; index < length; index++) {  // remove every breadcrumb
     removeLastCrumb()
-}
+  }
+})
 
 </script>

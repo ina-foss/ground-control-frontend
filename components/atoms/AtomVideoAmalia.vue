@@ -1,17 +1,18 @@
 <template>
-  <div class=" xs:h-full w-full h-auto xs:flex xs:justify-center ">
-    <div id="myplayer"></div>
-  </div>
+    <div class=" h-auto aspect-video w-full" ref="myplayer"></div>
 </template>
 
 
 <script setup>
 
+import { useService } from '#imports';
 
+const amaliaService = useService().$amalia
 const { videoSrc } = defineProps(['videoSrc'])
 
+const myplayer = ref()
 
-let dymamicSrc = $ref()
+let dynamicSrc = $ref()
 
 async function fetchVideoStream(url) {
   const response = await fetch(url);
@@ -21,20 +22,20 @@ async function fetchVideoStream(url) {
 }
 
 
-  const hlsPlayer = () => {
-    fetchVideoStream(videoSrc).then((content) => {
-      const src = `data:application/vnd.apple.mpegurl;base64,${content}`
-      dymamicSrc = src
-    })
+  const hlsPlayer = async () => {
+    let content = await fetchVideoStream(videoSrc)
+    const src = `data:application/vnd.apple.mpegurl;base64,${content}`
+    dynamicSrc = src
+
   }
 
+watchEffect(()=>{
+    if (dynamicSrc) {
+      myplayer.value.appendChild(amaliaService.createPlayer('id',dynamicSrc))
+    }
+  })
 
 onMounted(()=>{
-console.log('test')
-    document.getElementById('myplayer').mediaPlayer({
-      autoplay: false,
-      src: dymamicSrc
-    })
 
   hlsPlayer()
 })
@@ -42,9 +43,3 @@ console.log('test')
 
 </script>
 
-<script>        
-document.getElementById("myplayer").mediaPlayer({
-        autoplay : false,
-        src : "samples-data/examples/vid/amalia01.mp4",
-});
-</script>
