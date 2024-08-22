@@ -1,9 +1,8 @@
 import { OpenAPI } from "../api/generate";
-import { getApplicationConfiguration, initApplicationConfiguration } from "../services/dynamic-configuration-service";
-import { useAuth } from "../stores/auth"
-import { storeToRefs } from "pinia"
-import { UserService } from "../api/generate/services/UserService"
-
+import { getApplicationConfiguration } from "../services/dynamic-configuration-service";
+import { useAuth } from "../stores/auth";
+import { storeToRefs } from "pinia";
+import { UserService } from "../api/generate/services/UserService";
 
 /**
  * Services used throught the application
@@ -17,36 +16,49 @@ import { UserService } from "../api/generate/services/UserService"
  *  - setupHeader() -> void
  */
 export default class ApplicationService {
-  constructor() { }
 
-  private authStore = useAuth()
+  private authStore = useAuth();
 
   public getDefaultHeader() {
-    const { access_token } = storeToRefs(this.authStore)
+    const { access_token } = storeToRefs(this.authStore);
     return { Authorization: `Bearer ${access_token.value}` };
   }
 
   public async checkUser() {
-    const { userEmail, user } = storeToRefs(this.authStore)
-    let role = user.value.profile.roles ? user.value.profile.roles[2] : 'default'
-    const response = ref(await UserService.getUserByEmailUserGet(userEmail.value))
+    const { userEmail, user } = storeToRefs(this.authStore);
+
+    if (!user.value || !user.value.profile) {
+      console.error("User profile is not available.");
+      return;
+    }
+
+    let accounts = JSON.parse(JSON.stringify(user.value.profile));
+    console.log(accounts);
+
+    let role = user.value.profile.roles ? user.value.profile.roles[2] : 'default';
+
+    const response = ref(await UserService.getUserByEmailUserGet(userEmail.value));
     if (response.value == null) {
       UserService.createUserUserPost({
         email: userEmail.value,
         role: role
-      })
-        .then((response) => console.log(response))
+      }).then((response) => console.log(response));
     }
-
   }
-  /**
-    * Setup global OpenAPI header to include current access token
-    */
+
   public setupHeader() {
     const config = getApplicationConfiguration();
-    // Configuring from env vars
     OpenAPI.BASE = config['apiBasePath'];
-    OpenAPI.HEADERS = this.getDefaultHeader() // Add the access token to the header of every OpenAPI calls
+    OpenAPI.HEADERS = this.getDefaultHeader();
     inject('OpenAPI', OpenAPI);
+  }
+
+  /**
+   * Get user roles from the auth store
+   * @returns {string[]} Array of roles
+   */
+  public getUserRoles() {
+    const { user } = storeToRefs(this.authStore);
+    return user.value?.profile?.roles ?? [];
   }
 }
