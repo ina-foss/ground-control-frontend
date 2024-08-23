@@ -40,6 +40,7 @@
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
   import { TaskService, AnnotationService, AnnotationStatus } from '../../api/generate';
   import { Hls } from 'hls.js'
+  import _ from 'lodash'
 
   const authStore = useAuth()
 
@@ -115,19 +116,18 @@
 
   const loadTopics = () => {
     colors = ['#BEBEBE'] // reset colors before loading
-    locals.forEach((phrase, index) => {
+    let max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
+    while (colors.length <= max.data.topic){ // Create all colors below this max
+     const randomcolor = generatePastelColor(colors.length)
+      colors.push(randomcolor)
+    }
+    locals.forEach((phrase, index) => { // apppend topic number to each segments
       if (![0, undefined].includes(phrase.data.topic)) {
         topics[index] = phrase.data.topic
-        if (index == 0 || topics[index] != topics[index - 1]) {
-          const randomColor = generatePastelColor(index + 1)
-          colors.push(randomColor)
-        }
       }
     })
   }
-
-  onMounted(()=>
-    loadTopics())
+  onMounted(()=>{
 
   watch(()=> allFetched,() => {
     if(allFetched)
@@ -135,7 +135,7 @@
 
     loadTopics()
   })
-
+  })
 
 
 </script>
