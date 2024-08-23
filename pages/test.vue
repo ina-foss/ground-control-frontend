@@ -57,11 +57,8 @@ const selectionText = computed(() => {
 
 watch(()=>currentFocus,(newFocus, oldFocus)=>{
   lastFocus = oldFocus
-  console.log("oldFocus: " + oldFocus)
-  console.log("currentFocus: " + newFocus)
   if( typeof lastFocus == 'number' && spanRefArray.value[oldFocus]) spanRefArray.value[oldFocus].focus = false
   if( typeof currentFocus == 'number') spanRefArray.value[newFocus].focus = true
-  spanRefArray.value.forEach((span)=>console.log(span.focus))
 
 },{immediate:true})
 
@@ -159,7 +156,7 @@ const handleSelection = () => {
       }
     })
       spanCount.value++
-    const instance = app.mount(span)
+     app.mount(span)
     const fragment = document.createDocumentFragment()
     Array.from(span.childNodes).forEach(node => {
       fragment.appendChild(node)
