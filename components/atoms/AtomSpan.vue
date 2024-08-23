@@ -6,7 +6,6 @@
     </div>
     <span class=" align-super text-[0.70rem] pl-[0.5rem] ">{{label}}</span>
     <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-r-2"></span> -->
-    <p class="inline"> {{newIndex}}</p>
   </div>
 </template>
 
@@ -30,8 +29,11 @@ const handleDrag = () =>{
   emit('editSpan', {index: newIndex })
 }
 onMounted(()=>{
+
   watchEffect(()=>{
-    if(span.value) emit('spanReady', {element: span.value, index: newIndex})
+    if(span.value){
+      emit('spanReady', {element: span.value, index: newIndex})
+    }
   })
   watchEffect(()=>{
     if( focus.value == false){
