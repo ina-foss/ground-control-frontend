@@ -2,7 +2,7 @@
   "name": "ground-control-frontend",
   "version": "0.0.1",
   "type": "module",
-   "files": [
+  "files": [
     ".output"
   ],
   "scripts": {
@@ -18,10 +18,10 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@ina/amalia": "^2.0.25",
     "@ina/kit-ui": "^0.0.1",
     "@nuxtjs/color-mode": "^3.4.1",
     "@pinia/nuxt": "^0.5.1",
-    "@ina/amalia": "^2.0.25",
     "hls.js": "^1.5.8",
     "lodash": "^4.17.21",
     "nuxt": "^3.12.3",
@@ -39,6 +39,7 @@
     "@nuxt/eslint": "^0.3.13",
     "@nuxt/test-utils": "^3.13.1",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@nuxtjs/svg-sprite": "^1.0.2",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@primevue/nuxt-module": "^4.0.0",
     "@testing-library/vue": "^8.1.0",
