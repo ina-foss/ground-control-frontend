@@ -18,11 +18,14 @@ export default class AmaliaPlayerService {
         if (this.sourceLoaded) {
             return;
         }
-        const script = document.createElement('script');
-        script.setAttribute('type', 'module');
-        script.src = '/_nuxt/app/node_modules/@ina/amalia/amalia.min.js';
-        document.body.appendChild(script);
-        this.sourceLoaded = true;
+      const base = document.createElement('base')
+      base.href = '/_nuxt/node_modules/@ina/amalia/'
+      document.body.appendChild(base)
+      const script = document.createElement('script');
+      script.setAttribute('type', 'module');
+      script.src = 'amalia.min.js';
+      document.body.appendChild(script);
+      this.sourceLoaded = true;
     }
 
   public configurePlayer(mediaSrc: string, urlStreamPlayBack?: string, thumbnailBaseUrl?: string, mediaType?: string,
