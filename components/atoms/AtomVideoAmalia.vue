@@ -31,7 +31,7 @@ async function fetchVideoStream(url) {
 
 watchEffect(()=>{
     if (dynamicSrc) {
-      myplayer.value.appendChild(amaliaService.createPlayer('id',dynamicSrc))
+      myplayer.value.appendChild(amaliaService.createPlayer('PLAYER',dynamicSrc))
     }
   })
 
