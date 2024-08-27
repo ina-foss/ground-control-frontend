@@ -4,7 +4,7 @@
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
       <div class="flex cursor-pointer flex-start gap-2 ">
-      <Tag :severity="tcColor" class="">
+      <Tag :severity="tcColor" >
           <div @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})" class="flex justify-center  items-center gap-3">
           <i class="pi pi-clock" style="font-size: 1.5rem" />
           <p class="text-sm">{{transcriptions[0].tcin}}</p>
