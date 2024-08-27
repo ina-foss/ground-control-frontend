@@ -3,9 +3,9 @@
 
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
-      <div class="flex  flex-start gap-2 ">
-      <Tag :severity="tcColor">
-        <div class="flex justify-center items-center gap-3">
+      <div class="flex cursor-pointer flex-start gap-2 ">
+      <Tag :severity="tcColor" class="">
+          <div @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})" class="flex justify-center  items-center gap-3">
           <i class="pi pi-clock" style="font-size: 1.5rem" />
           <p class="text-sm">{{transcriptions[0].tcin}}</p>
         </div>
@@ -59,7 +59,7 @@
 <script setup>
   import Textarea from 'primevue/textarea';
 
-  const emits = defineEmits( ['confirm'])
+  const emits = defineEmits( ['confirm','onSegmentClick'])
   const toast = useToast()
 
   const { transcriptions, algos, userAnnotation } = defineProps({

@@ -6,7 +6,7 @@
     <div class="flex overflow-y-auto h-screen">
     <ol class=" flex flex-col overflow-y-auto h-full ">
       <ScrollTop
-        :pt="{ root: { style: 'position: absolute; right: 25%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
+        :pt="{ root: { style: 'position: absolute; right: 50%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
         :unstyled="true"
         class="absolute"

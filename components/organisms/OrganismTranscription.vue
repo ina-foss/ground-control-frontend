@@ -5,8 +5,8 @@
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:block h-full">
-      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"  :data="data" />
-      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :userAnnotations="userAnnotations" :algos="algos" />
+      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"  :data="data" :locals="annotations_in[0].result.data.localisation[0].sublocalisations.localisation" />
+      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" @on-segment-click="updateVideoTimecode" :userAnnotations="userAnnotations" :algos="algos" />
     </div>
   </div>
   <div v-else class="h-full">
@@ -45,6 +45,7 @@
   import MoleculeTranscription from '../molecules/MoleculeTranscription.vue';
 
   const authStore = useAuth()
+  const moleculeAnnotationLeftPanelRef= $ref()
 
   const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
   const { userEmail } = storeToRefs(authStore)
@@ -66,6 +67,10 @@
       return info
     }
   });
+
+  const updateVideoTimecode = (event) => {
+    moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
+  }
 
   const transcriptions = $computed(() => { // format array to have all transcription version in the same array element
     const res = []
