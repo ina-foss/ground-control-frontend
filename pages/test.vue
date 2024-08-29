@@ -39,7 +39,7 @@ const spanCount = ref(spanRefArray.value.length)
 let spanIndex = $ref()
 let lastFocus = $ref(undefined)
 let currentFocus = $ref(undefined)
-const labelSelected = ref('Person')
+const labelSelected = ref('')
 const labels = ['Person','Citation','Verbe']
 const text = ref('Mercredi soir, le chef d’Etat a évacué l’idée d’adouber Lucie Castets, candidate officielle de la coalition de gauche : "Le sujet n’est pas un nom donné par une formation politique. La question est quelle majorité peut se dégager à l’Assemblée pour que le gouvernement de la France puisse passer des réformes."')
 const state = reactive({
@@ -97,6 +97,14 @@ const onDeleteSpan = ({index}) => {
   console.log(spanRefArray.value)
 }
 
+watch(()=>labelSelected.value,(newLabel,oldLabel)=>{
+  if(typeof currentFocus != 'undefined'){
+      console.log(newLabel)
+      spanRefArray.value[currentFocus].label = newLabel
+      console.log(spanRefArray.value[currentFocus])
+  }
+},{immediate: true})
+
 const handleUnselect = () => {
   spanRefArray.value[currentFocus].focus = false
   currentFocus=undefined
@@ -104,10 +112,10 @@ const handleUnselect = () => {
 
 const handleSelection = () => {
   const currentSelection = document.getSelection()
-  if (currentSelection && currentSelection.toString() !== '') {
+  if (currentSelection && currentSelection.toString() !== '' && labelSelected.value != '' ) {
     state.selection = currentSelection
     let index = markRaw(spanCount.value)
-    let label = markRaw(labelSelected.value)
+    let label =markRaw(labelSelected.value)
     let direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
     if( state.selection.extentNode.data[state.selection.extentOffset-1] != ' '){
       state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
@@ -149,6 +157,7 @@ const handleSelection = () => {
             onFocusSpan: ({index}) =>{
               spanClicked = false
               currentFocus = index
+              labelSelected.value = spanRefArray.value[currentFocus].label
             }
 
 
