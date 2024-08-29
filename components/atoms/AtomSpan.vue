@@ -1,7 +1,7 @@
 <template>
-  <div  ref="span" @mousedown="handleDrag" class="inline border-blue-400 highlighted-text cursor-pointer  ">
+  <div  ref="span" @click="handleClick" @mousedown="handleDrag" :class="'inline border-blue-400 highlighted-text cursor-pointer'+ (linkCss != '' ? linkCss + ' cursor-crosshair' : '')" >
     <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-l-2"></span> -->
-    <div  @click="handleClick"  class="inline ">
+    <div    class="inline ">
       {{ (newText == '') ? text : newText }}
     </div>
     <span class=" align-super text-[0.70rem] pl-[0.5rem] ">{{newLabel}}</span>
@@ -11,10 +11,8 @@
 
 
 <script setup>
-import { Fragment } from 'vue/jsx-runtime';
-import { createApp } from 'vue';
 
-const {label, text, color, index: index } = defineProps(['label','text','color','index'])
+const {label, text, color, index: index, linkCss } = defineProps(['label','text','color','index','linkCss'])
 const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
 const newText = ref(text)
@@ -22,7 +20,6 @@ let newIndex = $ref(index)
 let newLabel = $ref(label)
 const focus = ref(false)
 
-watchEffect(()=> console.log(newLabel))
 
 const handleClick = () => {
   emit('focusSpan', {index: newIndex })
@@ -47,7 +44,6 @@ onMounted(()=>{
       span.value.style.backgroundColor = color + " 1)"
     }
   })
-  span.value.style.backgroundColor = color + " 0.4)"
 })
 
 const addLeftText = (editText) => {

@@ -1,16 +1,16 @@
 <template>
-  <div class="flex flex-row justify-around h-screen items-center w-full">
+  <div :class="'flex flex-row justify-around h-screen items-center w-full' + linkCursor" >
     <div class="flex flex-col p-6 max-w-[70%] gap-3 justify-center items-center h-screen">
       <Toast />
       <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
-      <div @mouseup="handleSelection" id="text">{{text}}</div>
+      <div @mouseup="handleSelection" :class="linkCursor" id="text">{{text}}</div>
       <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
       <Button label="Clear all" @click="deleteSelection" />
 
 
     </div>
   <div>
-    <AtomSpanDetail @deleteSpan="onDeleteSpan($event)" @unselect="handleUnselect()"  :focusSpan="currentFocus" :spanRefArray="spanRefArray" />
+    <AtomSpanDetail @link="linkMode = !linkMode" @deleteSpan="onDeleteSpan($event)" @unselect="handleUnselect()" :relationArray="relationArray" :focusSpan="currentFocus" :spanRefArray="spanRefArray" />
   </div>
     <div v-if="lastFocus">
       {{ lastFocus.value }}
@@ -35,8 +35,12 @@ let spanClicked = $ref(false)
 let currentFunction = $ref()
 const spanRefArray = ref([])
 const elementArray = ref([])
+let linkMode = $ref(false)
+let linkCss = $computed(()=> linkMode ? ' hover:border-2 ' : '')
+let linkCursor = $computed(()=> linkMode ? ' cursor-crosshair ' : '')
 const spanCount = ref(spanRefArray.value.length)
 let spanIndex = $ref()
+let relationArray = ref([])
 let lastFocus = $ref(undefined)
 let currentFocus = $ref(undefined)
 const labelSelected = ref('')
@@ -142,11 +146,12 @@ const handleSelection = () => {
     const app = createApp({
       render () {
         return h(AtomSpan , {
-           label: label,
-           text: selectionTextString,
-            color: generatePastelColor(random(0,15,true)),
+            label: label,
+            text: selectionTextString,
+            color: spanRefArray.value[index] ? spanRefArray.value[index].color : generatePastelColor(random(0,15,true)),
             index: index,
-            ref: el => spanRefArray.value.push(el),
+            linkCss: linkCss,
+            ref: el => spanRefArray.value[index] = el,
             onSpanReady: ({element, index}) => {
               elementArray.value[index] = element
             },
@@ -155,9 +160,15 @@ const handleSelection = () => {
               spanIndex = index
             },
             onFocusSpan: ({index}) =>{
-              spanClicked = false
-              currentFocus = index
-              labelSelected.value = spanRefArray.value[currentFocus].label
+              if( linkMode ){
+                relationArray.value.push({from: currentFocus, to: index})
+                linkMode=false
+              }
+              else{
+                spanClicked = false
+                currentFocus = index
+                labelSelected.value = spanRefArray.value[currentFocus].label
+              }
             }
 
 
