@@ -4,7 +4,7 @@
     <div  @click="handleClick"  class="inline ">
       {{ (newText == '') ? text : newText }}
     </div>
-    <span class=" align-super text-[0.70rem] pl-[0.5rem] ">{{label}}</span>
+    <span class=" align-super text-[0.70rem] pl-[0.5rem] ">{{newLabel}}</span>
     <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-r-2"></span> -->
   </div>
 </template>
@@ -19,7 +19,10 @@ const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
 const newText = ref(text)
 let newIndex = $ref(index)
+let newLabel = $ref(label)
 const focus = ref(false)
+
+watchEffect(()=> console.log(newLabel))
 
 const handleClick = () => {
   emit('focusSpan', {index: newIndex })
@@ -54,7 +57,7 @@ const addRightText = (editText) => {
   newText.value =  newText.value + editText
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText, label:label, color: color, index:$$(newIndex)})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText, label:$$(newLabel), color: color, index:$$(newIndex)})
 
 </script>
 
