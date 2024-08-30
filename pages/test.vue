@@ -27,6 +27,7 @@ import { useToast } from 'primevue/usetoast';
 import {createApp, createTextVNode} from 'vue'
 import AtomSpan from '~/components/atoms/AtomSpan.vue';
 import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
+import _ from 'lodash'
 
 const app = createApp()
 app.directive('badge', BadgeDirective)
@@ -70,7 +71,7 @@ const handleDelete = (event) => {
   console.log(event)
 }
 
-function generatePastelColor(tagNumber) {
+function generatePastelColor(tagNumber : number) {
   // Use tag number to create a seed (this is a basic example, there are better ways to do this)
   const seed = tagNumber * 123456789;
   const random = s => ((seed * s) % 155) + 100;  // Between 100 and 255
@@ -82,8 +83,8 @@ function generatePastelColor(tagNumber) {
   return `rgb(${r}, ${g}, ${b}, `;
 }
 
-const onDeleteSpan = ({index}) => {
-  let element = elementArray.value[index]
+const onDeleteSpan = ({ index } : { index : number }) => {
+  const element : Element = elementArray.value[index]
   let text = spanRefArray.value[index].text
   console.log(element)
     if (element && element.parentNode){
@@ -92,12 +93,15 @@ const onDeleteSpan = ({index}) => {
       parent.normalize(); // On fusionne les 3 textes
 
     }
+  _.remove(relationArray.value,(relation) => relation.to == index || relation.from == index)
+  console.log(relationArray.value)
   spanRefArray.value.splice(index,1)
   spanRefArray.value.forEach((span,index)=>{
     span.index = index
   })
   currentFocus = undefined
   spanCount.value--
+  console.log(spanRefArray.value.length)
   console.log(spanRefArray.value)
 }
 
@@ -141,14 +145,14 @@ const handleSelection = () => {
     state.range.deleteContents()
     state.selection.empty()
     state.selection = null
-
+    const color =  spanRefArray.value[index] ? spanRefArray.value[index].color : generatePastelColor(random(0,15,true))
     if (!spanClicked){
     const app = createApp({
       render () {
         return h(AtomSpan , {
             label: label,
             text: selectionTextString,
-            color: spanRefArray.value[index] ? spanRefArray.value[index].color : generatePastelColor(random(0,15,true)),
+            color: color,
             index: index,
             linkCss: linkCss,
             ref: el => spanRefArray.value[index] = el,
