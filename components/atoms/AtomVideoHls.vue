@@ -21,13 +21,13 @@
   const handleSeeking = () => {
 
     const currentTime = video.currentTime
-
+console.log("hlsCT:",currentTime)
     if (Math.abs(video.currentTime - lastTimecode) > 1) {
       let bestIndex = null
       let bestDiff = 100000
       locals.forEach((phrase, index) => {
-        if ((Math.abs(video.currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
-          bestDiff = video.currentTime - unixToTimestamp(phrase.tcin)
+        if ((Math.abs(currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
+          bestDiff = currentTime - unixToTimestamp(phrase.tcin)
           bestIndex = index
 
         }
