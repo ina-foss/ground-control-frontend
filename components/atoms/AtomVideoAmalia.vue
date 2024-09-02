@@ -40,7 +40,6 @@ const seek = async () =>{
     //console.log("Nouvel élément ajouté :", myplayer);
     const currentTime = amaliaService.callSeek()
     console.log('callseek=',currentTime)
-
     if (Math.abs(currentTime - lastTimecode) > 1) {
       let bestIndex = null
       let bestDiff = 100000
