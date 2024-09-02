@@ -35,6 +35,21 @@ watchEffect(()=>{
     }
   })
 
+const seek = async () =>{
+  if (myplayer) {
+    const currentTime = amaliaService.callSeek()
+    console.log('callseek=',currentTime)
+    let startIndex = 0
+    let lastIndex = locals.length
+    while(Math.abs(startIndex - lastIndex) > 1 ){
+      let mid = Math.floor((lastIndex + startIndex) / 2)
+      unixToTimestamp(locals[mid].tcin) >= currentTime ? lastIndex = mid : startIndex = mid
+    }
+    const bestIndex = startIndex
+      emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex})
+    lastIndex = bestIndex
+}}
+
 onMounted(()=>{
 
   hlsPlayer()
