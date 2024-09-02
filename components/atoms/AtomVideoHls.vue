@@ -21,22 +21,19 @@
   const handleSeeking = () => {
 
     const currentTime = video.currentTime
-console.log("hlsCT:",currentTime)
+    console.log("hlsCT:",currentTime)
     if (Math.abs(video.currentTime - lastTimecode) > 1) {
-      let bestIndex = null
-      let bestDiff = 100000
-      locals.forEach((phrase, index) => {
-        if ((Math.abs(currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
-          bestDiff = currentTime - unixToTimestamp(phrase.tcin)
-          bestIndex = index
-
-        }
-      });
+    let startIndex = 0
+    let endIndex = locals.length
+    while(Math.abs(startIndex - endIndex) > 1 ){
+      let mid = Math.floor(((endIndex - startIndex) / 2)+startIndex)
+      unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
+    }
+      const bestIndex = startIndex
       emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex})
       lastIndex = bestIndex
     }
     lastTimecode = currentTime
-
   }
 
   function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
