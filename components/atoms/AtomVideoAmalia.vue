@@ -6,6 +6,7 @@
 <script setup lang="js">
 
 import { useService } from '#imports';
+import { startsWith } from 'lodash';
 
 const amaliaService = useService().$amalia
 
@@ -37,21 +38,17 @@ watchEffect(()=>{
 
 const seek = async () =>{
   if (myplayer) {
-    //console.log("Nouvel élément ajouté :", myplayer);
     const currentTime = amaliaService.callSeek()
     console.log('callseek=',currentTime)
-    if (Math.abs(currentTime - lastTimecode) > 1) {
-      let bestIndex = null
-      let bestDiff = 100000
-      locals.forEach((phrase, index) => {
-        if ((Math.abs(currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
-          bestDiff = currentTime - unixToTimestamp(phrase.tcin)
-          bestIndex = index
-        }
-      });
+    let startIndex = 0
+    let lastIndex = locals.length
+    while(Math.abs(startIndex - lastIndex) > 1 ){
+      let mid = Math.floor(((lastIndex - startIndex) / 2)+startIndex)
+      unixToTimestamp(locals[mid].tcin) >= currentTime ? lastIndex = mid : startIndex = mid
+    }
+    const bestIndex = lastIndex
       emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex})
       lastIndex = bestIndex
-    }
     lastTimecode = currentTime
 }}
 
