@@ -46,10 +46,9 @@ const seek = async () =>{
       let mid = Math.floor(((lastIndex - startIndex) / 2)+startIndex)
       unixToTimestamp(locals[mid].tcin) >= currentTime ? lastIndex = mid : startIndex = mid
     }
-    const bestIndex = lastIndex
+    const bestIndex = startIndex
       emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex})
-      lastIndex = bestIndex
-    lastTimecode = currentTime
+    lastIndex = bestIndex
 }}
 
 onMounted(()=>{
