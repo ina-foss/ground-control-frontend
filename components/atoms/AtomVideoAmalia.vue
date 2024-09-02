@@ -1,26 +1,27 @@
 <template>
-    <div class=" h-auto aspect-video w-full" ref="myplayer"></div>
+    <div class=" h-auto aspect-video w-full" ref="myplayer" id="PLAYER" @click="seek"></div>
 </template>
 
 
-<script setup>
+<script setup lang="js">
 
 import { useService } from '#imports';
+import { startsWith } from 'lodash';
 
 const amaliaService = useService().$amalia
-const { videoSrc } = defineProps(['videoSrc'])
 
 const myplayer = ref()
 
 let dynamicSrc = $ref()
-
+let lastTimecode = 0
+let lastIndex = 0
+const { locals, data, videoSrc } = defineProps(['locals','data','videoSrc'])
+const emits = defineEmits([ 'timecode-update' ]);
 async function fetchVideoStream(url) {
   const response = await fetch(url);
   const videoHls = response.text();
-
   return videoHls;
 }
-
 
   const hlsPlayer = async () => {
     let content = await fetchVideoStream(videoSrc)
@@ -53,8 +54,13 @@ const seek = async () =>{
 onMounted(()=>{
 
   hlsPlayer()
+
 })
-
-
+function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
+  const millisecond = tc.split('.')[1]
+  const timeArray = tc.split('.')[0].split(':')
+  const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
+  return videoTime
+}
 </script>
 
