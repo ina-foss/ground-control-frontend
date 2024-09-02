@@ -23,15 +23,13 @@
     const currentTime = video.currentTime
 
     if (Math.abs(video.currentTime - lastTimecode) > 1) {
-      let bestIndex = null
-      let bestDiff = 100000
-      locals.forEach((phrase, index) => {
-        if ((Math.abs(video.currentTime - unixToTimestamp(phrase.tcin)) < bestDiff)) {
-          bestDiff = video.currentTime - unixToTimestamp(phrase.tcin)
-          bestIndex = index
-
-        }
-      });
+    let startIndex = 0
+    let endIndex = locals.length
+    while(Math.abs(startIndex - endIndex) > 1 ){
+      let mid = Math.floor(((endIndex + startIndex) / 2))
+      unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
+    }
+      const bestIndex = startIndex
       emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex})
       lastIndex = bestIndex
     }
