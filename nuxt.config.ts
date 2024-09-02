@@ -5,7 +5,7 @@ import path from 'path';
 export default defineNuxtConfig({
     ssr: false,
     app: {
-        pageTransition: {name: 'page', mode: 'in-out'}
+        pageTransition: {name: 'page', mode: 'in-out'},
     },
     devtools: {
         enabled: true,
@@ -24,11 +24,14 @@ export default defineNuxtConfig({
         public: {
         }
     },
-    modules: ['./node_modules/@vue-macros/nuxt','@nuxtjs/color-mode','nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
+    modules: ['./node_modules/@vue-macros/nuxt','@nuxtjs/color-mode','nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint','@nuxtjs/svg-sprite',],
     colorMode: {
       classSuffix:'',
-  },
-    primevue: {
+    },
+    svgSprite: {
+      input: '~/assets/svgs/symbol/svg/sprite.symbol.svg'  // Chemin où se trouvent les fichiers SVG
+    },
+      primevue: {
         options: {
             unstyled: true
         },

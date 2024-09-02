@@ -1,6 +1,16 @@
 <template>
   <div class="col-span-3 bg-surface-700 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
-    <AtomVideoHls ref="AtomVideoHlsRef" :data="data" :videoSrc="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+
+    <!-- Both player  -->
+    <AtomVideoHls ref="AtomVideoHlsRef" v-if="activePlayer == false" :data="data" :videoSrc="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoAmalia :videoSrc="videoSrc" v-else :data="data" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+
+    <!-- Input to switch between player -->
+    <div class=" flex items-center text-surface-0 gap-3 justify-center pt-3">
+      <InputSwitch  v-model="activePlayer" />
+      <b>Amalia Player</b>
+    </div>
+
     <AtomTopicList :colors="colors" />
     <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">Segmentation</h2>
       <p class="text-white p-3 md:block xs:hidden ">
@@ -16,9 +26,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="js">
   import AtomVideoHls from '../atoms/AtomVideoHls'
   import AtomTopicList from '../atoms/AtomTopicList'
+  import AtomVideoAmalia from '../atoms/AtomVideoAmalia.vue';
+  import { useService } from '#imports';
+
+  const videoPlayerList = ['amalia','hls']
+
+  const activePlayer = ref(true)
 
 const props = defineProps({
   data: null,
@@ -45,8 +61,8 @@ const { data, locals, colors, videoSrc } = props;
 
   const updateVideoTimecode = (event) => {
     AtomVideoHlsRef.videoRef.currentTime = unixToTimestamp(event.tcin) - 1 // Set video time to given timecode minus 1s to hear full segment
+    amaliaService.updateCurrentTc(unixToTimestamp(event.tcin))
   }
-
 
   defineExpose({updateVideoTimecode})
 </script>
