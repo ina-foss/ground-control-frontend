@@ -5,7 +5,7 @@
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:block h-full">
-      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"  :data="data" />
+      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"  :data="data" :locals="annotations_in[0].result.data.localisation[0].sublocalisations.localisation" @scroll-to-segment="scrollToSegment"/>
       <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions" :userAnnotations="userAnnotations" :algos="algos" />
     </div>
   </div>
@@ -52,7 +52,7 @@
   const emits = defineEmits([ 'submitAnnotation' ]);
 
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
-  const MoleculeTranscriptionRef = ref()
+  let MoleculeTranscriptionRef = $ref()
 
 
   const annotationInfo = $computed(() => { // get user annotation position
@@ -88,6 +88,10 @@
     return response
   })
 
+  const scrollToSegment = (event) => {
+console.log(MoleculeTranscriptionRef.transcriptionsRef)
+    MoleculeTranscriptionRef.transcriptionsRef[event.bestIndex].scrollIntoView({ behavior: "smooth" });
+  }
 
   const handleSubmit = () =>{
 

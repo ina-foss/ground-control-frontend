@@ -9,9 +9,11 @@
           target="parent"
         />
         <div  class=" rounded flex flex-col gap-2 p-3 " >
-          <AtomTrancription  @confirm="handleConfirm($event, index)" :userAnnotation="userAnnotations[index]" v-for="(transcription, index) in transcriptions" :algos="algos" :transcriptions="transcription"/>
-        </div>
-      </ol>
+          <div :ref="el => transcriptionsRef.push(el)" v-for="(transcription, index) in transcriptions" >
+            <AtomTrancription   @confirm="handleConfirm($event, index)" :userAnnotation="userAnnotations[index]"  :algos="algos" :transcriptions="transcription"/>
+          </div>
+      </div>
+    </ol>
   </div>
 </template>
 
@@ -19,6 +21,7 @@
 <script setup>
 import AtomTrancription from '../atoms/AtomTrancription.vue';
 
+let transcriptionsRef = $ref([])
 const { transcriptions,algos, userAnnotations } = defineProps({
   transcriptions:{ // all transcriptions by all algorithm group by sentence
     type: Array,
@@ -55,6 +58,6 @@ const handleConfirm = (event,index) => {
   localChanges.value[index] = event
 }
 
-defineExpose({locals: localChanges })
+defineExpose({locals: localChanges, transcriptionsRef:$$(transcriptionsRef) })
 
 </script>
