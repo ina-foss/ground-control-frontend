@@ -94,7 +94,6 @@
   })
 
   const scrollToSegment = (event) => {
-console.log(MoleculeTranscriptionRef.transcriptionsRef)
     MoleculeTranscriptionRef.transcriptionsRef[event.bestIndex].scrollIntoView({ behavior: "smooth" });
   }
 
