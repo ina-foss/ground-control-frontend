@@ -6,15 +6,12 @@
 <script setup lang="js">
 
 import { useService } from '#imports';
-import { startsWith } from 'lodash';
 
 const amaliaService = useService().$amalia
 
 const myplayer = ref()
 
 let dynamicSrc = $ref()
-let lastTimecode = 0
-let lastIndex = 0
 const { locals, data, videoSrc } = defineProps(['locals','data','videoSrc'])
 const emits = defineEmits([ 'timecode-update' ]);
 async function fetchVideoStream(url) {
@@ -32,22 +29,22 @@ async function fetchVideoStream(url) {
 
 watchEffect(()=>{
     if (dynamicSrc) {
-      myplayer.value.appendChild(amaliaService.createPlayer('PLAYER',dynamicSrc))
+      myplayer.value.appendChild(amaliaService.createPlayer('PLAYER',dynamicSrc)) // add amalia player once src is ready
     }
   })
 
 const seek = async () =>{
   if (myplayer) {
-    const currentTime = amaliaService.callSeek()
+    const currentTime = amaliaService.callSeek() // retreive the current time of the video
     console.log('callseek=',currentTime)
     let startIndex = 0
     let lastIndex = locals.length
-    while(Math.abs(startIndex - lastIndex) > 1 ){
+    while(Math.abs(startIndex - lastIndex) > 1 ){ // binary search of the 2 segments sourounding the currentTime
       let mid = Math.floor((lastIndex + startIndex) / 2)
       unixToTimestamp(locals[mid].tcin) >= currentTime ? lastIndex = mid : startIndex = mid
     }
     const bestIndex = startIndex
-      emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex})
+      emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex}) // emit both times to scroll and adapt css
     lastIndex = bestIndex
 }}
 

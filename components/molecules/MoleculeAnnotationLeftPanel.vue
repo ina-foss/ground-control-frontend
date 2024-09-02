@@ -1,11 +1,16 @@
 <template>
   <div class="col-span-3 bg-surface-700 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
+
+    <!-- Both player  -->
     <AtomVideoHls ref="AtomVideoHlsRef" v-if="activePlayer == false" :data="data" :videoSrc="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
     <AtomVideoAmalia :videoSrc="videoSrc" v-else :data="data" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+
+    <!-- Input to switch between player -->
     <div class=" flex items-center text-surface-0 gap-3 justify-center pt-3">
-    <InputSwitch  v-model="activePlayer" />
+      <InputSwitch  v-model="activePlayer" />
       <b>Amalia Player</b>
     </div>
+
     <AtomTopicList :colors="colors" />
     <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">Segmentation</h2>
       <p class="text-white p-3 md:block xs:hidden ">
