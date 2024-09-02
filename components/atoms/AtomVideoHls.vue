@@ -21,7 +21,7 @@
   const handleSeeking = () => {
 
     const currentTime = video.currentTime
-
+    console.log("hlsCT:",currentTime)
     if (Math.abs(video.currentTime - lastTimecode) > 1) {
     let startIndex = 0
     let endIndex = locals.length
@@ -34,7 +34,6 @@
       lastIndex = bestIndex
     }
     lastTimecode = currentTime
-
   }
 
   function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde

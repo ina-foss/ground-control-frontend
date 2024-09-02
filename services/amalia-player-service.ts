@@ -1,32 +1,29 @@
 import {PlayerConfig} from './player-config';
-import { useService } from '../composables/useService'
 
 export default class AmaliaPlayerService {
-    public static TAG_PLAYER_TAG = 'amalia-player';
-    public static TAG_CONTROL_BAR = 'amalia-control-bar';
-    public static TAG_TIMELINE = 'amalia-timeline';
-    public static TAG_SLIDER = 'amalia-time-bar';
+  public static TAG_PLAYER_TAG = 'amalia-player';
+  public static TAG_CONTROL_BAR = 'amalia-control-bar';
+  public player!: HTMLElement;
 
+  /**
+   * True when source loaded
+   */
+  private sourceLoaded = false;
+  public playerConfiguration: any;
 
-    /**
-     * True when source loaded
-     */
-    private sourceLoaded = false;
-    public playerConfiguration: any;
-
-    private loadSource() {
-        if (this.sourceLoaded) {
-            return;
-        }
-      const base = document.createElement('base')
-      base.href = '/_nuxt/node_modules/@ina/amalia/'
-      document.body.appendChild(base)
-      const script = document.createElement('script');
-      script.setAttribute('type', 'module');
-      script.src = 'amalia.min.js';
-      document.body.appendChild(script);
-      this.sourceLoaded = true;
+  private loadSource() {
+    if (this.sourceLoaded) {
+      return;
     }
+    const base = document.createElement('base')
+    base.href = '/_nuxt/node_modules/@ina/amalia/'
+    document.body.appendChild(base)
+    const script = document.createElement('script');
+    script.setAttribute('type', 'module');
+    script.src = 'amalia.min.js';
+    document.body.appendChild(script);
+    this.sourceLoaded = true;
+  }
 
   public configurePlayer(mediaSrc: string, urlStreamPlayBack?: string, thumbnailBaseUrl?: string, mediaType?: string,
                          downloadUrl?: string, aspectRatio?: string, audioTracks?: Array<{
@@ -84,6 +81,7 @@ export default class AmaliaPlayerService {
     }
 
   }
+
   private updateControlbarConfig(controlName: string) {
     let elementIndex;
     if (controlName == 'screenshot') {
@@ -94,25 +92,49 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.splice(elementIndex, 1);
   }
 
-    public createPlayer(playerId: string, src: string): HTMLElement {
-        this.loadSource();
-        if( !this.playerConfiguration){
-          this.configurePlayer(src)
-          console.log(this.playerConfiguration)
-        }
-        // Create web component
-        const player = document.createElement(AmaliaPlayerService.TAG_PLAYER_TAG);
-        player.setAttribute('player-id', playerId);
-        player.setAttribute('id', `ajs-${playerId}`);
-        player.setAttribute('config', JSON.stringify(this.playerConfiguration));
-        player.setAttribute('class', `${'timebar'}`);
+  public createPlayer(playerId: string, src: string): HTMLElement {
+    this.loadSource();
+    if (!this.playerConfiguration) {
+      this.configurePlayer(src)
+    }
+    // Create web component
+    this.player = document.createElement(AmaliaPlayerService.TAG_PLAYER_TAG);
+    this.player.setAttribute('player-id', playerId);
+    this.player.setAttribute('id', `ajs-${playerId}`);
+    this.player.setAttribute('config', JSON.stringify(this.playerConfiguration));
+    this.player.setAttribute('class', `${'timebar'}`);
 
 
-      // Create control bar
-        const controlBar = document.createElement(AmaliaPlayerService.TAG_CONTROL_BAR);
-        controlBar.setAttribute('player-id', playerId);
-        player.appendChild(controlBar);
-        return player;
+    // Create control bar
+    const controlBar = document.createElement(AmaliaPlayerService.TAG_CONTROL_BAR);
+    controlBar.setAttribute('player-id', playerId);
+    this.player.appendChild(controlBar);
+    return this.player;
+  }
+
+  public getPlayers(){
+    this.player = document.getElementById('PLAYER') as HTMLElement;
+
+    if (!this.player) {
+      console.error("L'élément avec l'ID 'PLAYER' n'a pas été trouvé.");
+      return null;
     }
 
+    const players: any = this.player.getElementsByTagName(AmaliaPlayerService.TAG_PLAYER_TAG);
+
+    if (players.length === 0) {
+      console.error("Aucun élément avec le tag spécifié n'a été trouvé.");
+      return null;
+    }
+    return players;
+  }
+  public callSeek() {
+    const players =this.getPlayers()
+    return players[0].mediaPlayerElement.getMediaPlayer().getCurrentTime();
+  }
+
+  public updateCurrentTc(tc:any){
+    const players =this.getPlayers()
+    players[0].mediaPlayerElement.getMediaPlayer().setCurrentTime(tc);
+  }
 }
