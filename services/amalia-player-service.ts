@@ -16,7 +16,7 @@ export default class AmaliaPlayerService {
       return;
     }
     const base = document.createElement('base')
-    base.href = '/_nuxt/node_modules/@ina/amalia/'
+    base.href = '/amalia/'
     document.body.appendChild(base)
     const script = document.createElement('script');
     script.setAttribute('type', 'module');
