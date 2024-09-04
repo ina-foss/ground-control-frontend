@@ -100,7 +100,7 @@
   const handleSubmit = () =>{
 
   let locals = []
-  MoleculeTranscriptionRef.value.locals.forEach((el, index) => { // format data sent to DB
+  MoleculeTranscriptionRef.locals.forEach((el, index) => { // format data sent to DB
     if (el == null) locals[index] = null
     else {
       el.phrase.data.algo = el.algo

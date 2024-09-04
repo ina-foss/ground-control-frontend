@@ -32,6 +32,9 @@
   import AtomVideoAmalia from '../atoms/AtomVideoAmalia.vue';
   import { useService } from '#imports';
 
+
+  const amalia = useService().$amalia
+
   const videoPlayerList = ['amalia','hls']
 
   const activePlayer = ref(true)
@@ -60,8 +63,8 @@ const { data, locals, colors, videoSrc } = props;
   }
 
   const updateVideoTimecode = (event) => {
-    AtomVideoHlsRef.videoRef.currentTime = unixToTimestamp(event.tcin) - 1 // Set video time to given timecode minus 1s to hear full segment
-    amaliaService.updateCurrentTc(unixToTimestamp(event.tcin))
+    if (activePlayer.value) amalia.updateCurrentTc(unixToTimestamp(event.tcin)) - 1
+    else AtomVideoHlsRef.videoRef.currentTime = unixToTimestamp(event.tcin) - 1 // Set video time to given timecode minus 1s to hear full segment
   }
 
   defineExpose({updateVideoTimecode})

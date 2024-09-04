@@ -9,7 +9,7 @@
         />
         <div  class=" rounded flex flex-col gap-2 p-3 " >
           <div :ref="el => transcriptionsRef.push(el)" v-for="(transcription, index) in transcriptions" >
-            <AtomTrancription   @confirm="handleConfirm($event, index)" :userAnnotation="userAnnotations[index]"  :algos="algos" :transcriptions="transcription"/>
+            <AtomTrancription @on-segment-click="handleSegmentClick"  @confirm="handleConfirm($event, index)" :userAnnotation="userAnnotations[index]"  :algos="algos" :transcriptions="transcription"/>
           </div>
       </div>
     </ol>
