@@ -63,7 +63,7 @@ const { data, locals, colors, videoSrc } = props;
   }
 
   const updateVideoTimecode = (event) => {
-    if (activePlayer.value) amalia.updateCurrentTc(unixToTimestamp(event.tcin)) - 1
+    if (activePlayer.value) amalia.updateCurrentTc(unixToTimestamp(event.tcin) -1 )
     else AtomVideoHlsRef.videoRef.currentTime = unixToTimestamp(event.tcin) - 1 // Set video time to given timecode minus 1s to hear full segment
   }
 
