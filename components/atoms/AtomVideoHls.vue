@@ -23,13 +23,13 @@
     const currentTime = video.currentTime // Retrieve videotime
     console.log("hlsCT:",currentTime)
     if (Math.abs(video.currentTime - lastTimecode) > 1) { // check if the user moved in the timeline
-    let startIndex = 0
-    let endIndex = locals.length
-    while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
-      const mid = Math.floor(((endIndex + startIndex) / 2))
-      unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
-    }
-      const bestIndex = startIndex
+      let startIndex = 0
+      let endIndex = locals.length
+      while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
+        const mid = Math.floor(((endIndex + startIndex) / 2))
+        unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
+      }
+      const bestIndex = endIndex
       emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex}) // emit time to scroll and modify css
       lastIndex = bestIndex
     }
