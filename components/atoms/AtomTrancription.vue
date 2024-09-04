@@ -3,11 +3,11 @@
 
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
-      <div class="flex cursor-pointer flex-start gap-2 ">
+      <div @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})"  class="flex cursor-pointer flex-start gap-2 ">
       <Tag :severity="tcColor" >
-          <div @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})" class="flex justify-center  items-center gap-3">
-          <i class="pi pi-clock" style="font-size: 1.5rem" />
-          <p class="text-sm">{{transcriptions[0].tcin}}</p>
+          <div class="flex justify-center  items-center gap-3">
+            <i class="pi pi-clock" style="font-size: 1.5rem" />
+            <p class="text-sm">{{transcriptions[0].tcin}}</p>
         </div>
       </Tag>
       <Tag v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-center "  :value="transcriptionTag" />
