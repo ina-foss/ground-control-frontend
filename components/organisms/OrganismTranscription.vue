@@ -1,8 +1,10 @@
 <template>
   <div v-if=" allFetched " class="h-full" >
-    <div class="fixed z-10 bottom-10 right-20 ">
+    <div class="fixed z-10 bottom-10 right-4 ">
       <Button label="Submit" size="large" @click="handleSubmit()" />
+      <Button class="ml-3" label="Finish" size="large" @click="handleFinish()" />
     </div>
+
     <Toast />
     <div class="grid grid-cols-9 xs:block h-full">
       <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"  :data="data" :locals="annotations_in[0].result.data.localisation[0].sublocalisations.localisation" @scroll-to-segment="scrollToSegment"/>
@@ -50,7 +52,7 @@
   const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
   const { userEmail } = storeToRefs(authStore)
 
-  const emits = defineEmits([ 'submitAnnotation' ]);
+  const emits = defineEmits([ 'submitAnnotation','finish-annotation' ]);
 
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
   let MoleculeTranscriptionRef = $ref()
@@ -110,6 +112,20 @@
     }
   })
   emits('submitAnnotation', { locals: locals })
+}
+const handleFinish = () =>{
+
+  let locals = []
+  MoleculeTranscriptionRef.locals.forEach((el, index) => { // format data sent to DB
+    if (el == null) locals[index] = null
+    else {
+      el.phrase.data.algo = el.algo
+      el.phrase.data.edited = el.edited
+      el.phrase.data.algoIndex = el.index
+      locals[index] = el.phrase
+    }
+  })
+  emits('finish-annotation', { locals: locals })
 }
 
   const algos = $computed(()=> { // List the name of the algorithm
