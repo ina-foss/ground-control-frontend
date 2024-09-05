@@ -19,6 +19,7 @@
 <script setup>
 
 import { bcStore } from '../../stores/breadcrumbs.ts';
+const store = bcStore()
 
 import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
