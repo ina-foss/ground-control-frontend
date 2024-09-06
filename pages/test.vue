@@ -1,0 +1,211 @@
+<template>
+  <div :class="'flex flex-row justify-around h-screen items-center w-full' + linkCursor" >
+    <div class="flex flex-col p-6 max-w-[70%] gap-3 justify-center items-center h-screen">
+      <Toast />
+      <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
+      <div @mouseup="handleSelection" :class="linkCursor" id="text">{{text}}</div>
+      <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
+      <Button label="Clear all" @click="deleteSelection" />
+
+
+    </div>
+  <div>
+    <AtomSpanDetail @link="linkMode = !linkMode" @deleteSpan="onDeleteSpan($event)" @unselect="handleUnselect()" :relationArray="relationArray" :focusSpan="currentFocus" :spanRefArray="spanRefArray" />
+  </div>
+    <div v-if="lastFocus">
+      {{ lastFocus.value }}
+    </div>
+
+  </div>
+
+</template>
+
+<script setup lang="ts">
+import { clamp, random } from 'lodash';
+import BadgeDirective from 'primevue/badgedirective';
+import { useToast } from 'primevue/usetoast';
+import {createApp, createTextVNode} from 'vue'
+import AtomSpan from '~/components/atoms/AtomSpan.vue';
+import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
+import _ from 'lodash'
+
+const app = createApp()
+app.directive('badge', BadgeDirective)
+const toast = useToast()
+let spanClicked = $ref(false)
+let currentFunction = $ref()
+const spanRefArray = ref([])
+const elementArray = ref([])
+let linkMode = $ref(false)
+let linkCss = $computed(()=> linkMode ? ' hover:border-2 ' : '')
+let linkCursor = $computed(()=> linkMode ? ' cursor-crosshair ' : '')
+const spanCount = ref(spanRefArray.value.length)
+let spanIndex = $ref()
+let relationArray = ref([])
+let lastFocus = $ref(undefined)
+let currentFocus = $ref(undefined)
+const labelSelected = ref('')
+const labels = ['Person','Citation','Verbe']
+const text = ref('Mercredi soir, le chef d’Etat a évacué l’idée d’adouber Lucie Castets, candidate officielle de la coalition de gauche : "Le sujet n’est pas un nom donné par une formation politique. La question est quelle majorité peut se dégager à l’Assemblée pour que le gouvernement de la France puisse passer des réformes."')
+const state = reactive({
+  selection: null as Selection | null,
+  range: null as Range | null
+})
+
+
+const selectionText = computed(() => {
+  if (state.range != null) {
+    return state.range.toString()
+  }
+  return ''
+})
+
+watch(()=>currentFocus,(newFocus, oldFocus)=>{
+  lastFocus = oldFocus
+  if( typeof lastFocus == 'number' && spanRefArray.value[oldFocus]) spanRefArray.value[oldFocus].focus = false
+  if( typeof currentFocus == 'number') spanRefArray.value[newFocus].focus = true
+
+},{immediate:true})
+
+const handleDelete = (event) => {
+  console.log(event)
+}
+
+function generatePastelColor(tagNumber : number) {
+  // Use tag number to create a seed (this is a basic example, there are better ways to do this)
+  const seed = tagNumber * 123456789;
+  const random = s => ((seed * s) % 155) + 100;  // Between 100 and 255
+
+  const r = random(3);
+  const g = random(5);
+  const b = random(7);
+
+  return `rgb(${r}, ${g}, ${b}, `;
+}
+
+const onDeleteSpan = ({ index } : { index : number }) => {
+  const element : Element = elementArray.value[index]
+  let text = spanRefArray.value[index].text
+  console.log(element)
+    if (element && element.parentNode){
+      let parent = element.parentNode // on recupere la div contenant la phrase
+      parent.replaceChild(document.createTextNode(text),element) // on remplave le span par du text
+      parent.normalize(); // On fusionne les 3 textes
+
+    }
+  _.remove(relationArray.value,(relation) => relation.to == index || relation.from == index)
+  console.log(relationArray.value)
+  spanRefArray.value.splice(index,1)
+  spanRefArray.value.forEach((span,index)=>{
+    span.index = index
+  })
+  currentFocus = undefined
+  spanCount.value--
+  console.log(spanRefArray.value.length)
+  console.log(spanRefArray.value)
+}
+
+watch(()=>labelSelected.value,(newLabel,oldLabel)=>{
+  if(typeof currentFocus != 'undefined'){
+      console.log(newLabel)
+      spanRefArray.value[currentFocus].label = newLabel
+      console.log(spanRefArray.value[currentFocus])
+  }
+},{immediate: true})
+
+const handleUnselect = () => {
+  spanRefArray.value[currentFocus].focus = false
+  currentFocus=undefined
+}
+
+const handleSelection = () => {
+  const currentSelection = document.getSelection()
+  if (currentSelection && currentSelection.toString() !== '' && labelSelected.value != '' ) {
+    state.selection = currentSelection
+    let index = markRaw(spanCount.value)
+    let label =markRaw(labelSelected.value)
+    let direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
+    if( state.selection.extentNode.data[state.selection.extentOffset-1] != ' '){
+      state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
+    }
+    if(direction == 'forward'){
+       if( state.selection.extentNode.data[state.selection.extentOffset-1] == ' '){ // Delete the last characted if it's a space
+        state.selection.modify('extend','backward','character')
+        }
+    }
+    else {
+        if( state.selection.extentNode.data[state.selection.extentOffset] === ' '){ // Delete the last characted if it's a space
+          state.selection.modify('extend','forward','character')
+        }
+    }
+    state.range = currentSelection.getRangeAt(0)
+    let selectionTextString = selectionText.value
+    state.selection.removeAllRanges()
+    let span = document.createElement('span')
+    state.range.deleteContents()
+    state.selection.empty()
+    state.selection = null
+    const color =  spanRefArray.value[index] ? spanRefArray.value[index].color : generatePastelColor(random(0,15,true))
+    if (!spanClicked){
+    const app = createApp({
+      render () {
+        return h(AtomSpan , {
+            label: label,
+            text: selectionTextString,
+            color: color,
+            index: index,
+            linkCss: linkCss,
+            ref: el => spanRefArray.value[index] = el,
+            onSpanReady: ({element, index}) => {
+              elementArray.value[index] = element
+            },
+            onEditSpan: ({index}) => {
+              spanClicked = true
+              spanIndex = index
+            },
+            onFocusSpan: ({index}) =>{
+              if( linkMode ){
+                relationArray.value.push({from: currentFocus, to: index})
+                linkMode=false
+              }
+              else{
+                spanClicked = false
+                currentFocus = index
+                labelSelected.value = spanRefArray.value[currentFocus].label
+              }
+            }
+
+
+        })
+      }
+    })
+      spanCount.value++
+     app.mount(span)
+    const fragment = document.createDocumentFragment()
+    Array.from(span.childNodes).forEach(node => {
+      fragment.appendChild(node)
+    });
+    state.range.insertNode(fragment)
+    }
+    else{
+      console.log(spanIndex)
+      direction == 'forward' ? spanRefArray.value[spanIndex].addRight(selectionTextString) : spanRefArray.value[spanIndex].addLeft(selectionTextString)
+      spanClicked = false
+    }
+
+  }
+}
+
+const deleteSelection = () => {
+  if (state.selection) {
+    let span = document.createElement('sup')
+    span.style.backgroundColor = "red"
+    span.appendChild(selectionText.value)
+    state.range.insertNode(span)
+  }
+
+}
+
+
+</script>
+
