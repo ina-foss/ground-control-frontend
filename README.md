@@ -1,93 +1,120 @@
-# Front
+# Nuxt 3 Minimal Starter
+
+Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+
+> **IMPORTANT**  
+> Make sure to have the last version of BOTH repositories locally installed and up to date before running `docker compose up`.
+> To do that, go to your local develop branch using `git checkout develop` and then `git pull` on both frontend and backend directories.
+> The 2 application needs to interact with each other so you need to work.
+
+## Deployment
+
+All the variables are initialize from the [config.json](./public/config.json) file.
+List of variables that can be override in production:
+| VARIABLE             | EXEMPLE                             | PURPOSE                                                                          |
+|----------------------|-------------------------------------|----------------------------------------------------------------------------------|
+| authorityUrl         | "http://localhost:9080/realms/ground-control"       | Keycloak realm url to setup authentication                               |
+| version                | 1.0.0                    | Actual version of Ground Control  |
+| client_id            | "web_app"                           | Identifier for Keycloak to know it's the frontend that reache it|
+| apiBasePath        | "localhost:8000"  | API address for the browser  |
 
 
+## Setup
 
-## Getting started
+Make sure to install the dependencies:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+```bash
+# npm
+npm install
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+# pnpm
+pnpm install
 
-## Add your files
+# yarn
+yarn install
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+# bun
+bun install
 ```
-cd existing_repo
-git remote add origin https://git.infra.sas.ina/ia/code/ground-control/front.git
-git branch -M master
-git push -uf origin master
+
+## Development Server
+
+Start the development server on `http://localhost:3000`:
+
+```bash
+# npm
+npm run dev
+
+# pnpm
+pnpm run dev
+
+# yarn
+yarn dev
+
+# bun
+bun run dev
 ```
 
-## Integrate with your tools
+## Running unit tests
 
-- [ ] [Set up project integrations](https://git.infra.sas.ina/ia/code/ground-control/front/-/settings/integrations)
+`npm run test` to execute the unit tests via vitest (`vitest`: the default command).
+`npm run coverage` to run and get a coverage report of unit tests (`vitest run --coverage`: the default command) .
 
-## Collaborate with your team
+These commands are specified in a script in `package.json`
+To make your own vitest unit tests configuration , you may use `vitest.config.ts` file to set up various options like environment, outputFile ...
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Running eslint
 
-## Test and Deploy
+`npm run lint` to execute the lint (`eslint .`: the default command).
+`npm run lint:fix` to run and fix lint warnings and errors (`eslint . --fix`: the default command) .
 
-Use the built-in continuous integration in GitLab.
+These commands are specified in a script in `package.json`
+To make your own eslint configuration , you may use `eslint.config.mjs` file to set up desired config.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## Updating OpenAPI services & models
 
-***
+```bash
+npm run update-api
+```
+This project uses a fastAPI backend which expose `openapi.json` file in its uvicorn server.
 
-# Editing this README
+The [@hey-api/openapi-ts](https://heyapi.vercel.app/openapi-ts/get-started.html) dependency use this exposed file to create all services and models, and store them in the [/api/generate/](./api/generate/) directory.
+The content of the directory is update each time the projet docker image of the project is built but if you want to run it mannualy, use the above command.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
 
-## Suggestions for a good README
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
 
-## Name
-Choose a self-explaining name for your project.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## About authentication
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+<div align="center">
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```mermaid
+---
+title: Authentication Flow
+---
+flowchart TD;
+  Z["import config"] --> A[Middleware];
+  A --> B{Is sign In ?};
+  B-->|No| C[Redirect Keycloak] ;
+  B--->|Yes| D[Store token in AuthStore];
+  D --> E["setup OpenAPI Header"]
+  C --> Z;
+  E --> F["Check if user is in DB"];
+  F --> G{Is alreday registered ?};
+  G --> |Yes| H[🥳 Access Ground Control 🥳];
+  G --> |No| I[Create new user];
+  I --> H;
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+</div>
+The authentication flow of the application is handled by Keycloak. All the variable needed for configuration are in the [config.json file](./assets/config.json). It contains the address of the Keycloak container and the one from the API. The file is loaded at the application creation in [this plugin](../plugins/backend-openapi-config.ts)
+In development mode, you can see all the tokens and user information in Pinia tab of the Nuxt DevTool. These infos are also store in a WebStorageSession which means the user is still connecting after closing the application tabs on its browser.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+The global middleware of the application redirect any incoming user who are not logged. After login in the Keycloak page, user gets redirected to `/auth` page where the actual sign in function is called. Finally, he comes back to the root of the application.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+The access token, used in every API call to the backend application, may eventually expire during long session. The page `/silent-refresh` allow user to refresh its access token using the refresh token. This route is called automatically upon access token expiration.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Production
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Pour compiler le projet, utilisez la commande `npm run build`. Celle-ci génère un répertoire dist contenant les fichiers à déployer avec Nginx

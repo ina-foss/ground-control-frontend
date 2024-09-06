@@ -1,0 +1,60 @@
+{
+  "name": "ground-control-frontend",
+  "version": "0.0.1",
+  "type": "module",
+  "files": [
+    ".output"
+  ],
+  "scripts": {
+    "build": "nuxt generate",
+    "dev": "nuxt dev",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "generate": "nuxt build",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@ina/amalia": "^2.0.25",
+    "@ina/kit-ui": "^0.0.1",
+    "@nuxtjs/color-mode": "^3.4.1",
+    "@pinia/nuxt": "^0.5.1",
+    "hls.js": "^1.5.8",
+    "lodash": "^4.17.21",
+    "nuxt": "^3.12.3",
+    "nuxt-socket-io": "^3.0.13",
+    "oidc-client-ts": "^3.0.1",
+    "pinia": "^2.1.7",
+    "primeicons": "^7.0.0",
+    "primevue": "^3.53.0",
+    "vue": "^3.4.21",
+    "vue-lodash": "^2.1.2",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "^0.42.1",
+    "@nuxt/eslint": "^0.3.13",
+    "@nuxt/test-utils": "^3.13.1",
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "@primevue/nuxt-module": "^4.0.1",
+    "@testing-library/vue": "^8.1.0",
+    "@types/lodash": "^4.17.5",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
+    "@vue-macros/nuxt": "^1.9.39",
+    "@vue/test-utils": "^2.4.6",
+    "eslint": "^8.57.0",
+    "happy-dom": "^14.11.2",
+    "jsdom": "^24.1.0",
+    "nuxt-lodash": "^2.5.3",
+    "nuxt-primevue": "^0.3.1",
+    "openapi-typescript-codegen": "^0.26.0",
+    "playwright-core": "^1.44.1",
+    "postcss-custom-properties": "^13.3.10",
+    "vitest": "^1.6.0"
+  }
+}
