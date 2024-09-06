@@ -95,7 +95,7 @@ const handleSubmit = (event) => {
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotationInfo.id,
       annotations_out.value[annotationInfo.index].result
-    ).then((response) => console.log(response))
+    )
       .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add({
@@ -105,8 +105,9 @@ const handleSubmit = (event) => {
         })
       })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> console.log(annotations_out.value)).then(()=> annotation_bool.out = true)
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
       })
+
   }
 
   else {
@@ -128,7 +129,7 @@ const handleSubmit = (event) => {
       }
     })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> console.log(annotations_out.value)).then(()=> annotation_bool.out = true)
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
       })
       .then(() => { window.onbeforeunload = null })
       .then(() => {
@@ -139,7 +140,6 @@ const handleSubmit = (event) => {
 
 }
 const handleFinish = (event) => {
-  debugger
   const locals = JSON.parse(JSON.stringify(event.locals))
 
   if (annotationInfo != null) {
@@ -149,18 +149,19 @@ const handleFinish = (event) => {
     AnnotationService.finishAnnotationAnnotationFinishIdPatch(
       annotationInfo.id,
       annotations_out.value[annotationInfo.index].result
-    ).then((response) => console.log("test",response))
-      /*.then(() => { window.onbeforeunload = null })
+    )
+      .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add({
           severity: 'info',
-          detail: 'Annotation has been updated',
+          detail: 'Annotation has been finished',
           life: 4000
         })
       })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> console.log(annotations_out.value)).then(()=> annotation_bool.out = true)
-      })*/
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
+      })
+      .then(window.location.reload())
   }
 
   else {
@@ -183,19 +184,15 @@ const handleFinish = (event) => {
       }
     })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> console.log(annotations_out.value)).then(()=> annotation_bool.out = true)
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
       })
-      .then(AnnotationService.finishAnnotationAnnotationFinishIdPatch(
-        annotationInfo.id, //get id annotation avant
-        annotations_out.value[annotationInfo.index].result
-      ))
       .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add(
-          { severity: 'info', detail: 'Annotation created', life: 5000 })
+          { severity: 'info', detail: 'Annotation created and finished', life: 5000 })
       })
+      .then(window.location.reload())
   }
-
 }
 
 function generatePastelColor(tagNumber) {

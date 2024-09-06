@@ -1,6 +1,6 @@
 <template>
   <div v-if=" allFetched " class="h-full" >
-    <div class="fixed z-10 bottom-10 right-4 ">
+    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed z-10 bottom-10 right-4 ">
       <Button label="Submit" size="large" @click="handleSubmit()" />
       <Button class="ml-3" label="Finish" size="large" @click="handleFinish()" />
     </div>
@@ -42,13 +42,12 @@
 </template>
 
 
-<script setup>
+<script setup lang="js" >
   import MoleculeAnnotationLeftPanel from '../molecules/MoleculeAnnotationLeftPanel.vue';
   import MoleculeTranscription from '../molecules/MoleculeTranscription.vue';
-
   const authStore = useAuth()
   const moleculeAnnotationLeftPanelRef= $ref()
-
+  import { AnnotationStatus } from '../../api/generate';
   const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
   const { userEmail } = storeToRefs(authStore)
 
@@ -56,14 +55,13 @@
 
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
   let MoleculeTranscriptionRef = $ref()
-
-
+  const annotationStatus = AnnotationStatus.ENDED
   const annotationInfo = $computed(() => { // get user annotation position
     let info = null
     if (allFetched ) {
       annotations_out.forEach((annotation, index) => {
         if (annotation.user_email == userEmail.value) {
-          info = { index: index, id: annotation.id }
+          info = { index: index, id: annotation.id}
         }
       })
       return info
@@ -141,7 +139,6 @@ const handleFinish = () =>{
 
   watchEffect(() => {if(allFetched)
     videoSrc = annotations_in[0]?.result.asset.url
-
     })
 
 </script>

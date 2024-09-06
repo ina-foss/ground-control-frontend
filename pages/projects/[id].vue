@@ -93,7 +93,8 @@
                   <Avatar
                     v-for="(annotation, index) in nestedData.annotations" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
-                    shape="circle"/>
+                    shape="circle"
+                    :style="{ backgroundColor: getColorForAnnotation(annotation.annotation_status) }"/>
                 </div>
               </template>
             </Column>
@@ -133,7 +134,7 @@
   import { ProjectService } from '../../api/generate';
   import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
   import {useRefreshStore} from '../stores/refresh';
-
+  import { AnnotationStatus } from '../../api/generate';
   const store = bcStore()
   const route = useRoute()
   const refreshStore = useRefreshStore()
@@ -159,7 +160,6 @@
   const editMode = ref(false)
   const expandMode = $ref(false)
   const data = ref(getProject)
-
   const buttonItems = [
     {
       label: 'One file',
@@ -208,7 +208,11 @@ fetchTasks(route.params.id).then((res) => {
   }
 })
 
-
+  function getColorForAnnotation(annotation_status) {
+    if(annotation_status === AnnotationStatus.ENDED){
+    return '#ACE1AF';
+    }
+  }
 const count_validated_task = ((annotations) => {
   let task_count = 0;
   annotations.forEach(annotation => {
