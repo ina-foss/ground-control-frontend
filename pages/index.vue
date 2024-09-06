@@ -15,7 +15,8 @@ onMounted(()=>{
   let length = getItems.value.length // get breadcrumb list's length
   for (let index = 0; index < length; index++) {  // remove every breadcrumb
     removeLastCrumb()
-}
+  }
+})
     router.push("/dashboard")
 
 </script>

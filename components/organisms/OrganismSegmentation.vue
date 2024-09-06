@@ -117,7 +117,7 @@
   const loadTopics = () => {
     colors = ['#BEBEBE'] // reset colors before loading
     let max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
-    while (colors.length <= max.data.topic){ // Create all colors below this max
+    while (colors.length <= max?.data.topic){ // Create all colors below this max
      const randomcolor = generatePastelColor(colors.length)
       colors.push(randomcolor)
     }
@@ -130,10 +130,11 @@
   onMounted(()=>{
 
   watch(()=> allFetched,() => {
-    if(allFetched)
-    videoSrc = annotations_in[0]?.result.asset.url
+      if(allFetched == true){
+        videoSrc = annotations_in[0]?.result.asset.url
 
-    loadTopics()
+          loadTopics()
+      }
   })
   })
 

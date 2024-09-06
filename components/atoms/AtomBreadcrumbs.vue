@@ -25,7 +25,6 @@ import { ref, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 
 const pages =  ['dashboard', 'projects-id', 'task-id']
-const store = bcStore()
 
 const home = { label: 'Projects', route: '/dashboard' }
 
