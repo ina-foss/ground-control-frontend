@@ -57,8 +57,13 @@ export default class ApplicationService {
    * Get user roles from the auth store
    * @returns {string[]} Array of roles
    */
-  public getUserRoles() {
+  public getUserRoles(): [] {
     const { user } = storeToRefs(this.authStore);
     return user.value?.profile?.roles ?? [];
+  }
+
+  public hasRole(role: string): boolean {
+    const roles: [] = this.getUserRoles();
+    return roles.includes(role);
   }
 }

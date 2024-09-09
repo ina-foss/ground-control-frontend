@@ -37,8 +37,8 @@ const menuVisible = ref(false);
 const dialogVisible = ref(false);
 
 const { $application } = useService();
-const roles = $application.getUserRoles();
+// const roles = $application.getUserRoles();
 
-const isAdmin = computed(() => roles?.includes('ROLE_ADMIN'));
+const isAdmin = computed(() => $application.hasRole('ROLE_ADMIN'));
 
 </script>
