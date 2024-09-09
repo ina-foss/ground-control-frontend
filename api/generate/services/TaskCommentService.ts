@@ -33,6 +33,8 @@ export class TaskCommentService {
                 'taskComment_id': taskCommentId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -67,6 +69,8 @@ export class TaskCommentService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -87,6 +91,8 @@ export class TaskCommentService {
                 'taskComment_id': taskCommentId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -113,6 +119,8 @@ export class TaskCommentService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -137,6 +145,8 @@ export class TaskCommentService {
                 'limit': limit,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

@@ -1,6 +1,6 @@
 <template>
   <div  class="h-full">
-    <component :is="annotationComponent" :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"></component>
+    <component :is="annotationComponent" :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)" @finish-annotation="handleFinish($event)"></component>
     <!-- <OrganismSegmentation :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   /> -->
   </div>
 </template>
@@ -96,7 +96,7 @@ const handleSubmit = (event) => {
     AnnotationService.updateAnnotationResultAnnotationIdPatch(
       annotationInfo.id,
       annotations_out.value[annotationInfo.index].result
-    ).then((response) => console.log(response))
+    )
       .then(() => { window.onbeforeunload = null })
       .then(() => {
         toast.add({
@@ -106,8 +106,9 @@ const handleSubmit = (event) => {
         })
       })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> console.log(annotations_out.value)).then(()=> annotation_bool.out = true)
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
       })
+
   }
 
   else {
@@ -129,7 +130,7 @@ const handleSubmit = (event) => {
       }
     })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> console.log(annotations_out.value)).then(()=> annotation_bool.out = true)
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
       })
       .then(() => { window.onbeforeunload = null })
       .then(() => {
@@ -138,6 +139,61 @@ const handleSubmit = (event) => {
       })
   }
 
+}
+const handleFinish = (event) => {
+  const locals = JSON.parse(JSON.stringify(event.locals))
+
+  if (annotationInfo != null) {
+    let result = annotations_out.value[annotationInfo.index].result
+    result.data.localisation[0].sublocalisations.localisation = locals
+    // L'utilisateur a déjà une annotation associée à cette tâche
+    AnnotationService.finishAnnotationAnnotationFinishIdPatch(
+      annotationInfo.id,
+      annotations_out.value[annotationInfo.index].result
+    )
+      .then(() => { window.onbeforeunload = null })
+      .then(() => {
+        toast.add({
+          severity: 'info',
+          detail: 'Annotation has been finished',
+          life: 4000
+        })
+      })
+      .then(() => {
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
+      })
+      .then(window.location.reload())
+  }
+
+  else {
+    let result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
+    result.data.localisation[0].sublocalisations.localisation = locals
+    // L'utilisateur n'a jamais annoté cette tâche
+    AnnotationService.createAnnotationAnnotationPost({
+      annotation: {
+        user_email: userEmail.value,
+        task_id: data.value.id,
+        result: result,
+        annotation_status: AnnotationStatus.ENDED,
+
+        version: 1
+      },
+      association: {
+        annotation_id : 0,
+        task_id: data.value.id,
+        direction: 'out'
+      }
+    })
+      .then(() => {
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res)=> annotations_out.value = res).then(()=> annotation_bool.out = true)
+      })
+      .then(() => { window.onbeforeunload = null })
+      .then(() => {
+        toast.add(
+          { severity: 'info', detail: 'Annotation created and finished', life: 5000 })
+      })
+      .then(window.location.reload())
+  }
 }
 
 function generatePastelColor(tagNumber) {

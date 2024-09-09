@@ -3,12 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AnnotationStatus } from './AnnotationStatus';
-/**
- * DTO containing all basic informations about Task except result
- */
-export type AnnotationBase = {
+export type AnnotationWithIdDto = {
     user_email: string;
     annotation_status: AnnotationStatus;
     version: number;
+    id: number;
 };
 

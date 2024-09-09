@@ -11,6 +11,5 @@ export type AnnotationCreate = {
     annotation_status: AnnotationStatus;
     version: number;
     result: (Record<string, any> | null);
-    task_id: number;
 };
 
