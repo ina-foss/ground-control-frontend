@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-black">
+  <div  class="bg-black">
 
     <DataTable
       v-if="data.steps?.length > 0" v-model:expanded-rows="expandedRows" :context-menu=true :pt="{
@@ -117,7 +117,7 @@
       <LoadingSpinner/>
     </div>
     <Dialog v-model:visible="visible" modal @hide="visible = false">
-      <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
+      <DataDialog :data="dialogContent" :visible="spinnerVisible" />
     </Dialog>
     <MoleculeFormTask :dialogVisible="dialogVisible" :stepObject="formStepClick" @toggle-dialog="dialogVisible=false"/>
   </div>
@@ -293,6 +293,7 @@ const handleRowClick =  (event) => {
     store.addCrumb({label: clickedRowData.value.name, route: `/tasks/${clickedRowData.value.id}`})
     console.log(event.data)
   if (editMode.value == false) navigateToTask( clickedRowData.value.id)
+
 
 
 }

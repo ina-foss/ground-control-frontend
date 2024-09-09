@@ -5,6 +5,7 @@
 <script setup>
 import { bcStore } from '~/stores/breadcrumbs';
 
+const router = useRouter()
 const store = bcStore()
 const { removeLastCrumb } = store
 const { getItems } = storeToRefs(store)
@@ -16,5 +17,6 @@ onMounted(()=>{
     removeLastCrumb()
   }
 })
+    router.push("/dashboard")
 
 </script>

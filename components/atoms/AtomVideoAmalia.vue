@@ -1,5 +1,5 @@
 <template>
-    <div class=" h-auto aspect-video w-full" ref="myplayer" id="PLAYER" @click="seek"></div>
+  <div class=" h-auto aspect-video w-full" ref="myplayer" id="PLAYER" @click="seek"></div>
 </template>
 
 
@@ -10,41 +10,42 @@ import { useService } from '#imports';
 const amaliaService = useService().$amalia
 
 const myplayer = ref()
+let lastIndex = 0
 
 let dynamicSrc = $ref()
-const { locals, data, videoSrc } = defineProps(['locals','data','videoSrc'])
-const emits = defineEmits([ 'timecode-update' ]);
+const { locals, data, videoSrc } = defineProps(['locals', 'data', 'videoSrc'])
+const emits = defineEmits(['timecode-update']);
 async function fetchVideoStream(url) {
   const response = await fetch(url);
   const videoHls = response.text();
   return videoHls;
 }
 
-  const hlsPlayer = async () => {
-    let content = await fetchVideoStream(videoSrc)
-    const src = `data:application/vnd.apple.mpegurl;base64,${content}`
-    dynamicSrc = src
+const hlsPlayer = async () => {
+  let content = await fetchVideoStream(videoSrc)
+  const src = `data:application/vnd.apple.mpegurl;base64,${content}`
+  dynamicSrc = src
 
+}
+
+watchEffect(() => {
+  if (dynamicSrc) {
+    myplayer.value.appendChild(amaliaService.createPlayer('PLAYER', dynamicSrc)) // add amalia player once src is ready
   }
+})
 
-watchEffect(()=>{
-    if (dynamicSrc) {
-      myplayer.value.appendChild(amaliaService.createPlayer('PLAYER',dynamicSrc)) // add amalia player once src is ready
-    }
-  })
-
-const seek = async () =>{
+const seek = async () => {
   if (myplayer) {
     const currentTime = amaliaService.callSeek() // retreive the current time of the video
-    console.log('callseek=',currentTime)
+    console.log('callseek=', currentTime)
     let startIndex = 0
-    let lastIndex = locals.length
-    while(Math.abs(startIndex - lastIndex) > 1 ){ // binary search of the 2 segments sourounding the currentTime
-      let mid = Math.floor((lastIndex + startIndex) / 2)
-      unixToTimestamp(locals[mid].tcin) >= currentTime ? lastIndex = mid : startIndex = mid
+    let endIndex = locals.length
+    while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
+      const mid = Math.floor(((endIndex + startIndex) / 2))
+      unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
     }
-    const bestIndex = startIndex
-      emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex}) // emit both times to scroll and adapt css
+    const bestIndex = endIndex
+    emits('timecode-update', { lastIndex: lastIndex, bestIndex: bestIndex }) // emit both times to scroll and adapt css
     lastIndex = bestIndex
 }}
 
