@@ -1,8 +1,8 @@
 <template>
   <div v-if=" allFetched " class="h-full" >
     <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed z-10 bottom-10 right-4 ">
-      <Button label="Submit" size="large" @click="handleSubmit()" />
-      <Button class="ml-3" label="Finish" size="large" @click="handleFinish()" />
+      <Button label="Soumettre" size="large" @click="handleSubmit()" />
+      <Button class="ml-3" severity="success" label="Terminer" size="large" @click="handleFinish()" />
     </div>
 
     <Toast />
