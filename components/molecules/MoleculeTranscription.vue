@@ -21,7 +21,7 @@
 import AtomTrancription from '../atoms/AtomTrancription.vue';
 
 const emits = defineEmits(['on-segment-click'])
-
+let isChanged = false
 let transcriptionsRef = $ref([])
 const { transcriptions,algos, userAnnotations } = defineProps({
   transcriptions:{ // all transcriptions by all algorithm group by sentence
@@ -42,12 +42,14 @@ const localChanges = ref([]) // store all the annotations confirmed by user befo
 watchEffect(()=>{
     userAnnotations.forEach( (change,index)  => { // load annotation from DB into localChanges for them to be display
       if (change == null) localChanges.value[index] = null
-      else{
-        localChanges.value[index] = {}
-        localChanges.value[index].index = change.data.algoIndex
-        localChanges.value[index].algo = change.data.algo
-        localChanges.value[index].edited = change.data.edited
-        localChanges.value[index].phrase = change
+      else {
+        if(isChanged === false) {
+          localChanges.value[index] = {}
+          localChanges.value[index].index = change.data.algoIndex
+          localChanges.value[index].algo = change.data.algo
+          localChanges.value[index].edited = change.data.edited
+          localChanges.value[index].phrase = change
+        }
       }
     })
 })
@@ -63,6 +65,7 @@ const handleConfirm = (event,index) => {
   }
   event.algo = algos[event.index]
   localChanges.value[index] = event
+  isChanged=true
 }
 
 defineExpose({locals: localChanges, transcriptionsRef:$$(transcriptionsRef) })
