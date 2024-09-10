@@ -6,8 +6,11 @@ export const initApplicationConfiguration = async () => {
         const timeStamp = new Date().getTime();
         let configUrl = '/config.json';
         const cbParam = configUrl.indexOf('?') !== -1 ? `&cb=${timeStamp}` : `?cb=${timeStamp}`;
+        const baseUrl = window.location.origin;
         configUrl = `${configUrl}${cbParam}`;
-        const response = await fetch(configUrl)
+
+        console.log(baseUrl + configUrl);
+        const response = await fetch(baseUrl + configUrl)
         const data = await response.json()
         const runtimeConfig = useRuntimeConfig()
         _.assignInWith(config, data, (objValue, srcValue) => {

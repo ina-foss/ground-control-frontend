@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Body_task_inject_step__step_id__post } from '../models/Body_task_inject_step__step_id__post';
 import type { TaskBaseDto } from '../models/TaskBaseDto';
 import type { TaskListDto } from '../models/TaskListDto';
 import type { TaskWithIdDto } from '../models/TaskWithIdDto';
@@ -34,6 +35,8 @@ export class TaskService {
                 'task_id': taskId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -68,6 +71,8 @@ export class TaskService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -94,6 +99,41 @@ export class TaskService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Task Inject
+     * Use to create a media, a task and an annotation in one request
+     *
+     * List of parameters overwritten by the request
+     * which can be equal to 0:
+     * - `task.media_id`
+     * - `annotation.association.task_id`
+     * - `annotation.association.annotation_id`
+     * @param stepId
+     * @param requestBody
+     * @returns TaskWithIdDto Successful Response
+     * @throws ApiError
+     */
+    public static taskInjectStepStepIdPost(
+        stepId: number,
+        requestBody: Body_task_inject_step__step_id__post,
+    ): CancelablePromise<TaskWithIdDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/step/{step_id}',
+            path: {
+                'step_id': stepId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

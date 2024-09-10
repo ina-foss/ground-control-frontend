@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AnnotationBase } from './AnnotationBase';
+import type { AnnotationWithIdDto } from './AnnotationWithIdDto';
 import type { TaskDataType } from './TaskDataType';
 import type { TaskStatus } from './TaskStatus';
 /**
@@ -17,6 +17,6 @@ export type TaskWithIdDto = {
     step_id: number;
     media_id: number;
     id: number;
-    annotations: Array<AnnotationBase>;
+    annotations: Array<AnnotationWithIdDto>;
 };
 
