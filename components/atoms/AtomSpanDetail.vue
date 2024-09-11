@@ -2,7 +2,8 @@
   <div class="w-[300px] border-gray-100 border shadow-lg p-3  flex flex-col">
     <div class="w-full">
       <b>Result</b>
-      <Divider :pt="{
+      <Divider
+:pt="{
         root:{
           style: 'margin-top : 10px; margin-bottom: 10px'
         }
@@ -10,17 +11,16 @@
         <div v-if="typeof focusSpan == 'undefined'">Nothing selected</div>
         <div v-else class="border-gray-200  p-2 flex flex-col start-0  gap-2">
           <div   class="" >
-            <p class="  inline-flex items-start justify-start gap-2" >
-            <div  class="bg-[--color]  rounded-xl min-w-6 text-center transition-all duration-500" :style="`--color: ${spanRefArray[focusSpan].color}1) `">{{ focusSpan +1 }}</div>
-            {{spanRefArray[focusSpan].text}} </p>
+            <p class="  inline-flex items-start justify-start gap-2" /><div  class="bg-[--color]  rounded-xl min-w-6 text-center transition-all duration-500" :style="`--color: ${spanRefArray[focusSpan].color}1) `">{{ focusSpan +1 }}</div>
+            {{spanRefArray[focusSpan].text}}
           </div>
         <div>
           label(s): {{spanRefArray[focusSpan].label}}
         </div>
         <div class="flex flex-row gap-2">
-          <Button @click=" emit('link')" outlined class="scale-[85%]"  icon="pi pi-paperclip"/>
-          <Button @click=" emit('unselect') " outlined class="scale-[85%]"  icon="pi pi-eject" />
-          <Button @click=" emit('deleteSpan',{index : focusSpan}) " class="scale-[85%]"  severity="danger" icon="pi pi-trash" />
+          <Button outlined class="scale-[85%]" icon="pi pi-paperclip"  @click=" emit('link')"/>
+          <Button outlined class="scale-[85%]" icon="pi pi-eject"  @click=" emit('unselect') " />
+          <Button class="scale-[85%]" severity="danger"  icon="pi pi-trash" @click=" emit('deleteSpan',{index : focusSpan}) " />
         </div>
         </div>
 
