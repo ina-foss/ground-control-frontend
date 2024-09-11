@@ -12,7 +12,7 @@
     "coverage": "vitest run --coverage",
     "generate": "nuxt build",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "nuxt prepare && playwright install chromium",
     "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
