@@ -34,7 +34,7 @@ const mediaSize = computed(() => {
   return width
 })
 
-console.log(mediaSize.value)
+
 watchEffect(() => {
   fetchProject(first.value, rows)
 })
