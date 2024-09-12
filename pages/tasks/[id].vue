@@ -4,7 +4,6 @@
                :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()"
                @submit-annotation="handleSubmit($event,'submit')"
                @finish-annotation="handleSubmit($event,'end')"></component>
-    <!-- <OrganismSegmentation :data="data" :allFetched="allFetched" :annotations_in="annotations_in" :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()" @submit-annotation="handleSubmit($event)"   /> -->
   </div>
 </template>
 
@@ -26,7 +25,6 @@ const route = useRoute()
 const toast = useToast()
 const authStore = useAuth()
 
-const segmentationRefs = ref([])
 const {getData} = storeToRefs(refresh)
 const {getItems} = storeToRefs(store)
 const {userEmail} = storeToRefs(authStore)
@@ -168,16 +166,4 @@ const handleSubmit = (event, action) => {
 
 }
 
-function generatePastelColor(tagNumber) {
-  // Use tag number to create a seed (this is a basic example, there are better ways to do this)
-  const seed = tagNumber * 123456789;
-  const random = s => ((seed * s) % 155) + 100;  // Between 100 and 255
-
-  const r = random(3);
-  const g = random(5);
-  const b = random(7);
-
-  return `rgb(${r}, ${g}, ${b}, 1)`;
-
-}
 </script>
