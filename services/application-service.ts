@@ -33,7 +33,6 @@ export default class ApplicationService {
     }
 
     let accounts = JSON.parse(JSON.stringify(user.value.profile));
-    console.log(accounts);
 
     let role = user.value.profile.roles ? user.value.profile.roles[2] : 'default';
 

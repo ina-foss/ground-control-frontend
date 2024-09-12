@@ -8,10 +8,11 @@
         target="parent"
       />
       <div class=" rounded flex flex-col gap-2 p-3 ">
-        <div :ref="el => transcriptionsRef.push(el)" v-for="(transcription, index) in transcriptions">
-          <AtomTrancription @on-segment-click="handleSegmentClick" @confirm="handleConfirm($event, index)"
-                            :userAnnotation="userAnnotations[index]" :algos="algos" :transcriptions="transcription"
-                            :status="status"/>
+        <div v-for="(transcription, index) in transcriptions" :key="index" :ref="el => transcriptionsRef.push(el)">
+          <AtomTrancription
+:user-annotation="userAnnotations[index]" :algos="algos"
+                            :transcriptions="transcription" :status="status" @on-segment-click="handleSegmentClick"
+                            @confirm="handleConfirm($event, index)"/>
         </div>
       </div>
     </ol>
@@ -21,10 +22,10 @@
 
 <script setup>
 import AtomTrancription from '../atoms/AtomTrancription.vue';
-
+import {AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
 let isChanged = false
-let transcriptionsRef = $ref([])
+const transcriptionsRef = $ref([])
 const {transcriptions, algos, userAnnotations, status} = defineProps({
   transcriptions: { // all transcriptions by all algorithm group by sentence
     type: Array,
@@ -35,10 +36,12 @@ const {transcriptions, algos, userAnnotations, status} = defineProps({
     required: true
   },
   userAnnotations: {
-    type: Array
+    type: Array,
+    default: null
   },
   status: {
-    type: Object
+    type: String,
+    default: AnnotationStatus.DRAFT
   }
 })
 const localChanges = ref([]) // store all the annotations confirmed by user before submitting

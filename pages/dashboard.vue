@@ -62,7 +62,6 @@ const sortDataById = computed(() => {
   }
 )
 onMounted(() => {
-  console.log(dashboardRef.value)
 })
 
 while (getItems.value.length > 0) store.removeLastCrumb()

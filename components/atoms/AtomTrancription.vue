@@ -77,7 +77,7 @@ const {transcriptions, algos, userAnnotation, status} = defineProps({
     type: Object
   },
   status: {
-    type: Object
+    type: String
   }
 })
 
