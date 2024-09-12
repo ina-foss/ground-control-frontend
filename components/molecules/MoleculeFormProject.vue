@@ -1,6 +1,7 @@
 <template>
   <Toast/>
-  <Dialog :visible="dialogVisible" modal :header="headerTitle" :style="{ width: 'fit-content' }" class="bg-white "
+  <Dialog
+:visible="dialogVisible" modal :header="headerTitle" :style="{ width: 'fit-content' }" class="bg-white "
           @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
     <Stepper class="transition-all">
       <StepperPanel class="transition-all" header="Infos">
@@ -14,7 +15,8 @@
             </div>
             <div class="flex gap-3 ">
               <label class="self-center basis-1/4">Description</label>
-              <InputText v-model="description" placeholder="Enter a new project description" autocomplete="off"
+              <InputText
+v-model="description" placeholder="Enter a new project description" autocomplete="off"
                          class="flex-auto"/>
             </div>
             <div class="flex gap-3 ">
@@ -41,7 +43,7 @@
         </template>
       </StepperPanel>
       <StepperPanel header="Steps">
-        <template #content="{ prevCallback, nextCallback }">
+        <template #content="{ prevCallback }">
           <div class="w-[70vh] grid-cols-3 flex">
             <div class="">
               <label>Available</label>
@@ -51,7 +53,8 @@
             <div class="basis-1/3">
               <label>Selected</label>
               <ol v-if="selectedType.length !== 0" class="border-surface-300 border-[1px] py-3 rounded">
-                <li v-for="(type, index) in selectedType" :key="index"
+                <li
+v-for="(type, index) in selectedType" :key="index"
                     class="leading-none px-5 py-3 self-center overflow-visible">{{ index + 1 }}. {{ type }}
                 </li>
               </ol>
@@ -60,7 +63,8 @@
 
           <div class="flex justify-between pt-8">
             <Button label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback"/>
-            <Button v-if="!project" label="Create" severity="success" icon="pi pi-check" size="small"
+            <Button
+v-if="!project" label="Create" severity="success" icon="pi pi-check" size="small"
                     @click="createProject"/>
             <Button v-else label="Update" severity="success" icon="pi pi-check" size="small" @click="updateProject"/>
           </div>
@@ -76,13 +80,11 @@
 
 import InputSwitch from 'primevue/inputswitch';
 import {ProjectStatus, AnnotationType, ProjectService, StepService, StepStatus} from '~/api/generate';
-import {useRefreshStore} from '#imports';
-import {useAuth} from '#imports';
+import {useRefreshStore,useAuth} from '#imports';
 
 const errorVisible = ref(true);
 const {dialogVisible, project} = defineProps(['dialogVisible', 'project'])
 const emits = defineEmits(['toggle-dialog', 'refreshData'])
-const visible = computed(() => dialogVisible)
 const deleteDialog = $ref(false)
 let title = $ref(project?.title || '')
 let description = $ref(project?.description || '')
@@ -128,7 +130,7 @@ const updateProject = async () => {
             pinned_at: null,
             status: StepStatus.DRAFT,
             project_id: response.id
-          }).catch((err) => console.error(err)).then((res) => console.log(res));
+          }).catch((err) => console.error(err));
         }
       });
       emits('toggle-dialog');
@@ -168,7 +170,7 @@ const createProject = async () => {
           pinned_at: null,
           status: StepStatus.DRAFT,
           project_id: res.id
-        }).catch((err) => console.error(err)).then((res) => console.log(res))
+        }).catch((err) => console.error(err))
       })
       // reset dialog values of create new
       title = '',

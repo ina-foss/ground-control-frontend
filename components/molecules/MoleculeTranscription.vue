@@ -8,8 +8,8 @@
           target="parent"
         />
         <div  class=" rounded flex flex-col gap-2 p-3 " >
-          <div :ref="el => transcriptionsRef.push(el)" v-for="(transcription, index) in transcriptions" >
-            <AtomTrancription @on-segment-click="handleSegmentClick"  @confirm="handleConfirm($event, index)" :userAnnotation="userAnnotations[index]"  :algos="algos" :transcriptions="transcription"/>
+          <div v-for="(transcription, index) in transcriptions" :key="index" :ref="el => transcriptionsRef.push(el)" >
+            <AtomTrancription :user-annotation="userAnnotations[index]"  :algos="algos" :transcriptions="transcription"  @on-segment-click="handleSegmentClick" @confirm="handleConfirm($event, index)"/>
           </div>
       </div>
     </ol>
@@ -22,7 +22,7 @@ import AtomTrancription from '../atoms/AtomTrancription.vue';
 
 const emits = defineEmits(['on-segment-click'])
 let isChanged = false
-let transcriptionsRef = $ref([])
+const transcriptionsRef = $ref([])
 const { transcriptions,algos, userAnnotations } = defineProps({
   transcriptions:{ // all transcriptions by all algorithm group by sentence
     type: Array,
@@ -33,7 +33,8 @@ const { transcriptions,algos, userAnnotations } = defineProps({
     required: true
   },
   userAnnotations:{
-    type: Array
+    type: Array,
+    default:null
   }
 })
 
