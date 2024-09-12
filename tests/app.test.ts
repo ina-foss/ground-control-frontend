@@ -8,7 +8,7 @@ describe('Nuxt Application', () => {
         fetch.mockReset()
     })
     setup({
-        browser: true,
+        browser: false,
     });
 
     it('renders the index page', async () => {
