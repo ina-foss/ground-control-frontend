@@ -124,8 +124,6 @@ const handleSegmentation = () => {
       props.topics[props.index] = 1
       topicIndex.value = 1
     } else {
-      console.log(topicIndex.value)
-      // !props.topics.includes(props.index) && props.colors.splice(topicIndex.value,1);
       props.topics[props.index] = 0;
       topicIndex.value = 0
     }
