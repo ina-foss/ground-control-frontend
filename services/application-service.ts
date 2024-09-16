@@ -28,20 +28,17 @@ export default class ApplicationService {
     const { userEmail, user } = storeToRefs(this.authStore);
 
     if (!user.value || !user.value.profile) {
-      console.error("User profile is not available.");
       return;
     }
 
-    let accounts = JSON.parse(JSON.stringify(user.value.profile));
-
-    let role = user.value.profile.roles ? user.value.profile.roles[2] : 'default';
+    const role = user.value.profile.roles ? user.value.profile.roles[2] : 'default';
 
     const response = ref(await UserService.getUserByEmailUserGet(userEmail.value));
     if (response.value == null) {
       UserService.createUserUserPost({
         email: userEmail.value,
         role: role
-      }).then((response) => console.log(response));
+      }).then((response));
     }
   }
 
