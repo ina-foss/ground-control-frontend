@@ -29,6 +29,7 @@ export default class AuthService {
     }
 
     public signInRedirect() {
+      console.log('redirecting');
         return this.userManager.signinRedirect();
     }
 
