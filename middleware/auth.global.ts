@@ -16,6 +16,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const user = (await services.$auth.getUser()) as User;
   if (!user && !authFlowRoutes.includes(to.path)) {
     // use this to automatically force a sign in and redirect
+
     services.$auth.signInRedirect();
   }
   else {
