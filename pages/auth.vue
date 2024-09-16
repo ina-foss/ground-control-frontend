@@ -14,16 +14,8 @@ const router = useRouter();
 
 const authenticateOidc = async () => {
   try {
-    if (window.location.search.search('state=') !== -1) {
-      console.log("state not found, callback");
-
-      await services.$auth.signInCallback();
-
-      router.push("/");
-    }
-
-
-
+    await services.$auth.signInCallback();
+    router.push("/");
   } catch (error) {
     console.error(error);
   }
