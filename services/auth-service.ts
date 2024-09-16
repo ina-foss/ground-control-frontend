@@ -29,9 +29,10 @@ export default class AuthService {
     }
 
     public signInRedirect() {
-      console.log('redirecting');
-
+      if (window.location.search.search('state=') === -1) {
+        console.log('redirecting...');
         return this.userManager.signinRedirect();
+      }
     }
 
     public signInCallback() {
