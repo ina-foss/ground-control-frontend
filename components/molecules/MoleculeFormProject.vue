@@ -5,8 +5,8 @@
           @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
     <Stepper class="transition-all">
       <StepperPanel class="transition-all" header="Infos">
-        <template #content="{ nextCallback }" class="transition-all">
-          <div class=" grid grid-cols-1 grid-rows-3 gap-3 min-w-[70vh]">
+        <template #content="{ nextCallback }">
+          <div class="grid grid-cols-1 grid-rows-3 gap-3 min-w-[70vh]">
             <span class="text-slate-400 ">Enter project configuration</span>
             <div class="flex grid-cols-2 gap-3 align-items-center ">
               <label class="self-center basis-1/4">Title</label>

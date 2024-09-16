@@ -32,7 +32,7 @@
 
         <div v-if="spanRefArray.length == 0">No Regions created yet</div>
         <div v-else class="border-gray-200 border-[1px] p-2 text-nowrap flex flex-col start-0 ">
-          <div  v-for="(span,index) in spanRefArray" class="flex flex-row hover:bg-surface-100 w-full py-2 justify-start gap-2" >
+          <div  v-for="(span,index) in spanRefArray" :key="index" class="flex flex-row hover:bg-surface-100 w-full py-2 justify-start gap-2" >
             <div  class="bg-[--color] shrink rounded-xl min-w-6 text-center" :style="`--color: ${span.color}1) `">{{ index +1 }}</div>
               <p class="truncate"> {{span.text}} </p>
             </div>
@@ -44,7 +44,7 @@
       </Divider>
       <div v-if="relationArray.length == 0">No Regions created yet</div>
       <div v-else class="border-gray-200 border-[1px] p-2 text-nowrap flex flex-col">
-        <div v-for="relation in relationArray" class="flex  justify-center items-center gap-3">
+        <div v-for="(relation,index) in relationArray" :key="index" class="flex  justify-center items-center gap-3">
             <div  class="bg-[--color] shrink rounded-xl min-w-6 text-center" :style="`--color: ${spanRefArray[relation.from].color}1) `">{{ relation.from +1 }}</div>
           <i class="pi pi-arrow-right"/>
             <div  class="bg-[--color] shrink rounded-xl min-w-6 text-center" :style="`--color: ${spanRefArray[relation.to].color}1) `">{{ relation.to +1 }}</div>
@@ -64,6 +64,5 @@ const emit = defineEmits(['deleteSpan','unselect','link'])
 
 const { focusSpan, spanRefArray, relationArray } = defineProps(['focusSpan', 'spanRefArray','relationArray'])
 
-watchEffect(()=> console.log(spanRefArray))
 
 </script>

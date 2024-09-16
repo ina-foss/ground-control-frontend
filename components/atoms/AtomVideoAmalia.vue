@@ -1,5 +1,5 @@
 <template>
-  <div class=" h-auto aspect-video w-full" ref="myplayer" id="PLAYER" @click="seek"></div>
+  <div id="PLAYER" ref="myplayer" class=" h-auto aspect-video w-full" @click="seek"/>
 </template>
 
 
@@ -13,7 +13,7 @@ const myplayer = ref()
 let lastIndex = 0
 
 let dynamicSrc = $ref()
-const { locals, data, videoSrc } = defineProps(['locals', 'data', 'videoSrc'])
+const { locals, videoSrc } = defineProps(['locals', 'videoSrc'])
 const emits = defineEmits(['timecode-update']);
 async function fetchVideoStream(url) {
   const response = await fetch(url);
@@ -22,7 +22,7 @@ async function fetchVideoStream(url) {
 }
 
 const hlsPlayer = async () => {
-  let content = await fetchVideoStream(videoSrc)
+  const content = await fetchVideoStream(videoSrc)
   const src = `data:application/vnd.apple.mpegurl;base64,${content}`
   dynamicSrc = src
 
@@ -35,9 +35,8 @@ watchEffect(() => {
 })
 
 const seek = async () => {
-  if (myplayer) {
+  if (myplayer.value) {
     const currentTime = amaliaService.callSeek() // retreive the current time of the video
-    console.log('callseek=', currentTime)
     let startIndex = 0
     let endIndex = locals.length
     while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime

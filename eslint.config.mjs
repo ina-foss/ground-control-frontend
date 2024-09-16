@@ -7,11 +7,10 @@ export default withNuxt(
   .prepend(
     {
       ignores: [
-        'presets',
-        'api',
+      'presets',
+      'api',
       'html',
       'services',
-      'components',
       'composables',
       'layout',
       'tests',

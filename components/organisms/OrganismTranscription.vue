@@ -7,20 +7,23 @@
 
     <Toast/>
     <div class="grid grid-cols-9 xs:block h-full">
-      <MoleculeAnnotationLeftPanel class="xs:sticky" ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc"
+      <MoleculeAnnotationLeftPanel
+ref="moleculeAnnotationLeftPanelRef" class="xs:sticky" :video-src="videoSrc"
                                    :data="data"
                                    :locals="annotations_in[0].result.data.localisation[0].sublocalisations.localisation"
                                    @scroll-to-segment="scrollToSegment"/>
-      <MoleculeTranscription ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions"
-                             @on-segment-click="updateVideoTimecode" :userAnnotations="userAnnotations" :algos="algos"
-                             :status="data.annotations[0]?.annotation_status"/>
+      <MoleculeTranscription
+ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions"
+                             :user-annotations="userAnnotations" :algos="algos" :status="data.annotations[0]?.annotation_status"
+                             @on-segment-click="updateVideoTimecode"/>
     </div>
   </div>
   <div v-else class="h-full">
     <div class="grid grid-cols-9 xs:block h-full overflow-y-auto">
       <div class="col-span-3 bg-surface-700 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
         <div class=" xs:h-full w-full h-auto xs:flex xs:justify-center ">
-          <Skeleton :pt="{
+          <Skeleton
+:pt="{
             root: {
               style: 'height: 100%; width:auto'
             }
@@ -50,10 +53,10 @@
 <script setup lang="js">
 import MoleculeAnnotationLeftPanel from '../molecules/MoleculeAnnotationLeftPanel.vue';
 import MoleculeTranscription from '../molecules/MoleculeTranscription.vue';
+import {AnnotationStatus} from '../../api/generate';
 
 const authStore = useAuth()
 const moleculeAnnotationLeftPanelRef = $ref()
-import {AnnotationStatus} from '../../api/generate';
 
 const {
   data,
@@ -66,7 +69,7 @@ const {userEmail} = storeToRefs(authStore)
 const emits = defineEmits(['submitAnnotation', 'finish-annotation']);
 let info = null
 let videoSrc = $ref(annotations_in[0]?.result.asset.url)
-let MoleculeTranscriptionRef = $ref()
+const MoleculeTranscriptionRef = $ref()
 const annotationStatus = AnnotationStatus.ENDED
 const annotationInfo = $computed(() => { // get user annotation position
 
@@ -100,8 +103,11 @@ const transcriptions = $computed(() => { // format array to have all transcripti
 const userAnnotations = $computed(() => { // return array of users annotations
   let response = []
   if (allFetched && annotationInfo != null) {
-    response = [...annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation]
-  }
+    const annotation = annotations_out[annotationInfo.index];
+
+    if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
+      response = [...annotation.result.data.localisation[0].sublocalisations.localisation];
+    }  }
   return response
 })
 
@@ -111,7 +117,7 @@ const scrollToSegment = (event) => {
 
 const handleSubmit = () => {
 
-  let locals = []
+  const locals = []
   MoleculeTranscriptionRef.locals.forEach((el, index) => { // format data sent to DB
     if (el == null) locals[index] = null
     else {
@@ -125,7 +131,7 @@ const handleSubmit = () => {
 }
 const handleFinish = () => {
 
-  let locals = []
+  const locals = []
   MoleculeTranscriptionRef.locals.forEach((el, index) => { // format data sent to DB
     if (el == null) locals[index] = null
     else {

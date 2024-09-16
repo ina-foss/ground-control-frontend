@@ -18,7 +18,7 @@
   const { colors } = defineProps<Props>()
 
   const cleanedColors = $computed(()=>{ // delete the first element
-    let cleaned = {}
+    const cleaned = {}
 
     colors.forEach((color,index)=>{
       if (index != 0){

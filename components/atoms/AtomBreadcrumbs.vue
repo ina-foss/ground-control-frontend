@@ -19,12 +19,10 @@
 <script setup>
 
 import { bcStore } from '../../stores/breadcrumbs.ts';
-const store = bcStore()
 
 import { ref, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+const store = bcStore()
 
-const pages =  ['dashboard', 'projects-id', 'task-id']
 
 const home = { label: 'Projects', route: '/dashboard' }
 
@@ -32,17 +30,11 @@ const {getItems} = storeToRefs(store)
 
 const items = ref(getItems)
 
-const router = useRouter();
 
 // Watch for changes in the breadcrumb items and update localStorage
 watch(items, (newItems) => {
   localStorage.setItem('breadcrumbItems', JSON.stringify(newItems));
 }, { deep: true });
-
-// Function to update breadcrumb items
-const updateBreadcrumb = (newItems) => {
-  items.value = newItems;
-};
 
 // Initial breadcrumb setup as it was last pages
 // This means no loss when F5
@@ -55,13 +47,6 @@ onMounted(() => {
   }
 });
 
-// Example route change handling to update breadcrumb
-router.afterEach((to) => {
-  // Logic to generate breadcrumb items based on the route
-  const breadcrumbItems = [
-    home,
-    { label: to.name, to: to.fullPath }
-  ];
-});
+
 
 </script>
