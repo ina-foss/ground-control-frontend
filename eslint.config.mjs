@@ -10,6 +10,7 @@ export default withNuxt(
       'presets',
       'api',//warnings
       'public',
+       'test-results'
       ],
     },
     {
