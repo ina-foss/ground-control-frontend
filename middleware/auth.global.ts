@@ -1,13 +1,11 @@
 import type { User } from "oidc-client-ts";
 import { useAuth } from "../stores/auth";
-import { getApplicationConfiguration, initApplicationConfiguration } from "../services/dynamic-configuration-service";
 import { useService } from "../composables/useService";
-import { UserService } from "../api/generate/services/UserService"
-import { OpenAPI } from "../api/generate";
+
 
 const authFlowRoutes = ["/auth", "/silent-refresh", "/logout"];
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async (to:any) => {
   if (process.env.NODE_ENV === 'test') {
     return; // Bypass the entire authentication logic in test mode
   }
