@@ -8,20 +8,9 @@ export default withNuxt(
     {
       ignores: [
       'presets',
-      'api',
-      'html',
-      'services',
-      'composables',
-      'layout',
-      'tests',
+      'api',//warnings
       'public',
-      'server',
-      'stores',
-      'test-results',
-      'plugins',
-      'pages',
-      'middleware',
-      'vitest.config.ts'],
+      ],
     },
     {
       languageOptions: {
