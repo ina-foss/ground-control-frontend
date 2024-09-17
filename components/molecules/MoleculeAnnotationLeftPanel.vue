@@ -2,8 +2,8 @@
   <div class="col-span-3 bg-surface-700 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
 
     <!-- Both player  -->
-    <AtomVideoHls ref="AtomVideoHlsRef" v-if="activePlayer == false" :data="data" :videoSrc="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
-    <AtomVideoAmalia :videoSrc="videoSrc" v-else :data="data" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoHls v-if="activePlayer == false" ref="AtomVideoHlsRef" :video-src="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoAmalia v-else :video-src="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
     <!-- Input to switch between player -->
     <div class=" flex items-center text-surface-0 gap-3 justify-center pt-3">
@@ -35,21 +35,27 @@
 
   const amalia = useService().$amalia
 
-  const videoPlayerList = ['amalia','hls']
 
   const activePlayer = ref(true)
-
-const props = defineProps({
-  data: null,
-  locals: null,
-  colors: {
-    type: Array,
-    default: () => []
-  },
-  videoSrc: String
-});
-
-const { data, locals, colors, videoSrc } = props;
+  const props = defineProps({
+    data: {
+      type: Object,
+      default: () => null
+    },
+    locals: {
+      type: Object,
+      default: () => null
+    },
+    colors: {
+      type: Array,
+      default: () => []
+    },
+    videoSrc: {
+      type: String,
+      default: ''
+    }
+  });
+const { locals, colors, videoSrc } = props;
 
   const AtomVideoHlsRef = $ref()
 

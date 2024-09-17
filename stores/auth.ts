@@ -1,7 +1,6 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
 import type { User } from "oidc-client-ts";
 import { computed } from "vue";
-import { useService } from "../composables/useService";
 
 export const useAuth = defineStore("auth", () => {
   const authUser = ref<User | null>(null);

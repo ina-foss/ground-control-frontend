@@ -1,12 +1,14 @@
 <template>
-  <div :style="dynamicStyle($props.colors[topicIndex])" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg " >
+  <div :style="dynamicStyle(newColors[topicIndex])" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg " >
     <div class="flex items-center gap-2">
-      <Button :icon="iconBool" :label="topicText" :pt="{
+      <Button
+:icon="iconBool" :label="topicText" :pt="{
         root: {
-          style: `max-width: 40px; min-width: 40px; background-color:${$props.colors[topicIndex]}; border:none `
+          style: `max-width: 40px; min-width: 40px; background-color:${newColors[topicIndex]}; border:none `
         }
       }" @click="handleSegmentation()" />
-      <div v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
+      <div
+v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
         class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
         @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: props.index })">
         {{ $props.phrase.data.text[0] }}
@@ -19,22 +21,14 @@
 
 const props = defineProps(['phrase', 'colors', 'topics', 'index'])
 const emit = defineEmits(['segmentation', 'onSegmentClick'])
-
+const newColors =props.colors;
+const newTopics =props.topics;
 const toast = useToast()
-
-
-// let bgButtonColor = ref('transparent')
-// const topicIndex = ref(0)
-// if (props.phrase.data.topic !== undefined) topicIndex.value = props.phrase.data.topic
 const topicIndex = computed(()=> props.topics[props.index] ? props.topics[props.index] : 0)
 const iconBool = ref('pi pi-tag')
-
 const topicText = ref(null)
-let isVisible = false
 iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
 topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
-
-
 
 function generatePastelColor(tagNumber) {
   // Use tag number to create a seed (this is a basic example, there are better ways to do this)
@@ -47,12 +41,10 @@ function generatePastelColor(tagNumber) {
 
   return `rgb(${r}, ${g}, ${b}, 1)`;
 }
-
 function dynamicStyle(color) {
 
   const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
   if (props.topics[props.index] === props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
-    isVisible = true
     if (hexMatch) {
       const [r, g, b] = extractRGB(color);
       return {
@@ -65,7 +57,6 @@ function dynamicStyle(color) {
       marginTop: '0px'
     };
   } else {
-    isVisible = false
     if (hexMatch) {
       const [r, g, b] = extractRGB(color);
       return {
@@ -77,8 +68,6 @@ function dynamicStyle(color) {
     };
   }
 }
-
-
 function reduceOpacityOfColor(rgbaColor, opacity) {
   const rgbaMatch = rgbaColor?.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)/);
   if (rgbaMatch) {
@@ -91,13 +80,11 @@ function reduceOpacityOfColor(rgbaColor, opacity) {
   }
   return rgbaColor;
 }
-
 function extractRGB(hexColor) {
   const rgbaColor = hexToRgba(hexColor, 0.5);
   const rgba = rgbaColor?.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
   return rgba.slice(0, 3);
 }
-
 function hexToRgba(hex, opacity) {
   let r = 0, g = 0, b = 0;
   // Handle 3 digit hex
@@ -114,39 +101,37 @@ function hexToRgba(hex, opacity) {
   }
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
-
 const handleSegmentation = () => {
 
   if (props.index === 0) { // Cas particulier de la premiere phrase
     if (topicIndex.value === 0) {
       const randomColor = generatePastelColor(props.index + 1)
-      props.colors[1] = (randomColor)
-      props.topics[props.index] = 1
+      newColors[1] = (randomColor)
+      newTopics[props.index] = 1
       topicIndex.value = 1
     } else {
-      props.topics[props.index] = 0;
+      newTopics[props.index] = 0;
       topicIndex.value = 0
     }
   } else if (topicIndex.value < props.topics[props.index - 1]) { //On rattrape le topic precedent
-    if (props.topics[props.index - 1] !== undefined) {
-      props.topics[props.index] = props.topics[props.index - 1]
+    if (newTopics[props.index - 1] !== undefined) {
+      newTopics[props.index] = props.topics[props.index - 1]
       topicIndex.value = props.topics[props.index]
 
     } else {
       toast.add({ severity: "info", detail: "Can't modify this sentence" })
     }
 
-  } else if (topicIndex.value === props.colors.length - 1 && (props.topics[props.index - 1] === topicIndex.value)) { // On cree un nouveau topic
+  } else if (topicIndex.value === newColors.length - 1 && (props.topics[props.index - 1] === topicIndex.value)) { // On cree un nouveau topic
     //new topic
     const randomColor = generatePastelColor(props.index + 1)
-    props.colors.push(randomColor)
-    props.topics[props.index]++
+    newColors.push(randomColor)
+    newTopics[props.index]++
 
-  } else if (topicIndex.value < props.colors.length - 1  &&  topicIndex.value !=  props.topics[props.index+ 1] ) { // On itere parmi les topics existants
-    props.topics[props.index]++
+  } else if (topicIndex.value < newColors.length - 1  &&  topicIndex.value !=  props.topics[props.index+ 1] ) { // On itere parmi les topics existants
+    newTopics[props.index]++
   } else if (topicIndex.value !== 0) { // Reset du topic a 0
-    // if( _.findIndex(props.topics, (topic)=> topic == topicIndex.value ) == 1) props.colors.slice(topicIndex,1)
-    props.topics[props.index] = 0;
+    newTopics[props.index] = 0;
   }
 
   emit('segmentation', props.index)

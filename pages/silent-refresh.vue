@@ -9,13 +9,13 @@
     const authService = useService()
     const router = useRouter()
 
-    
+
     const silentRefreshOidc = async () => {
         try{
             await authService.$auth.renewToken()
             router.push("/")
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 

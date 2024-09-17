@@ -9,7 +9,7 @@
 
   import { Hls } from 'hls.js'
 
-  const { locals, data, videoSrc } = defineProps(['locals','data','videoSrc'])
+  const { locals, videoSrc } = defineProps(['locals','videoSrc'])
 
   const emits = defineEmits([ 'timecode-update' ]);
 
@@ -21,7 +21,6 @@
   const handleSeeking = () => {
 
     const currentTime = video.currentTime // Retrieve videotime
-    console.log("hlsCT:",currentTime)
     if (Math.abs(video.currentTime - lastTimecode) > 1) { // check if the user moved in the timeline
       let startIndex = 0
       let endIndex = locals.length
@@ -58,7 +57,7 @@
         hls.attachMedia(video);
         hls.on(Hls.Events.MEDIA_ATTACHED, function () {
           hls.loadSource(src);
-          hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
           });
         });
 

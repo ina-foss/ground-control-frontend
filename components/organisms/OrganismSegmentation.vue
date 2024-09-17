@@ -2,7 +2,8 @@
   <div v-if=" !allFetched ">
     <div class="grid grid-cols-9  ">
       <div class="col-span-3 h-screen  bg-surface-700 gap-3 px-5 py-5">
-        <Skeleton :pt="{
+        <Skeleton
+:pt="{
           root: {
              style: 'height: auto'
           }
@@ -28,7 +29,7 @@
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :videoSrc="videoSrc" :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
       <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
@@ -38,8 +39,6 @@
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
-  import { TaskService, AnnotationService, AnnotationStatus } from '../../api/generate';
-  import { Hls } from 'hls.js'
   import _ from 'lodash'
 
   const authStore = useAuth()
@@ -57,7 +56,6 @@
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
-  const video = $ref(null)
 
   const annotationInfo = $computed(() => {
     let info = null
@@ -98,7 +96,7 @@
         phrase.data.topic = topics[index]
       }
     })
-    emits('submitAnnotation',{ locals: locals })
+    emits('submit-annotation',{ locals: locals })
   }
 
   function generatePastelColor(tagNumber) {
@@ -116,7 +114,7 @@
 
   const loadTopics = () => {
     colors = ['#BEBEBE'] // reset colors before loading
-    let max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
+    const max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
     while (colors.length <= max?.data.topic){ // Create all colors below this max
      const randomcolor = generatePastelColor(colors.length)
       colors.push(randomcolor)

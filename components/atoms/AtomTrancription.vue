@@ -3,15 +3,17 @@
 
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
-      <div @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})"
-           class="flex cursor-pointer flex-start gap-2 ">
+      <div
+class="flex cursor-pointer flex-start gap-2 "
+           @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})">
         <Tag :severity="tcColor">
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
             <p class="text-sm">{{ transcriptions[0].tcin }}</p>
           </div>
         </Tag>
-        <Tag v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-center "
+        <Tag
+v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-center "
              :value="transcriptionTag"/>
       </div>
       <Button v-if="status!=='ended'" icon="pi pi-pencil" size="small" severity="contrast" @click="onExpand()"/>
@@ -21,13 +23,15 @@
     <div v-if="isExpand == true" class="flex flex-col gap-2 ">
       <div class="flex flex-row gap-3 w-full ">
         <!-- List of available transcriptions -->
-        <span v-for="(phrase, index) in transcriptions" :key="index"
+        <span
+v-for="(phrase, index) in transcriptions" :key="index"
               class="rounded bg-gray-500 w-full text-gray-100 relative p-2 scroll-mt-5 ">
           <Tag severity="secondary" :value="algos[index] "/>
           <p>{{ phrase.data.text[0] }}</p>
           <div class="flex justify-end">
-           <Button @click="selectTrancription(phrase, index)" icon="pi pi-check" :outlined="true" rounded
-                   style="scale: 0.8;" severity="success" class=""/>
+           <Button
+icon="pi pi-check" :outlined="true" rounded style="scale: 0.8;"
+                   severity="success" class="" @click="selectTrancription(phrase, index)"/>
           </div>
         </span>
       </div>
@@ -38,7 +42,7 @@
           <Tag v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
         </div>
         <div class="flex justify-center">
-          <Textarea :auto-resize="true" style="width: 95%;" v-model="editedTranscription.text"/>
+          <Textarea v-model="editedTranscription.text" :auto-resize="true" style="width: 95%;"/>
         </div>
       </div>
       <!-- Footer with Buttons -->
@@ -77,7 +81,7 @@ const {transcriptions, algos, userAnnotation, status} = defineProps({
     type: Object
   },
   status: {
-    type: Object
+    type: String
   }
 })
 

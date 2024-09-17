@@ -1,5 +1,5 @@
 <template>
-  <div  ref="span" @click="handleClick" @mousedown="handleDrag" :class="'inline border-blue-400 highlighted-text cursor-pointer'+ (linkCss != '' ? linkCss + ' cursor-crosshair' : '')" >
+  <div  ref="span" :class="'inline border-blue-400 highlighted-text cursor-pointer'+ (linkCss != '' ? linkCss + ' cursor-crosshair' : '')" @click="handleClick" @mousedown="handleDrag" >
     <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-l-2"></span> -->
     <div    class="inline ">
       {{ (newText == '') ? text : newText }}
@@ -16,8 +16,8 @@ const {label, text, color, index: index, linkCss } = defineProps(['label','text'
 const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
 const newText = ref(text)
-let newIndex = $ref(index)
-let newLabel = $ref(label)
+const newIndex = $ref(index)
+const newLabel = $ref(label)
 const focus = ref(false)
 
 
@@ -37,7 +37,6 @@ onMounted(()=>{
   })
   watchEffect(()=>{
     if( focus.value == false){
-      console.log("span :"+newIndex+" is unfocused")
       span.value.style.backgroundColor = color + " 0.4)"
     }
     else{
