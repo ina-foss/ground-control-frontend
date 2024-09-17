@@ -1,8 +1,9 @@
 <template>
   <div class="bg-black">
 
-    <DataTable class="overflow-scroll-full"
-               v-if="data.steps?.length > 0" v-model:expanded-rows="expandedRows" :context-menu=true :pt="{
+    <DataTable
+v-if="data.steps?.length > 0"
+               v-model:expanded-rows="expandedRows" class="overflow-scroll-full" :context-menu=true :pt="{
       column: {
         bodycell:({ state }) => ({
           style: state['d_editing']
@@ -39,11 +40,13 @@
         <template #body="slotProps">
           <div class="flex justify-between min-w-[203px] gap-3">
             <Button label="Create Task" size="small" severity="info" @click="stepCreate(slotProps.data.id)"/>
-            <Button icon="pi pi-angle-down" label="Export" size="small" severity="secondary" text
+            <Button
+icon="pi pi-angle-down" label="Export" size="small" severity="secondary" text
                     :loading="loadingExport" @click="clickButtonMenu($event,slotProps.data) "/>
-            <Menu :model="buttonItems" :popup="true" ref="buttonMenu">
+            <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
               <template #item="{ item, props }">
-                <a v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-items-center"
+                <a
+v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-items-center"
                    v-bind="props.action">
                   <p @click="item.command(event,selectedRow.value)">{{ item.label }}</p>
                 </a>
@@ -52,15 +55,16 @@
           </div>
         </template>
       </Column>
-      <Column :row-editor.value="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"/>
+      <Column :row-editor="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"/>
       <template #expansion="slotProps">
         <div class="p-6 border-surface-200 border-2">
-          <DataTable class="overflow-scroll"
+          <DataTable
+class="overflow-scroll"
                      unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
-                     @row-click="handleRowClick($event)"
-                     edit-mode="cell" table-style="background-color: white" @cell-edit-complete="onCellEditComplete">
+                     edit-mode="cell"
+                     table-style="background-color: white" @row-click="handleRowClick($event)" @cell-edit-complete="onCellEditComplete">
             <Column field="name" header="Name" style="width : 8rem ; min-width: 70px; ">
-              <template #editor="{ index: nestedIndex, data: nestedData }">
+              <template #editor="{ index: nestedIndex }">
                 <InputText
                   v-model="data.steps[slotProps.index].tasks[nestedIndex].name"
                   style="width : 100% ; min-width: 70px; "/>
@@ -80,13 +84,13 @@
               <template #header><i
                 v-tooltip="'Nbr annotations remplies'"
                 class="pi pi-star-fill cursor-help"/></template>
-              <template #body="slotProps">
+              <template #body="">
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
             <Column field="predictions.length" style="width: 12px">
               <template #header><i v-tooltip="'Nbr de prédictions'" class="pi pi-lightbulb cursor-help"/></template>
-              <template #body="slotProps">
+              <template #body="">
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
@@ -104,7 +108,7 @@
             <Column field="instruction" header="Instruction"/>
 
             <Column header="Data">
-              <template #body="slotProps">
+              <template #body="">
                 <Button icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
 
               </template>
@@ -120,7 +124,7 @@
     <Dialog v-model:visible="visible" modal @hide="visible = false">
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>
-    <MoleculeFormTask :dialogVisible="dialogVisible" :stepObject="formStepClick" @toggle-dialog="dialogVisible=false"/>
+    <MoleculeFormTask :dialog-visible="dialogVisible" :step-object="formStepClick" @toggle-dialog="dialogVisible=false"/>
   </div>
 
 </template>
@@ -131,10 +135,9 @@
 import _ from 'lodash';
 import {ref} from 'vue';
 import {bcStore} from '~/stores/breadcrumbs';
-import {AnnotationService} from '../../api/generate';
+import {AnnotationService,AnnotationStatus} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
-import {AnnotationStatus} from '../../api/generate';
 
 const store = bcStore()
 const route = useRoute()
@@ -187,17 +190,17 @@ const buttonItems = [
 
 
 // On affiche meme si c'es pas fini
-fetchTasks(route.params.id).then((res) => {
+fetchTasks(route.params.id).then(() => {
   if (getItems.value.length == 2) {
     store.removeLastCrumb()
   }
 })
 
 
-const savedItems = localStorage.getItem('breadcrumbItems');
+localStorage.getItem('breadcrumbItems');
 
 // On affiche meme si c'es pas fini
-fetchTasks(route.params.id).then((res) => {
+fetchTasks(route.params.id).then(() => {
   if (store.items.length === 0) { // When coming from dashboard
     store.addCrumb({label: data.value.title, route: data.value.id})
   } else while (getItems.value.length > 2) { // When coming from task view
@@ -211,16 +214,6 @@ function getColorForAnnotation(annotation_status) {
   }
 }
 
-const count_validated_task = ((annotations) => {
-  let task_count = 0;
-  annotations.forEach(annotation => {
-    if (annotation.status == 'validated') {
-      task_count++
-    }
-  })
-  return task_count
-})
-
 const clickButtonMenu = (event, step) => {
   selectedRow.value = step
   buttonMenu.value.toggle(event)
@@ -229,7 +222,7 @@ const clickButtonMenu = (event, step) => {
 const exportOut = async (step, group) => {
   const tasks = step.tasks
   loadingExport = true
-  let annos = {}
+  const annos = {}
   for (const task of tasks) {
     try {
       // Fetch annotation data
@@ -276,7 +269,6 @@ function triggerDownload(data, name) {
 }
 
 const navigateToTask = (id) => {
-  console.log(id)
   navigateTo({
     path: `/tasks/${id}`
   })
@@ -308,7 +300,8 @@ const statusSeverity = computed(() => {
 
     case 'ended':
       return 'success'
-
+    default:
+      return ''
   }
 })
 

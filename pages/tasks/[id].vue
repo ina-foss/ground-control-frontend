@@ -1,9 +1,10 @@
 <template>
   <div class="h-full">
-    <component :is="annotationComponent" :data="data" :allFetched="allFetched" :annotations_in="annotations_in"
+    <component
+:is="annotationComponent" :data="data" :all-fetched="allFetched" :annotations_in="annotations_in"
                :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()"
                @submit-annotation="handleSubmit($event,'submit')"
-               @finish-annotation="handleSubmit($event,'end')"></component>
+               @finish-annotation="handleSubmit($event,'end')"/>
   </div>
 </template>
 
@@ -29,7 +30,6 @@ const {getData} = storeToRefs(refresh)
 const {getItems} = storeToRefs(store)
 const {userEmail} = storeToRefs(authStore)
 const {fetchAnnotations} = refresh
-const {addCrumb} = store
 
 const data = ref(getData)
 const savedItems = localStorage.getItem('breadcrumbItems');
@@ -90,7 +90,7 @@ const handleSubmit = (event, action) => {
   const locals = JSON.parse(JSON.stringify(event.locals))
 
   if (annotationInfo != null) {
-    let result = annotations_out.value[annotationInfo.index].result
+    const result = annotations_out.value[annotationInfo.index].result
     result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur a déjà une annotation associée à cette tâche
     let promise;
@@ -125,7 +125,7 @@ const handleSubmit = (event, action) => {
       })
 
   } else {
-    let result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
+    const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
     result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur n'a jamais annoté cette tâche
     AnnotationService.createAnnotationAnnotationPost({

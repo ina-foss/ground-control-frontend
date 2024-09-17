@@ -5,7 +5,8 @@
         v-for="(project,index) in sortDataById" :key="index" :project=project
         @refresh-data="handleRefresh"/>
     </div>
-    <Paginator class="sticky" :always-show="false" v-model:first="first" :rows="rows" :total-records="20"
+    <Paginator
+v-model:first="first" class="sticky" :always-show="false" :rows="rows" :total-records="20"
                template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink"/>
   </div>
 </template>
@@ -25,14 +26,6 @@ const {getItems} = storeToRefs(store)
 const first = ref(0)
 const rows = $ref(10)
 const dashboardRef = ref()
-const mediaSize = computed(() => {
-  let width = _.max([window.innerWidth])
-  if (width < 768) return 'sm'
-  if (width < 1024) return 'md'
-  if (width > 1024) return 'lg'
-
-  return width
-})
 
 
 watchEffect(() => {
@@ -45,7 +38,7 @@ localStorage.setItem('breadcrumbItems', null);
 const savedItems = localStorage.getItem('breadcrumbItems');
 const parsedItems = JSON.parse(savedItems);
 
-fetchProject(first.value, rows).then((res) => {
+fetchProject(first.value, rows).then(() => {
   if (parsedItems === null) {
     store.removeLastCrumb()
   }
@@ -57,10 +50,11 @@ const handleRefresh = async () => {
 
 const sortDataById = computed(() => {
     // Check if data is an array and not just an object
-    if (Array.isArray(data.value)) return data?.value?.sort((a, b) => a.id - b.id)
+    if (Array.isArray(data.value)) return [...data.value].sort((a, b) => a.id - b.id)
     return []
   }
 )
+
 onMounted(() => {
 })
 

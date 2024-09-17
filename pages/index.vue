@@ -12,7 +12,7 @@ const { getItems } = storeToRefs(store)
 
 
 onMounted(()=>{
-  let length = getItems.value.length // get breadcrumb list's length
+  const length = getItems.value.length // get breadcrumb list's length
   for (let index = 0; index < length; index++) {  // remove every breadcrumb
     removeLastCrumb()
   }
