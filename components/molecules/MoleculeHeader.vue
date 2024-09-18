@@ -39,6 +39,6 @@ const dialogVisible = ref(false);
 const { $application } = useService();
 // const roles = $application.getUserRoles();
 
-const isAdmin = computed(() => $application.hasRole('ROLE_ADMIN'));
+const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 </script>
