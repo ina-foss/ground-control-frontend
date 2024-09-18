@@ -2,15 +2,15 @@
   <div :class="'flex flex-row justify-around h-screen items-center w-full' + linkCursor" >
     <div class="flex flex-col p-6 max-w-[70%] gap-3 justify-center items-center h-screen">
       <Toast />
-      <SelectButton :unstyled="true" v-model="labelSelected" :options="labels" aria-labelledby="basic" />
-      <div @mouseup="handleSelection" :class="linkCursor" id="text">{{text}}</div>
+      <SelectButton v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
+      <div id="text" :class="linkCursor" @mouseup="handleSelection">{{text}}</div>
       <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
       <Button label="Clear all" @click="deleteSelection" />
 
 
     </div>
   <div>
-    <AtomSpanDetail @link="linkMode = !linkMode" @deleteSpan="onDeleteSpan($event)" @unselect="handleUnselect()" :relationArray="relationArray" :focusSpan="currentFocus" :spanRefArray="spanRefArray" />
+    <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray" @link="linkMode = !linkMode" @delete-span="onDeleteSpan($event)" @unselect="handleUnselect()" />
   </div>
     <div v-if="lastFocus">
       {{ lastFocus.value }}
@@ -21,27 +21,23 @@
 </template>
 
 <script setup lang="ts">
-import { clamp, random } from 'lodash';
+import _, { random } from 'lodash';
 import BadgeDirective from 'primevue/badgedirective';
-import { useToast } from 'primevue/usetoast';
-import {createApp, createTextVNode} from 'vue'
+import {createApp} from 'vue'
 import AtomSpan from '~/components/atoms/AtomSpan.vue';
 import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
-import _ from 'lodash'
 
 const app = createApp()
 app.directive('badge', BadgeDirective)
-const toast = useToast()
 let spanClicked = $ref(false)
-let currentFunction = $ref()
 const spanRefArray = ref([])
 const elementArray = ref([])
 let linkMode = $ref(false)
-let linkCss = $computed(()=> linkMode ? ' hover:border-2 ' : '')
-let linkCursor = $computed(()=> linkMode ? ' cursor-crosshair ' : '')
+const linkCss = $computed(()=> linkMode ? ' hover:border-2 ' : '')
+const linkCursor = $computed(()=> linkMode ? ' cursor-crosshair ' : '')
 const spanCount = ref(spanRefArray.value.length)
 let spanIndex = $ref()
-let relationArray = ref([])
+const relationArray = ref([])
 let lastFocus = $ref(undefined)
 let currentFocus = $ref(undefined)
 const labelSelected = ref('')
@@ -60,16 +56,12 @@ const selectionText = computed(() => {
   return ''
 })
 
-watch(()=>currentFocus,(newFocus, oldFocus)=>{
+watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
   lastFocus = oldFocus
   if( typeof lastFocus == 'number' && spanRefArray.value[oldFocus]) spanRefArray.value[oldFocus].focus = false
   if( typeof currentFocus == 'number') spanRefArray.value[newFocus].focus = true
 
 },{immediate:true})
-
-const handleDelete = (event) => {
-  console.log(event)
-}
 
 function generatePastelColor(tagNumber : number) {
   // Use tag number to create a seed (this is a basic example, there are better ways to do this)
@@ -85,31 +77,25 @@ function generatePastelColor(tagNumber : number) {
 
 const onDeleteSpan = ({ index } : { index : number }) => {
   const element : Element = elementArray.value[index]
-  let text = spanRefArray.value[index].text
-  console.log(element)
+  const text = spanRefArray.value[index].text
     if (element && element.parentNode){
-      let parent = element.parentNode // on recupere la div contenant la phrase
-      parent.replaceChild(document.createTextNode(text),element) // on remplave le span par du text
+      const parent = element.parentNode // on recupere la div contenant la phrase
+      parent.replaceChild(document.createTextNode(text),element) // on remplace le span par du text
       parent.normalize(); // On fusionne les 3 textes
 
     }
   _.remove(relationArray.value,(relation) => relation.to == index || relation.from == index)
-  console.log(relationArray.value)
   spanRefArray.value.splice(index,1)
   spanRefArray.value.forEach((span,index)=>{
     span.index = index
   })
   currentFocus = undefined
   spanCount.value--
-  console.log(spanRefArray.value.length)
-  console.log(spanRefArray.value)
 }
 
-watch(()=>labelSelected.value,(newLabel,oldLabel)=>{
+watch(()=>labelSelected.value,(newLabel:any)=>{
   if(typeof currentFocus != 'undefined'){
-      console.log(newLabel)
       spanRefArray.value[currentFocus].label = newLabel
-      console.log(spanRefArray.value[currentFocus])
   }
 },{immediate: true})
 
@@ -122,9 +108,9 @@ const handleSelection = () => {
   const currentSelection = document.getSelection()
   if (currentSelection && currentSelection.toString() !== '' && labelSelected.value != '' ) {
     state.selection = currentSelection
-    let index = markRaw(spanCount.value)
-    let label =markRaw(labelSelected.value)
-    let direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
+    const index = markRaw(spanCount.value)
+    const label =markRaw(labelSelected.value)
+    const direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
     if( state.selection.extentNode.data[state.selection.extentOffset-1] != ' '){
       state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
     }
@@ -139,9 +125,9 @@ const handleSelection = () => {
         }
     }
     state.range = currentSelection.getRangeAt(0)
-    let selectionTextString = selectionText.value
+    const selectionTextString = selectionText.value
     state.selection.removeAllRanges()
-    let span = document.createElement('span')
+    const span = document.createElement('span')
     state.range.deleteContents()
     state.selection.empty()
     state.selection = null
@@ -188,7 +174,6 @@ const handleSelection = () => {
     state.range.insertNode(fragment)
     }
     else{
-      console.log(spanIndex)
       direction == 'forward' ? spanRefArray.value[spanIndex].addRight(selectionTextString) : spanRefArray.value[spanIndex].addLeft(selectionTextString)
       spanClicked = false
     }
@@ -198,7 +183,7 @@ const handleSelection = () => {
 
 const deleteSelection = () => {
   if (state.selection) {
-    let span = document.createElement('sup')
+    const span = document.createElement('sup')
     span.style.backgroundColor = "red"
     span.appendChild(selectionText.value)
     state.range.insertNode(span)

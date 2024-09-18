@@ -6,5 +6,4 @@
 
 <script setup>
 
-    const loading = defineProps(['loading'])
 </script>

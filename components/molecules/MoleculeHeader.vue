@@ -15,7 +15,7 @@
         @click="dialogVisible = true"
       />
       <Button v-else label="Settings" severity="secondary" outlined size="small" />
-      <MoleculeFormProject :dialogVisible="dialogVisible" @toggle-dialog="dialogVisible = false" />
+      <MoleculeFormProject :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false" />
     </div>
     <div class="self-center">
       <AtomAvatarHeader />
@@ -39,6 +39,6 @@ const dialogVisible = ref(false);
 const { $application } = useService();
 // const roles = $application.getUserRoles();
 
-const isAdmin = computed(() => $application.hasRole('ROLE_ADMIN'));
+const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 </script>

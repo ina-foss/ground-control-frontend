@@ -7,22 +7,11 @@ export default withNuxt(
   .prepend(
     {
       ignores: [
-        'presets',
-        'api',
-      'html',
-      'services',
-      'components',
-      'composables',
-      'layout',
-      'tests',
+      'presets',
+      'api',//warnings
       'public',
-      'server',
-      'stores',
-      'test-results',
-      'plugins',
-      'pages',
-      'middleware',
-      'vitest.config.ts'],
+       'test-results'
+      ],
     },
     {
       languageOptions: {

@@ -9,8 +9,7 @@ export default defineVitestConfig({
         ],
         globals: true,
         setupFiles: 'tests/setup.ts',
-      onConsoleLog(log: string, type: 'stdout' | 'stderr'): false | void {
-        console.log('log in test: ', log);
+      onConsoleLog(log: string, type: 'stdout' | 'stderr'): false | undefined {
         if (log === 'message from third party library' && type === 'stdout') {
           return false;
         }

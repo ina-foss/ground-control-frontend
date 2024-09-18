@@ -1,5 +1,6 @@
 <template>
-    <Dialog :visible="dialogVisible" modal header="Your Project" :style="{ width: 'fit-content' }" class="bg-white "
+    <Dialog
+:visible="dialogVisible" modal header="Your Project" :style="{ width: 'fit-content' }" class="bg-white "
       @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
       <Stepper>
         <StepperPanel header="Infos">
@@ -12,7 +13,8 @@
             </div>
             <div class="flex gap-3 ">
               <label class="self-center basis-1/4">Instruction</label>
-              <InputText v-model="instruction" placeholder="Enter a new task instruction" autocomplete="off"
+              <InputText
+v-model="instruction" placeholder="Enter a new task instruction" autocomplete="off"
                 class="flex-auto" />
             </div>
             <div class="grid grid-cols-2   ">
@@ -36,7 +38,8 @@
         <template #content="{prevCallback}" >
             <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Upload tasks </span>
-              <FileUpload ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
+              <FileUpload
+ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
                 invalid-file-type-message="Invalid type" auto name="file[]" :pt="{
                   buttonbar: {
                     style: `z-index:20; padding-top: 10px; padding-bottom: 10px; `
@@ -46,7 +49,7 @@
                   },
 
                 }" @upload="onUpload($event)" @error="onUpload($event)">
-                <template #empty="{ chooseCallback }">
+                <template #empty="">
 
                   <div class="flex items-center justify-content-center flex-col">
                     <span class="pi pi-file-arrow-up align-center " style="font-size: 2.5rem" />
@@ -54,9 +57,10 @@
                   </div>
                 </template>
 
-                <template #content="{ uploadedFiles, files, removeUploadedFileCallback, removeFileCallback }"  >
+                <template #content="{ uploadedFiles, removeUploadedFileCallback }"  >
                   <div  class="flex flex-col gap-2">
-                    <div v-for="(file, index) in uploadedFiles" :key="index"
+                    <div
+v-for="(file, index) in uploadedFiles" :key="index"
                       class="grid grid-cols-8 gap-2 px-1 items-center">
                       <span class="pi pi-file self-center w-2" />
                       <p v-tooltip.top="file.name" class="text-ellipsis text-nowrap col-span-4 overflow-hidden ">
@@ -67,7 +71,8 @@
                       <p v-else class="text-slate-400 text-xs text-nowrap col-span-2  ">{{ Math.round(file.size /
                         1024) }} KB
                       </p>
-                      <Button icon="pi pi-times" text rounded size="small" severity="danger"
+                      <Button
+icon="pi pi-times" text rounded size="small" severity="danger"
                         class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
                           root: {
                             style: 'justify-content: center; justify-items: center; place-self: center;'
@@ -82,9 +87,7 @@
                         " />
                     </div>
                   </div>
-                  <div v-for="file in files">
-                    <ProgressSpinner style="width: 40px;" stroke-width=5 />
-                  </div>
+
                 </template>
 
               </FileUpload>
@@ -107,9 +110,8 @@
 <script setup>
 
   import { TaskStatus, TaskService,TaskDataType, MediaService, AnnotationService, AnnotationStatus} from '~/api/generate';
-  import { useRefreshStore } from '#imports';
-  import { useAuth } from '#imports';
-  import _ from 'lodash';
+  import { useRefreshStore , useAuth } from '#imports';
+    import _ from 'lodash';
 
   const refreshStore = useRefreshStore()
   const authStore = useAuth()
@@ -117,7 +119,7 @@
   const { dialogVisible, stepObject } = defineProps(['dialogVisible','stepObject' ])
   const { fetchTasks } = refreshStore
   const { userEmail } = storeToRefs(authStore)
-  const route = useRoute()
+
   const toast = useToast()
 
   const templateRef= ref()
@@ -127,10 +129,8 @@
   const dataType = $ref()
   const status = $ref(TaskStatus.DRAFT)
 
-  let files = $ref([])
-  let fileData = $ref([])
-  const visible = computed(() => dialogVisible)
-
+  const files = $ref([])
+  const fileData = $ref([])
   const deleteDialog = $ref(false)
 
   const onUpload = async (event) => {
@@ -146,17 +146,14 @@
         let _this$uploadedFiles;
       }
     };
-    // xhr.open('POST', '/', true);
     files.push(event.files);
     const reader = new FileReader();
     reader.onloadend = onReaderLoad;
     reader.readAsText(event.files[0])
-    console.log(fileData)
   }
 
   watchEffect(() => {
     if (fileData.length > 1) {
-    console.log(templateRef.value)
       for (let i = 1; i < fileData.length; i++) {
         if (fileData[i].asset?.url !== fileData[i-1].asset.url) {
           toast.add({life: 5000, severity: 'error', detail:'attention pas les meme medias', summary:"Oula bro t'es down bad ou quoi ?" } );
@@ -173,7 +170,7 @@
   }
 
   const createTask = async () => {
-    let taskCreated = false
+
         MediaService.createMediaMediaPost({
           url: fileData[0].asset.url,
           type: fileData[0].asset.media_type

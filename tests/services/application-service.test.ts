@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import ApplicationService from '@/services/application-service';
-import { useAuth } from '@/stores/auth';
 import { storeToRefs } from 'pinia';
 
 // Mock `useAuth` and `storeToRefs`

@@ -2,10 +2,10 @@
   <div class="h-full flex justify-center content-center p-4">
     <div
       class="bg-gradient-to-t flex flex-col overflow-hidden from-surface-200 to-surface-200 h-full w-7 rounded-lg">
-      <div v-for="(group, index) in groupedTopics" :key="index" class="cursor-pointer w-full h-[--length] bg-[--color] hover:opacity-50"
-        v-tooltip="`Jump to topic ${group.topic}`" @click="$emit('progressBarJump',{topic: group.topic})"
-        :style="`--color:${colors[group.topic]}; --length:${((100 / total_length) * group.count) + '%'}`">
-      </div>
+      <div
+v-for="(group, index) in groupedTopics" :key="index" v-tooltip="`Jump to topic ${group.topic}`"
+        class="cursor-pointer w-full h-[--length] bg-[--color] hover:opacity-50" :style="`--color:${colors[group.topic]}; --length:${((100 / total_length) * group.count) + '%'}`"
+        @click="$emit('progressBarJump',{topic: group.topic})"/>
 
     </div>
 
@@ -15,7 +15,7 @@
 
 <script setup lang="js">
 const {topics, colors, total_length} = defineProps(['topics', 'colors', 'total_length'])
-const emits = defineEmits(['progressBarJump']);
+defineEmits(['progressBarJump']);
 
 const groupedTopics = computed(() => {
   const grouped = {};

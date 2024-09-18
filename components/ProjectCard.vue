@@ -2,15 +2,17 @@
   <div
     class="w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl">
     <NuxtLink
-      @click="navigate" :to="{ name: 'projects-id', params: { id: project.id } }">
+      :to="{ name: 'projects-id', params: { id: project.id } }" @click="navigate">
       <div class="inline-block flex justify-between align-middle pl-2">
           <p class="font-semibold self-center exeeded_text">
             {{ project.title }} </p>
           <p class="inline-block  text-2xl">
-            <Button icon="pi pi-trash" severity="danger" text rounded size="small"
+            <Button
+icon="pi pi-trash" severity="danger" text rounded size="small"
                      @click.stop.prevent="deleteDialog=true" />
 <!--Confirmation dialog to delete-->
-            <Dialog v-model:visible="deleteDialog" modal header="Are you sure you want to delete this project?" :style="{ width: '35rem' }" class="bg-white"
+            <Dialog
+v-model:visible="deleteDialog" modal header="Are you sure you want to delete this project?" :style="{ width: '35rem' }" class="bg-white"
                      @after-hide="deleteDialog = false">
               <div class=" grid grid-cols-1 gap-1">
                 <ButtonGroup class="justify-evenly flex items-center pt-6 ">
@@ -21,22 +23,26 @@
               </div>
             </Dialog>
 
-            <Button icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
+            <Button
+icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
             @click.stop.prevent="visible=true" />
 
-          <MoleculeFormProject :dialogVisible="visible" :project="project" @toggle-dialog="visible=false"/>
-          <Dialog  modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
+          <MoleculeFormProject :dialog-visible="visible" :project="project" @toggle-dialog="visible=false"/>
+          <Dialog
+modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
             @hide="$emit('refreshData')" @after-hide="deleteDialog = false">
             <div class=" grid grid-cols-1 grid-rows-3 gap-1">
               <span class="text-slate-400 ">Modify task informations </span>
               <div class="flex grid-cols-2 gap-3 align-items-center ">
                 <label class="self-center basis-1/4">Task name</label>
-                <InputText v-model="title" placeholder="Enter a new task name" autocomplete="off" class="flex-auto"
+                <InputText
+v-model="title" placeholder="Enter a new task name" autocomplete="off" class="flex-auto"
                   size="small" />
               </div>
               <div class="flex gap-3 ">
                 <label class="self-center basis-1/4">Task description</label>
-                <InputText v-model="description" placeholder="Enter a new task description" autocomplete="off"
+                <InputText
+v-model="description" placeholder="Enter a new task description" autocomplete="off"
                   class="flex-auto" />
               </div>
               <ButtonGroup class="justify-evenly flex items-center pt-6 ">
@@ -64,7 +70,7 @@
       <div class="flex justify-between  pl-2 py-2 text-gray-400">
         <p v-if="$props.project.created_at != null" class="self-center">
           {{ $props.project.created_at.split('T')[0] }}</p>
-        <Avatar shape="circle" icon="pi pi-user" v-tooltip.left="userEmail" />
+        <Avatar v-tooltip.left="userEmail" shape="circle" icon="pi pi-user" />
       </div>
     </NuxtLink>
   </div>
@@ -81,7 +87,7 @@ import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
 import {useRefreshStore} from '#imports';
 
 const visible = ref(false)
-let deleteDialog = ref(false)
+const deleteDialog = ref(false)
 const store = bcStore()
 const { project } = defineProps(['project'])
 const authStore = useAuth()
@@ -102,18 +108,21 @@ const statusSeverity = computed(() =>{
     case 'ended':
       return 'success'
 
+    default:
+      return ''
+
   }
 })
 
 const title = ref(project.title)
 
 const description = ref(project.description)
-const emit = defineEmits(['refreshData']);
+defineEmits(['refreshData']);
 const refreshStore = useRefreshStore()
 
 const deleteProject = async () => {
   try {
-    const res = await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
+    await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
     navigateTo(`/dashboard`);
     await refreshStore.fetchProject();
     deleteDialog.value= false
