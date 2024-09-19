@@ -131,6 +131,7 @@ const handleSegmentation = () => {
   } else if (topicIndex.value < newColors.length - 1  &&  topicIndex.value !=  props.topics[props.index+ 1] ) { // On itere parmi les topics existants
     newTopics[props.index]++
   } else if (topicIndex.value !== 0) { // Reset du topic a 0
+    newColors.pop()
     newTopics[props.index] = 0;
   }
 
