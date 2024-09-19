@@ -30,7 +30,6 @@ export default class AuthService {
 
     public signInRedirect() {
       if (window.location.search.search('state=') === -1) {
-        console.log('redirecting...');
         return this.userManager.signinRedirect();
       }
     }
