@@ -85,11 +85,8 @@ const annotationInfo = $computed(() => {
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
 }
+const submitExistantAnnotation =(action)=>{
 
-const handleSubmit = (event, action) => {
-  const locals = JSON.parse(JSON.stringify(event.locals))
-
-  if (annotationInfo != null) {
     const result = annotations_out.value[annotationInfo.index].result
     result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur a déjà une annotation associée à cette tâche
@@ -124,44 +121,54 @@ const handleSubmit = (event, action) => {
         AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
       })
 
-  } else {
-    const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
-    result.data.localisation[0].sublocalisations.localisation = locals
-    // L'utilisateur n'a jamais annoté cette tâche
-    AnnotationService.createAnnotationAnnotationPost({
-      annotation: {
-        user_email: userEmail.value,
-        task_id: data.value.id,
-        result: result,
-        annotation_status: action === "submit" ? AnnotationStatus.DRAFT : AnnotationStatus.ENDED,
-        version: 1
-      },
-      association: {
-        annotation_id: 0,
-        task_id: data.value.id,
-        direction: 'out'
-      }
-    })
-      .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
-      })
-      .then(() => {
-        window.onbeforeunload = null
-      })
-      .then(() => {
-        toast.add(
-          {
-            severity: 'info',
-            detail: action === "submit" ? 'Annotation created' : 'Annotation created and ended',
-            life: 5000
-          })
-        if (action === "end") {
 
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        }
-      })
+}
+const submitNewAnnotation =(action)=>{
+  const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
+  result.data.localisation[0].sublocalisations.localisation = locals
+  // L'utilisateur n'a jamais annoté cette tâche
+  AnnotationService.createAnnotationAnnotationPost({
+    annotation: {
+      user_email: userEmail.value,
+      task_id: data.value.id,
+      result: result,
+      annotation_status: action === "submit" ? AnnotationStatus.DRAFT : AnnotationStatus.ENDED,
+      version: 1
+    },
+    association: {
+      annotation_id: 0,
+      task_id: data.value.id,
+      direction: 'out'
+    }
+  })
+    .then(() => {
+      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+    })
+    .then(() => {
+      window.onbeforeunload = null
+    })
+    .then(() => {
+      toast.add(
+        {
+          severity: 'info',
+          detail: action === "submit" ? 'Annotation created' : 'Annotation created and ended',
+          life: 5000
+        })
+      if (action === "end") {
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+    })}
+const handleSubmit = (event, action) => {
+  const locals = JSON.parse(JSON.stringify(event.locals))
+
+  if (annotationInfo != null) {
+    submitExistantAnnotation(action);
+
+  } else {
+    submitNewAnnotation(action);
   }
 
 }
