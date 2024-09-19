@@ -10,7 +10,21 @@ export default withNuxt(
       'presets',
       'api',//warnings
       'public',
-       'test-results'
+       'test-results',
+        'components/DataDialog.vue',
+        'components/ProjectCard.vue',
+        'components/organisms/OrganismTranscription.vue',
+        'components/organisms/OrganismSegmentation.vue',
+        'components/molecules/MoleculeSegmentation.vue' ,
+        'components/molecules/MoleculeFormTask.vue',
+        'components/molecules/MoleculeFormProject.vue',
+        'components/atoms/AtomVideoHls.vue',
+        'components/atoms/AtomVideoAmalia.vue',
+        'components/atoms/AtomTrancription.vue',
+        'components/atoms/AtomSpanDetail.vue',
+        'components/atoms/AtomSpan.vue',
+        'components/atoms/AtomSegmentation.vue',
+        'components/atoms/AtomProgressBar.vue'
       ],
     },
     {
