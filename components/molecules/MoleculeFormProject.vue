@@ -140,7 +140,7 @@ const createProject = async () => {
   if (title === '') {
     toast.add({severity: "error", detail: "Project could not be created", summary: "Something went wrong"})
   } else {
-    let {userEmail} = useAuth()
+    const {userEmail} = useAuth()
     const response = ProjectService.createProjectProjectPost({
       title: title,
       description: description,
