@@ -85,7 +85,7 @@ const annotationInfo = $computed(() => {
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
 }
-const submitExistantAnnotation =(action)=>{
+const submitExistantAnnotation =(locals,action)=>{
 
     const result = annotations_out.value[annotationInfo.index].result
     result.data.localisation[0].sublocalisations.localisation = locals
@@ -123,7 +123,7 @@ const submitExistantAnnotation =(action)=>{
 
 
 }
-const submitNewAnnotation =(action)=>{
+const submitNewAnnotation =(locals,action)=>{
   const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
   result.data.localisation[0].sublocalisations.localisation = locals
   // L'utilisateur n'a jamais annoté cette tâche
@@ -165,10 +165,10 @@ const handleSubmit = (event, action) => {
   const locals = JSON.parse(JSON.stringify(event.locals))
 
   if (annotationInfo != null) {
-    submitExistantAnnotation(action);
+    submitExistantAnnotation(locals,action);
 
   } else {
-    submitNewAnnotation(action);
+    submitNewAnnotation(locals,action);
   }
 
 }
