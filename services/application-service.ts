@@ -55,6 +55,7 @@ export default class ApplicationService {
    */
   public getUserRoles(): [] {
     const { user } = storeToRefs(this.authStore);
+    console.log(user.value?.profile?.roles);
     return user.value?.profile?.roles ?? [];
   }
 
