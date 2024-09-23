@@ -1,9 +1,10 @@
 <template>
-    <div>
-        <Breadcrumb :home="home" :model="items">
-            <template #item="{ item, props }">
-                <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-                    <a :href="href" v-bind="props.action" @click.prevent="navigate()">
+        <Breadcrumb :home="home" :model="items" class="border-0">
+
+            <template   #item="{ item, props }">
+
+                <router-link v-if="item.route " v-slot="{ href, navigate }" :to="item.route" custom>
+                  <a :href="href" v-bind="props.action" @click.prevent="navigate()">
                         <span :class="[item.icon, 'text-color']" />
                         <span class="text-primary text-ellipsis text-nowrap font-semibold">{{ item.label }}</span>
                     </a>
@@ -13,7 +14,7 @@
                 </a>
             </template>
         </Breadcrumb>
-    </div>
+
 </template>
 
 <script setup>

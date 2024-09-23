@@ -4,11 +4,11 @@
     <NuxtLink
       :to="{ name: 'projects-id', params: { id: project.id } }" @click="navigate">
       <div class="inline-block flex justify-between align-middle pl-2">
-          <p class="font-semibold self-center exeeded_text">
+          <p class="font-bold self-center exeeded_text">
             {{ project.title }} </p>
           <p class="inline-block  text-2xl">
             <Button
-icon="pi pi-trash" severity="danger" text rounded size="small"
+icon="pi pi-trash" severity="primary" text rounded size="small"
                      @click.stop.prevent="deleteDialog=true" />
 <!--Confirmation dialog to delete-->
             <Dialog
@@ -16,9 +16,9 @@ v-model:visible="deleteDialog" modal header="Are you sure you want to delete thi
                      @after-hide="deleteDialog = false">
               <div class=" grid grid-cols-1 gap-1">
                 <ButtonGroup class="justify-evenly flex items-center pt-6 ">
-                  <Button label="No" severity="info" class="justify-self-center" @click="deleteDialog = false" />
-                  <Button v-if="deleteDialog === false" label="Delete" severity="danger" @click="deleteDialog = true" />
-                  <Button v-else label="Yes" severity="danger" class="" @click="deleteProject" />
+                  <Button label="No" style="color: black; background-color:#0B7698" class="justify-self-center" @click="deleteDialog = false" />
+                  <Button v-if="deleteDialog === false" label="Delete" @click="deleteDialog = true" />
+                  <Button v-else label="Yes" style="color: black; background-color:#9ADC82" @click="deleteProject" />
                 </ButtonGroup>
               </div>
             </Dialog>
@@ -57,7 +57,7 @@ v-model="description" placeholder="Enter a new task description" autocomplete="o
       <div class="flex justify-between justify-items-stretch pl-2 pt-1 items-center text-sm">
         <div class="flex justify-between items-center  justify-items-stretch gap-3">
           <span class="">{{ project.steps.length }} <i class="pi pi-list-check " /></span>
-          <Tag :severity="statusSeverity" class="mb-1 scale-90 ">{{ project.status}}</Tag>
+          <Tag class="mb-1 scale-90" :class="statusSeverity">{{ project.status}}</Tag>
         </div>
         <div class="flex justify-between justify-items-stretch gap-3">
           <span>1/{{ }} </span>
@@ -67,7 +67,7 @@ v-model="description" placeholder="Enter a new task description" autocomplete="o
       </div>
       <hr>
       <div class="text-sm px-2 py-3 text-slate-500"> {{ $props.project.description }} </div>
-      <div class="flex justify-between  pl-2 py-2 text-gray-400">
+      <div class=" bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400" style="font-size: 14px">
         <p v-if="$props.project.created_at != null" class="self-center">
           {{ $props.project.created_at.split('T')[0] }}</p>
         <Avatar v-tooltip.left="userEmail" shape="circle" icon="pi pi-user" />
@@ -134,7 +134,19 @@ const deleteProject = async () => {
 </script>
 <style>
 .exeeded_text{
-  text-overflow: ellipsis;
-  overflow: hidden;
+font-size: 19px;
+  font-family: Lato;
+}
+.warning{
+  background-color: #F9D621;
+  color:black;
+}
+.info{
+  background-color: #B3DDF4;
+  color:black;
+}
+.success{
+  background-color: #9ADC82;
+  color:black;
 }
 </style>

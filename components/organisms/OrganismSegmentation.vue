@@ -25,7 +25,13 @@
   </div>
   <div v-else class="h-full" >
     <div class="fixed bottom-10 z-10 right-20 ">
-      <Button label="Submit" size="large" @click="handleSubmit()" />
+      <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #0B7698;
+border-color: #0B7698"
+              label="Soumettre" size="large" @click="handleSubmit()" />
+      <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #9ADC82;
+border-color: #9ADC82"
+              class="ml-3" severity="success" label="Terminer" size="large" @click="handleFinish()"/>
+
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">

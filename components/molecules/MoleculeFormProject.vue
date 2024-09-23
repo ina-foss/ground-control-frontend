@@ -1,25 +1,34 @@
 <template>
   <Toast/>
   <Dialog
-    :visible="dialogVisible" modal :header="headerTitle" :style="{ width: 'fit-content' }" class="bg-white "
-    @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
+    :visible="dialogVisible"
+    modal
+    :style="{ width: 'fit-content'}"
+    class="bg-white"
+    @hide="$emit('refreshData')"
+    @after-hide="deleteDialog = false"
+    @update:visible="emits('toggle-dialog')">
+
+    <template #header>
+      <span class="header-title">{{ headerTitle }}</span>
+    </template>
     <Stepper class="transition-all">
       <StepperPanel class="transition-all" header="Infos">
         <template #content="{ nextCallback }">
-          <div class="grid grid-cols-1 grid-rows-3 gap-3 min-w-[70vh]">
+          <div class="grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
             <span class="text-slate-400 ">Enter project configuration</span>
-            <div class="flex grid-cols-2 gap-3 align-items-center ">
+            <div class="flex grid-cols-2 gap-2 align-items-center ">
               <label class="self-center basis-1/4">Title</label>
               <InputText v-model="title" placeholder="Enter a new project name" autocomplete="off" class="flex-auto"/>
               <InlineMessage v-if="errorVisible === true && !title">Title is required</InlineMessage>
             </div>
-            <div class="flex gap-3 ">
+            <div class="flex gap-2 ">
               <label class="self-center basis-1/4">Description</label>
               <InputText
                 v-model="description" placeholder="Enter a new project description" autocomplete="off"
                 class="flex-auto"/>
             </div>
-            <div class="flex gap-3 ">
+            <div class="flex gap-2 ">
               <label class="self-center basis-1/4">Status</label>
               <Dropdown v-model="status" :options="Object.values(ProjectStatus)" placeholder="Test"/>
             </div>
@@ -32,8 +41,8 @@
               <InputSwitch v-model="allowSkip" class="scale-75"/>
             </div>
           </div>
-          <div class="flex justify-end pt-8">
-            <Button label="Next" icon="pi pi-arrow-right" icon-pos="right" size="small" @click="nextCallback"/>
+          <div class="flex justify-end pt-5">
+            <Button style="color: black; background-color:#0B7698" label="Next" icon="pi pi-arrow-right" icon-pos="right" size="small" @click="nextCallback"/>
           </div>
         </template>
       </StepperPanel>
@@ -57,11 +66,11 @@
           </div>
 
           <div class="flex justify-between pt-8">
-            <Button label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback"/>
-            <Button
+            <Button style="color: black; background-color:#0B7698" label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback"/>
+            <Button style="color: black;background-color:#9ADC82"
               v-if="!project" label="Create" severity="success" icon="pi pi-check" size="small"
               @click="createProject"/>
-            <Button v-else label="Update" severity="success" icon="pi pi-check" size="small" @click="updateProject"/>
+            <Button style="color: black;background-color:#9ADC82 " v-else label="Update" severity="success" icon="pi pi-check" size="small" @click="updateProject"/>
           </div>
         </template>
       </StepperPanel>
@@ -188,3 +197,9 @@ const createProject = async () => {
 }
 
 </script>
+<style>
+.header-title {
+  font-size: 19px;
+  font-weight: 700;
+}
+</style>

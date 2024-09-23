@@ -7,7 +7,7 @@
 
     <!-- Input to switch between player -->
     <div class=" flex items-center text-surface-0 gap-3 justify-center pt-3">
-      <InputSwitch  v-model="activePlayer" />
+      <InputSwitch v-model="activePlayer"   />
       <b>Amalia Player</b>
     </div>
 
@@ -75,3 +75,4 @@ const { locals, colors, videoSrc } = props;
 
   defineExpose({updateVideoTimecode})
 </script>
+

@@ -32,22 +32,22 @@ v-if="data.steps?.length > 0"
       <Column field="annotation_type" header="Type"/>
       <Column header="Status">
         <template #body>
-          <Tag :severity="statusSeverity" class="mb-1 scale-90 ">{{ data.status }}</Tag>
+          <Tag :class="statusSeverity" class="mb-1 scale-90 ">{{ data.status }}</Tag>
         </template>
       </Column>
       <Column field="description" header="Description"/>
       <Column header=" " style="width: 18%; ">
         <template #body="slotProps">
           <div class="flex justify-between min-w-[203px] gap-3">
-            <Button label="Create Task" size="small" severity="info" @click="stepCreate(slotProps.data.id)"/>
+            <Button style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;" outlined label="Create Task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
             <Button
-icon="pi pi-angle-down" label="Export" size="small" severity="secondary" text
-                    :loading="loadingExport" @click="clickButtonMenu($event,slotProps.data) "/>
+ label="Export" size="small" severity="secondary" text
+                    :loading="loadingExport"  icon="pi pi-angle-down" icon-pos="right" @click="clickButtonMenu($event,slotProps.data) "/>
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
               <template #item="{ item, props }">
                 <a
-v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-items-center"
-                   v-bind="props.action">
+                  v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-items-center"
+                  v-bind="props.action">
                   <p @click="item.command(event,selectedRow.value)">{{ item.label }}</p>
                 </a>
               </template>
@@ -109,7 +109,8 @@ class="overflow-scroll"
 
             <Column header="Data">
               <template #body="">
-                <Button icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
+
+                <Button size="small" severity="secondary" style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;" outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
 
               </template>
             </Column>
@@ -331,5 +332,17 @@ const openDialog = (data) => {
   max-height: 90vh;
   overflow-y: auto;
   overflow-x: hidden;
+}
+.warning{
+  background-color: #F9D621;
+  color:black;
+}
+.info{
+  background-color: #B3DDF4;
+  color:black;
+}
+.success{
+  background-color: #9ADC82;
+  color:black;
 }
 </style>

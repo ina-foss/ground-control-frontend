@@ -2,6 +2,9 @@
   <div>
     <MoleculeHeader />
     <main class="h-[calc(100vh)] fixed w-full pt-[60px] pb-5 ">
+      <div class="flex-grow pt-2">
+        <AtomBreadcrumbs />
+      </div>
       <slot />
     </main>
     <MoleculeFooter />
@@ -13,5 +16,6 @@
 <script setup>
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue';
 import MoleculeHeader from '~/components/molecules/MoleculeHeader.vue';
+import AtomBreadcrumbs from "~/components/atoms/AtomBreadcrumbs.vue";
 
 </script>

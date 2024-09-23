@@ -1,8 +1,10 @@
 <template>
   <div v-if=" allFetched " class="h-full">
     <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed z-10 bottom-10 right-4 ">
-      <Button label="Soumettre" size="large" @click="handleSubmit()"/>
-      <Button class="ml-3" severity="success" label="Terminer" size="large" @click="handleFinish()"/>
+      <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #0B7698;
+border-color: #0B7698" label="Soumettre" size="large" @click="handleSubmit()"/>
+      <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #9ADC82;
+border-color: #9ADC82" class="ml-3" severity="success" label="Terminer" size="large" @click="handleFinish()"/>
     </div>
 
     <Toast/>
