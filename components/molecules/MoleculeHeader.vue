@@ -9,7 +9,7 @@
     </div>
     <div class="self-center">
       <Button
-        v-if="isAdmin && $route.name == 'dashboard'"
+        v-if="$route.name == 'dashboard'"
         label="Create Project"
         size="small"
         @click="dialogVisible = true"
@@ -37,6 +37,7 @@ const menuVisible = ref(false);
 const dialogVisible = ref(false);
 
 const { $application } = useService();
+// const roles = $application.getUserRoles();
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 

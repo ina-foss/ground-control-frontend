@@ -52,28 +52,14 @@ export default class ApplicationService {
   /**
    * Get user roles from the auth store
    * @returns {string[]} Array of roles
-   * TODO check roles inside profile or decode token ?
    */
   public getUserRoles(): [] {
     const { user } = storeToRefs(this.authStore);
     return user.value?.profile?.roles ?? [];
   }
 
-  public getUserRolesFromToken(): [] {
-    const parseJwt = (token: string) => {
-      try {
-        return JSON.parse(atob(token.split('.')[1]));
-      } catch (e) {
-        return null;
-      }
-    };
-    console.log(parseJwt(this.getDefaultHeader()['Authorization']));
-    return parseJwt(this.getDefaultHeader()['Authorization'])?.realm_access?.roles;
-  }
-
   public hasRole(role: string): boolean {
     const roles: [] = this.getUserRoles();
-    const rolesFromToken: [] = this.getUserRolesFromToken();
-    return roles?.includes(role) || rolesFromToken?.includes(role);
+    return roles.includes(role);
   }
 }
