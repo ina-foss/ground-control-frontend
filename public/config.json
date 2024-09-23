@@ -1,6 +1,6 @@
 {
   "apiBasePath": "http://localhost:8000",
-  "authorityUrl" : "http://localhost:9080/realms/ground-control",
-  "clientId": "web_app",
+  "authorityUrl" : "https://sso.notilus.d.sas.ina/auth/realms/notilus/",
+  "clientId": "notilus-front-local",
   "version": "1.0.0"
 }
