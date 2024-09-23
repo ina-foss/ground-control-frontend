@@ -8,6 +8,7 @@
       <AtomIcon class="self-center" />
     </div>
     <div class="flex justify-end items-center">
+      <div>
       <Button
         v-if="isAdmin && $route.name == 'dashboard'"
         class="mr-5"
@@ -22,6 +23,7 @@
     </div>
     <div>
       <AtomAvatarHeader />
+    </div>
     </div>
   </div>
 </template>
