@@ -6,13 +6,13 @@
       <div
 class="flex cursor-pointer flex-start gap-2 "
            @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})">
-        <Tag :severity="tcColor">
+        <Tag :class="tcColor">
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
             <p class="text-sm">{{ transcriptions[0].tcin }}</p>
           </div>
         </Tag>
-        <Tag
+        <Tag style="color: black;background-color: #006180"
 v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-center "
              :value="transcriptionTag"/>
       </div>
@@ -39,7 +39,7 @@ icon="pi pi-check" :outlined="true" rounded style="scale: 0.8;"
       <div class="w-full bg-white flex-col items-center rounded p-2 ">
         <div class="flex justify-between pb-2  ">
           <h2>Result</h2>
-          <Tag v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
+          <Tag style="color: black;background-color: #006180" v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
         </div>
         <div class="flex justify-center">
           <Textarea v-model="editedTranscription.text" :auto-resize="true" style="width: 95%;"/>
@@ -47,8 +47,8 @@ icon="pi pi-check" :outlined="true" rounded style="scale: 0.8;"
       </div>
       <!-- Footer with Buttons -->
       <div class="flex justify-end gap-2">
-        <Button label="Cancel" severity="secondary" size="small" @click="onCancel()"/>
-        <Button label="Confirm" severity="info" size="small" @click=" onFinished()"/>
+        <Button style="color: black;background-color: #595959" label="Cancel" severity="secondary" size="small" @click="onCancel()"/>
+        <Button style="color: black;background-color: #006180"  label="Confirm" severity="info" size="small" @click=" onFinished()"/>
       </div>
     </div>
 
@@ -161,3 +161,13 @@ const selectTrancription = (phrase, index) => {
 
 
 </script>
+<style>
+.success{
+  background-color: #9ADC82;
+  color: black;
+}
+.danger{
+  background-color: #EE4343;
+  color: black;
+}
+</style>

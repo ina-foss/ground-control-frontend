@@ -24,7 +24,7 @@
     </div>
   </div>
   <div v-else class="h-full" >
-    <div class="fixed bottom-10 z-10 right-20 ">
+    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed bottom-10 z-10 right-20 ">
       <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #0B7698;
 border-color: #0B7698"
               label="Soumettre" size="large" @click="handleSubmit()" />
@@ -46,6 +46,7 @@ border-color: #9ADC82"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
   import _ from 'lodash'
+  import {AnnotationStatus} from '../../api/generate';
 
   const authStore = useAuth()
 
@@ -62,6 +63,7 @@ border-color: #9ADC82"
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
+  const annotationStatus = AnnotationStatus.ENDED
 
   const annotationInfo = $computed(() => {
     let info = null
@@ -103,6 +105,14 @@ border-color: #9ADC82"
       }
     })
     emits('submit-annotation',{ locals: locals })
+  }
+  const handleFinish = () => {
+    locals.forEach((phrase, index) => {
+      if (![undefined].includes(topics[index])) {
+        phrase.data.topic = topics[index]
+      }
+    })
+    emits('finish-annotation', {locals: locals})
   }
 
   function generatePastelColor(tagNumber) {
