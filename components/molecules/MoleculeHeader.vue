@@ -10,8 +10,7 @@
     <div class="flex justify-end items-center">
       <div>
       <Button
-        v-if="isAdmin && $route.name == 'dashboard'"
-        class="mr-5"
+        v-if="$route.name == 'dashboard'"
         label="Create Project"
         size="small"
         outlined
@@ -36,6 +35,8 @@ import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
 const dialogVisible = ref(false);
 const { $application } = useService();
+// const roles = $application.getUserRoles();
+
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 </script>
