@@ -8,7 +8,7 @@
       <AtomIcon class="self-center" />
     </div>
     <div class="flex justify-end items-center">
-      <div>
+      <div class="mr-4">
       <Button
         v-if="$route.name == 'dashboard'"
         label="Create Project"
