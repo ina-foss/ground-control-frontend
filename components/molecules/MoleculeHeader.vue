@@ -1,5 +1,6 @@
 <template>
-  <div class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 bg-white border-b-2 border-#EDEDED justify-between">
+  <div class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 border-b-2 border-#EDEDED justify-between bg-surface-color"
+       style="background-color: #FFFFFF">
     <div class="flex items-center">
       <AtomLogo size="md" />
       <div style="padding: 25px;font-size: 20px">
@@ -10,17 +11,15 @@
     <div class="flex justify-end items-center">
       <div class="mr-4">
       <Button
+        class="button"
         v-if="$route.name == 'dashboard'"
         label="Create Project"
         size="small"
-        outlined
-        severity="secondary"
-        style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
         @click="dialogVisible = true"
       />
       <MoleculeFormProject :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false" />
     </div>
-    <div>
+    <div class="mt-1">
       <AtomAvatarHeader />
     </div>
     </div>
@@ -40,3 +39,15 @@ const { $application } = useService();
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 </script>
+<style>
+.button{
+  font-size: 14px;
+  font-family: Lato,sans-serif;
+  font-weight: bold;
+  height: 33px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #FFFFFF;
+  background-color: #0B7698;
+}
+</style>

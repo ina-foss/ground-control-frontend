@@ -1,7 +1,7 @@
 <template>
   <div>
     <MoleculeHeader />
-    <main class="h-[calc(100vh)] fixed w-full pt-[60px] pb-5 ">
+    <main class="h-[calc(100vh)] fixed w-full pt-[60px] pb-5 " style="background-color: #F7F7F7">
       <div class="flex-grow pt-2">
         <AtomBreadcrumbs />
       </div>

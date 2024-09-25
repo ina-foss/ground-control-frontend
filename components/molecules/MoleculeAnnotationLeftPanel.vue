@@ -1,5 +1,5 @@
 <template>
-  <div class="col-span-3 bg-surface-700 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
+  <div style="background-color: #212529" class="col-span-3 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
 
     <!-- Both player  -->
     <AtomVideoHls v-if="activePlayer == false" ref="AtomVideoHlsRef" :video-src="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
@@ -7,7 +7,7 @@
 
     <!-- Input to switch between player -->
     <div class=" flex items-center text-surface-0 gap-3 justify-center pt-3">
-      <InputSwitch v-model="activePlayer"   />
+      <InputSwitch class="custom-inputswitch" v-model="activePlayer"   />
       <b>Amalia Player</b>
     </div>
 
@@ -76,3 +76,22 @@ const { locals, colors, videoSrc } = props;
   defineExpose({updateVideoTimecode})
 </script>
 
+<style>
+/* Couleur de fond et bordure pour l'état activé */
+.custom-inputswitch .peer:checked + span {
+  background-color: #00BEFA !important;
+  border-color: #00BEFA !important;
+}
+
+/* Couleur de fond pour l'état inactif */
+.custom-inputswitch .peer + span {
+  background-color: #EDEDED !important;
+  border-color: #EDEDED !important;
+}
+
+/* Couleur de la manette coulissante */
+.custom-inputswitch .peer:checked + span::before {
+  background-color: #EDEDED !important;
+}
+
+</style>

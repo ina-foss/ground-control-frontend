@@ -1,6 +1,6 @@
 <template>
   <div v-if=" allFetched " class="h-full">
-    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed z-10 bottom-10 right-4 ">
+    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed z-10 bottom-12 right-4 mb-8">
       <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #0B7698;
 border-color: #0B7698" label="Soumettre" size="large" @click="handleSubmit()"/>
       <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #9ADC82;

@@ -1,18 +1,21 @@
 <template>
-  <div class="bg-black">
+  <div class="bg-black" >
 
     <DataTable
-v-if="data.steps?.length > 0"
-               v-model:expanded-rows="expandedRows" class="overflow-scroll-full" :context-menu=true :pt="{
+      v-if="data.steps?.length > 0"
+      v-model:expanded-rows="expandedRows" class="overflow-scroll-full custom-data-table" :context-menu=true :pt="{
       column: {
         bodycell:({ state }) => ({
           style: state['d_editing']
         })
       },
+      row:{
+        style: { backgroundColor: 'black', color: 'white' }
+      },
       style: 'height:88px'
     }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit" edit-mode="cell"
-               table-style="background-color: white" @row-expand="expandMode = true"
-               @cell-edit-complete="onCellEditComplete">
+       @row-expand="expandMode = true"
+      @cell-edit-complete="onCellEditComplete">
       <Column expander style="width: 5rem;"/>
       <Column
         :pt="{
@@ -20,7 +23,7 @@ v-if="data.steps?.length > 0"
           test: 'test',
 
         }
-      }" field="name" header="Name" style="width : 8rem ; min-width: 70px; ">
+      }" field="name" header="Name" style="width : 8rem ; min-width: 70px;">
         <template #editor="{ index }">
           <InputText v-model="data.tasks[index].name" style="width : 100% ; min-width: 70px; "/>
         </template>
@@ -39,10 +42,16 @@ v-if="data.steps?.length > 0"
       <Column header=" " style="width: 18%; ">
         <template #body="slotProps">
           <div class="flex justify-between min-w-[203px] gap-3">
-            <Button style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;" outlined label="Create Task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
             <Button
- label="Export" size="small" severity="secondary" text
-                    :loading="loadingExport"  icon="pi pi-angle-down" icon-pos="right" @click="clickButtonMenu($event,slotProps.data) "/>
+              style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
+              outlined label="Create Task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
+            <div  class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
+                  @click="clickButtonMenu($event,slotProps.data) ">
+            <Button
+              label="Export" size="small" severity="secondary" text></Button>
+            <img style="fill: black" width="15px" height="15px" src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg"/>
+          </div>
+
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
               <template #item="{ item, props }">
                 <a
@@ -56,13 +65,14 @@ v-if="data.steps?.length > 0"
         </template>
       </Column>
       <Column :row-editor="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"/>
-      <template #expansion="slotProps">
-        <div class="p-6 border-surface-200 border-2">
+      <template #expansion="slotProps" style="background-color: black">
+        <div class="p-6 border-surface-200 border-4">
           <DataTable
-class="overflow-scroll"
-                     unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
-                     edit-mode="cell"
-                     table-style="background-color: white" @row-click="handleRowClick($event)" @cell-edit-complete="onCellEditComplete">
+            class="overflow-scroll p-5"
+            unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
+            edit-mode="cell"
+            table-style="background-color: white" @row-click="handleRowClick($event)"
+            @cell-edit-complete="onCellEditComplete">
             <Column field="name" header="Name" style="width : 8rem ; min-width: 70px; ">
               <template #editor="{ index: nestedIndex }">
                 <InputText
@@ -100,7 +110,7 @@ class="overflow-scroll"
                   <Avatar
                     v-for="(annotation, index) in nestedData.annotations" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
-                    shape="circle"
+                    shape="circle" style="color: black;font-weight: bold"
                     :style="{ backgroundColor: getColorForAnnotation(annotation.annotation_status) }"/>
                 </div>
               </template>
@@ -110,7 +120,9 @@ class="overflow-scroll"
             <Column header="Data">
               <template #body="">
 
-                <Button size="small" severity="secondary" style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;" outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
+                <Button size="small" severity="secondary"
+                        style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
+                        outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
 
               </template>
             </Column>
@@ -125,7 +137,8 @@ class="overflow-scroll"
     <Dialog v-model:visible="visible" modal @hide="visible = false">
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>
-    <MoleculeFormTask :dialog-visible="dialogVisible" :step-object="formStepClick" @toggle-dialog="dialogVisible=false"/>
+    <MoleculeFormTask :dialog-visible="dialogVisible" :step-object="formStepClick"
+                      @toggle-dialog="dialogVisible=false"/>
   </div>
 
 </template>
@@ -136,7 +149,7 @@ class="overflow-scroll"
 import _ from 'lodash';
 import {ref} from 'vue';
 import {bcStore} from '~/stores/breadcrumbs';
-import {AnnotationService,AnnotationStatus} from '../../api/generate';
+import {AnnotationService, AnnotationStatus} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
 
@@ -333,16 +346,23 @@ const openDialog = (data) => {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.warning{
+
+.warning {
   background-color: #F9D621;
-  color:black;
+  color: black;
 }
-.info{
+
+.info {
   background-color: #B3DDF4;
-  color:black;
+  color: black;
 }
-.success{
+
+.success {
   background-color: #9ADC82;
-  color:black;
+  color: black;
+}
+.custom-data-table .p-datatable-tbody > tr {
+  background-color: black !important; /* Force l'application de la couleur de fond */
+  color: white !important; /* Force l'application de la couleur du texte */
 }
 </style>

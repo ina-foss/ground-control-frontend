@@ -23,8 +23,8 @@
       </div>
     </div>
   </div>
-  <div v-else class="h-full" >
-    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed bottom-10 z-10 right-20 ">
+  <div v-else class="h-full " >
+    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed bottom-10 z-10 right-20  mb-8">
       <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #0B7698;
 border-color: #0B7698"
               label="Soumettre" size="large" @click="handleSubmit()" />

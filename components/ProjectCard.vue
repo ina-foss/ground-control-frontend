@@ -1,6 +1,7 @@
 <template>
   <div
-    class="w-full bg-white max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl">
+    class="w-full bg-surface-color max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md shadow hover:scale-105 transition-all  hover:shadow-xl"
+    style="background-color: #FFFFFF">
     <NuxtLink
       :to="{ name: 'projects-id', params: { id: project.id } }" @click="navigate">
       <div class="inline-block flex justify-between align-middle pl-2">
@@ -8,8 +9,10 @@
             {{ project.title }} </p>
           <p class="inline-block  text-2xl">
             <Button
-icon="pi pi-trash" severity="primary" text rounded size="small"
-                     @click.stop.prevent="deleteDialog=true" />
+ severity="primary" text rounded size="small"
+                     @click.stop.prevent="deleteDialog=true" >
+              <img src="public/icons/icons-svg/icons-svg/trash-icon.svg" class="w-4 h-4 mb-2 mr-0"/>
+            </Button>
 <!--Confirmation dialog to delete-->
             <Dialog
 v-model:visible="deleteDialog" modal header="Are you sure you want to delete this project?" :style="{ width: '35rem' }" class="bg-white"
@@ -70,7 +73,9 @@ v-model="description" placeholder="Enter a new task description" autocomplete="o
       <div class=" bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400" style="font-size: 14px">
         <p v-if="$props.project.created_at != null" class="self-center">
           {{ $props.project.created_at.split('T')[0] }}</p>
-        <Avatar v-tooltip.left="userEmail" shape="circle" icon="pi pi-user" />
+        <Avatar
+          v-tooltip.left="userEmail" :label=userEmail.charAt(0).toUpperCase()
+          shape="circle" style="color: black;font-weight: bold"/>
       </div>
     </NuxtLink>
   </div>

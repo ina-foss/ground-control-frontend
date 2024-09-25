@@ -1,13 +1,15 @@
 <template>
-  <div class="overflow-y-auto h-full ">
+  <div class="overflow-y-auto h-full bg-neutral-color" style="background-color: #F7F7F7">
     <div ref="dashboardRef" class="py-8 px-4 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
       <ProjectCard
         v-for="(project,index) in sortDataById" :key="index" :project=project
         @refresh-data="handleRefresh"/>
     </div>
-    <Paginator
-v-model:first="first" class="sticky" :always-show="false" :rows="rows" :total-records="20"
+    <div class="absolute bottom-16 w-full">
+    <Paginator style="background-color: #FFFFFF"
+v-model:first="first" class="sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="20"
                template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink"/>
+  </div>
   </div>
 </template>
 

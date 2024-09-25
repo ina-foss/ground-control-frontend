@@ -17,32 +17,38 @@
         <template #content="{ nextCallback }">
           <div class="grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
             <span class="text-slate-400 ">Enter project configuration</span>
-            <div class="flex grid-cols-2 gap-2 align-items-center ">
-              <label class="self-center basis-1/4">Title</label>
-              <InputText v-model="title" placeholder="Enter a new project name" autocomplete="off" class="flex-auto"/>
-              <InlineMessage v-if="errorVisible === true && !title">Title is required</InlineMessage>
+            <div class="flex">
+              <label class="self-center basis-1/5 pr-4">Title</label>
+              <InputText v-model="title" placeholder="Enter a new project name" autocomplete="off" class=" input-box flex-auto custom-placeholder"/>
+              <InlineMessage class="input-box ml-3" v-if="errorVisible === true && !title">Title is required</InlineMessage>
             </div>
-            <div class="flex gap-2 ">
-              <label class="self-center basis-1/4">Description</label>
+            <div class="flex ">
+              <label class="self-center basis-1/5 pr-4">Description</label>
               <InputText
                 v-model="description" placeholder="Enter a new project description" autocomplete="off"
-                class="flex-auto"/>
+                class="flex-auto input-box custom-placeholder"/>
             </div>
-            <div class="flex gap-2 ">
-              <label class="self-center basis-1/4">Status</label>
-              <Dropdown v-model="status" :options="Object.values(ProjectStatus)" placeholder="Test"/>
+            <div class="flex">
+              <label class="self-center basis-1/5 pr-4">Status</label>
+              <Dropdown class="custom-dropdown" v-model="status" :options="Object.values(ProjectStatus)"/>
             </div>
             <div class="flex justify-between items-center">
-              <label class="self-center text-sm ">Published ?</label>
+              <label style="color: black" class="self-center text-sm ">Published ?</label>
               <InputSwitch v-model="isPublished" class="scale-75"/>
-              <label class="self-center text-sm">Allow empty annotations ?</label>
+              <label style="color: black" class="self-center text-sm">Allow empty annotations ?</label>
               <InputSwitch v-model="emptyAnnotations" class="scale-75"/>
-              <label class="self-center text-sm">Allow skip ?</label>
+              <label style="color: black" class="self-center text-sm">Allow skip ?</label>
               <InputSwitch v-model="allowSkip" class="scale-75"/>
             </div>
           </div>
           <div class="flex justify-end pt-5">
-            <Button style="color: black; background-color:#0B7698" label="Next" icon="pi pi-arrow-right" icon-pos="right" size="small" @click="nextCallback"/>
+            <Button
+              class="button"
+              icon="pi pi-arrow-right" icon-pos="left"
+              label="Next"
+              size="small"
+              @click="nextCallback"
+            />
           </div>
         </template>
       </StepperPanel>
@@ -65,12 +71,22 @@
             </div>
           </div>
 
-          <div class="flex justify-between pt-8">
-            <Button style="color: black; background-color:#0B7698" label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback"/>
-            <Button style="color: black;background-color:#9ADC82"
-              v-if="!project" label="Create" severity="success" icon="pi pi-check" size="small"
-              @click="createProject"/>
-            <Button style="color: black;background-color:#9ADC82 " v-else label="Update" severity="success" icon="pi pi-check" size="small" @click="updateProject"/>
+          <div class="flex justify-end pt-8">
+            <Button class="button button-prev mr-4" label="Previous" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="prevCallback"/>
+            <Button
+              class="button"
+              icon="pi pi-check" icon-pos="left"
+              v-if="!project" label="Create"
+              size="small"
+              @click="createProject"
+            />
+            <Button
+              class="button"
+              icon="pi pi-check" icon-pos="left"
+              v-else label="Update"
+              size="small"
+              @click="updateProject"
+            />
           </div>
         </template>
       </StepperPanel>
@@ -201,5 +217,34 @@ const createProject = async () => {
 .header-title {
   font-size: 19px;
   font-weight: 700;
+}
+label{
+  text-align: right;
+  color: black
+}
+.input-box{
+  height: 33px;
+}
+.custom-placeholder::placeholder {
+  color: #757575;
+}
+.custom-dropdown {
+  height: 33px; /* Définit la hauteur du dropdown */
+  display: flex; /* Utilisation de flexbox pour aligner le contenu */
+  align-items: center; /* Centre le texte verticalement */
+}
+
+.custom-dropdown .p-dropdown-label
+{
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.button-prev{
+  background-color: transparent!important;
+  color: #0B7698!important;
+  border-color: #0B7698!important;
 }
 </style>

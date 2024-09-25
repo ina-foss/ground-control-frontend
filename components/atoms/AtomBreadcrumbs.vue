@@ -1,5 +1,5 @@
 <template>
-        <Breadcrumb :home="home" :model="items" class="border-0">
+        <Breadcrumb :home="home" :model="items" class="border-0" style="background-color: #F7F7F7">
 
             <template   #item="{ item, props }">
 
@@ -13,6 +13,9 @@
                     <span class="text-color">{{ item.label }}</span>
                 </a>
             </template>
+          <template #separator>
+            <span>/</span>
+          </template>
         </Breadcrumb>
 
 </template>
