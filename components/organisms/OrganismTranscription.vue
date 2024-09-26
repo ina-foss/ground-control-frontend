@@ -1,11 +1,14 @@
 <template>
+  <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed z-30 right-12 mr-4" style="top: 18px;" >
+    <Button class="button button-prev mr-4" label="Soumettre" size="small" @click="handleSubmit()"/>
+    <Button
+      class="button"
+      label="Terminer"
+      size="small"
+      @click="handleFinish()"
+    />
+  </div>
   <div v-if=" allFetched " class="h-full">
-    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus" class="fixed z-10 bottom-12 right-4 mb-8">
-      <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #0B7698;
-border-color: #0B7698" label="Soumettre" size="large" @click="handleSubmit()"/>
-      <Button style="font-family: Lato,sans-serif;font-weight: bold;border-radius: 4px;color: black;background-color: #9ADC82;
-border-color: #9ADC82" class="ml-3" severity="success" label="Terminer" size="large" @click="handleFinish()"/>
-    </div>
 
     <Toast/>
     <div class="grid grid-cols-9 xs:block h-full">
@@ -163,3 +166,8 @@ watchEffect(() => {
 })
 
 </script>
+<style>
+.fixed{
+  position: absolute !important;
+}
+</style>

@@ -13,9 +13,10 @@ class="flex cursor-pointer flex-start gap-2 "
             <p class="text-sm">{{ transcriptions[0].tcin }}</p>
           </div>
         </Tag>
-        <Tag style="color: black;background-color: #006180"
+        <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
 v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-center "
              :value="transcriptionTag"/>
+
       </div>
       <Button v-if="status!=='ended'" icon="pi pi-pencil" size="small" severity="contrast" @click="onExpand()"/>
     </div>
@@ -27,7 +28,9 @@ v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-cent
         <span style="color: white;background-color: #212529"
 v-for="(phrase, index) in transcriptions" :key="index"
               class="rounded w-full text-gray-100 relative p-2 scroll-mt-5 ">
-          <Tag severity="secondary" :value="algos[index] "/>
+                  <Tag style="border: 1px solid #3379FF; color: #3379FF;background-color: white;font-weight: bold"
+                       severity="info" class="h-7 self-center "
+                       :value="algos[index]"/>
           <p>{{ phrase.data.text[0] }}</p>
           <div class="flex justify-end">
            <Button
@@ -38,9 +41,10 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
       </div>
       <!-- Selected transcription and Result  -->
       <div class="w-full bg-white flex-col items-center rounded p-2 ">
-        <div class="flex justify-between pb-2  " style="color: black">
-          <h2>Result</h2>
-          <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold" v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
+        <div class="flex pb-2 " style="color: black">
+          <h2 class="pr-3">Result</h2>
+          <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
+               v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
         </div>
         <div class="flex justify-center" style="color: black">
           <Textarea v-model="editedTranscription.text" :auto-resize="true" style="width: 95%;color: black"/>
@@ -48,8 +52,13 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
       </div>
       <!-- Footer with Buttons -->
       <div class="flex justify-end gap-2">
-        <Button style="color: black;background-color: #595959" label="Cancel" severity="secondary" size="small" @click="onCancel()"/>
-        <Button style="color: black;background-color: #006180"  label="Confirm" severity="info" size="small" @click=" onFinished()"/>
+        <Button class="button button-prev mr-1" label="Cancel" size="small" @click="onCancel()"/>
+        <Button
+          class="button"
+          label="Confirm"
+          size="small"
+          @click="onFinished()"
+        />
       </div>
     </div>
 

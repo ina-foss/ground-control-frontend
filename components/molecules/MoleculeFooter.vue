@@ -3,7 +3,6 @@
     <div class="centered-icon">
       <AtomLogo size="md" />
     </div>
-    <p>© 2024 Institut national de l'audiovisuel V{{ config.version }} </p>
   </div>
 
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full">
+  <div style="height: 88%;">
     <component
 :is="annotationComponent" :data="data" :all-fetched="allFetched" :annotations_in="annotations_in"
                :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()"
