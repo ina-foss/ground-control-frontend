@@ -23,9 +23,17 @@
       </div>
     </div>
   </div>
-  <div v-else class="h-full" >
-    <div class="fixed bottom-10 z-10 right-20 ">
-      <Button label="Submit" size="large" @click="handleSubmit()" />
+  <div v-else class="h-full " >
+    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus"
+         class="fixed z-30 right-12 mr-4" style="top: 18px;" >
+      <Button class="button button-prev mr-4" label="Soumettre" size="small" @click="handleSubmit()"/>
+      <Button
+        class="button"
+        label="Terminer"
+        size="small"
+        @click="handleFinish()"
+      />
+
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
@@ -40,6 +48,7 @@
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
   import _ from 'lodash'
+  import {AnnotationStatus} from '../../api/generate';
 
   const authStore = useAuth()
 
@@ -56,6 +65,7 @@
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
+  const annotationStatus = AnnotationStatus.ENDED
 
   const annotationInfo = $computed(() => {
     let info = null
@@ -97,6 +107,14 @@
       }
     })
     emits('submit-annotation',{ locals: locals })
+  }
+  const handleFinish = () => {
+    locals.forEach((phrase, index) => {
+      if (![undefined].includes(topics[index])) {
+        phrase.data.topic = topics[index]
+      }
+    })
+    emits('finish-annotation', {locals: locals})
   }
 
   function generatePastelColor(tagNumber) {

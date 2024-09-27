@@ -1,8 +1,10 @@
 <template>
     <div>
-        <Avatar
-v-tooltip.left="userEmail" class="cursor-pointer" icon="pi pi-user" shape="circle"
-                @click="toggle" />
+        <Avatar style="background-color: transparent"
+v-tooltip.left="userEmail" class="cursor-pointer" shape="circle"
+                @click="toggle" >
+          <img src="public/icons/icons-svg/icons-svg/account-icon.svg"/>
+        </Avatar>
 
         <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
     </div>
@@ -24,21 +26,21 @@ const items = computed(() => {
             label: 'Options',
             items: [
                 {
-                    label: `Toggle ${nextColorMode} `,
+                    label: `Changer en mode ${nextColorMode} `,
                     icon: 'pi toggle-icon',
                     command: () => {
                         toggleDarkMode()
                     }
                 },
                 {
-                    label: 'Refresh token',
+                    label: 'Rafraichir token',
                     icon: 'pi pi-refresh',
                     command: () => {
                         router.push("/silent-refresh")
                     }
                 },
                 {
-                    label: 'Logout',
+                    label: 'Déconnexion',
                     icon: 'pi pi-sign-out',
                     command: () => {
                         handleLogout()

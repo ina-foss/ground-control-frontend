@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full">
+  <div style="height: 88%;">
     <component
 :is="annotationComponent" :data="data" :all-fetched="allFetched" :annotations_in="annotations_in"
                :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()"
@@ -85,7 +85,7 @@ const annotationInfo = $computed(() => {
 const refreshTaskData = async () => {
   data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
 }
-const submitExistantAnnotation =(action)=>{
+const submitExistantAnnotation =(locals,action)=>{
 
     const result = annotations_out.value[annotationInfo.index].result
     result.data.localisation[0].sublocalisations.localisation = locals
@@ -105,7 +105,7 @@ const submitExistantAnnotation =(action)=>{
     promise.then(() => {
       toast.add({
         severity: 'info',
-        detail: action === "submit" ? 'Annotation has been updated' : 'Annotation has been ended',
+        detail: action === "submit" ? 'Cette annotation a été mise à jour' : 'Cette annotation est terminée',
         life: 4000
       })
       if (action === "end") {
@@ -123,7 +123,7 @@ const submitExistantAnnotation =(action)=>{
 
 
 }
-const submitNewAnnotation =(action)=>{
+const submitNewAnnotation =(locals,action)=>{
   const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
   result.data.localisation[0].sublocalisations.localisation = locals
   // L'utilisateur n'a jamais annoté cette tâche
@@ -151,7 +151,7 @@ const submitNewAnnotation =(action)=>{
       toast.add(
         {
           severity: 'info',
-          detail: action === "submit" ? 'Annotation created' : 'Annotation created and ended',
+          detail: action === "submit" ? 'Annotation créée' : 'Annotation créée et terminée',
           life: 5000
         })
       if (action === "end") {
@@ -165,10 +165,10 @@ const handleSubmit = (event, action) => {
   const locals = JSON.parse(JSON.stringify(event.locals))
 
   if (annotationInfo != null) {
-    submitExistantAnnotation(action);
+    submitExistantAnnotation(locals,action);
 
   } else {
-    submitNewAnnotation(action);
+    submitNewAnnotation(locals,action);
   }
 
 }
