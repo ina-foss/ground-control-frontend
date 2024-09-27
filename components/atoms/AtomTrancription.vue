@@ -1,20 +1,22 @@
 <template>
-  <div class="bg-surface-200 flex  flex-col p-4 gap-1 drop-shadow-lg rounded transition-all ">
+  <div class="flex  flex-col p-4 gap-1 drop-shadow-lg rounded transition-all "
+  style="background-color: #EDEDED">
 
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
       <div
 class="flex cursor-pointer flex-start gap-2 "
            @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})">
-        <Tag :severity="tcColor">
+        <Tag :class="tcColor">
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
             <p class="text-sm">{{ transcriptions[0].tcin }}</p>
           </div>
         </Tag>
-        <Tag
+        <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
 v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-center "
              :value="transcriptionTag"/>
+
       </div>
       <Button v-if="status!=='ended'" icon="pi pi-pencil" size="small" severity="contrast" @click="onExpand()"/>
     </div>
@@ -23,38 +25,47 @@ v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-cent
     <div v-if="isExpand == true" class="flex flex-col gap-2 ">
       <div class="flex flex-row gap-3 w-full ">
         <!-- List of available transcriptions -->
-        <span
+        <span style="color: white;background-color: #212529"
 v-for="(phrase, index) in transcriptions" :key="index"
-              class="rounded bg-gray-500 w-full text-gray-100 relative p-2 scroll-mt-5 ">
-          <Tag severity="secondary" :value="algos[index] "/>
+              class="rounded w-full text-gray-100 relative p-2 scroll-mt-5 ">
+                  <Tag style="border: 1px solid #3379FF; color: #3379FF;background-color: white;font-weight: bold"
+                       severity="info" class="h-7 self-center "
+                       :value="algos[index]"/>
           <p>{{ phrase.data.text[0] }}</p>
           <div class="flex justify-end">
            <Button
-icon="pi pi-check" :outlined="true" rounded style="scale: 0.8;"
-                   severity="success" class="" @click="selectTrancription(phrase, index)"/>
+icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;background-color: #9ADC82;border-color: #9ADC82"
+                   class="" @click="selectTrancription(phrase, index)"/>
           </div>
         </span>
       </div>
       <!-- Selected transcription and Result  -->
       <div class="w-full bg-white flex-col items-center rounded p-2 ">
-        <div class="flex justify-between pb-2  ">
-          <h2>Result</h2>
-          <Tag v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
+        <div class="flex pb-2 " style="color: black">
+          <h2 class="pr-3">
+            Résultat : </h2>
+          <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
+               v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
         </div>
-        <div class="flex justify-center">
-          <Textarea v-model="editedTranscription.text" :auto-resize="true" style="width: 95%;"/>
+        <div class="flex justify-center" style="color: black">
+          <Textarea v-model="editedTranscription.text" :auto-resize="true" style="width: 95%;color: black"/>
         </div>
       </div>
       <!-- Footer with Buttons -->
       <div class="flex justify-end gap-2">
-        <Button label="Cancel" severity="secondary" size="small" @click="onCancel()"/>
-        <Button label="Confirm" severity="info" size="small" @click=" onFinished()"/>
+        <Button class="button button-prev mr-1" label="Annuler" size="small" @click="onCancel()"/>
+        <Button
+          class="button"
+          label="Confirmer"
+          size="small"
+          @click="onFinished()"
+        />
       </div>
     </div>
 
     <!-- In READING mode  -->
     <span v-else :class="`rounded-lg  scroll-mt-5 bg-white p-2 ${textColor} `">
-      <p v-if="editedTranscription.text == ''">
+      <p v-if="editedTranscription.text == ''" >
         {{ transcriptions[0].data.text[0] }}
       </p>
       <p v-else>{{ editedTranscription.text }}</p>
@@ -119,7 +130,7 @@ const tcColor = computed(() => {
 const textColor = computed(() => {
   return isFinished || (!isExpand && confirmedTranscription.index != null) ?
     'text-black' :
-    'text-gray-500'
+    'black'
 })
 
 const onExpand = () => {
@@ -161,3 +172,13 @@ const selectTrancription = (phrase, index) => {
 
 
 </script>
+<style>
+.success{
+  background-color: #9ADC82;
+  color: black;
+}
+.danger{
+  background-color: #EE4343;
+  color: black;
+}
+</style>

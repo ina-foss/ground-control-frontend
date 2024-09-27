@@ -1,18 +1,21 @@
 <template>
-  <div class="bg-black">
+  <div class="bg-black" >
 
     <DataTable
-v-if="data.steps?.length > 0"
-               v-model:expanded-rows="expandedRows" class="overflow-scroll-full" :context-menu=true :pt="{
+      v-if="data.steps?.length > 0"
+      v-model:expanded-rows="expandedRows" class="overflow-scroll-full custom-data-table" :context-menu=true :pt="{
       column: {
         bodycell:({ state }) => ({
           style: state['d_editing']
         })
       },
+      row:{
+        style: { backgroundColor: 'black', color: 'white' }
+      },
       style: 'height:88px'
     }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit" edit-mode="cell"
-               table-style="background-color: white" @row-expand="expandMode = true"
-               @cell-edit-complete="onCellEditComplete">
+       @row-expand="expandMode = true"
+      @cell-edit-complete="onCellEditComplete">
       <Column expander style="width: 5rem;"/>
       <Column
         :pt="{
@@ -20,7 +23,7 @@ v-if="data.steps?.length > 0"
           test: 'test',
 
         }
-      }" field="name" header="Name" style="width : 8rem ; min-width: 70px; ">
+      }" field="name" header="Titre" style="width : 8rem ; min-width: 70px;">
         <template #editor="{ index }">
           <InputText v-model="data.tasks[index].name" style="width : 100% ; min-width: 70px; "/>
         </template>
@@ -30,24 +33,31 @@ v-if="data.steps?.length > 0"
       </Column>
       <Column field="id" header="ID" style="width: 40px;"/>
       <Column field="annotation_type" header="Type"/>
-      <Column header="Status">
+      <Column header="Statut">
         <template #body>
-          <Tag :severity="statusSeverity" class="mb-1 scale-90 ">{{ data.status }}</Tag>
+          <Tag :class="statusSeverity" class="mb-1 scale-90 ">{{ data.status }}</Tag>
         </template>
       </Column>
       <Column field="description" header="Description"/>
       <Column header=" " style="width: 18%; ">
         <template #body="slotProps">
           <div class="flex justify-between min-w-[203px] gap-3">
-            <Button label="Create Task" size="small" severity="info" @click="stepCreate(slotProps.data.id)"/>
             <Button
-icon="pi pi-angle-down" label="Export" size="small" severity="secondary" text
-                    :loading="loadingExport" @click="clickButtonMenu($event,slotProps.data) "/>
+              style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
+              outlined label="Créer un task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
+            <div
+class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
+                  @click="clickButtonMenu($event,slotProps.data) ">
+            <Button
+              label="Exporter" size="small" severity="secondary" text/>
+            <img style="fill: black" width="15px" height="15px" src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg">
+          </div>
+
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
               <template #item="{ item, props }">
                 <a
-v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-items-center"
-                   v-bind="props.action">
+                  v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-items-center"
+                  v-bind="props.action">
                   <p @click="item.command(event,selectedRow.value)">{{ item.label }}</p>
                 </a>
               </template>
@@ -57,13 +67,14 @@ v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-
       </Column>
       <Column :row-editor="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"/>
       <template #expansion="slotProps">
-        <div class="p-6 border-surface-200 border-2">
+        <div class="p-6 border-surface-200 border-4">
           <DataTable
-class="overflow-scroll"
-                     unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
-                     edit-mode="cell"
-                     table-style="background-color: white" @row-click="handleRowClick($event)" @cell-edit-complete="onCellEditComplete">
-            <Column field="name" header="Name" style="width : 8rem ; min-width: 70px; ">
+            class="overflow-scroll p-5"
+            unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
+            edit-mode="cell"
+            table-style="background-color: white" @row-click="handleRowClick($event)"
+            @cell-edit-complete="onCellEditComplete">
+            <Column field="name" header="Titre" style="width : 8rem ; min-width: 70px; ">
               <template #editor="{ index: nestedIndex }">
                 <InputText
                   v-model="data.steps[slotProps.index].tasks[nestedIndex].name"
@@ -75,41 +86,45 @@ class="overflow-scroll"
             </Column>
             <Column field="id" header="ID" style="width: 40px;"/>
             <Column field="annotations.length" sortable style="width: 3rem;">
-              <template #header><i v-tooltip="'Nbr total annotation'" class="pi pi-star cursor-help"/></template>
+              <template #header><i v-tooltip="'Nombre total annotations'" class="pi pi-star cursor-help"/></template>
               <template #body="{ data: nestedData }">
                 <div class="flex-1 text-center"> {{ nestedData.annotations?.length || 0 }}</div>
               </template>
             </Column>
             <Column field="predictions.length" sortable style="width: 3rem">
               <template #header><i
-                v-tooltip="'Nbr annotations remplies'"
+                v-tooltip="'Nombre annotations remplies'"
                 class="pi pi-star-fill cursor-help"/></template>
               <template #body="">
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
             <Column field="predictions.length" style="width: 12px">
-              <template #header><i v-tooltip="'Nbr de prédictions'" class="pi pi-lightbulb cursor-help"/></template>
+              <template #header><i v-tooltip="'Nombre de prédictions'" class="pi pi-lightbulb cursor-help"/></template>
               <template #body="">
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
-            <Column header="Annoted by" style="width: 12rem">
+            <Column header="Annoté par" style="width: 12rem">
               <template #body="{data: nestedData}">
                 <div class="flex justify-start gap-2 ">
                   <Avatar
                     v-for="(annotation, index) in nestedData.annotations" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
-                    shape="circle"
+                    shape="circle" style="color: black;font-weight: bold"
                     :style="{ backgroundColor: getColorForAnnotation(annotation.annotation_status) }"/>
                 </div>
               </template>
             </Column>
             <Column field="instruction" header="Instruction"/>
 
-            <Column header="Data">
+            <Column header="Données">
               <template #body="">
-                <Button icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
+
+                <Button
+size="small" severity="secondary"
+                        style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
+                        outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
 
               </template>
             </Column>
@@ -124,7 +139,9 @@ class="overflow-scroll"
     <Dialog v-model:visible="visible" modal @hide="visible = false">
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>
-    <MoleculeFormTask :dialog-visible="dialogVisible" :step-object="formStepClick" @toggle-dialog="dialogVisible=false"/>
+    <MoleculeFormTask
+:dialog-visible="dialogVisible" :step-object="formStepClick"
+                      @toggle-dialog="dialogVisible=false"/>
   </div>
 
 </template>
@@ -135,7 +152,7 @@ class="overflow-scroll"
 import _ from 'lodash';
 import {ref} from 'vue';
 import {bcStore} from '~/stores/breadcrumbs';
-import {AnnotationService,AnnotationStatus} from '../../api/generate';
+import {AnnotationService, AnnotationStatus} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
 
@@ -166,25 +183,25 @@ const expandMode = $ref(false)
 const data = ref(getProject)
 const buttonItems = [
   {
-    label: 'One file',
+    label: 'Un seul fichier',
     command: () => {
       exportOut(selectedRow.value, 'one')
     },
-    tooltip: "Export all the step's annotations in one file"
+    tooltip: "Exporter toutes les annotations de l'étape dans un seul fichier"
   },
   {
-    label: 'Grp. by Task',
+    label: 'Regrouper par tâche',
     command: () => {
       exportOut(selectedRow.value, 'task')
     },
-    tooltip: "Export annotations by grouping them by task"
+    tooltip: "Exporter les annotations en les regroupant par tâche"
   },
   {
-    label: 'Seperate',
+    label: 'Fichiers séparés',
     command: () => {
       exportOut(selectedRow.value, 'all')
     },
-    tooltip: "Export all annotations in a dedicated file"
+    tooltip: "Exporter chaque annotations dans un fichier dédié"
   }
 ]
 
@@ -331,5 +348,24 @@ const openDialog = (data) => {
   max-height: 90vh;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.warning {
+  background-color: #F9D621;
+  color: black;
+}
+
+.info {
+  background-color: #B3DDF4;
+  color: black;
+}
+
+.success {
+  background-color: #9ADC82;
+  color: black;
+}
+.custom-data-table .p-datatable-tbody > tr {
+  background-color: black !important; /* Force l'application de la couleur de fond */
+  color: white !important; /* Force l'application de la couleur du texte */
 }
 </style>
