@@ -30,7 +30,7 @@
             </div>
             <div class="flex">
               <label class="self-center basis-1/5 pr-4">Statut</label>
-              <Dropdown class="custom-dropdown" v-model="status" :options="Object.values(ProjectStatus)"/>
+              <Dropdown class="custom-dropdown" v-model="status" :options="translatedProjectStatus"  optionLabel="label"/>
             </div>
             <div class="flex justify-between items-center">
               <label style="color: black" class="self-center text-sm ">Publié ?</label>
@@ -99,7 +99,7 @@
 
 
 import InputSwitch from 'primevue/inputswitch';
-import {AnnotationType, ProjectService, ProjectStatus, StepService, StepStatus} from '~/api/generate';
+import {AnnotationType, ProjectService, ProjectStatus, StepService, StepStatus, TaskStatus} from '~/api/generate';
 import {useRefreshStore} from '#imports';
 import {useAuth} from '../../stores/auth';
 
@@ -108,9 +108,20 @@ const {userEmail} = useAuth()
 const {dialogVisible, project} = defineProps(['dialogVisible', 'project'])
 const emits = defineEmits(['toggle-dialog', 'refreshData'])
 const deleteDialog = $ref(false)
+const translations = {
+  draft: 'Brouillon',
+  pending: 'En attente',
+  ended: 'Terminé'
+}
+const translatedProjectStatus = $computed(() => {
+  return Object.values(TaskStatus).map(status => ({
+    label: translations[status],
+    value: status,
+  }));
+})
 let title = $ref(project?.title || '')
 let description = $ref(project?.description || '')
-let status = $ref(project?.status || ProjectStatus.DRAFT)
+let status = $ref(project?.status.value || translatedProjectStatus[0])
 let isPublished = $ref(project?.is_published || false)
 let allowSkip = $ref(project?.allow_skip || false)
 let emptyAnnotations = $ref(project?.empty_annotations || false)
@@ -132,7 +143,7 @@ const updateProject = async () => {
       const response = await ProjectService.updateProjectProjectProjectIdPut(project?.id, {
         title: title,
         description: description,
-        status: status,
+        status: status.value,
         is_published: isPublished,
         empty_annotations: emptyAnnotations,
         allow_skip: allowSkip,
@@ -169,7 +180,7 @@ const createProject = async () => {
     const response = ProjectService.createProjectProjectPost({
       title: title,
       description: description,
-      status: status,
+      status: status.value,
       is_published: isPublished,
       empty_annotations: emptyAnnotations,
       allow_skip: allowSkip,

@@ -24,7 +24,7 @@ v-model="instruction" placeholder="Entrez l'instruction de tâche" autocomplete=
               </div>
               <div class="flex">
               <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
-              <Dropdown class="custom-dropdown" v-model="status"  :options="Object.values(TaskStatus)" placeholder="" />
+              <Dropdown class="custom-dropdown" v-model="status"  :options="translatedTaskStatus" optionLabel="label" placeholder="" />
               </div>
             </div>
           </div>
@@ -118,7 +118,7 @@ icon="pi pi-times" text rounded size="small" severity="danger"
               <Button
                 class="button"
                 icon="pi pi-check" icon-pos="left"
-                v-if="!project" label="Créer"
+                label="Créer"
                 size="small"
                 @click="createTask"
               />
@@ -148,11 +148,22 @@ icon="pi pi-times" text rounded size="small" severity="danger"
   const toast = useToast()
 
   const templateRef= ref()
+  const translations = {
+    draft: 'Brouillon',
+    pending: 'En attente',
+    ended: 'Terminé'
+  }
+  const translatedTaskStatus = $computed(() => {
+    return Object.values(TaskStatus).map(status => ({
+      label: translations[status],
+      value: status,
+    }));
+  })
 
   const name = $ref()
   const instruction = $ref()
   const dataType = $ref(TaskDataType.LDD)
-  const status = $ref(TaskStatus.DRAFT)
+  const status = $ref(translatedTaskStatus[0])
 
   const files = $ref([])
   const fileData = $ref([])
@@ -204,7 +215,7 @@ icon="pi pi-times" text rounded size="small" severity="danger"
           name: name,
           instruction: instruction,
           data_type: dataType,
-          status: status,
+          status: status.value,
           lead_time: null,
           step_id: stepObject.id,
           media_id: res.id
@@ -229,5 +240,7 @@ icon="pi pi-times" text rounded size="small" severity="danger"
     })
     emits('toggle-dialog')
   }
+
+
 
 </script>
