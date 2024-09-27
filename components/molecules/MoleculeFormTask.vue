@@ -1,59 +1,78 @@
 <template>
     <Dialog
-:visible="dialogVisible" modal header="Your Project" :style="{ width: 'fit-content' }" class="bg-white "
+:visible="dialogVisible" modal header="Nouvelle tâche" :style="{ width: 'fit-content' }" class="bg-white "
       @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
       <Stepper>
-        <StepperPanel header="Infos">
+        <StepperPanel header="Informations">
         <template #content="{nextCallback}" >
-          <div class=" grid grid-cols-1 grid-rows-3 gap-3 min-w-[70vh]">
-            <span class="text-slate-400 ">Enter Task configuration</span>
-            <div class="flex grid-cols-2 gap-3 align-items-center ">
-              <label class="self-center basis-1/4">Title</label>
-              <InputText v-model="name" placeholder="Enter a new task name" autocomplete="off" class="flex-auto" />
+          <div class=" grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
+            <span class="text-slate-400 ">Entrez la configuration de la tâche</span>
+            <div class="flex">
+              <label class="self-center basis-1/5 pr-4">Titre</label>
+              <InputText v-model="name" placeholder="Entrez le titre de la tâche" autocomplete="off" class="input-box flex-auto custom-placeholder" />
             </div>
-            <div class="flex gap-3 ">
-              <label class="self-center basis-1/4">Instruction</label>
+            <div class="flex">
+              <label class="self-center basis-1/5 pr-4">Instruction</label>
               <InputText
-v-model="instruction" placeholder="Enter a new task instruction" autocomplete="off"
-                class="flex-auto" />
+v-model="instruction" placeholder="Entrez l'instruction de tâche" autocomplete="off"
+                class="flex-auto input-box custom-placeholder" />
             </div>
-            <div class="grid grid-cols-2   ">
-              <div class="flex gap-3 ">
-                <label class="self-center basis-1/2">Data type</label>
-                <Dropdown v-model="dataType"  :options="Object.values(TaskDataType)" placeholder="" />
+            <div class="grid grid-cols-2 flex justify-between">
+              <div class="flex">
+                <label class="self-center basis-1/2,5 pr-4 -mr-1">Type de données</label>
+                <Dropdown class="custom-dropdown" v-model="dataType"  :options="Object.values(TaskDataType)" placeholder="" />
               </div>
-              <div class="flex gap-3 ">
-              <label class="self-center basis-1/2 "> Status </label>
-              <Dropdown v-model="status"  :options="Object.values(TaskStatus)" placeholder="" />
+              <div class="flex">
+              <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
+              <Dropdown class="custom-dropdown" v-model="status"  :options="Object.values(TaskStatus)" placeholder="" />
               </div>
             </div>
           </div>
-            <div class="flex justify-end pt-8">
-            <Button label="Next" icon="pi pi-arrow-right" icon-pos="right" size="small" @click="nextCallback" />
+            <div class="flex justify-end pt-5">
+              <Button
+                class="button"
+                icon="pi pi-arrow-right" icon-pos="left"
+                label="Suivant"
+                size="small"
+                @click="nextCallback"
+              />
             </div>
         </template>
 
         </StepperPanel>
-        <StepperPanel header="Data">
+        <StepperPanel header="Données">
         <template #content="{prevCallback}" >
             <div class="grid grid-cols-1 w-[70vh] gap-3">
-            <span class="text-slate-400 "> Upload tasks </span>
+            <span class="text-slate-400 "> Télécharger des tâches </span>
               <FileUpload
 ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
-                invalid-file-type-message="Invalid type" auto name="file[]" :pt="{
+                invalid-file-type-message="Type invalide" auto name="file[]" :pt="{
                   buttonbar: {
-                    style: `z-index:20; padding-top: 10px; padding-bottom: 10px; `
+                    style: `z-index:20; padding-top: 10px; padding-bottom: 10px;`
                   },
                   content: {
                     style: ''
                   },
+                                    chooseButtonLabel: 'Télécharger',
+
+                    chooseButton: {
+                    style: `font-size: 14px;
+  font-family: Lato,sans-serif;
+  font-weight: bold;
+  height: 33px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #FFFFFF;
+  background-color: #0B7698; `
+                  },
+
 
                 }" @upload="onUpload($event)" @error="onUpload($event)">
                 <template #empty="">
 
                   <div class="flex items-center justify-content-center flex-col">
                     <span class="pi pi-file-arrow-up align-center " style="font-size: 2.5rem" />
-                    <p class="text-xs pt-3 text-slate-400 ">Upload a JSON file</p>
+                    <p class="text-xs pt-3 text-slate-400 ">Téléchargez un fichier JSON</p>
                   </div>
                 </template>
 
@@ -95,8 +114,14 @@ icon="pi pi-times" text rounded size="small" severity="danger"
             </div>
 
             <div class="flex justify-between pt-8">
-              <Button label="Previous" icon="pi pi-arrow-left" icon-pos="right" size="small" @click="prevCallback" />
-              <Button label="Create" severity="success" icon="pi pi-check" size="small" @click="createTask" />
+              <Button class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="prevCallback"/>
+              <Button
+                class="button"
+                icon="pi pi-check" icon-pos="left"
+                v-if="!project" label="Créer"
+                size="small"
+                @click="createTask"
+              />
             </div>
         </template>
 
@@ -126,7 +151,7 @@ icon="pi pi-times" text rounded size="small" severity="danger"
 
   const name = $ref()
   const instruction = $ref()
-  const dataType = $ref()
+  const dataType = $ref(TaskDataType.LDD)
   const status = $ref(TaskStatus.DRAFT)
 
   const files = $ref([])

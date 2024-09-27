@@ -26,21 +26,21 @@ const items = computed(() => {
             label: 'Options',
             items: [
                 {
-                    label: `Toggle ${nextColorMode} `,
+                    label: `Changer en mode ${nextColorMode} `,
                     icon: 'pi toggle-icon',
                     command: () => {
                         toggleDarkMode()
                     }
                 },
                 {
-                    label: 'Refresh token',
+                    label: 'Rafraichir token',
                     icon: 'pi pi-refresh',
                     command: () => {
                         router.push("/silent-refresh")
                     }
                 },
                 {
-                    label: 'Logout',
+                    label: 'Déconnexion',
                     icon: 'pi pi-sign-out',
                     command: () => {
                         handleLogout()

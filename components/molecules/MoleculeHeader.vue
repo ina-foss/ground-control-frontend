@@ -13,7 +13,7 @@
       <Button
         class="button"
         v-if="$route.name == 'dashboard'"
-        label="Create Project"
+        label="Nouveau projet"
         size="small"
         @click="dialogVisible = true"
       />

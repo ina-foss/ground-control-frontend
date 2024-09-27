@@ -28,7 +28,7 @@ import { ref, onMounted, watch } from 'vue';
 const store = bcStore()
 
 
-const home = { label: 'Projects', route: '/dashboard' }
+const home = { label: 'Projets', route: '/dashboard' }
 
 const {getItems} = storeToRefs(store)
 

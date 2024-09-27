@@ -13,31 +13,31 @@
       <span class="header-title">{{ headerTitle }}</span>
     </template>
     <Stepper class="transition-all">
-      <StepperPanel class="transition-all" header="Infos">
+      <StepperPanel class="transition-all" header="Informations">
         <template #content="{ nextCallback }">
           <div class="grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
-            <span class="text-slate-400 ">Enter project configuration</span>
+            <span class="text-slate-400 ">Entrez la configuration du projet</span>
             <div class="flex">
-              <label class="self-center basis-1/5 pr-4">Title</label>
-              <InputText v-model="title" placeholder="Enter a new project name" autocomplete="off" class=" input-box flex-auto custom-placeholder"/>
-              <InlineMessage class="input-box ml-3" v-if="errorVisible === true && !title">Title is required</InlineMessage>
+              <label class="self-center basis-1/5 pr-4">Titre</label>
+              <InputText v-model="title" placeholder="Entrez le titre du projet" autocomplete="off" class=" input-box flex-auto custom-placeholder"/>
+              <InlineMessage class="input-box ml-3" v-if="errorVisible === true && !title">Le titre est requis</InlineMessage>
             </div>
             <div class="flex ">
               <label class="self-center basis-1/5 pr-4">Description</label>
               <InputText
-                v-model="description" placeholder="Enter a new project description" autocomplete="off"
+                v-model="description" placeholder="Entrez la description du projet" autocomplete="off"
                 class="flex-auto input-box custom-placeholder"/>
             </div>
             <div class="flex">
-              <label class="self-center basis-1/5 pr-4">Status</label>
+              <label class="self-center basis-1/5 pr-4">Statut</label>
               <Dropdown class="custom-dropdown" v-model="status" :options="Object.values(ProjectStatus)"/>
             </div>
             <div class="flex justify-between items-center">
-              <label style="color: black" class="self-center text-sm ">Published ?</label>
+              <label style="color: black" class="self-center text-sm ">Publié ?</label>
               <InputSwitch v-model="isPublished" class="scale-75"/>
-              <label style="color: black" class="self-center text-sm">Allow empty annotations ?</label>
+              <label style="color: black" class="self-center text-sm">Autoriser les annotations vides ?</label>
               <InputSwitch v-model="emptyAnnotations" class="scale-75"/>
-              <label style="color: black" class="self-center text-sm">Allow skip ?</label>
+              <label style="color: black" class="self-center text-sm">autoriser le saut ?</label>
               <InputSwitch v-model="allowSkip" class="scale-75"/>
             </div>
           </div>
@@ -45,23 +45,23 @@
             <Button
               class="button"
               icon="pi pi-arrow-right" icon-pos="left"
-              label="Next"
+              label="Suivant"
               size="small"
               @click="nextCallback"
             />
           </div>
         </template>
       </StepperPanel>
-      <StepperPanel header="Steps">
+      <StepperPanel header="Etapes">
         <template #content="{ prevCallback }">
           <div class="w-[70vh] grid-cols-3 flex">
             <div class="">
-              <label>Available</label>
+              <label>Disponibles</label>
               <Listbox v-model="selectedType" :options="availableType" multiple class="basis-1/3"/>
             </div>
             <span class=" flex justify-center items-center basis-1/3"><i class="pi pi-arrow-right scale-150"/></span>
             <div class="basis-1/3">
-              <label>Selected</label>
+              <label>sélectionnés</label>
               <ol v-if="selectedType.length !== 0" class="border-surface-300 border-[1px] py-3 rounded">
                 <li
                   v-for="(type, index) in selectedType" :key="index"
@@ -72,18 +72,18 @@
           </div>
 
           <div class="flex justify-end pt-8">
-            <Button class="button button-prev mr-4" label="Previous" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="prevCallback"/>
+            <Button class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="prevCallback"/>
             <Button
               class="button"
               icon="pi pi-check" icon-pos="left"
-              v-if="!project" label="Create"
+              v-if="!project" label="Créer"
               size="small"
               @click="createProject"
             />
             <Button
               class="button"
               icon="pi pi-check" icon-pos="left"
-              v-else label="Update"
+              v-else label="sauvegarder"
               size="small"
               @click="updateProject"
             />
@@ -118,7 +118,7 @@ const availableType = $ref(Object.values(AnnotationType))
 let selectedType = $ref([])
 const refreshStore = useRefreshStore()
 const toast = useToast()
-const headerTitle = !project ? 'New Project' : 'Edit ' + project?.title
+const headerTitle = !project ? 'Nouveau projet' : 'Modifier ' + project?.title
 if (project?.steps !== null && project?.steps !== undefined) {
   project?.steps.forEach(type => {
     selectedType.push(type.annotation_type)

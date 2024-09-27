@@ -42,7 +42,8 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
       <!-- Selected transcription and Result  -->
       <div class="w-full bg-white flex-col items-center rounded p-2 ">
         <div class="flex pb-2 " style="color: black">
-          <h2 class="pr-3">Result</h2>
+          <h2 class="pr-3">
+            Résultat : </h2>
           <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
                v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
         </div>
@@ -52,10 +53,10 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
       </div>
       <!-- Footer with Buttons -->
       <div class="flex justify-end gap-2">
-        <Button class="button button-prev mr-1" label="Cancel" size="small" @click="onCancel()"/>
+        <Button class="button button-prev mr-1" label="Annuler" size="small" @click="onCancel()"/>
         <Button
           class="button"
-          label="Confirm"
+          label="Confirmer"
           size="small"
           @click="onFinished()"
         />
