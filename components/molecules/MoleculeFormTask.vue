@@ -1,60 +1,61 @@
 <template>
-    <Dialog
-:visible="dialogVisible" modal header="Nouvelle tâche" :style="{ width: 'fit-content' }" class="bg-white "
-      @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
-      <Stepper>
-        <StepperPanel header="Informations">
-        <template #content="{nextCallback}" >
+  <Dialog
+    :visible="dialogVisible" modal header="Nouvelle tâche" :style="{ width: 'fit-content' }" class="bg-white "
+    @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
+    <Stepper>
+      <StepperPanel header="Informations">
+        <template #content="{nextCallback}">
           <div class=" grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
             <span class="text-slate-400 ">Entrez la configuration de la tâche</span>
             <div class="flex">
               <label class="self-center basis-1/5 pr-4">Titre</label>
-              <InputText v-model="name" placeholder="Entrez le titre de la tâche" autocomplete="off" class="input-box flex-auto custom-placeholder" />
+              <InputText v-model="name" placeholder="Entrez le titre de la tâche" autocomplete="off"
+                         class="input-box flex-auto custom-placeholder"/>
             </div>
             <div class="flex">
               <label class="self-center basis-1/5 pr-4">Instruction</label>
               <InputText
-v-model="instruction" placeholder="Entrez l'instruction de tâche" autocomplete="off"
-                class="flex-auto input-box custom-placeholder" />
+                v-model="instruction" placeholder="Entrez l'instruction de tâche" autocomplete="off"
+                class="flex-auto input-box custom-placeholder"/>
             </div>
             <div class="grid grid-cols-2 flex justify-between">
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1">Type de données</label>
-                <Dropdown class="custom-dropdown" v-model="dataType"  :options="Object.values(TaskDataType)" placeholder="" />
+                <Dropdown class="custom-dropdown" v-model="dataType" :options="Object.values(TaskDataType)"
+                          placeholder=""/>
               </div>
               <div class="flex">
-              <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
-              <Dropdown class="custom-dropdown" v-model="status"  :options="translatedTaskStatus" optionLabel="label" placeholder="" />
+                <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
+                <Dropdown class="custom-dropdown" v-model="status" :options="translatedTaskStatus" optionLabel="label"
+                          placeholder=""/>
               </div>
             </div>
           </div>
-            <div class="flex justify-end pt-5">
-              <Button
-                class="button"
-                icon="pi pi-arrow-right" icon-pos="left"
-                label="Suivant"
-                size="small"
-                @click="nextCallback"
-              />
-            </div>
+          <div class="flex justify-end pt-5">
+            <Button
+              class="button"
+              icon="pi pi-arrow-right" icon-pos="left"
+              label="Suivant"
+              size="small"
+              @click="nextCallback"
+            />
+          </div>
         </template>
 
-        </StepperPanel>
-        <StepperPanel header="Données">
-        <template #content="{prevCallback}" >
-            <div class="grid grid-cols-1 w-[70vh] gap-3">
+      </StepperPanel>
+      <StepperPanel header="Données">
+        <template #content="{prevCallback}">
+          <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Télécharger des tâches </span>
-              <FileUpload
-ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
-                invalid-file-type-message="Type invalide" auto name="file[]" :pt="{
+            <FileUpload chooseLabel="Télécharger"
+              ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
+              invalid-file-type-message="Type invalide" auto name="file[]" :pt="{
                   buttonbar: {
                     style: `z-index:20; padding-top: 10px; padding-bottom: 10px;`
                   },
                   content: {
                     style: ''
                   },
-                                    chooseButtonLabel: 'Télécharger',
-
                     chooseButton: {
                     style: `font-size: 14px;
   font-family: Lato,sans-serif;
@@ -63,36 +64,37 @@ ref="templateRef" accept="application/json" :show-upload-button=false :show-canc
   padding: 8px 12px;
   border-radius: 4px;
   color: #FFFFFF;
-  background-color: #0B7698; `
-                  },
-
-
+  background-color: #0B7698;`,
+                  }
                 }" @upload="onUpload($event)" @error="onUpload($event)">
-                <template #empty="">
+              <template #empty="">
 
-                  <div class="flex items-center justify-content-center flex-col">
-                    <span class="pi pi-file-arrow-up align-center " style="font-size: 2.5rem" />
-                    <p class="text-xs pt-3 text-slate-400 ">Téléchargez un fichier JSON</p>
-                  </div>
-                </template>
+                <div class="flex items-center justify-content-center flex-col">
+                  <span class="pi pi-file-arrow-up align-center " style="font-size: 2.5rem"/>
+                  <p class="text-xs pt-3 text-slate-400 ">Téléchargez un fichier JSON</p>
+                </div>
+              </template>
 
-                <template #content="{ uploadedFiles, removeUploadedFileCallback }"  >
-                  <div  class="flex flex-col gap-2">
-                    <div
-v-for="(file, index) in uploadedFiles" :key="index"
-                      class="grid grid-cols-8 gap-2 px-1 items-center">
-                      <span class="pi pi-file self-center w-2" />
-                      <p v-tooltip.top="file.name" class="text-ellipsis text-nowrap col-span-4 overflow-hidden ">
-                        {{ file.name }}
-                      </p>
-                      <p v-if="file.size < 1024" class="text-slate-400 text-xs text-nowrap col-span-2   ">{{
-                        file.size }} B</p>
-                      <p v-else class="text-slate-400 text-xs text-nowrap col-span-2  ">{{ Math.round(file.size /
-                        1024) }} KB
-                      </p>
-                      <Button
-icon="pi pi-times" text rounded size="small" severity="danger"
-                        class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
+              <template #content="{ uploadedFiles, removeUploadedFileCallback }">
+                <div class="flex flex-col gap-2">
+                  <div
+                    v-for="(file, index) in uploadedFiles" :key="index"
+                    class="grid grid-cols-8 gap-2 px-1 items-center">
+                    <span class="pi pi-file self-center w-2"/>
+                    <p v-tooltip.top="file.name" class="text-ellipsis text-nowrap col-span-4 overflow-hidden ">
+                      {{ file.name }}
+                    </p>
+                    <p v-if="file.size < 1024" class="text-slate-400 text-xs text-nowrap col-span-2   ">{{
+                        file.size
+                      }} B</p>
+                    <p v-else class="text-slate-400 text-xs text-nowrap col-span-2  ">{{
+                        Math.round(file.size /
+                          1024)
+                      }} KB
+                    </p>
+                    <Button
+                      icon="pi pi-times" text rounded size="small" severity="danger"
+                      class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
                           root: {
                             style: 'justify-content: center; justify-items: center; place-self: center;'
                           },
@@ -103,144 +105,148 @@ icon="pi pi-times" text rounded size="small" severity="danger"
                         removeUploadedFileCallback(index)
                         _.remove(fileData,(file,indexFile) => indexFile != index )
                         }
-                        " />
-                    </div>
+                        "/>
                   </div>
+                </div>
 
-                </template>
+              </template>
 
-              </FileUpload>
+            </FileUpload>
 
-            </div>
+          </div>
 
-            <div class="flex justify-between pt-8">
-              <Button class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="prevCallback"/>
-              <Button
-                class="button"
-                icon="pi pi-check" icon-pos="left"
-                label="Créer"
-                size="small"
-                @click="createTask"
-              />
-            </div>
+          <div class="flex justify-between pt-8">
+            <Button class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left"
+                    size="small" @click="prevCallback"/>
+            <Button
+              class="button"
+              icon="pi pi-check" icon-pos="left"
+              label="Créer"
+              size="small"
+              @click="createTask"
+            />
+          </div>
         </template>
 
-        </StepperPanel>
-      </Stepper>
-      <Toast />
-    </Dialog>
+      </StepperPanel>
+    </Stepper>
+    <Toast/>
+  </Dialog>
 </template>
 
 
 <script setup>
 
-  import { TaskStatus, TaskService,TaskDataType, MediaService, AnnotationService, AnnotationStatus} from '~/api/generate';
-  import { useRefreshStore , useAuth } from '#imports';
-    import _ from 'lodash';
+import {TaskStatus, TaskService, TaskDataType, MediaService, AnnotationService, AnnotationStatus} from '~/api/generate';
+import {useRefreshStore, useAuth} from '#imports';
+import _ from 'lodash';
 
-  const refreshStore = useRefreshStore()
-  const authStore = useAuth()
-  const emits = defineEmits(['toggle-dialog', 'refreshData'])
-  const { dialogVisible, stepObject } = defineProps(['dialogVisible','stepObject' ])
-  const { fetchTasks } = refreshStore
-  const { userEmail } = storeToRefs(authStore)
+const refreshStore = useRefreshStore()
+const authStore = useAuth()
+const emits = defineEmits(['toggle-dialog', 'refreshData'])
+const {dialogVisible, stepObject} = defineProps(['dialogVisible', 'stepObject'])
+const {fetchTasks} = refreshStore
+const {userEmail} = storeToRefs(authStore)
 
-  const toast = useToast()
+const toast = useToast()
 
-  const templateRef= ref()
-  const translations = {
-    draft: 'Brouillon',
-    pending: 'En attente',
-    ended: 'Terminé'
-  }
-  const translatedTaskStatus = $computed(() => {
-    return Object.values(TaskStatus).map(status => ({
-      label: translations[status],
-      value: status,
-    }));
-  })
+const templateRef = ref()
+const translations = {
+  draft: 'Brouillon',
+  pending: 'En attente',
+  ended: 'Terminé'
+}
+const translatedTaskStatus = $computed(() => {
+  return Object.values(TaskStatus).map(status => ({
+    label: translations[status],
+    value: status,
+  }));
+})
 
-  const name = $ref()
-  const instruction = $ref()
-  const dataType = $ref(TaskDataType.LDD)
-  const status = $ref(translatedTaskStatus[0])
+const name = $ref()
+const instruction = $ref()
+const dataType = $ref(TaskDataType.LDD)
+const status = $ref(translatedTaskStatus[0])
 
-  const files = $ref([])
-  const fileData = $ref([])
-  const deleteDialog = $ref(false)
+const files = $ref([])
+const fileData = $ref([])
+const deleteDialog = $ref(false)
 
-  const onUpload = async (event) => {
-    const xhr = new XMLHttpRequest()
-    const formData = new FormData()
-    const file = event.files[0]
+const onUpload = async (event) => {
+  const xhr = new XMLHttpRequest()
+  const formData = new FormData()
+  const file = event.files[0]
 
 
+  formData.append("file", file)
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      let _this$uploadedFiles;
+    }
+  };
+  files.push(event.files);
+  const reader = new FileReader();
+  reader.onloadend = onReaderLoad;
+  reader.readAsText(event.files[0])
+}
 
-    formData.append("file", file)
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        let _this$uploadedFiles;
-      }
-    };
-    files.push(event.files);
-    const reader = new FileReader();
-    reader.onloadend = onReaderLoad;
-    reader.readAsText(event.files[0])
-  }
-
-  watchEffect(() => {
-    if (fileData.length > 1) {
-      for (let i = 1; i < fileData.length; i++) {
-        if (fileData[i].asset?.url !== fileData[i-1].asset.url) {
-          toast.add({life: 5000, severity: 'error', detail:'attention pas les meme medias', summary:"Oula bro t'es down bad ou quoi ?" } );
-          templateRef.value.removeUploadedFile(i)
-          fileData.pop()
-        }
+watchEffect(() => {
+  if (fileData.length > 1) {
+    for (let i = 1; i < fileData.length; i++) {
+      if (fileData[i].asset?.url !== fileData[i - 1].asset.url) {
+        toast.add({
+          life: 5000,
+          severity: 'error',
+          detail: 'attention pas les meme medias',
+          summary: "Oula bro t'es down bad ou quoi ?"
+        });
+        templateRef.value.removeUploadedFile(i)
+        fileData.pop()
       }
     }
-  });
-
-  const onReaderLoad = (event) => {
-    const obj = JSON.parse(event.target.result);
-    fileData.push(obj)
   }
+});
 
-  const createTask = async () => {
+const onReaderLoad = (event) => {
+  const obj = JSON.parse(event.target.result);
+  fileData.push(obj)
+}
 
-        MediaService.createMediaMediaPost({
-          url: fileData[0].asset.url,
-          type: fileData[0].asset.media_type
-      }).then((res)=> {
-        TaskService.createTaskTaskPost({
-          name: name,
-          instruction: instruction,
-          data_type: dataType,
-          status: status.value,
-          lead_time: null,
-          step_id: stepObject.id,
-          media_id: res.id
-          }).catch((err) => console.error(err)).then((res) => {
-            fileData.forEach(file => {
-              AnnotationService.createAnnotationAnnotationPost({
-                annotation: {
-                  user_email : userEmail.value,
-                  annotation_status: AnnotationStatus.DRAFT,
-                  version: 0,
-                  result: file,
-                  task_id: res.id
-                },
-                association: {
-                  annotation_id : 0,
-                  task_id: res.id,
-                  direction: 'in'
-                }
-              })
-            })
-         }).then(() => fetchTasks(stepObject.project_id))
-    })
-    emits('toggle-dialog')
-  }
+const createTask = async () => {
 
+  MediaService.createMediaMediaPost({
+    url: fileData[0].asset.url,
+    type: fileData[0].asset.media_type
+  }).then((res) => {
+    TaskService.createTaskTaskPost({
+      name: name,
+      instruction: instruction,
+      data_type: dataType,
+      status: status.value,
+      lead_time: null,
+      step_id: stepObject.id,
+      media_id: res.id
+    }).catch((err) => console.error(err)).then((res) => {
+      fileData.forEach(file => {
+        AnnotationService.createAnnotationAnnotationPost({
+          annotation: {
+            user_email: userEmail.value,
+            annotation_status: AnnotationStatus.DRAFT,
+            version: 0,
+            result: file,
+            task_id: res.id
+          },
+          association: {
+            annotation_id: 0,
+            task_id: res.id,
+            direction: 'in'
+          }
+        })
+      })
+    }).then(() => fetchTasks(stepObject.project_id))
+  })
+  emits('toggle-dialog')
+}
 
 
 </script>

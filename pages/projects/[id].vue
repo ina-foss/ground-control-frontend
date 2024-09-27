@@ -45,11 +45,12 @@
             <Button
               style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
               outlined label="Créer un task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
-            <div  class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
+            <div
+class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
                   @click="clickButtonMenu($event,slotProps.data) ">
             <Button
-              label="Exporter" size="small" severity="secondary" text></Button>
-            <img style="fill: black" width="15px" height="15px" src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg"/>
+              label="Exporter" size="small" severity="secondary" text/>
+            <img style="fill: black" width="15px" height="15px" src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg">
           </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
@@ -65,7 +66,7 @@
         </template>
       </Column>
       <Column :row-editor="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"/>
-      <template #expansion="slotProps" style="background-color: black">
+      <template #expansion="slotProps">
         <div class="p-6 border-surface-200 border-4">
           <DataTable
             class="overflow-scroll p-5"
@@ -120,7 +121,8 @@
             <Column header="Données">
               <template #body="">
 
-                <Button size="small" severity="secondary"
+                <Button
+size="small" severity="secondary"
                         style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
                         outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
 
@@ -137,7 +139,8 @@
     <Dialog v-model:visible="visible" modal @hide="visible = false">
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>
-    <MoleculeFormTask :dialog-visible="dialogVisible" :step-object="formStepClick"
+    <MoleculeFormTask
+:dialog-visible="dialogVisible" :step-object="formStepClick"
                       @toggle-dialog="dialogVisible=false"/>
   </div>
 

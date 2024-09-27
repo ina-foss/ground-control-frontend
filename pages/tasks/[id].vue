@@ -105,7 +105,7 @@ const submitExistantAnnotation =(locals,action)=>{
     promise.then(() => {
       toast.add({
         severity: 'info',
-        detail: action === "submit" ? 'Annotation has been updated' : 'Annotation has been ended',
+        detail: action === "submit" ? 'Cette annotation a été mise à jour' : 'Cette annotation est terminée',
         life: 4000
       })
       if (action === "end") {
@@ -151,7 +151,7 @@ const submitNewAnnotation =(locals,action)=>{
       toast.add(
         {
           severity: 'info',
-          detail: action === "submit" ? 'Annotation created' : 'Annotation created and ended',
+          detail: action === "submit" ? 'Annotation créée' : 'Annotation créée et terminée',
           life: 5000
         })
       if (action === "end") {
