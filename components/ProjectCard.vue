@@ -60,12 +60,9 @@ v-model="description" placeholder="Enter a new task description" autocomplete="o
       <div class="flex justify-between justify-items-stretch pl-2 pt-1 items-center text-sm">
         <div class="flex justify-between items-center  justify-items-stretch gap-3">
           <span class="">{{ project.steps.length }} <i class="pi pi-list-check " /></span>
-          <Tag class="mb-1 scale-90" :class="statusSeverity">{{ project.status}}</Tag>
+          <Tag class="mb-1 scale-90" :class="statusSeverity">{{ translatedProjectStatus(project.status)}}</Tag>
         </div>
         <div class="flex justify-between justify-items-stretch gap-3">
-          <span>1/{{ }} </span>
-          <span>2 <i class="pi pi-flag-fill" style="color:red" /> </span>
-          <span>{{ $props.project.total_users_with_annotations }} <i class="pi pi-users" /></span>
         </div>
       </div>
       <hr>
@@ -85,7 +82,7 @@ v-model="description" placeholder="Enter a new task description" autocomplete="o
 <script setup>
 import { bcStore } from '~/stores/breadcrumbs';
 import { defineEmits } from 'vue';
-import {ProjectService} from '~/api/generate';
+import {ProjectService, TaskStatus} from '~/api/generate';
 import { useAuth } from '../stores/auth';
 import { storeToRefs } from 'pinia';
 import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
@@ -97,6 +94,15 @@ const store = bcStore()
 const { project } = defineProps(['project'])
 const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore)
+const translations = {
+  draft: 'Brouillon',
+  pending: 'En attente',
+  ended: 'Terminé'
+}
+
+const translatedProjectStatus =(project_status)=> {
+  return translations[project_status]
+}
 
 const navigate = () =>{
   store.addCrumb({ label: project.title, route: `/projects/${project.id}` })
