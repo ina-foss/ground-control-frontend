@@ -13,7 +13,7 @@
         style: { backgroundColor: 'black', color: 'white' }
       },
       style: 'height:88px'
-    }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit" edit-mode="cell"
+    }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit"
        @row-expand="expandMode = true"
       @cell-edit-complete="onCellEditComplete">
       <Column expander style="width: 5rem;"/>
@@ -28,7 +28,7 @@
           <InputText v-model="data.tasks[index].name" style="width : 100% ; min-width: 70px; "/>
         </template>
         <template #body="slotProps">
-          <p class="cursor-text	" @click="editMode = true"> {{ slotProps.data.title }}</p>
+          <p class="cursor-text	"> {{ slotProps.data.title }}</p>
         </template>
       </Column>
       <Column field="id" header="ID" style="width: 40px;"/>
@@ -71,7 +71,6 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
           <DataTable
             class="overflow-scroll p-5"
             unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
-            edit-mode="cell"
             table-style="background-color: white" @row-click="handleRowClick($event)"
             @cell-edit-complete="onCellEditComplete">
             <Column field="name" header="Titre" style="width : 8rem ; min-width: 70px; ">
@@ -81,10 +80,9 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
                   style="width : 100% ; min-width: 70px; "/>
               </template>
               <template #body="{ data: nestedData }">
-                <p class="cursor-text	" @click="editMode = true"> {{ nestedData.name }}</p>
+                <p class="cursor-text	"> {{ nestedData.name }}</p>
               </template>
             </Column>
-            <Column field="id" header="ID" style="width: 40px;"/>
             <Column field="annotations.length" sortable style="width: 3rem;">
               <template #header><i v-tooltip="'Nombre total annotations'" class="pi pi-star cursor-help"/></template>
               <template #body="{ data: nestedData }">
@@ -302,7 +300,7 @@ const handleRowClick = (event) => {
   clickedRowData.value = event.data;
   store.addCrumb({label: clickedRowData.value.name, route: `/tasks/${clickedRowData.value.id}`})
 
-  if (editMode.value == false) navigateToTask(clickedRowData.value.id)
+  if (editMode.value === false) navigateToTask(clickedRowData.value.id)
 
 
 }
