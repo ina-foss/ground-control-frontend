@@ -108,15 +108,12 @@ const handleSegmentation = () => {
       const randomColor = generatePastelColor(props.index + 1)
       newColors[1] = (randomColor)
       newTopics[props.index] = 1
-      topicIndex.value = 1
     } else {
       newTopics[props.index] = 0;
-      topicIndex.value = 0
     }
   } else if (topicIndex.value < props.topics[props.index - 1]) { //On rattrape le topic precedent
     if (newTopics[props.index - 1] !== undefined) {
       newTopics[props.index] = props.topics[props.index - 1]
-      topicIndex.value = props.topics[props.index]
 
     } else {
       toast.add({ severity: "info", detail: "Can't modify this sentence" })
@@ -124,14 +121,13 @@ const handleSegmentation = () => {
 
   } else if (topicIndex.value === newColors.length - 1 && (props.topics[props.index - 1] === topicIndex.value)) { // On cree un nouveau topic
     //new topic
-    const randomColor = generatePastelColor(props.index + 1)
+    const randomColor = generatePastelColor(newColors.length)
     newColors.push(randomColor)
     newTopics[props.index]++
 
   } else if (topicIndex.value < newColors.length - 1  &&  topicIndex.value !=  props.topics[props.index+ 1] ) { // On itere parmi les topics existants
     newTopics[props.index]++
   } else if (topicIndex.value !== 0) { // Reset du topic a 0
-    newColors.pop()
     newTopics[props.index] = 0;
   }
 
