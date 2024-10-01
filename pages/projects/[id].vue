@@ -1,8 +1,10 @@
 <template>
-  <div class="bg-black" >
+  <div v-if="!data.title">
+    <LoadingSpinner/>
+  </div>
+  <div v-else>
 
     <DataTable
-      v-if="data.steps?.length > 0"
       v-model:expanded-rows="expandedRows" class="overflow-scroll-full custom-data-table" :context-menu=true :pt="{
       column: {
         bodycell:({ state }) => ({
@@ -16,6 +18,12 @@
     }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit"
        @row-expand="expandMode = true"
       @cell-edit-complete="onCellEditComplete">
+      <template #empty style="backgroundColor: white">
+        <div class="bg-white h-[calc(100vh-300px)] w-full flex flex-col gap-10 items-center justify-center ">
+          <i class="pi pi-ellipsis-h opacity-30  scale-[1000%]"></i>
+          <h1 class="text-xl font-bold">Ce projet ne comporte aucune etapes</h1>
+        </div>
+      </template>
       <Column expander style="width: 5rem;"/>
       <Column
         :pt="{
@@ -131,9 +139,6 @@ size="small" severity="secondary"
       </template>
 
     </DataTable>
-    <div v-else class="min-h-[calc(100vh-52px)] bg-white items-center justify-center flex flex-col">
-      <LoadingSpinner/>
-    </div>
     <Dialog v-model:visible="visible" modal @hide="visible = false">
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>
