@@ -72,7 +72,7 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
             class="overflow-scroll p-5"
             unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             table-style="background-color: white" @row-click="handleRowClick($event)"
-            @cell-edit-complete="onCellEditComplete">
+           >
             <Column field="name" header="Titre" style="width : 8rem ; min-width: 70px; ">
               <template #editor="{ index: nestedIndex }">
                 <InputText
@@ -298,7 +298,14 @@ const stepCreate = (stepId) => {
 
 const handleRowClick = (event) => {
   clickedRowData.value = event.data;
-  store.addCrumb({label: clickedRowData.value.name, route: `/tasks/${clickedRowData.value.id}`})
+  if (localStorage.getItem('breadcrumbItems')) {
+
+      const breadcrumbItems = JSON.parse(localStorage.getItem('breadcrumbItems'));
+    if( !breadcrumbItems.some(item => item.label === clickedRowData.value.name)){
+      store.addCrumb({label: clickedRowData.value.name, route: `/tasks/${clickedRowData.value.id}`})
+
+    }
+    }
 
   if (editMode.value === false) navigateToTask(clickedRowData.value.id)
 
