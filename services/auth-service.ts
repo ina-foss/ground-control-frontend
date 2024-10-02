@@ -1,12 +1,14 @@
 import type { User} from "oidc-client-ts";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import { getApplicationConfiguration } from "./dynamic-configuration-service";
+import { OpenAPI } from "~/api/generate";
 
 export default class AuthService {
     private userManager!: UserManager;
 
     constructor() {
         this.initializedOidc();
+        this.setupInterceptor();
     }
 
     private initializedOidc() {
@@ -26,6 +28,16 @@ export default class AuthService {
         } catch (error) {
             console.error(error);
         }
+    }
+
+    private setupInterceptor() {
+      OpenAPI.interceptors.response.use( async (response) => {
+        console.log(response.status)
+          if (response.status == 401){
+            await this.userManager.signinRedirect()
+        }
+        return response
+      })
     }
 
     public signInRedirect() {
