@@ -47,9 +47,11 @@ const annotationComponent = $computed(() => {
 })
 
 onBeforeRouteLeave((to,from)=>{
+  console.log(window.onbeforeunload)
   if(window.onbeforeunload != null) {
     const answer = window.confirm("Vous n'avez pas sauvegarder votre travail. Voulez-vous quitter cette page ?")
-    if (!answer) return false
+    if (answer) window.onbeforeunload = null
+    return answer
   }
   else return true
 })
