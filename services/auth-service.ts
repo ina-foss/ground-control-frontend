@@ -8,7 +8,6 @@ export default class AuthService {
 
     constructor() {
         this.initializedOidc();
-        this.setupInterceptor();
     }
 
     private initializedOidc() {
@@ -25,22 +24,15 @@ export default class AuthService {
                 loadUserInfo: true,
             };
             this.userManager = new UserManager(settings);
+            this.userManager.events.addAccessTokenExpired(()=>  signInRedirect())
+      console.log(this.userManager.events)
         } catch (error) {
             console.error(error);
         }
     }
 
-    private setupInterceptor() {
-      OpenAPI.interceptors.response.use( async (response) => {
-        console.log(response.status)
-          if (response.status == 401){
-            await this.userManager.signinRedirect()
-        }
-        return response
-      })
-    }
-
     public signInRedirect() {
+    console.log('redirect')
       if (window.location.search.search('state=') === -1) {
         return this.userManager.signinRedirect();
       }
