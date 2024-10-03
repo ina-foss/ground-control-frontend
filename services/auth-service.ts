@@ -24,7 +24,7 @@ export default class AuthService {
                 loadUserInfo: true,
             };
             this.userManager = new UserManager(settings);
-            this.userManager.events.addAccessTokenExpired(()=>  signInRedirect())
+            this.userManager.events.addAccessTokenExpired(()=>  this.userManager.signinRedirect())
         } catch (error) {
             console.error(error);
         }
