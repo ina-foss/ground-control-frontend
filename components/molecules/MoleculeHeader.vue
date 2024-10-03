@@ -37,6 +37,7 @@ const { $application } = useService();
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
+console.log(isAdmin.value)
 </script>
 <style>
 .button{
