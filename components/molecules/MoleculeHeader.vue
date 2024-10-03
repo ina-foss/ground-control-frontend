@@ -12,7 +12,7 @@
       <div class="mr-4">
       <Button
         class="button"
-        v-if="$route.name == 'dashboard'"
+        v-if="isAdmin && $route.name == 'dashboard'"
         label="Nouveau projet"
         size="small"
         @click="dialogVisible = true"
@@ -34,7 +34,6 @@ import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
 const dialogVisible = ref(false);
 const { $application } = useService();
-// const roles = $application.getUserRoles();
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
