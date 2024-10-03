@@ -7,7 +7,7 @@
 
     <!-- Input to switch between player -->
     <div class=" flex items-center text-surface-0 gap-3 justify-center pt-3">
-      <InputSwitch class="custom-inputswitch" v-model="activePlayer"   />
+      <InputSwitch v-model="activePlayer" class="custom-inputswitch"    />
       <b>Amalia Player</b>
     </div>
 

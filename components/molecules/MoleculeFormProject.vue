@@ -114,14 +114,16 @@ const translations = {
   ended: 'Terminé'
 }
 const translatedProjectStatus = $computed(() => {
-  return Object.values(TaskStatus).map(status => ({
+  return Object.values(ProjectStatus).map(status => ({
     label: translations[status],
     value: status,
   }));
 })
+const first = ref(0)
+const rows = ref(15)
 let title = $ref(project?.title || '')
 let description = $ref(project?.description || '')
-let status = $ref(project?.status.value || translatedProjectStatus[0])
+let status = $ref(translatedProjectStatus.find(x=>x.value ===project?.status)|| translatedProjectStatus[0])
 let isPublished = $ref(project?.is_published || false)
 let allowSkip = $ref(project?.allow_skip || false)
 let emptyAnnotations = $ref(project?.empty_annotations || false)
@@ -166,7 +168,7 @@ const updateProject = async () => {
         }
       });
       emits('toggle-dialog');
-      refreshStore.fetchProject();
+      await refreshStore.fetchProject(first.value, rows.value);
     } catch (error) {
       toast.add({severity: 'error', detail: 'Project could not be updated', summary: 'Something went wrong'});
     }
@@ -206,10 +208,10 @@ const createProject = async () => {
             project_id: res.id
           }).catch((err) => console.error(err))
         })
-        // reset dialog values of create new
+        // reset dialog values of create new project
         title = '',
           description = '',
-          status = ProjectStatus.DRAFT,
+          status = translatedProjectStatus[0],
           isPublished = false,
           allowSkip = false,
           emptyAnnotations = false,
@@ -217,7 +219,7 @@ const createProject = async () => {
 
         emits('toggle-dialog')
 
-        refreshStore.fetchProject()
+        refreshStore.fetchProject(first.value, rows.value)
 
       })
   }

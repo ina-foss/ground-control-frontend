@@ -163,10 +163,10 @@ const translatedTaskStatus = $computed(() => {
   }));
 })
 
-const name = $ref()
-const instruction = $ref()
-const dataType = $ref(TaskDataType.LDD)
-const status = $ref(translatedTaskStatus[0])
+let name = $ref()
+let instruction = $ref()
+let dataType = $ref(TaskDataType.LDD)
+let status = $ref(translatedTaskStatus[0])
 
 const files = $ref([])
 const fileData = $ref([])
@@ -244,7 +244,14 @@ const createTask = async () => {
         })
       })
     }).then(() => fetchTasks(stepObject.project_id))
+      .then(  // reset dialog values of create new task
+        name= '',
+        instruction= '',
+        dataType = TaskDataType.LDD,
+        status = translatedTaskStatus[0])
   })
+
+
   emits('toggle-dialog')
 }
 
