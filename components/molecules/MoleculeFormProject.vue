@@ -119,8 +119,6 @@ const translatedProjectStatus = $computed(() => {
     value: status,
   }));
 })
-const first = ref(0)
-const rows = ref(15)
 let title = $ref(project?.title || '')
 let description = $ref(project?.description || '')
 let status = $ref(translatedProjectStatus.find(x=>x.value ===project?.status)|| translatedProjectStatus[0])
@@ -168,7 +166,8 @@ const updateProject = async () => {
         }
       });
       emits('toggle-dialog');
-      await refreshStore.fetchProject(first.value, rows.value);
+      await refreshStore.fetchProject();
+      await refreshStore.totalRecords();
     } catch (error) {
       toast.add({severity: 'error', detail: 'Project could not be updated', summary: 'Something went wrong'});
     }
@@ -219,9 +218,9 @@ const createProject = async () => {
 
         emits('toggle-dialog')
 
-        refreshStore.fetchProject(first.value, rows.value)
-
-      })
+        refreshStore.fetchProject() // Pas de parametre = on refetch avec le precedent skip value
+        refreshStore.totalRecords();
+    })
   }
 }
 
