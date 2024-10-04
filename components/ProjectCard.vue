@@ -70,6 +70,8 @@ const store = bcStore()
 const { project } = defineProps(['project'])
 const authStore = useAuth()
 const { userEmail } = storeToRefs(authStore)
+const first = ref(0)
+const rows = ref(15)
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
@@ -101,9 +103,7 @@ const statusSeverity = computed(() =>{
   }
 })
 
-const title = ref(project.title)
 
-const description = ref(project.description)
 defineEmits(['refreshData']);
 const refreshStore = useRefreshStore()
 
@@ -111,7 +111,8 @@ const deleteProject = async () => {
   try {
     await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
     navigateTo(`/dashboard`);
-    await refreshStore.fetchProject();
+
+    await refreshStore.fetchProject(first.value, rows.value)
     deleteDialog.value= false
   } catch (err) {
     console.error("Error deleting project:", err);
