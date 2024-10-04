@@ -32,7 +32,6 @@ const rows = ref(15)
 let totalRecords = 20;
 
 const dashboardRef = ref()
-
 const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
 

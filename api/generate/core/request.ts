@@ -291,32 +291,37 @@ export const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): 
  * @throws ApiError
  */
 export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): CancelablePromise<T> => {
-    return new CancelablePromise(async (resolve, reject, onCancel) => {
-        try {
-            const url = getUrl(config, options);
-            const formData = getFormData(options);
-            const body = getRequestBody(options);
-            const headers = await getHeaders(config, options);
+	return new CancelablePromise(async (resolve, reject, onCancel) => {
+		try {
+			const url = getUrl(config, options);
+			const formData = getFormData(options);
+			const body = getRequestBody(options);
+			const headers = await getHeaders(config, options);
 
-            if (!onCancel.isCancelled) {
-                const response = await sendRequest(config, options, url, body, formData, headers, onCancel);
-                const responseBody = await getResponseBody(response);
-                const responseHeader = getResponseHeader(response, options.responseHeader);
+			if (!onCancel.isCancelled) {
+				let response = await sendRequest(config, options, url, body, formData, headers, onCancel);
 
-                const result: ApiResult = {
-                    url,
-                    ok: response.ok,
-                    status: response.status,
-                    statusText: response.statusText,
-                    body: responseHeader ?? responseBody,
-                };
+				for (const fn of config.interceptors.response._fns) {
+					response = await fn(response);
+				}
 
-                catchErrorCodes(options, result);
+				const responseBody = await getResponseBody(response);
+				const responseHeader = getResponseHeader(response, options.responseHeader);
 
-                resolve(result.body);
-            }
-        } catch (error) {
-            reject(error);
-        }
-    });
+				const result: ApiResult = {
+					url,
+					ok: response.ok,
+					status: response.status,
+					statusText: response.statusText,
+					body: responseHeader ?? responseBody,
+				};
+
+				catchErrorCodes(options, result);
+
+				resolve(result.body);
+			}
+		} catch (error) {
+			reject(error);
+		}
+	});
 };

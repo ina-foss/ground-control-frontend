@@ -17,6 +17,6 @@ import AtomLogo from "~/components/atoms/AtomLogo.vue";
   margin-left: auto;
   margin-right: auto;
   padding: 10px;
-  width: auto;
+  width: 120px;
 }
 </style>

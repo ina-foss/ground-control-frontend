@@ -31,6 +31,7 @@ export default class AuthService {
     }
 
     public signInRedirect() {
+    console.log('redirect')
       if (window.location.search.search('state=') === -1) {
         return this.userManager.signinRedirect();
       }
