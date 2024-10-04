@@ -35,7 +35,6 @@ import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
 const dialogVisible = ref(false);
 const { $application } = useService();
-// const roles = $application.getUserRoles();
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
