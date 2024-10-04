@@ -41,12 +41,16 @@
       type: Array,
       default: () => []
     },
+    topics: {
+      type: Array,
+      default: ()=>[]
+    },
     videoSrc: {
       type: String,
       default: ''
     }
   });
-const { locals, colors, videoSrc } = props;
+const { locals, colors, topics, videoSrc } = props;
 
   const AtomVideoHlsRef = $ref()
 

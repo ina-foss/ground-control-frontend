@@ -72,7 +72,7 @@
   const emits = defineEmits([ 'submit-annotation', 'refresh-data' ]);
 
   let colors = $ref(['#BEBEBE'])
-  const topics = $ref([])
+  let topics = $ref([])
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
