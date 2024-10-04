@@ -9,22 +9,23 @@
       </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="js">
 
-  interface Props {
-    colors: Array<string>
-  }
+  import _ from 'lodash';
 
-  const { colors } = defineProps<Props>()
+
+  const { colors, topics } = defineProps(['colors','topics'])
+
 
   const cleanedColors = $computed(()=>{ // delete the first element
     const cleaned = {}
-
     colors.forEach((color,index)=>{
-      if (index != 0){
+      if (index != 0 && _.findIndex(topics,(el)=> el == index) != -1 ) {
         cleaned[index]= color
       }
     })
     return cleaned
   })
+
+
 </script>

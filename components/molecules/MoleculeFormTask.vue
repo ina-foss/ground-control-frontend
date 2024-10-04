@@ -49,7 +49,7 @@
             <span class="text-slate-400 "> Télécharger des tâches </span>
             <FileUpload chooseLabel="Télécharger"
               ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
-              invalid-file-type-message="Type invalide" auto name="file[]" :pt="{
+              invalid-file-type-message="Type invalide"  name="file[]" :pt="{
                   buttonbar: {
                     style: `z-index:20; padding-top: 10px; padding-bottom: 10px;`
                   },
@@ -66,7 +66,7 @@
   color: #FFFFFF;
   background-color: #0B7698;`,
                   }
-                }" @upload="onUpload($event)" @error="onUpload($event)">
+                }" @select="onSelect($event)" @error="onSelect($event)">
               <template #empty="">
 
                 <div class="flex items-center justify-content-center flex-col">
@@ -75,10 +75,10 @@
                 </div>
               </template>
 
-              <template #content="{ uploadedFiles, removeUploadedFileCallback }">
+              <template #content="{files, uploadedFiles,removeFileCallback, removeUploadedFileCallback }">
                 <div class="flex flex-col gap-2">
                   <div
-                    v-for="(file, index) in uploadedFiles" :key="index"
+                    v-for="(file, index) in files"
                     class="grid grid-cols-8 gap-2 px-1 items-center">
                     <span class="pi pi-file self-center w-2"/>
                     <p v-tooltip.top="file.name" class="text-ellipsis text-nowrap col-span-4 overflow-hidden ">
@@ -102,7 +102,7 @@
                             style: 'max-width:24px'
                           }
                         }" @click="()=>{
-                        removeUploadedFileCallback(index)
+                        removeFileCallback(index)
                         _.remove(fileData,(file,indexFile) => indexFile != index )
                         }
                         "/>
@@ -163,31 +163,28 @@ const translatedTaskStatus = $computed(() => {
   }));
 })
 
-const name = $ref()
-const instruction = $ref()
-const dataType = $ref(TaskDataType.LDD)
-const status = $ref(translatedTaskStatus[0])
+let name = $ref()
+let instruction = $ref()
+let dataType = $ref(TaskDataType.LDD)
+let status = $ref(translatedTaskStatus[0])
 
 const files = $ref([])
 const fileData = $ref([])
 const deleteDialog = $ref(false)
 
-const onUpload = async (event) => {
-  const xhr = new XMLHttpRequest()
-  const formData = new FormData()
-  const file = event.files[0]
-
-
-  formData.append("file", file)
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      let _this$uploadedFiles;
-    }
-  };
-  files.push(event.files);
+const onSelect = async (event) => {
   const reader = new FileReader();
-  reader.onloadend = onReaderLoad;
-  reader.readAsText(event.files[0])
+  reader.onloadend = await onReaderLoad;
+  reader.readAsText(event.files[event.files.length-1])
+  if ( event.files.length == fileData.length){
+    fileData.pop()
+    toast.add({
+      life: 5000,
+      severity: 'error',
+      detail: "Impossible d'importer deux fois le même fichier",
+      summary: "Erreur d'import"
+    });
+  }
 }
 
 watchEffect(() => {
@@ -197,10 +194,10 @@ watchEffect(() => {
         toast.add({
           life: 5000,
           severity: 'error',
-          detail: 'attention pas les meme medias',
-          summary: "Oula bro t'es down bad ou quoi ?"
+          detail: "Toutes les transcriptions d'une tâches doivent concerner le même media",
+          summary: "Erreur d'import"
         });
-        templateRef.value.removeUploadedFile(i)
+        templateRef.value.remove(i)
         fileData.pop()
       }
     }
@@ -244,7 +241,14 @@ const createTask = async () => {
         })
       })
     }).then(() => fetchTasks(stepObject.project_id))
+      .then(  // reset dialog values of create new task
+        name= '',
+        instruction= '',
+        dataType = TaskDataType.LDD,
+        status = translatedTaskStatus[0])
   })
+
+
   emits('toggle-dialog')
 }
 

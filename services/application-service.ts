@@ -46,7 +46,6 @@ export default class ApplicationService {
     const config = getApplicationConfiguration();
     OpenAPI.BASE = config['apiBasePath'];
     OpenAPI.HEADERS = this.getDefaultHeader();
-    inject('OpenAPI', OpenAPI);
   }
 
   /**

@@ -7,11 +7,11 @@
 
     <!-- Input to switch between player -->
     <div class=" flex items-center text-surface-0 gap-3 justify-center pt-3">
-      <InputSwitch class="custom-inputswitch" v-model="activePlayer"   />
+      <InputSwitch v-model="activePlayer" class="custom-inputswitch"    />
       <b>Amalia Player</b>
     </div>
 
-    <AtomTopicList :colors="colors" />
+    <AtomTopicList :topics="topics" :colors="colors" />
     <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">Segmentation</h2>
       <p class="text-white p-3 md:block xs:hidden ">
         Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
@@ -50,12 +50,16 @@
       type: Array,
       default: () => []
     },
+    topics: {
+      type: Array,
+      default: ()=>[]
+    },
     videoSrc: {
       type: String,
       default: ''
     }
   });
-const { locals, colors, videoSrc } = props;
+const { locals, colors, topics, videoSrc } = props;
 
   const AtomVideoHlsRef = $ref()
 
