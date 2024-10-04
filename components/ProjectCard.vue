@@ -15,13 +15,13 @@
             </Button>
 <!--Confirmation dialog to delete-->
             <Dialog
-v-model:visible="deleteDialog" modal header="Are you sure you want to delete this project?" :style="{ width: '35rem' }" class="bg-white"
+v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?" :style="{ width: '30rem' }" class="bg-white"
                      @after-hide="deleteDialog = false">
               <div class=" grid grid-cols-1 gap-1">
                 <ButtonGroup class="justify-evenly flex items-center pt-6 ">
-                  <Button label="No" style="color: black; background-color:#0B7698" class="justify-self-center" @click="deleteDialog = false" />
-                  <Button v-if="deleteDialog === false" label="Delete" @click="deleteDialog = true" />
-                  <Button v-else label="Yes" style="color: black; background-color:#9ADC82" @click="deleteProject" />
+                  <Button label="Non" class="button button-prev mr-4" size="small" @click="deleteDialog = false" />
+                  <Button v-if="deleteDialog === false" class="button" size="small" label="Supprimer" @click="deleteDialog = true" />
+                  <Button v-else class="button" size="small" label="Oui" @click="deleteProject" />
                 </ButtonGroup>
               </div>
             </Dialog>
@@ -31,30 +31,6 @@ icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
             @click.stop.prevent="visible=true" />
 
           <MoleculeFormProject :dialog-visible="visible" :project="project" @toggle-dialog="visible=false"/>
-          <Dialog
-modal header="Tasks Settings" :style="{ width: '35rem' }" class="bg-white"
-            @hide="$emit('refreshData')" @after-hide="deleteDialog = false">
-            <div class=" grid grid-cols-1 grid-rows-3 gap-1">
-              <span class="text-slate-400 ">Modify task informations </span>
-              <div class="flex grid-cols-2 gap-3 align-items-center ">
-                <label class="self-center basis-1/4">Task name</label>
-                <InputText
-v-model="title" placeholder="Enter a new task name" autocomplete="off" class="flex-auto"
-                  size="small" />
-              </div>
-              <div class="flex gap-3 ">
-                <label class="self-center basis-1/4">Task description</label>
-                <InputText
-v-model="description" placeholder="Enter a new task description" autocomplete="off"
-                  class="flex-auto" />
-              </div>
-              <ButtonGroup class="justify-evenly flex items-center pt-6 ">
-                <Button label="Update" severity="info" class="justify-self-center" @click="updateProject" />
-                <Button v-if="deleteDialog === false" label="Delete" severity="danger" @click="deleteDialog = true" />
-                <Button v-else label="Sure ?" severity="danger" class="" @click="deleteProject" />
-              </ButtonGroup>
-            </div>
-          </Dialog>
         </p>
       </div>
       <div class="flex justify-between justify-items-stretch pl-2 pt-1 items-center text-sm">

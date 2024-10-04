@@ -37,7 +37,7 @@
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :topics="topics" :locals="locals" @scroll-to-segment="scrollToSegment" />
       <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
@@ -60,7 +60,7 @@
   const emits = defineEmits([ 'submit-annotation', 'refresh-data' ]);
 
   let colors = $ref(['#BEBEBE'])
-  const topics = $ref([])
+  let topics = $ref([])
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()

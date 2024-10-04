@@ -9,10 +9,8 @@
 
 
 <script setup>
-import { getApplicationConfiguration } from '~/services/dynamic-configuration-service';
 import AtomLogo from "~/components/atoms/AtomLogo.vue";
 
-const config = getApplicationConfiguration()
 </script>
 <style>
 .centered-icon{

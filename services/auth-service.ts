@@ -1,6 +1,7 @@
 import type { User} from "oidc-client-ts";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import { getApplicationConfiguration } from "./dynamic-configuration-service";
+import { OpenAPI } from "~/api/generate";
 
 export default class AuthService {
     private userManager!: UserManager;
@@ -23,6 +24,7 @@ export default class AuthService {
                 loadUserInfo: true,
             };
             this.userManager = new UserManager(settings);
+            this.userManager.events.addAccessTokenExpired(()=>  this.userManager.signinRedirect())
         } catch (error) {
             console.error(error);
         }
