@@ -46,14 +46,15 @@ const annotationComponent = $computed(() => {
 
 })
 
-onBeforeRouteLeave((to,from)=>{
-  console.log(window.onbeforeunload)
+onBeforeRouteLeave((to,from,next)=>{
   if(window.onbeforeunload != null) {
     const answer = window.confirm("Vous n'avez pas sauvegarder votre travail. Voulez-vous quitter cette page ?")
-    if (answer) window.onbeforeunload = null
-    return answer
+    if (answer) {
+      window.onbeforeunload = null;
+      next();
+    }
   }
-  else return true
+  else  next()
 })
 
 await fetchAnnotations(route.params.id)
