@@ -6,8 +6,10 @@
         @refresh-data="handleRefresh"/>
     </div>
     <div class="absolute bottom-16 w-full">
-    <Paginator style="background-color: #FFFFFF"
-v-model:first="first" class="sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="20"
+    <Paginator
+      v-model:first="first"
+      style="background-color: #FFFFFF"
+ class="sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="totalRecords"
                template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink"/>
   </div>
   </div>
@@ -25,29 +27,28 @@ const {fetchProject} = refreshStore
 const {getData} = storeToRefs(refreshStore)
 const store = bcStore()
 const {getItems} = storeToRefs(store)
-const first = ref(0)
-const rows = $ref(10)
+const first = ref(1)
+const rows = ref(15)
+let totalRecords = 20;
+
 const dashboardRef = ref()
-
-
-watchEffect(() => {
-  fetchProject(first.value, rows)
-})
-
-
 const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
-const savedItems = localStorage.getItem('breadcrumbItems');
-const parsedItems = JSON.parse(savedItems);
 
-fetchProject(first.value, rows).then(() => {
-  if (parsedItems === null) {
-    store.removeLastCrumb()
-  }
+const getTotalRecords=()=>{
+  refreshStore.totalRecords().then(result=>{
+    totalRecords = result
+  })
+}
+
+watch(first, () => {
+  fetchProject(first.value, rows.value)
+  getTotalRecords()
 })
 
 const handleRefresh = async () => {
-  await fetchProject(first.value, rows)
+  await fetchProject(first.value, rows.value)
+  getTotalRecords()
 }
 
 const sortDataById = computed(() => {
@@ -56,8 +57,12 @@ const sortDataById = computed(() => {
     return []
   }
 )
-
+watchEffect(() => {
+  fetchProject(first.value, rows.value)
+  getTotalRecords()
+})
 onMounted(() => {
+  getTotalRecords()
 })
 
 while (getItems.value.length > 0) store.removeLastCrumb()

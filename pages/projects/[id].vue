@@ -350,7 +350,7 @@ const openDialog = (data) => {
 }
 
 .overflow-scroll-full {
-  max-height: 90vh;
+  max-height: 80vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
