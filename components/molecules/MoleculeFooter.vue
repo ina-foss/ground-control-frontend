@@ -1,5 +1,5 @@
 <template>
-  <div class="bottom-0 text-sm fixed bg-black text-white h-[70px] w-full" >
+  <div class="bottom-0 text-sm flex fixed bg-black text-white h-[70px] w-full " >
     <div class="centered-icon">
       <AtomLogo size="md" />
     </div>

@@ -1,8 +1,10 @@
 <template>
-  <div class="bg-black" >
+  <div v-if="!data.title">
+    <LoadingSpinner/>
+  </div>
+  <div v-else>
 
     <DataTable
-      v-if="data.steps?.length > 0"
       v-model:expanded-rows="expandedRows" class="overflow-scroll-full custom-data-table" :context-menu=true :pt="{
       column: {
         bodycell:({ state }) => ({
@@ -14,21 +16,17 @@
       },
       style: 'height:88px'
     }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit"
-       @row-expand="expandMode = true"
       @cell-edit-complete="onCellEditComplete">
+      <template #empty style="backgroundColor: white">
+        <div class="bg-white h-[calc(100vh-300px)] w-full flex flex-col gap-10 items-center justify-center ">
+          <i class="pi pi-ellipsis-h opacity-30  scale-[1000%]"></i>
+          <h1 class="text-xl font-bold">Ce projet ne comporte aucune etapes</h1>
+        </div>
+      </template>
       <Column expander style="width: 5rem;"/>
-      <Column
-        :pt="{
-        root: {
-          test: 'test',
-
-        }
-      }" field="name" header="Titre" style="width : 8rem ; min-width: 70px;">
-        <template #editor="{ index }">
-          <InputText v-model="data.tasks[index].name" style="width : 100% ; min-width: 70px; "/>
-        </template>
+      <Column field="name" header="Titre" style="width : 8rem ; min-width: 70px;">
         <template #body="slotProps">
-          <p class="cursor-text	"> {{ slotProps.data.title }}</p>
+          <p > {{ slotProps.data.title }}</p>
         </template>
       </Column>
       <Column field="id" header="ID" style="width: 40px;"/>
@@ -69,9 +67,10 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
       <template #expansion="slotProps">
         <div class="p-6 border-surface-200 border-4">
           <DataTable
+            :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
             class="overflow-scroll p-5"
-            unstyled :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
-            table-style="background-color: white" @row-click="handleRowClick($event)"
+             :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
+             @row-click="handleRowClick($event)"
            >
             <Column field="name" header="Titre" style="width : 8rem ; min-width: 70px; ">
               <template #editor="{ index: nestedIndex }">
@@ -116,24 +115,21 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
             </Column>
             <Column field="instruction" header="Instruction"/>
 
-            <Column header="Données">
-              <template #body="">
-
-                <Button
-size="small" severity="secondary"
-                        style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
-                        outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/>
-
-              </template>
-            </Column>
+<!--             <Column header="Données"> -->
+<!--               <template #body=""> -->
+<!---->
+<!--                 <Button -->
+<!-- size="small" severity="secondary" -->
+<!--                         style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;" -->
+<!--                         outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/> -->
+<!---->
+<!--               </template> -->
+<!--             </Column> -->
           </DataTable>
         </div>
       </template>
 
     </DataTable>
-    <div v-else class="min-h-[calc(100vh-52px)] bg-white items-center justify-center flex flex-col">
-      <LoadingSpinner/>
-    </div>
     <Dialog v-model:visible="visible" modal @hide="visible = false">
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>

@@ -17,7 +17,6 @@ export const useRefreshStore = defineStore('refresh', {
     async totalRecords(){
       const res = await ProjectService.readProjectsProjectsGet()
       const data =  res
-
       return data.length;
     },
     async fetchProject(skip: number, limit: number) {
