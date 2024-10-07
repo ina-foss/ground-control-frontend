@@ -1,6 +1,7 @@
 import {defineStore} from 'pinia'
 
 import {ProjectService, TaskService} from '../api/generate'
+import { clamp } from 'lodash'
 
 export const useRefreshStore = defineStore('refresh', {
   state: () => {
@@ -25,8 +26,8 @@ export const useRefreshStore = defineStore('refresh', {
     },
     async fetchProject(skip: number, limit: number) {
       const default_limit = 15
-      const res = await ProjectService.readProjectsProjectsGet(skip || this.last_index, limit || default_limit)
-      if(skip == undefined) this.last_index = skip
+      const res = await ProjectService.readProjectsProjectsGet((skip == undefined ? this.last_index : skip), limit || default_limit)
+      if(skip != undefined) this.last_index = skip
       const data =  res
       this.data = data;
 
