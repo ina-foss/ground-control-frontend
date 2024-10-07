@@ -2,7 +2,7 @@
   <div style="height: 88%;">
     <component
 :is="annotationComponent" :data="data" :all-fetched="allFetched" :annotations_in="annotations_in"
-               :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()"
+               :annotations_out="annotations_out" class="overflow-y-hidden"
                @submit-annotation="handleSubmit($event,'submit')"
                @finish-annotation="handleSubmit($event,'end')"/>
   </div>
@@ -92,9 +92,6 @@ const annotationInfo = $computed(() => {
   }
 });
 
-const refreshTaskData = async () => {
-  data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
-}
 const submitExistantAnnotation =(locals,action)=>{
 
     const result = annotations_out.value[annotationInfo.index].result

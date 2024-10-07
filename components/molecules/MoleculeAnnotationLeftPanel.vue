@@ -11,7 +11,7 @@
       <b>Amalia Player</b>
     </div>
 
-    <AtomTopicList :colors="colors" />
+    <AtomTopicList :colors="colors" :topics="topics" />
     <slot>
     </slot>
   </div>
