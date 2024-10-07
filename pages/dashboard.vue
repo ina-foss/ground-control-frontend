@@ -24,27 +24,23 @@ import {bcStore} from "~/stores/breadcrumbs";
 
 const refreshStore = useRefreshStore()
 const {fetchProject} = refreshStore
-const {getData} = storeToRefs(refreshStore)
+const {getData, getProjectNumber} = storeToRefs(refreshStore)
 const store = bcStore()
 const {getItems} = storeToRefs(store)
-const first = ref(1)
+const first = ref(0)
 const rows = ref(15)
-let totalRecords = 20;
+let totalRecords = $ref(getProjectNumber);
 
 const dashboardRef = ref()
 const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
 
 const getTotalRecords=()=>{
-  refreshStore.totalRecords().then(result=>{
-    totalRecords = result
-  })
+  refreshStore.totalRecords()
 }
 
-watch(first, () => {
-  fetchProject(first.value, rows.value)
-  getTotalRecords()
-})
+watch(()=> first.value,()=> handleRefresh(first.value,rows.value) )
+
 
 const handleRefresh = async () => {
   await fetchProject(first.value, rows.value)
@@ -57,12 +53,8 @@ const sortDataById = computed(() => {
     return []
   }
 )
-watchEffect(() => {
-  fetchProject(first.value, rows.value)
-  getTotalRecords()
-})
 onMounted(() => {
-  getTotalRecords()
+  handleRefresh()
 })
 
 while (getItems.value.length > 0) store.removeLastCrumb()

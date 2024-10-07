@@ -112,7 +112,8 @@ const deleteProject = async () => {
     await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
     navigateTo(`/dashboard`);
 
-    await refreshStore.fetchProject(first.value, rows.value)
+    await refreshStore.fetchProject()
+    await refreshStore.totalRecords()
     deleteDialog.value= false
   } catch (err) {
     console.error("Error deleting project:", err);
