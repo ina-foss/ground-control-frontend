@@ -13,10 +13,18 @@
 
   import _ from 'lodash';
 
+  const props = defineProps({
+    colors: {
+      type: Array,
+      default: () => []
+    },
+    topics: {
+      type: Array,
+      default: ()=>[]
+    },
 
-  const { colors, topics } = defineProps(['colors','topics'])
-
-
+  });
+  const { colors, topics } = props;
   const cleanedColors = $computed(()=>{ // delete the first element
     const cleaned = {}
     colors.forEach((color,index)=>{

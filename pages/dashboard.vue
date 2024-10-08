@@ -16,7 +16,6 @@
 </template>
 
 <script setup>
-import _ from 'lodash'
 import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
 import {bcStore} from "~/stores/breadcrumbs";
@@ -29,7 +28,7 @@ const store = bcStore()
 const {getItems} = storeToRefs(store)
 const first = ref(0)
 const rows = ref(15)
-let totalRecords = $ref(getProjectNumber);
+const totalRecords = $ref(getProjectNumber);
 
 const dashboardRef = ref()
 const data = ref(getData)
