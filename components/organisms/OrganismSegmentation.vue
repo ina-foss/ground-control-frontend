@@ -37,7 +37,19 @@
     </div>
     <Toast />
     <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" @scroll-to-segment="scrollToSegment" />
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" :topics="topics" @scroll-to-segment="scrollToSegment">
+        <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">Segmentation</h2>
+        <p class="text-white p-3 md:block xs:hidden ">
+          Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
+          Chaque segment correspond à une thématique différente de la précédente.<br>
+          Chaque changement de segment correspond à un changement d'interlocuteur ou de sujet.<br><span
+            class="underline">Exemple</span> :
+          <br>si on souhaite retranscrire le contenu d'une émission qui dure 1h, grâce à la segmentation, nous pouvons
+          avoir un "résumé" du contenu de l'émission grâce aux différents segments. Ces derniers retracent les divers
+          sujets
+          ayant été traités, différencie les interlocuteurs.
+        </p>
+      </MoleculeAnnotationLeftPanel>
       <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
@@ -57,10 +69,10 @@
 
 
 
-  const emits = defineEmits([ 'submit-annotation', 'refresh-data' ]);
+  const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
   let colors = $ref(['#BEBEBE'])
-  const topics = $ref([])
+  let topics = $ref([])
   let videoSrc = $ref(annotations_in[0]?.result.asset.url)
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()

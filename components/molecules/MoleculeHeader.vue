@@ -1,5 +1,6 @@
 <template>
-  <div class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 border-b-2 border-#EDEDED justify-between bg-surface-color"
+  <div
+    class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 border-b-2 border-#EDEDED justify-between bg-surface-color"
        style="background-color: #FFFFFF">
     <div class="flex items-center">
       <AtomLogo size="md" />
@@ -11,8 +12,8 @@
     <div class="flex justify-end items-center">
       <div class="mr-4">
       <Button
-        class="button"
         v-if="$route.name == 'dashboard'"
+        class="button"
         label="Nouveau projet"
         size="small"
         @click="dialogVisible = true"
@@ -34,7 +35,6 @@ import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
 const dialogVisible = ref(false);
 const { $application } = useService();
-// const roles = $application.getUserRoles();
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 

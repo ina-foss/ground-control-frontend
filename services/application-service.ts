@@ -46,7 +46,6 @@ export default class ApplicationService {
     const config = getApplicationConfiguration();
     OpenAPI.BASE = config['apiBasePath'];
     OpenAPI.HEADERS = this.getDefaultHeader();
-    inject('OpenAPI', OpenAPI);
   }
 
   /**
@@ -58,8 +57,22 @@ export default class ApplicationService {
     return user.value?.profile?.roles ?? [];
   }
 
-  public hasRole(role: string): boolean {
-    const roles: [] = this.getUserRoles();
-    return roles.includes(role);
-  }
+  public getUserRolesFromToken(): [] {
+      const parseJwt = (token: string) => {
+        try {
+          return JSON.parse(atob(token.split('.')[1]));
+        } catch (e) {
+          return null;
+        }
+      };
+      console.log(parseJwt(this.getDefaultHeader()['Authorization']));
+      return parseJwt(this.getDefaultHeader()['Authorization'])?.realm_access?.roles;
+    }
+
+    public hasRole(role: string): boolean {
+      const roles: [] = this.getUserRoles();
+      const rolesFromToken: [] = this.getUserRolesFromToken();
+      return roles?.includes(role) || rolesFromToken?.includes(role);
+    }
+
 }

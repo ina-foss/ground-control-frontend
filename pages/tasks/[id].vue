@@ -2,7 +2,7 @@
   <div style="height: 88%;">
     <component
 :is="annotationComponent" :data="data" :all-fetched="allFetched" :annotations_in="annotations_in"
-               :annotations_out="annotations_out" class="overflow-y-hidden" @refresh-data="refreshTaskData()"
+               :annotations_out="annotations_out" class="overflow-y-hidden"
                @submit-annotation="handleSubmit($event,'submit')"
                @finish-annotation="handleSubmit($event,'end')"/>
   </div>
@@ -46,6 +46,16 @@ const annotationComponent = $computed(() => {
 
 })
 
+onBeforeRouteLeave((to,from,next)=>{
+  if(window.onbeforeunload != null) {
+    const answer = window.confirm("Vous n'avez pas sauvegarder votre travail. Voulez-vous quitter cette page ?")
+    if (answer) {
+      window.onbeforeunload = null;
+      next();
+    }
+  }
+  else  next()
+})
 
 await fetchAnnotations(route.params.id)
 
@@ -82,9 +92,6 @@ const annotationInfo = $computed(() => {
   }
 });
 
-const refreshTaskData = async () => {
-  data.value = await TaskService.readTaskTaskTaskIdGet(route.params.id)
-}
 const submitExistantAnnotation =(locals,action)=>{
 
     const result = annotations_out.value[annotationInfo.index].result

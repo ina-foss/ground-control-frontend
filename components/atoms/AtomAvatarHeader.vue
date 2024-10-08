@@ -1,9 +1,11 @@
 <template>
     <div>
-        <Avatar style="background-color: transparent"
-v-tooltip.left="userEmail" class="cursor-pointer" shape="circle"
+        <Avatar
+          v-tooltip.left="userEmail"
+          style="background-color: transparent;height: 28px"
+ class="cursor-pointer" shape="circle"
                 @click="toggle" >
-          <img src="public/icons/icons-svg/icons-svg/account-icon.svg"/>
+          <img src="public/icons/icons-svg/icons-svg/account-icon.svg">
         </Avatar>
 
         <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />

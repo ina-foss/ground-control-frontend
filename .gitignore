@@ -18,6 +18,7 @@ logs
 .fleet
 .idea
 .test_reports/
+test-results/
 /coverage
 .coverage
 
@@ -29,3 +30,4 @@ logs
 
 # package-lock.json
 package-lock.json
+.npmrc

@@ -12,11 +12,19 @@
 
     <Toast/>
     <div class="grid grid-cols-9 xs:block h-full">
-      <MoleculeAnnotationLeftPanel
-ref="moleculeAnnotationLeftPanelRef" class="xs:sticky" :video-src="videoSrc"
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" class="xs:sticky"
+                                   :video-src="videoSrc"
                                    :data="data"
                                    :locals="annotations_in[0].result.data.localisation[0].sublocalisations.localisation"
-                                   @scroll-to-segment="scrollToSegment"/>
+                                   @scroll-to-segment="scrollToSegment">
+        <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">Réconciliation de Transcriptions</h2>
+        <p class="text-white p-3 md:block xs:hidden ">
+          Dans le cadre d'une réconciliation de transcription, plusieurs versions d'une même transcription peuvent être comparées.<br>
+          L'utilisateur peut selectionner, pour chaque segment, la meilleure version de la transcription.<br>
+          Il peut egalement manuellement corriger la transcriptions si les deux versions comportent des erreurs par rapport a l'archive.<br>
+        </p>
+
+      </MoleculeAnnotationLeftPanel>
       <MoleculeTranscription
 ref="MoleculeTranscriptionRef" class="overflow-y-auto" :transcriptions="transcriptions"
                              :user-annotations="userAnnotations" :algos="algos" :status="data.annotations[0]?.annotation_status"
