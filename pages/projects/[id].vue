@@ -33,7 +33,7 @@
       <Column field="annotation_type" header="Type"/>
       <Column header="Statut">
         <template #body>
-          <Tag :class="statusSeverity" class="mb-1 scale-90 ">{{ data.status }}</Tag>
+          <Tag :class="statusSeverity" class="mb-1 scale-90 ">{{translatedAnnotationStatus(data.status) }}</Tag>
         </template>
       </Column>
       <Column field="description" header="Description"/>
@@ -198,7 +198,15 @@ const buttonItems = [
     tooltip: "Exporter chaque annotations dans un fichier dédié"
   }
 ]
+const translations = {
+  draft: 'Brouillon',
+  pending: 'En attente',
+  ended: 'Terminé'
+}
 
+const translatedAnnotationStatus =(annotation_status)=> {
+  return translations[annotation_status]
+}
 
 // On affiche meme si c'es pas fini
 fetchTasks(route.params.id).then(() => {

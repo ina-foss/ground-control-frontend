@@ -1,6 +1,6 @@
 <template>
   <div class="overflow-y-auto h-full bg-neutral-color" style="background-color: #F7F7F7">
-    <div ref="dashboardRef" class="py-8 px-4 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
+    <div ref="dashboardRef" class="p-3 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
       <ProjectCard
         v-for="(project,index) in sortDataById" :key="index" :project=project
         @refresh-data="handleRefresh"/>
@@ -10,7 +10,7 @@
       v-model:first="first"
       style="background-color: #FFFFFF"
  class="sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="totalRecords"
-               template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink"/>
+        template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink"/>
   </div>
   </div>
 </template>

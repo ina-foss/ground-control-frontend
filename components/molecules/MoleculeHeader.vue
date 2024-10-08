@@ -1,6 +1,6 @@
 <template>
   <div
-    class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 border-b-2 border-#EDEDED justify-between bg-surface-color"
+    class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 border-b-[1px] border-#EDEDED justify-between bg-surface-color"
        style="background-color: #FFFFFF">
     <div class="flex items-center">
       <AtomLogo size="md" />
