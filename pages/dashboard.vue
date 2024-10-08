@@ -39,7 +39,7 @@ const getTotalRecords=()=>{
   refreshStore.totalRecords()
 }
 
-watch(()=> first.value,()=> handleRefresh(first.value,rows.value) )
+watch(()=> first.value,()=> handleRefresh() )
 
 
 const handleRefresh = async () => {
