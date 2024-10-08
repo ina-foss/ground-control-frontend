@@ -12,7 +12,7 @@
     <div class="flex justify-end items-center">
       <div class="mr-4">
       <Button
-        v-if="$route.name == 'dashboard'"
+        v-if="isAdmin && $route.name == 'dashboard'"
         class="button"
         label="Nouveau projet"
         size="small"
