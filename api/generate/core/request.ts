@@ -291,37 +291,32 @@ export const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): 
  * @throws ApiError
  */
 export const request = <T>(config: OpenAPIConfig, options: ApiRequestOptions): CancelablePromise<T> => {
-	return new CancelablePromise(async (resolve, reject, onCancel) => {
-		try {
-			const url = getUrl(config, options);
-			const formData = getFormData(options);
-			const body = getRequestBody(options);
-			const headers = await getHeaders(config, options);
+    return new CancelablePromise(async (resolve, reject, onCancel) => {
+        try {
+            const url = getUrl(config, options);
+            const formData = getFormData(options);
+            const body = getRequestBody(options);
+            const headers = await getHeaders(config, options);
 
-			if (!onCancel.isCancelled) {
-				let response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+            if (!onCancel.isCancelled) {
+                const response = await sendRequest(config, options, url, body, formData, headers, onCancel);
+                const responseBody = await getResponseBody(response);
+                const responseHeader = getResponseHeader(response, options.responseHeader);
 
-				for (const fn of config.interceptors.response._fns) {
-					response = await fn(response);
-				}
+                const result: ApiResult = {
+                    url,
+                    ok: response.ok,
+                    status: response.status,
+                    statusText: response.statusText,
+                    body: responseHeader ?? responseBody,
+                };
 
-				const responseBody = await getResponseBody(response);
-				const responseHeader = getResponseHeader(response, options.responseHeader);
+                catchErrorCodes(options, result);
 
-				const result: ApiResult = {
-					url,
-					ok: response.ok,
-					status: response.status,
-					statusText: response.statusText,
-					body: responseHeader ?? responseBody,
-				};
-
-				catchErrorCodes(options, result);
-
-				resolve(result.body);
-			}
-		} catch (error) {
-			reject(error);
-		}
-	});
+                resolve(result.body);
+            }
+        } catch (error) {
+            reject(error);
+        }
+    });
 };
