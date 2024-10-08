@@ -15,11 +15,11 @@
             </Button>
 <!--Confirmation dialog to delete-->
             <Dialog
-v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?" :style="{ width: '30rem' }" class="bg-white"
+v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?" :style="{ width: '30rem'}" class="bg-white pb-0"
                      @after-hide="deleteDialog = false">
-              <div class=" grid grid-cols-1 gap-1">
-                <ButtonGroup class="justify-evenly flex items-center pt-6 ">
-                  <Button label="Non" class="button button-prev mr-4" size="small" @click="deleteDialog = false" />
+              <div class="flex justify-end pb-0">
+                <ButtonGroup class="justify-evenly flex">
+                  <Button label="Non" class="button button-prev mr-3" size="small" @click="deleteDialog = false" />
                   <Button v-if="deleteDialog === false" class="button" size="small" label="Supprimer" @click="deleteDialog = true" />
                   <Button v-else class="button" size="small" label="Oui" @click="deleteProject" />
                 </ButtonGroup>
