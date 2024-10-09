@@ -1,38 +1,36 @@
 <template>
-        <Breadcrumb  :home="home" :model="items" class="border-0 p-3" style="background-color: #F7F7F7;font-size:14px">
-
-            <template #item="{ item, props }">
-
-                <router-link v-if="item.route " v-slot="{ href, navigate }" :to="item.route" custom>
-                  <a :href="href" v-bind="props.action" @click.prevent="navigate()" style="color: #757575">
-                        <span :class="[item.icon]" />
-                        <span  :class="[{ 'text-primary font-bold': isSelected(item.label) }, 'font-semibold']">{{ item.label }}</span>
-                    </a>
-                </router-link>
-                <a v-else :href="item.url" :target="item.target" v-bind="props.action" style="color: #757575">
-                    <span :class="[{ 'text-primary font-bold': isSelected(item.label) }]">{{ item.label }}</span>
-                </a>
-            </template>
-          <template #separator>
-            <span>/</span>
-          </template>
-        </Breadcrumb>
-
+  <Breadcrumb :home="home" class="breadcrumb-container border-0 p-3" style="background-color: #F7F7F7; font-size: 14px;">
+    <template #item="{ props }">
+      <template v-for="(breadcrumbItem, index) in fullBreadcrumbs" :key="index" >
+        <router-link v-if="breadcrumbItem.route" v-slot="{ href, navigate }" :to="breadcrumbItem.route" custom>
+          <a :href="href" v-bind="props.action" class="breadcrumb-item" style="color: #757575" @click.prevent="navigate()" >
+            <span :class="[breadcrumbItem.icon]" />
+            <span :class="[{ 'text-primary font-bold': isSelected(breadcrumbItem.label, index) }, 'font-semibold']">
+              {{ breadcrumbItem.label }}
+                      <span v-if="index < fullBreadcrumbs.length - 1" class="breadcrumb-separator"> / </span>
+            </span>
+          </a>
+        </router-link>
+        <a v-else :href="breadcrumbItem.url" :target="breadcrumbItem.target" v-bind="props.action" class="breadcrumb-item" style="color: #757575">
+          <span :class="[{ 'text-primary font-bold': isSelected(breadcrumbItem.label, index) }]">
+            {{ breadcrumbItem.label }}
+            <span v-if="index < fullBreadcrumbs.length - 1" class="breadcrumb-separator"> / </span>
+          </span>
+        </a>
+      </template>
+    </template>
+  </Breadcrumb>
 </template>
 
 <script setup>
-
 import { bcStore } from '../../stores/breadcrumbs.ts';
-
 import { ref, onMounted, watch } from 'vue';
 const store = bcStore()
-
 const home = { label: 'Projets', route: '/dashboard' }
-
 const {getItems} = storeToRefs(store)
 
 const items = ref(getItems)
-debugger
+
 // Watch for changes in the breadcrumb items and update localStorage
 watch(items, (newItems) => {
   localStorage.setItem('breadcrumbItems', JSON.stringify(newItems));
@@ -48,32 +46,50 @@ onMounted(() => {
     });
   }
 });
-const isSelected=(label)=> {
-  debugger
-  const savedItems = localStorage.getItem('breadcrumbItems');
-  /*if(label === home.label){
-    return true;
-  }else {*/
-    if (!label) {
-      return false;
-    } else {
-      const a = JSON.parse(savedItems);
-      const b = a.slice(-1)[0]
-      return b.label === label;
 
-    /*}*/
+
+const fullBreadcrumbs = computed(() => {
+  return [home, ...items.value];
+});
+const isSelected = (label, index) => {
+  const savedItems = localStorage.getItem('breadcrumbItems');
+  if (!label || !savedItems) {
+    return false;
   }
 
-  //return this.$route.path === item.route; // ou tout autre critère de sélection
+  const breadcrumbItems = JSON.parse(savedItems);
+  if (breadcrumbItems && breadcrumbItems.length > 0) {
+    return index === breadcrumbItems.length ;
+  }
+  if(index===0){
+    return true;
+  }
+  return false;
+};
 
-}
 
 </script>
 <style>
 .text-primary {
-  color: #212529; /* ou toute autre couleur souhaitée */
+  color: #212529;
 }
 .font-bold {
   font-weight: bold;
+}
+.breadcrumb-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.breadcrumb-container a {
+  white-space: nowrap;
+  display: inline-flex;
+}
+
+.breadcrumb-separator {
+  display: inline;
+  margin: 0 5px;
 }
 </style>
