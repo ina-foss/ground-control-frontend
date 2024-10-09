@@ -1,5 +1,5 @@
 <template>
-        <Breadcrumb :home="home" :model="items" class="border-0" style="background-color: #F7F7F7">
+        <Breadcrumb :home="home" :model="items" class="border-0" style="background-color: #F7F7F7;padding:12px">
 
             <template   #item="{ item, props }">
 

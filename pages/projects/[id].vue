@@ -5,14 +5,16 @@
   <div v-else>
 
     <DataTable
-      v-model:expanded-rows="expandedRows" class="overflow-scroll-full custom-data-table" :context-menu=true :pt="{
+      v-model:expanded-rows="expandedRows" class=" overflow-scroll-full custom-data-table" :context-menu=true
+      :pt="{
       column: {
         bodycell:({ state }) => ({
           style: state['d_editing']
         })
       },
       row:{
-        style: { backgroundColor: 'black', color: 'white' }
+        class:'p-3',
+        style: { backgroundColor: 'black', color: 'white',padding:'14px' },
       },
       style: 'height:88px'
     }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit"
@@ -23,38 +25,39 @@
           <h1 class="text-xl font-bold">Ce projet ne comporte aucune etapes</h1>
         </div>
       </template>
-      <Column expander style="width: 5rem;"/>
-      <Column field="name" header="Titre" style="width : 8rem ; min-width: 70px;">
+      <Column expander style="width: 5rem;"  bodyClass="text-sm p-3"/>
+      <Column field="name" header="Titre" class="txt" style="width : 8rem ; min-width: 70px;"  bodyClass="p-3 text-sm">
         <template #body="slotProps">
           <p > {{ slotProps.data.title }}</p>
         </template>
       </Column>
-      <Column field="id" header="ID" style="width: 40px;"/>
-      <Column field="annotation_type" header="Type"/>
-      <Column header="Statut">
+      <Column field="id" header="ID" class="txt" style="width: 40px;" bodyClass="text-sm"/>
+      <Column field="annotation_type" class="txt" header="Type"  bodyClass="text-sm"/>
+      <Column header="Statut" class="txt"  bodyClass="text-sm">
         <template #body>
-          <Tag :class="statusSeverity" class="mb-1 scale-90 ">{{translatedAnnotationStatus(data.status) }}</Tag>
+          <Tag  :class="statusSeverity" class="mb-1 scale-90 font-medium" >{{translatedAnnotationStatus(data.status) }}</Tag>
         </template>
       </Column>
-      <Column field="description" header="Description"/>
-      <Column header=" " style="width: 18%; ">
+      <Column field="description" header="Description" class="txt"  bodyClass="text-sm"/>
+      <Column header=" " style="width: 18%; "  bodyClass="text-sm">
         <template #body="slotProps">
-          <div class="flex justify-between min-w-[203px] gap-3">
-            <Button
+          <div class="flex justify-between min-w-[203px] gap-3 txt">
+            <Button class="txt"
               style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
               outlined label="Créer un task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
             <div
-class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
+class="flex items-center space-x-2 cursor-pointer txt" :loading="loadingExport"
                   @click="clickButtonMenu($event,slotProps.data) ">
-            <Button
+            <Button class="txt"  style="font-size:14px"
               label="Exporter" size="small" severity="secondary" text/>
-            <img style="fill: black" width="15px" height="15px" src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg">
+              <img style="height:15px;width:15px;filter: brightness(0) saturate(100%) invert(11%) sepia(5%) saturate(250%) hue-rotate(180deg) brightness(90%) contrast(90%);"
+                   src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg">
           </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
-              <template #item="{ item, props }">
+              <template #item="{ item, props }" >
                 <a
-                  v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="flex align-items-center"
+                  v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="txt flex align-items-center"
                   v-bind="props.action">
                   <p @click="item.command(event,selectedRow.value)">{{ item.label }}</p>
                 </a>
@@ -63,7 +66,7 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
           </div>
         </template>
       </Column>
-      <Column :row-editor="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"/>
+      <Column :row-editor="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"  bodyClass="text-sm"/>
       <template #expansion="slotProps">
         <div class="p-6 border-surface-200 border-4">
           <DataTable
@@ -72,7 +75,7 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
              :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
              @row-click="handleRowClick($event)"
            >
-            <Column field="name" header="Titre" style="width : 8rem ; min-width: 70px; ">
+            <Column class="txt" bodyClass="text-sm" field="name" header="Titre" style="width : 8rem ; min-width: 70px; ">
               <template #editor="{ index: nestedIndex }">
                 <InputText
                   v-model="data.steps[slotProps.index].tasks[nestedIndex].name"
@@ -82,13 +85,13 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
                 <p class="cursor-text	"> {{ nestedData.name }}</p>
               </template>
             </Column>
-            <Column field="annotations.length" sortable style="width: 3rem;">
+            <Column class="txt" bodyClass="text-sm" field="annotations.length" sortable style="width: 3rem;">
               <template #header><i v-tooltip="'Nombre total annotations'" class="pi pi-star cursor-help"/></template>
               <template #body="{ data: nestedData }">
                 <div class="flex-1 text-center"> {{ nestedData.annotations?.length || 0 }}</div>
               </template>
             </Column>
-            <Column field="predictions.length" sortable style="width: 3rem">
+            <Column class="txt" bodyClass="text-sm" field="predictions.length" sortable style="width: 3rem">
               <template #header><i
                 v-tooltip="'Nombre annotations remplies'"
                 class="pi pi-star-fill cursor-help"/></template>
@@ -96,13 +99,13 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
-            <Column field="predictions.length" style="width: 12px">
+            <Column class="txt" bodyClass="text-sm" field="predictions.length" style="width: 12px">
               <template #header><i v-tooltip="'Nombre de prédictions'" class="pi pi-lightbulb cursor-help"/></template>
               <template #body="">
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
-            <Column header="Annoté par" style="width: 12rem">
+            <Column class="txt" bodyClass="text-sm" header="Annoté par" style="width: 12rem">
               <template #body="{data: nestedData}">
                 <div class="flex justify-start gap-2 ">
                   <Avatar
@@ -113,7 +116,7 @@ class="flex items-center space-x-2 cursor-pointer" :loading="loadingExport"
                 </div>
               </template>
             </Column>
-            <Column field="instruction" header="Instruction"/>
+            <Column class="txt" bodyClass="text-sm" field="instruction" header="Instruction"/>
 
 <!--             <Column header="Données"> -->
 <!--               <template #body=""> -->
@@ -366,5 +369,8 @@ const onCellEditComplete = () => {
 .custom-data-table .p-datatable-tbody > tr {
   background-color: black !important; /* Force l'application de la couleur de fond */
   color: white !important; /* Force l'application de la couleur du texte */
+}
+.txt{
+  color:#212529;
 }
 </style>
