@@ -1,6 +1,12 @@
 <template>
     <div class=" col-span-4 flex flex-col overflow-y-auto   ">
-      <SelectButton class="self-center sticky top-0" v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
+      <div class=" flex justify-center gap-10">
+        <SelectButton class="self-center sticky top-0" v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
+        <div class="flex items-center">
+          <InputText v-model="newLabel" size="small" />
+          <Button icon="pi pi-plus" size='small' @click="labels.push(newLabel)" />
+        </div>
+      </div>
       <div class="flex flex-col  " v-for="local in locals">
         <AtomTranscriptionSpan @mouseup="handleSelection" :local="local" />
 
@@ -23,6 +29,8 @@
 
   const { locals } = defineProps(['locals'])
 
+  let newLabel = ref('')
+
   const app = createApp()
   app.directive('badge', BadgeDirective)
   let spanClicked = $ref(false)
@@ -37,7 +45,7 @@
   let lastFocus = $ref(undefined)
   let currentFocus = $ref(undefined)
   const labelSelected = ref('')
-  const labels = ['Person','Citation','Verbe']
+  const labels = $ref(['Person','Citation','Verbe'])
   const text = ref('Mercredi soir, le chef d’Etat a évacué l’idée d’adouber Lucie Castets, candidate officielle de la coalition de gauche : "Le sujet n’est pas un nom donné par une formation politique. La question est quelle majorité peut se dégager à l’Assemblée pour que le gouvernement de la France puisse passer des réformes."')
   const state = reactive({
     selection: null,
