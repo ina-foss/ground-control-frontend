@@ -17,9 +17,9 @@
       style: 'height:88px'
     }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit"
       @cell-edit-complete="onCellEditComplete">
-      <template #empty style="backgroundColor: white">
+      <template #empty>
         <div class="bg-white h-[calc(100vh-300px)] w-full flex flex-col gap-10 items-center justify-center ">
-          <i class="pi pi-ellipsis-h opacity-30  scale-[1000%]"></i>
+          <i class="pi pi-ellipsis-h opacity-30  scale-[1000%]"/>
           <h1 class="text-xl font-bold">Ce projet ne comporte aucune etapes</h1>
         </div>
       </template>
@@ -173,7 +173,6 @@ const selectedRow = ref()
 const expandedRows = ref()
 
 const editMode = ref(false)
-const expandMode = $ref(false)
 const data = ref(getProject)
 const buttonItems = [
   {
@@ -335,15 +334,6 @@ const statusSeverity = computed(() => {
 const onCellEditComplete = () => {
   editMode.value = false
 }
-
-const openDialog = (data) => {
-  // Set dialog content based on the data passed
-  dialogContent.value = data;
-
-  // Open the dialog
-  visible.value = true;
-}
-
 
 </script>
 <style>

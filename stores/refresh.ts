@@ -1,7 +1,6 @@
 import {defineStore} from 'pinia'
 
 import {ProjectService, TaskService} from '../api/generate'
-import { clamp } from 'lodash'
 
 export const useRefreshStore = defineStore('refresh', {
   state: () => {

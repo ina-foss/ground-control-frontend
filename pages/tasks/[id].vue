@@ -15,7 +15,7 @@ import {ref} from 'vue';
 import {bcStore} from '~/stores/breadcrumbs';
 import OrganismSegmentation from '~/components/organisms/OrganismSegmentation.vue';
 import OrganismTranscription from '~/components/organisms/OrganismTranscription.vue'
-import {TaskService, AnnotationService, AnnotationStatus} from '../../api/generate';
+import { AnnotationService, AnnotationStatus} from '../../api/generate';
 import {useAuth} from '../../stores/auth';
 import {storeToRefs} from 'pinia';
 import {useRefreshStore} from '#imports';

@@ -12,8 +12,7 @@
     </div>
 
     <AtomTopicList :colors="colors" :topics="topics" />
-    <slot>
-    </slot>
+    <slot/>
   </div>
 </template>
 
