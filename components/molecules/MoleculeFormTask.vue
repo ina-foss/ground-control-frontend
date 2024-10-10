@@ -167,7 +167,6 @@ let name = $ref()
 let instruction = $ref()
 let dataType = $ref(TaskDataType.LDD)
 let status = $ref(translatedTaskStatus[0])
-
 const files = $ref([])
 const fileData = $ref([])
 const deleteDialog = $ref(false)
