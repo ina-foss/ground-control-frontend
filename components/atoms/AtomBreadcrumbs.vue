@@ -2,7 +2,7 @@
   <Breadcrumb :home="home" class="breadcrumb-container border-0 p-3" style="background-color: #F7F7F7; font-size: 14px;">
     <template #item="{ props }">
       <template v-for="(breadcrumbItem, index) in fullBreadcrumbs" :key="index" >
-        <router-link v-if="breadcrumbItem.route" v-slot="{ href, navigate }" :to="breadcrumbItem.route" custom >
+        <router-link v-if="breadcrumbItem.route" v-slot="{ navigate }" :to="breadcrumbItem.route" custom >
           <a v-bind="props.action" class="breadcrumb-item" style="color: #757575;cursor: pointer;" @click.prevent="navigate()" >
             <span :class="[breadcrumbItem.icon]" />
             <span :class="[{ 'text-primary font-bold': isSelected(breadcrumbItem.label, index) }, 'font-semibold']">
