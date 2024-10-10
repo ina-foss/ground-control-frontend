@@ -72,7 +72,7 @@
           </div>
 
           <div class="flex justify-end pt-8">
-            <Button class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="prevCallback"/>
+            <Button class="button button-prev mx-3" label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="prevCallback"/>
             <Button
               class="button"
               icon="pi pi-check" icon-pos="left"

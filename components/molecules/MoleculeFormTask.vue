@@ -167,14 +167,13 @@ let name = $ref()
 let instruction = $ref()
 let dataType = $ref(TaskDataType.LDD)
 let status = $ref(translatedTaskStatus[0])
-
 const files = $ref([])
 const fileData = $ref([])
 const deleteDialog = $ref(false)
 
 const onSelect = async (event) => {
   const reader = new FileReader();
-  reader.onloadend = await onReaderLoad;
+  reader.onloadend = onReaderLoad;
   reader.readAsText(event.files[event.files.length-1])
   if ( event.files.length == fileData.length){
     fileData.pop()

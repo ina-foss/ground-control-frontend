@@ -65,7 +65,6 @@ export default class ApplicationService {
           return null;
         }
       };
-      console.log(parseJwt(this.getDefaultHeader()['Authorization']));
       return parseJwt(this.getDefaultHeader()['Authorization'])?.realm_access?.roles;
     }
 
