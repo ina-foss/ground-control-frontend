@@ -14,7 +14,8 @@
             @click.stop.prevent="deleteDialog=true">
             <img
               style="height: 24px;filter: invert(44%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(86%) contrast(88%);"
-              src="public/icons/icons-svg/icons-svg/trash-icon.svg"/>
+              src="public/icons/icons-svg/icons-svg/trash-icon.svg"
+              alt="Trash Icon"/>
           </Button>
           <!--Confirmation dialog to delete-->
           <Dialog

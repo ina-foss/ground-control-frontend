@@ -38,13 +38,17 @@ const getTotalRecords=()=>{
   refreshStore.totalRecords()
 }
 
-watch(()=> first.value,()=> handleRefresh(first.value,rows.value) )
+watch(()=> first.value,()=> handleRefresh() )
 
 
 const handleRefresh = async () => {
-  await fetchProject(first.value, rows.value)
-  getTotalRecords()
-}
+  try {
+    await fetchProject(first.value, rows.value);
+    getTotalRecords();
+  } catch (error) {
+    console.error("Erreur lors de la récupération des projets :", error);
+  }
+};
 
 const sortDataById = computed(() => {
     // Check if data is an array and not just an object
