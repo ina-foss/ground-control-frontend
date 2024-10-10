@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[300px] border-gray-100 border shadow-lg p-3  flex flex-col">
+  <div class="w-[300px] border-gray-100 border shadow-lg p-3 bg-surface-100 flex flex-col">
     <div class="w-full">
       <b>Result</b>
       <Divider
@@ -10,12 +10,15 @@
       }" />
         <div v-if="typeof focusSpan == 'undefined'">Nothing selected</div>
         <div v-else class="border-gray-200  p-2 flex flex-col start-0  gap-2">
-          <div   class="" >
-            <p class="  inline-flex items-start justify-start gap-2" /><div  class="bg-[--color]  rounded-xl min-w-6 text-center transition-all duration-500" :style="`--color: ${spanRefArray[focusSpan].color}1) `">{{ focusSpan +1 }}</div>
+          <div class=" inline-flex items-start justify-start gap-2" >
+          <div class="bg-[--color]  rounded-xl min-w-6 text-center transition-all duration-500" :style="`--color: ${spanRefArray[focusSpan].color}1) `">{{ focusSpan +1 }}</div>
             {{spanRefArray[focusSpan].text}}
           </div>
         <div>
-          label(s): {{spanRefArray[focusSpan].label}}
+          label(s):
+          <span v-for="lbl in spanRefArray[focusSpan].label">
+          {{ lbl }}
+          </span>
         </div>
         <div class="flex flex-row gap-2">
           <Button outlined class="scale-[85%]" icon="pi pi-paperclip"  @click=" emit('link')"/>
@@ -26,7 +29,7 @@
 
     </div>
     <div>
-      <Divider align="left">
+      <Divider align="left" :pt="customdividerstyle" >
         <b>Regions ({{ spanRefArray.length}})</b>
       </Divider>
 
@@ -39,7 +42,7 @@
         </div>
     </div>
     <div>
-      <Divider align="left">
+      <Divider align="left" :pt="customdividerstyle" >
         <b>Relations ({{relationArray.length}})</b>
       </Divider>
       <div v-if="relationArray.length == 0">No Regions created yet</div>
@@ -59,10 +62,12 @@
 
 
 <script setup>
-
+const customdividerstyle = ref({content: 'bg-surface-100 z-10 px-1'})
 const emit = defineEmits(['deleteSpan','unselect','link'])
+
 
 const { focusSpan, spanRefArray, relationArray } = defineProps(['focusSpan', 'spanRefArray','relationArray'])
 
 
 </script>
+

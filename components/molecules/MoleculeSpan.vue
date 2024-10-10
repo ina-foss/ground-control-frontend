@@ -4,15 +4,15 @@
         <SelectButton class="self-center sticky top-0" v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
         <div class="flex items-center">
           <InputText v-model="newLabel" size="small" />
-          <Button icon="pi pi-plus" size='small' @click="labels.push(newLabel)" />
+          <Button icon="pi pi-plus" size='small' @click="addLabel()" />
         </div>
       </div>
       <div class="flex flex-col  " v-for="local in locals">
         <AtomTranscriptionSpan @mouseup="handleSelection" :local="local" />
-
       </div>
     </div>
-    <div class=" h-full content-center place-self-center col-span-2">
+    <div class=" h-full flex flex-col items-center place-content-center gap-10 col-span-2">
+      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
       <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray" @link="linkMode = !linkMode" @delete-span="onDeleteSpan($event)" @unselect="handleUnselect()" />
     </div>
 </template>
@@ -25,7 +25,15 @@
   import AtomTranscriptionSpan from '../atoms/AtomTranscriptionSpan.vue';
   import AtomSpan from '~/components/atoms/AtomSpan.vue';
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
+  import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
   import _, { random } from 'lodash';
+
+  const options = reactive({
+    span: true,
+    timecode: false,
+    bloc: true
+  })
+
 
   const { locals } = defineProps(['locals'])
 
@@ -78,6 +86,11 @@ function generatePastelColor(tagNumber : number) {
   return `rgb(${r}, ${g}, ${b}, `;
 }
 
+  const addLabel = () => {
+    labels.push(newLabel.value)
+    newLabel.value = ''
+  }
+
 // TODO:  Molecule
 const onDeleteSpan = ({ index } : { index : number }) => {
   const element : Element = elementArray.value[index]
@@ -99,7 +112,7 @@ const onDeleteSpan = ({ index } : { index : number }) => {
 
 watch(()=>labelSelected.value,(newLabel:any)=>{
   if(typeof currentFocus != 'undefined'){
-      spanRefArray.value[currentFocus].label = newLabel
+      spanRefArray.value[currentFocus].label[0] = newLabel
   }
 },{immediate: true})
 
@@ -142,11 +155,12 @@ const handleSelection = () => {
     const app = createApp({
       render () {
         return h(AtomSpan , {
-            label: label,
+            label: [label],
             text: selectionTextString,
             color: color,
             index: index,
             linkCss: linkCss,
+            options: options,
             ref: el => spanRefArray.value[index] = el,
             onSpanReady: ({element, index}) => {
               elementArray.value[index] = element
@@ -163,7 +177,7 @@ const handleSelection = () => {
               else{
                 spanClicked = false
                 currentFocus = index
-                labelSelected.value = spanRefArray.value[currentFocus].label
+                labelSelected.value = spanRefArray.value[currentFocus].label[0]
               }
             }
 
