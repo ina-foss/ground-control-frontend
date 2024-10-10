@@ -58,7 +58,8 @@ class="flex items-center space-x-2 cursor-pointer txt" :loading="loadingExport"
               label="Exporter" size="small" severity="secondary" text/>
               <img
                 style="height:15px;width:15px;filter: brightness(0) saturate(100%) invert(11%) sepia(5%) saturate(250%) hue-rotate(180deg) brightness(90%) contrast(90%);"
-                   src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg">
+                   src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg"
+                alt="Arrow Down Icon">
           </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
