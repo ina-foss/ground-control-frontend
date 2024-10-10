@@ -4,44 +4,54 @@
     style="background-color: #FFFFFF">
     <NuxtLink
       :to="{ name: 'projects-id', params: { id: project.id } }" @click="navigate">
+      <div class="min-h-[75%]">
       <div class="inline-block flex justify-between align-middle pl-2">
-          <p class="font-bold self-center exeeded_text">
-            {{ project.title }} </p>
-          <p class="inline-block float-right">
-            <Button
- severity="primary" text rounded size="small"
-                     @click.stop.prevent="deleteDialog=true" >
-              <img style="height: 24px;filter: invert(44%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(86%) contrast(88%);" src="public/icons/icons-svg/icons-svg/trash-icon.svg"/>
-            </Button>
-<!--Confirmation dialog to delete-->
-            <Dialog
-v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?" :style="{ width: '30rem'}" class="bg-white pb-0"
-                     @after-hide="deleteDialog = false">
-              <div class="flex justify-end pb-0">
-                <ButtonGroup class="justify-evenly flex">
-                  <Button label="Non" class="button button-prev mr-3" size="small" @click="deleteDialog = false" />
-                  <Button v-if="deleteDialog === false" class="button" size="small" label="Supprimer" @click="deleteDialog = true" />
-                  <Button v-else class="button" size="small" label="Oui" @click="deleteProject" />
-                </ButtonGroup>
-              </div>
-            </Dialog>
+        <p class="font-bold self-center exeeded_text">
+          {{ project.title }} </p>
+        <p class="inline-block float-right">
+          <Button
+            severity="primary" text rounded size="small"
+            @click.stop.prevent="deleteDialog=true">
+            <img
+              style="height: 24px;filter: invert(44%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(86%) contrast(88%);"
+              src="public/icons/icons-svg/icons-svg/trash-icon.svg"/>
+          </Button>
+          <!--Confirmation dialog to delete-->
+          <Dialog
+            v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?"
+            :style="{ width: '30rem'}" class="bg-white pb-0"
+            @after-hide="deleteDialog = false">
+            <div class="flex justify-end pb-0">
+              <ButtonGroup class="justify-evenly flex">
+                <Button label="Non" class="button button-prev mr-3" size="small" @click="deleteDialog = false"/>
+                <Button v-if="deleteDialog === false" class="button" size="small" label="Supprimer"
+                        @click="deleteDialog = true"/>
+                <Button v-else class="button" size="small" label="Oui" @click="deleteProject"/>
+              </ButtonGroup>
+            </div>
+          </Dialog>
 
-            <Button
-icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
-            @click.stop.prevent="visible=true" />
+          <Button
+            icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
+            @click.stop.prevent="visible=true"/>
 
           <MoleculeFormProject :dialog-visible="visible" :project="project" @toggle-dialog="visible=false"/>
         </p>
       </div>
       <div class="flex justify-between justify-items-stretch pl-2 pt-1 items-center text-sm">
         <div class="flex justify-between items-center  justify-items-stretch gap-3">
-          <span class="font-bold"> <span style="color:#0057FF;" class="mr-2">{{ project.steps.length }} </span><i class="pi pi-list-check " /></span>
-          <Tag class="mb-1 scale-90" :class="statusSeverity">{{ translatedProjectStatus(project.status)}}</Tag>
+          <span class="font-bold"> <span style="color:#0057FF;" class="mr-2">{{ project.steps.length }} </span><i
+            class="pi pi-list-check "/></span>
+          <Tag class="mb-1 scale-90" :class="statusSeverity">{{ translatedProjectStatus(project.status) }}</Tag>
         </div>
         <div class="flex justify-between justify-items-stretch gap-3">
         </div>
       </div>
-      <div class="text-sm px-2 py-3 text-slate-500" style="color:#757575;font-size:12px"> {{  $props.project.description.charAt(0).toUpperCase() + $props.project.description.slice(1)  }} </div>
+      <div class="text-sm px-2 py-3 text-slate-500"
+           style="color:#757575;font-size:12px;">
+        {{ $props.project.description.charAt(0).toUpperCase() + $props.project.description.slice(1) }}
+      </div>
+      </div>
       <hr>
 
 
@@ -59,38 +69,38 @@ icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
 </template>
 
 <script setup>
-import { bcStore } from '~/stores/breadcrumbs';
-import { defineEmits } from 'vue';
+import {bcStore} from '~/stores/breadcrumbs';
+import {defineEmits} from 'vue';
 import {ProjectService, TaskStatus} from '~/api/generate';
-import { useAuth } from '../stores/auth';
-import { storeToRefs } from 'pinia';
+import {useAuth} from '../stores/auth';
+import {storeToRefs} from 'pinia';
 import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
 import {useRefreshStore} from '#imports';
 
 const visible = ref(false)
 const deleteDialog = ref(false)
 const store = bcStore()
-const { project } = defineProps(['project'])
+const {project} = defineProps(['project'])
 const authStore = useAuth()
-const { userEmail } = storeToRefs(authStore)
+const {userEmail} = storeToRefs(authStore)
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
   ended: 'Terminé'
 }
 
-const translatedProjectStatus =(project_status)=> {
+const translatedProjectStatus = (project_status) => {
   return translations[project_status]
 }
-const formatDate=(dateString)=> {
+const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  return date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'long', year: 'numeric'});
 }
-const navigate = () =>{
-  store.addCrumb({ label: project.title, route: `/projects/${project.id}` })
+const navigate = () => {
+  store.addCrumb({label: project.title, route: `/projects/${project.id}`})
 }
 
-const statusSeverity = computed(() =>{
+const statusSeverity = computed(() => {
   switch (project.status) {
     case 'pending':
       return 'warning'
@@ -118,7 +128,7 @@ const deleteProject = async () => {
 
     await refreshStore.fetchProject()
     await refreshStore.totalRecords()
-    deleteDialog.value= false
+    deleteDialog.value = false
   } catch (err) {
     console.error("Error deleting project:", err);
   }
@@ -126,22 +136,25 @@ const deleteProject = async () => {
 
 </script>
 <style>
-.exeeded_text{
-font-size: 19px;
+.exeeded_text {
+  font-size: 19px;
   font-family: Lato;
-  color:#212529;
+  color: #212529;
 }
-.warning{
+
+.warning {
   background-color: #F9D621;
-  color:black;
+  color: black;
 }
-.info{
+
+.info {
   background-color: #B3DDF4;
-  color:black;
+  color: black;
 }
-.success{
+
+.success {
   background-color: #9ADC82;
-  color:black;
+  color: black;
 }
 
 </style>
