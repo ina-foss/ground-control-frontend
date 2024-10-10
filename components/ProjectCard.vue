@@ -9,11 +9,11 @@
         <p class="font-bold self-center exeeded_text">
           {{ project.title }} </p>
         <p class="inline-block float-right">
-          <Button
+          <Button style="padding:0px;margin:0px 12px 0px 12px;"
             severity="primary" text rounded size="small"
             @click.stop.prevent="deleteDialog=true">
             <img
-              style="height: 24px;filter: invert(44%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(86%) contrast(88%);"
+              style="height:18px;width:18px;filter: invert(14%) sepia(6%) saturate(147%) hue-rotate(182deg) brightness(91%) contrast(90%);"
               src="public/icons/icons-svg/icons-svg/trash-icon.svg"
               alt="Trash Icon"/>
           </Button>
@@ -32,7 +32,7 @@
             </div>
           </Dialog>
 
-          <Button
+          <Button style="height:18px;width:18px"
             icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
             @click.stop.prevent="visible=true"/>
 
@@ -58,12 +58,12 @@
 
     </NuxtLink>
     <div class=" bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400" style="font-size: 14px">
-      <p v-if="$props.project.created_at != null" class="self-center font-bold" style="color:#212529">
+      <p v-if="$props.project.created_at != null" class="self-center font-medium" style="color:#212529">
         {{ formatDate($props.project.created_at) }}
       </p>
       <Avatar
         v-tooltip.left="userEmail" :label=userEmail.charAt(0).toUpperCase()
-        shape="circle" style="background-color:#0057FF;color: white;font-weight: bold;height:24px;width:24px"/>
+        shape="circle" style="background-color:#0057FF;color: white;font-weight: 500;height:24px;width:24px"/>
     </div>
   </div>
 
