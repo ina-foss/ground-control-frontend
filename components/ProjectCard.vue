@@ -13,14 +13,23 @@
             severity="primary" text rounded size="small"
             @click.stop.prevent="deleteDialog=true">
             <img
-              style="height:18px;width:18px;filter: invert(14%) sepia(6%) saturate(147%) hue-rotate(182deg) brightness(91%) contrast(90%);"
+              style="height:18px;width:18px;filter: sepia(1) saturate(0) brightness(0.6);"
               src="public/icons/icons-svg/icons-svg/trash-icon.svg"
               alt="Trash Icon"/>
           </Button>
           <!--Confirmation dialog to delete-->
           <Dialog
             v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?"
-            :style="{ width: '30rem'}" class="bg-white pb-0"
+            :style="{ width: '30rem'}" class="bg-white pb-0" :pt="{
+
+        header:{
+          style:{color:'#212529'},
+class: 'flex justify-between items-center p-3',
+        },
+                content:{
+class: 'p-3',
+        }
+            }"
             @after-hide="deleteDialog = false">
             <div class="flex justify-end pb-0">
               <ButtonGroup class="justify-evenly flex">
@@ -32,8 +41,8 @@
             </div>
           </Dialog>
 
-          <Button style="height:18px;width:18px"
-            icon="pi pi-ellipsis-h" severity="secondary" text rounded size="small"
+          <Button style="height:18px;width:18px; color:#212529;"
+            icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded size="small"
             @click.stop.prevent="visible=true"/>
 
           <MoleculeFormProject :dialog-visible="visible" :project="project" @toggle-dialog="visible=false"/>
@@ -57,7 +66,7 @@
 
 
     </NuxtLink>
-    <div class=" bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400" style="font-size: 14px">
+    <div class=" bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400" style="font-size: 12px">
       <p v-if="$props.project.created_at != null" class="self-center font-medium" style="color:#212529">
         {{ formatDate($props.project.created_at) }}
       </p>
@@ -157,5 +166,7 @@ const deleteProject = async () => {
   background-color: #9ADC82;
   color: black;
 }
-
+.custom-icon-color .pi {
+  color: #212529;
+}
 </style>
