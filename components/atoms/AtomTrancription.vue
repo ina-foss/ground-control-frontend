@@ -10,7 +10,7 @@ class="flex cursor-pointer flex-start gap-2 "
         <Tag :class="tcColor">
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
-            <p class="text-sm">{{ transcriptions[0].tcin }}</p>
+            <p class="text-sm">{{$application.timestampToUnix(transcriptions[0].tcin)  }}</p>
           </div>
         </Tag>
         <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
@@ -77,9 +77,11 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
 
 <script setup>
 import Textarea from 'primevue/textarea';
+import { useService } from '#imports';
 
 const emits = defineEmits(['confirm', 'onSegmentClick'])
 const toast = useToast()
+const { $application }  = useService()
 
 const {transcriptions, algos, userAnnotation, status} = defineProps({
   transcriptions: {
