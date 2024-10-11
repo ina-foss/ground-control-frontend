@@ -4,7 +4,9 @@
     <div class="inline ">
       {{ (newText == '') ? text : newText }}
     </div>
-    <span v-for="lbl in newLabel" class=" align-super text-[0.70rem] pl-[0.5rem] ">{{lbl}}</span>
+    <span v-if="options.span == true">
+      <span v-for="lbl in newLabel" class=" align-super text-[0.70rem] pl-[0.5rem] ">{{lbl}}</span>
+    </span>
     <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-r-2"></span> -->
   </div>
 </template>
@@ -43,6 +45,7 @@ const newText = ref(text)
 const newIndex = $ref(index)
 const newLabel = $ref(label)
 const focus = ref(false)
+const { $application } = useService()
 
 watchEffect(()=>
   console.log(options.span)
@@ -56,8 +59,8 @@ const handleDrag = () =>{
   emit('editSpan', {index: newIndex })
 }
 onMounted(()=>{
-
   watchEffect(()=>{
+
     if(span.value){
       emit('spanReady', {element: span.value, index: newIndex})
     }
