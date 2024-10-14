@@ -66,16 +66,19 @@ onMounted(()=>{
     }
   })
   watchEffect(()=>{
-    if( focus.value == false){
-      //TODO : Refactor tout dans $application et retourner le bon ordre + si c'est noir ou blanc ?
       let color ='--extra-'+ (newIndex%10+1)
-      // span.value.style.backgroundColor = color + " 0.4)"
-      span.value.style.backgroundColor = `var(${color})`
       let hex = getComputedStyle(document.body).getPropertyValue(color)
-      span.value.style.color = colorIsDarkSimple(hex) ? 'white' : 'black'
+    if( options.span == true ) {
+      if( focus.value == false){
+        span.value.style.backgroundColor = `var(${color})`
+        span.value.style.color = colorIsDarkSimple(hex) ? 'white' : 'black'
+      }
+      else{
+        span.value.style.backgroundColor = color + " 1)"
+      }
     }
     else{
-      span.value.style.backgroundColor = color + " 1)"
+      span.value.style.backgroundColor = 'transparent'
     }
   })
 })

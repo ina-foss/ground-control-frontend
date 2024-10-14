@@ -11,7 +11,7 @@
         <div v-if="typeof focusSpan == 'undefined'">Nothing selected</div>
         <div v-else class="border-gray-200  p-2 flex flex-col start-0  gap-2">
           <div class=" inline-flex items-start justify-start gap-2" >
-          <div class="bg-[--color]  rounded-xl min-w-6 text-center transition-all duration-500" :style="`--color: ${spanRefArray[focusSpan].color}1) `">{{ focusSpan +1 }}</div>
+          <div class="bg-[--color]  rounded-xl min-w-6 text-center transition-all duration-500" :style="`background-color: var(--extra-${focusSpan % 10 + 1 });`">{{ focusSpan +1 }}</div>
             {{spanRefArray[focusSpan].text}}
           </div>
         <div>
