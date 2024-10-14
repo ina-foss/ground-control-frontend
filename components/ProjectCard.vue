@@ -8,10 +8,15 @@
       <div class="inline-block flex justify-between align-middle pl-2">
         <p class="font-bold self-center exeeded_text">
           {{ project.title }} </p>
-        <p class="inline-block float-right">
-          <Button style="padding:0px;margin:0px 12px 0px 12px;"
-            severity="primary" text rounded size="small"
-            @click.stop.prevent="deleteDialog=true">
+        <p class="inline-block flex flex-col items-center">
+
+
+          <Button style="height:18px;width:18px; color:#212529;" class="mt-3"
+                  icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded size="small"
+                  @click.stop.prevent="visible=true"/>
+          <Button style="padding:12px 0 0 0;margin:0;"
+                  severity="primary" text rounded size="small"
+                  @click.stop.prevent="deleteDialog=true">
             <img
               style="height:18px;width:18px;filter: sepia(1) saturate(0) brightness(0.6);"
               src="public/icons/icons-svg/icons-svg/trash-icon.svg"
@@ -21,15 +26,14 @@
           <Dialog
             v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?"
             :style="{ width: '30rem'}" class="bg-white pb-0" :pt="{
-
-        header:{
-          style:{color:'#212529'},
-class: 'flex justify-between items-center p-3',
-        },
-                content:{
-class: 'p-3',
-        }
-            }"
+      header:{
+        style:{color:'#212529'},
+        class: 'flex justify-between items-center p-3',
+      },
+      content:{
+        class: 'p-3',
+      }
+    }"
             @after-hide="deleteDialog = false">
             <div class="flex justify-end pb-0">
               <ButtonGroup class="justify-evenly flex">
@@ -40,11 +44,6 @@ class: 'p-3',
               </ButtonGroup>
             </div>
           </Dialog>
-
-          <Button style="height:18px;width:18px; color:#212529;"
-            icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded size="small"
-            @click.stop.prevent="visible=true"/>
-
           <MoleculeFormProject :dialog-visible="visible" :project="project" @toggle-dialog="visible=false"/>
         </p>
       </div>
