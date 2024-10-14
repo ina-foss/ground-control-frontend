@@ -8,7 +8,7 @@
         }
       }" @click="handleSegmentation()" />
       <div
-v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
+v-tooltip.top="$application.timestampToUnix(phrase.tcin) + '-' + $application.timestampToUnix(phrase.tcout)"
         class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
         @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: props.index })">
         {{ $props.phrase.data.text[0] }}
@@ -18,9 +18,11 @@ v-tooltip.top="phrase.tcin + '-' + phrase.tcout"
 </template>
 
 <script setup>
+import { useService } from '#imports';
 
 const props = defineProps(['phrase', 'colors', 'topics', 'index'])
 const emit = defineEmits(['segmentation', 'onSegmentClick'])
+const { $application } = useService()
 const newColors =props.colors;
 const newTopics =props.topics;
 const toast = useToast()
