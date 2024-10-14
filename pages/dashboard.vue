@@ -5,13 +5,36 @@
         v-for="(project,index) in sortDataById" :key="index" :project=project
         @refresh-data="handleRefresh"/>
     </div>
-    <div class="absolute bottom-16 w-full">
-    <Paginator
-      v-model:first="first"
-      style="background-color: #FFFFFF"
- class="sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="totalRecords"
-        template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink"/>
-  </div>
+    <div class="absolute bottom-[4.4rem] w-full">
+      <Paginator
+        :pt="{
+
+        root:{
+          style: { padding: '0px', height: '24px',backgroundColor:'transparent' },
+
+        },
+        firstPageButton: {
+            class: ['paginator-button'],
+          },
+          previousPageButton: {
+            class: ['paginator-button'],
+          },
+          pageButton: {
+            class: ['paginator-button'],
+                  },
+          nextPageButton: {
+            class: ['paginator-button'],
+          },
+          lastPageButton: {
+            class: ['paginator-button'],
+          },
+
+      }"
+        v-model:first="first"
+
+        class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="totalRecords"
+        template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink" />
+    </div>
   </div>
 </template>
 
@@ -33,13 +56,11 @@ const totalRecords = $ref(getProjectNumber);
 const dashboardRef = ref()
 const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
-
-const getTotalRecords=()=>{
+const getTotalRecords = () => {
   refreshStore.totalRecords()
 }
 
-watch(()=> first.value,()=> handleRefresh() )
-
+watch(() => first.value, () => {handleRefresh()})
 
 const handleRefresh = async () => {
   try {
@@ -56,10 +77,35 @@ const sortDataById = computed(() => {
     return []
   }
 )
+
+
 onMounted(() => {
-  handleRefresh()
+  handleRefresh();
 })
 
 while (getItems.value.length > 0) store.removeLastCrumb()
 
 </script>
+<style >
+
+.custom-paginator .paginator-button {
+  height: 24px;
+  width: 24px;
+  font-size: 14px;
+  color: #757575;
+  padding: 0 12px ;
+}
+
+.custom-paginator .paginator-button:hover {
+  background-color: #0C7DA2;
+  border-radius: 50%;
+}
+.custom-paginator .paginator-button:focus {
+  color: #006180;
+}
+.custom-paginator .paginator-button:active {
+  color: #006180;
+}
+
+
+</style>

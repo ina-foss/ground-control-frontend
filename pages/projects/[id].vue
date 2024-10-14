@@ -390,4 +390,5 @@ const onCellEditComplete = () => {
 .txt{
   color:#212529;
 }
+
 </style>
