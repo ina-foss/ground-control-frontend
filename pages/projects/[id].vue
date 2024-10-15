@@ -2,17 +2,17 @@
   <div v-if="!data.title">
     <LoadingSpinner/>
   </div>
-  <div v-else>
+  <div v-else class="grid h-[80vh] p-3">
 
     <DataTable
-      v-model:expanded-rows="expandedRows" class=" overflow-scroll-full custom-data-table" :context-menu=true
+      v-model:expanded-rows="expandedRows" class=" overflow-scroll-full custom-data-table p-3" :context-menu=true
       :pt="{
       column: {
         bodycell:({ state }) => ({
-          style: {padding: '12px',...state['d_editing']}
+          style: {padding: '12px',...state['d_editing']},
         }),
         headercell:({ state }) => ({
-          style: {padding: '12px',backgroundColor:'#EDEDED',...state['d_editing']}
+          style: {padding: '12px',backgroundColor:'#EDEDED',...state['d_editing']},
         })
       },
       row:{
@@ -28,7 +28,6 @@
           <h1 class="text-xl font-bold">Ce projet ne comporte aucune etapes</h1>
         </div>
       </template>
-      <Column id="test" expander style="width: 5rem;color:blue" class="txt"  body-class="text-sm p-3"/>
       <Column field="name" header="Titre" class="txt" style="width : 8rem ; min-width: 70px;"   body-class="p-3 text-sm">
         <template #body="slotProps">
           <p > {{ slotProps.data.title }}</p>
@@ -37,8 +36,8 @@
       <Column field="id" header="ID" class="txt" style="width: 40px;" body-class="text-sm"/>
       <Column field="annotation_type" class="txt" header="Type"  body-class="text-sm"/>
       <Column header="Statut" class="txt"  body-class="text-sm">
-        <template #body>
-          <Tag  :class="statusSeverity" class="mb-1 scale-90 font-medium" >{{translatedAnnotationStatus(data.status) }}</Tag>
+        <template #body="slotProps">
+          <Tag  :class="getStatusClass(slotProps.data.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(slotProps.data.status) }}</Tag>
         </template>
       </Column>
       <Column field="description" header="Description" class="txt"  body-class="text-sm"/>
@@ -46,18 +45,18 @@
         <template #body="slotProps">
           <div class="flex justify-between min-w-[203px] gap-3 txt">
             <Button
-              class="txt"
+              class="button button-prev txt"
               style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
               outlined label="Créer un task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
             <div
-class="flex items-center space-x-2 cursor-pointer txt" :loading="loadingExport"
+              class="flex items-center space-x-2 cursor-pointer txt border border-[#0B7698] bg-transparent text-[#0B7698] rounded-[5px]" :loading="loadingExport"
                   @click="clickButtonMenu($event,slotProps.data) ">
             <Button
-              class="txt"
+              class="txt button button-prev "
                     style="font-size:14px"
               label="Exporter" size="small" severity="secondary" text/>
               <img
-                style="height:15px;width:15px;filter: brightness(0) saturate(100%) invert(11%) sepia(5%) saturate(250%) hue-rotate(180deg) brightness(90%) contrast(90%);"
+                style="height:15px;width:15px;filter: brightness(0) saturate(100%) invert(20%) sepia(12%) saturate(427%) hue-rotate(154deg) brightness(91%) contrast(92%);"
                    src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg"
                 alt="Arrow Down Icon">
           </div>
@@ -74,26 +73,31 @@ class="flex items-center space-x-2 cursor-pointer txt" :loading="loadingExport"
           </div>
         </template>
       </Column>
-      <Column :row-editor="true" body-style="text-align:center" style="width: 10%; min-width: 8rem"  body-class="text-sm"/>
-      <template #expansion="slotProps">
-        <div class="p-6 border-surface-200 border-4">
+      <Column :row-editor="true" body-style="text-align:center" style="width: 5%; min-width: 5rem"  body-class="text-sm"/>
+      <Column id="test" expander style="width: 5rem;" class="txt"  body-class="text-sm p-3"/>
+
+      <template #expansion="slotProps" class="p-0">
+        <div class="border-surface-200 border-4" style="border-width: 17px;">
           <DataTable
             :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
-            class="overflow-scroll p-5"
+            class="overflow-scroll"
              :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
       column: {
         bodycell:({ state }) => ({
-          style: {padding: '12px',...state['d_editing']}
+        class:'p-3',
+          style: {...state['d_editing']}
         }),
         headercell:({ state }) => ({
-          style: {padding: '12px',backgroundColor:'#EDEDED',...state['d_editing']}
+        class:'p-3',
+          style: {backgroundColor:'#EDEDED',...state['d_editing']}
         })
       },
       row:{
         class:'p-3',
         style: { backgroundColor: 'black', color: 'white' },
-      }
+      },
+       style: {height:'88px'}
     }"
             @row-click="handleRowClick($event)">
             <Column class="txt" body-class="text-sm" field="name" header="Titre" style="width : 8rem ; min-width: 70px; ">
@@ -126,13 +130,18 @@ class="flex items-center space-x-2 cursor-pointer txt" :loading="loadingExport"
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
+            <Column header="Statut" class="txt" style="max-width: 20px"  body-class="text-sm">
+              <template #body="{ data: nestedData }">
+                <Tag  :class="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
+              </template>
+            </Column>
             <Column class="txt" body-class="text-sm" header="Annoté par" style="width: 12rem">
               <template #body="{data: nestedData}">
                 <div class="flex justify-start gap-2 ">
                   <Avatar
                     v-for="(annotation, index) in nestedData.annotations" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
-                    shape="circle" style="color: black;font-weight: bold"
+                    shape="circle" style="background-color:#0057FF;color: white;font-weight: 500;height:24px;width:24px"
                     :style="{ backgroundColor: getColorForAnnotation(annotation.annotation_status) }"/>
                 </div>
               </template>
@@ -198,6 +207,8 @@ const expandedRows = ref()
 
 const editMode = ref(false)
 const data = ref(getProject)
+
+console.log(data.value)
 const buttonItems = [
   {
     label: 'Un seul fichier',
@@ -254,6 +265,7 @@ function getColorForAnnotation(annotation_status) {
   if (annotation_status === AnnotationStatus.ENDED) {
     return '#ACE1AF';
   }
+  else return '#0057FF';
 }
 
 const clickButtonMenu = (event, step) => {
@@ -336,25 +348,20 @@ const handleRowClick = (event) => {
 
   if (editMode.value === false) navigateToTask(clickedRowData.value.id)
 
-
 }
 
-const statusSeverity = computed(() => {
-  switch (data.value.status) {
+const getStatusClass = (status) => {
+  switch (status) {
     case 'pending':
-      return 'warning'
-
+      return 'warning';
     case 'draft':
-      return 'info'
-
+      return 'info';
     case 'ended':
-      return 'success'
+      return 'success';
     default:
-      return ''
+      return '';
   }
-})
-
-
+};
 const onCellEditComplete = () => {
   editMode.value = false
 }
