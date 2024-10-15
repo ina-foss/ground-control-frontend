@@ -1,11 +1,11 @@
 <template>
   <div
-    class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 border-b-2 border-#EDEDED justify-between bg-surface-color"
-       style="background-color: #FFFFFF">
+    class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 border-b-2 border-#EDEDED justify-between bg-surface-color dark:bg-surface-800 "
+       >
     <div class="flex items-center">
       <AtomLogo size="md" />
       <div style="padding: 25px;font-size: 20px">
-        <NuxtLink class="self-center font-bold" to="/">Ground Control</NuxtLink>
+        <NuxtLink class="self-center font-bold dark:text-white" to="/">Ground Control</NuxtLink>
       </div>
       <AtomIcon class="self-center" />
     </div>
