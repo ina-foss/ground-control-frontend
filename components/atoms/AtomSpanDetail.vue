@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[300px] border-gray-100 border shadow-lg p-3 bg-surface-100 flex flex-col">
+  <div class="w-[300px] border-gray-100 border  shadow-lg p-3 bg-surface-100  flex flex-col">
     <div class="w-full">
       <b>Result</b>
       <Divider
@@ -11,7 +11,9 @@
         <div v-if="typeof focusSpan == 'undefined'">Nothing selected</div>
         <div v-else class="border-gray-200  p-2 flex flex-col start-0  gap-2">
           <div class=" inline-flex items-start justify-start gap-2" >
-          <div class="bg-[--color]  rounded-xl min-w-6 text-center transition-all duration-500" :style="`background-color: var(--extra-${focusSpan % 10 + 1 });`">{{ focusSpan +1 }}</div>
+          <div :class="` bg-[color:${computeColor(focusSpan).color}] text-${textColorPicker(computeColor(focusSpan).hex)}  rounded-xl min-w-6 text-center transition-all duration-500`" >
+            {{ focusSpan+1}}
+          </div>
             {{spanRefArray[focusSpan].text}}
           </div>
         <div>
@@ -36,7 +38,7 @@
         <div v-if="spanRefArray.length == 0">No Regions created yet</div>
         <div v-else class="border-gray-200 border-[1px] p-2 text-nowrap flex flex-col start-0 ">
           <div  v-for="(span,index) in spanRefArray" :key="index" class="flex flex-row hover:bg-surface-100 w-full py-2 justify-start gap-2" >
-            <div  class="bg-[--color] shrink rounded-xl min-w-6 text-center" :style="`background-color: var(--extra-${index % 10 + 1 });`">{{ index +1 }}</div>
+            <div  :class="` bg-[color:${computeColor(index).color}] text-${textColorPicker(computeColor(index).hex)} shrink rounded-xl min-w-6 text-center `" >{{ index +1 }}</div>
               <p class="truncate"> {{span.text}} </p>
             </div>
         </div>
@@ -46,12 +48,12 @@
         <b>Relations ({{relationArray.length}})</b>
       </Divider>
       <div v-if="relationArray.length == 0">No Regions created yet</div>
-      <div v-else class="border-gray-200 border-[1px] p-2 text-nowrap flex flex-col">
+      <div v-else class="border-gray-200 border-[1px] text-nowrap flex flex-col">
         <div v-for="(relation,index) in relationArray" :key="index" class="flex  justify-center items-center gap-3">
-            <div  class="bg-[--color] shrink rounded-xl min-w-6 text-center" :style="`--color: ${spanRefArray[relation.from].color}1) `">{{ relation.from +1 }}</div>
+          <div  :class="` bg-[color:${computeColor(relation.from).color}] text-${textColorPicker(computeColor(relation.from).hex)} shrink rounded-xl min-w-6 text-center`" >{{ relation.from +1 }}</div>
           <i class="pi pi-arrow-right"/>
-            <div  class="bg-[--color] shrink rounded-xl min-w-6 text-center" :style="`--color: ${spanRefArray[relation.to].color}1) `">{{ relation.to +1 }}</div>
-            <Button icon="pi pi-trash" outlined  size="large" severity="danger" class="scale-[0.7]"/>
+            <div  :class="` bg-[color:${computeColor(relation.to).color}] text-${textColorPicker(computeColor(relation.to).hex)} shrink rounded-xl min-w-6 text-center `" >{{ relation.to +1 }}</div>
+            <Button icon="pi pi-trash" outlined  size="large" severity="danger" class="scale-[0.6]"/>
         </div>
       </div>
     </div>
@@ -62,11 +64,15 @@
 
 
 <script setup>
+import { useService } from '#imports';
+const { $application } = useService()
 const customdividerstyle = ref({content: 'bg-surface-100 z-10 px-1'})
 const emit = defineEmits(['deleteSpan','unselect','link'])
+const { computeColor,textColorPicker } = $application
 
 
 const { focusSpan, spanRefArray, relationArray } = defineProps(['focusSpan', 'spanRefArray','relationArray'])
+
 
 
 </script>

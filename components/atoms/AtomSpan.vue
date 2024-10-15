@@ -1,5 +1,5 @@
 <template>
-  <div  ref="span" :class="'inline border-blue-400 '+(options.span==true ? ' highlighted-text cursor-pointer' : '') +  (linkCss != '' ? linkCss + ' cursor-crosshair' : '')" @click="handleClick" @mousedown="handleDrag" >
+  <div  ref="span" :class="`inline border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ' highlighted-text cursor-pointer' : 'text-black'}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
     <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-l-2"></span> -->
     <div class="inline ">
       {{ (newText == '') ? text : newText }}
@@ -46,6 +46,7 @@ const newIndex = $ref(index)
 const newLabel = $ref(label)
 const focus = ref(false)
 const { $application } = useService()
+const { textColorPicker, computeColor } = $application
 
 watchEffect(()=>
   console.log(options.span)
@@ -66,30 +67,17 @@ onMounted(()=>{
     }
   })
   watchEffect(()=>{
-      let color ='--extra-'+ (newIndex%10+1)
-      let hex = getComputedStyle(document.body).getPropertyValue(color)
     if( options.span == true ) {
-      if( focus.value == false){
-        span.value.style.backgroundColor = `var(${color})`
-        span.value.style.color = colorIsDarkSimple(hex) ? 'white' : 'black'
-      }
-      else{
-        span.value.style.backgroundColor = color + " 1)"
-      }
+        span.value.style.color = textColorPicker(computeColor(newIndex).hex)
+        span.value.style.backgroundColor = `var(${computeColor(newIndex).color})`
     }
     else{
       span.value.style.backgroundColor = 'transparent'
+      span.value.style.color = 'black'
     }
   })
 })
 
-function colorIsDarkSimple(bgColor) {
-  let color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
-  let r = parseInt(color.substring(0, 2), 16); // hexToR
-  let g = parseInt(color.substring(2, 4), 16); // hexToG
-  let b = parseInt(color.substring(4, 6), 16); // hexToB
-  return ((r * 0.299) + (g * 0.587) + (b * 0.114)) <= 120;
-}
 const addLeftText = (editText) => {
   newText.value = editText + newText.value
 }
@@ -102,6 +90,11 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
 </script>
 
 <style >
+
+.focus {
+  @apply border-2 border-gray-500
+}
+
 .highlighted-text {
   display: inline;
   position: relative;
