@@ -1,7 +1,7 @@
 <template>
     <div class=" col-span-4 flex flex-col overflow-y-auto   ">
-      <div class=" flex justify-center gap-10">
-        <SelectButton class="self-center sticky top-0" v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
+      <div class=" flex justify-center gap-10 sticky top-0">
+        <SelectButton class="self-center " v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
         <div class="flex items-center">
           <InputText v-model="newLabel" size="small" />
           <Button icon="pi pi-plus" size='small' @click="addLabel()" />
@@ -91,7 +91,6 @@ function generatePastelColor(tagNumber : number) {
     newLabel.value = ''
   }
 
-// TODO:  Molecule
 const onDeleteSpan = ({ index } : { index : number }) => {
   const element : Element = elementArray.value[index]
   const text = spanRefArray.value[index].text
@@ -116,13 +115,11 @@ watch(()=>labelSelected.value,(newLabel:any)=>{
   }
 },{immediate: true})
 
-// TODO: Atom
 const handleUnselect = () => {
   spanRefArray.value[currentFocus].focus = false
   currentFocus=undefined
 }
 
-// TODO: Atom
 const handleSelection = () => {
   const currentSelection = document.getSelection()
   if (currentSelection && currentSelection.toString() !== '' && labelSelected.value != '' ) {
@@ -201,7 +198,6 @@ const handleSelection = () => {
   }
 }
 
-// TODO: Atom
 const deleteSelection = () => {
   if (state.selection) {
     const span = document.createElement('sup')
