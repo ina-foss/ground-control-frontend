@@ -11,9 +11,10 @@
         <AtomTranscriptionSpan @mouseup="handleSelection" :local="local" />
       </div>
     </div>
-    <div class=" h-full flex flex-col items-center place-content-center gap-10 col-span-2">
+    <div class=" h-full flex flex-col items-center place-content-center  gap-10 col-span-2">
       <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
-      <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray" @link="linkMode = !linkMode" @delete-span="onDeleteSpan($event)" @unselect="handleUnselect()" />
+      <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
+      @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()" @focus-span="handleFocusSpan" />
     </div>
 </template>
 
@@ -166,17 +167,7 @@ const handleSelection = () => {
               spanClicked = true
               spanIndex = index
             },
-            onFocusSpan: ({index}) =>{
-              if( linkMode ){
-                relationArray.value.push({from: currentFocus, to: index})
-                linkMode=false
-              }
-              else{
-                spanClicked = false
-                currentFocus = index
-                labelSelected.value = spanRefArray.value[currentFocus].label[0]
-              }
-            }
+            onFocusSpan:(event)=> handleFocusSpan(event)
 
 
         })
@@ -198,6 +189,17 @@ const handleSelection = () => {
   }
 }
 
+  const handleFocusSpan = ({index}) =>{
+    if( linkMode ){
+    relationArray.value.push({from: currentFocus, to: index})
+    linkMode=false
+    }
+    else{
+    spanClicked = false
+    currentFocus = index
+    labelSelected.value = spanRefArray.value[currentFocus].label[0]
+    }
+  }
 const deleteSelection = () => {
   if (state.selection) {
     const span = document.createElement('sup')
