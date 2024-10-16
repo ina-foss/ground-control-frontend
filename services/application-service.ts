@@ -3,7 +3,7 @@ import { getApplicationConfiguration } from "../services/dynamic-configuration-s
 import { useAuth } from "../stores/auth";
 import { storeToRefs } from "pinia";
 import { UserService } from "../api/generate/services/UserService";
-import { floor, padStart, pad, padEnd } from "lodash";
+import { floor, padStart, padEnd } from "lodash";
 
 /**
  * Services used throught the application
@@ -38,13 +38,18 @@ export default class ApplicationService {
     return videoTime
   }
 
-  public timestampToUnix(time: number | string){
+  /**
+   * Convert timestamp into readable time code
+   * @param time
+   * @returns {string}
+   */
+  public timestampToUnix(time: number | string): string {
     if ( typeof time != "number") return time
         const hour: number = floor(time/3600)
-        const minute: number = floor((time-hour)/60)
-        const second: number = floor(time-hour-minute)
-        const milli: number = floor(time-hour-minute-second,3)
-  return `${padStart((hour.toString()),2,'0')}:${padStart(minute.toString(),2,'0')}:${pad(second.toString(),2,'0')}.${padEnd(milli.toString().split('.')[1],3,'0')}`
+        const minute: number = floor((time % 3600 )/60)
+        const second: number = floor(time % 60)
+        const milli: number = floor(time % 1,2)
+  return `${padStart((hour.toString()),2,'0')}:${padStart(minute.toString(),2,'0')}:${padStart(second.toString(),2,'0')}.${padEnd(milli.toString().split('.')[1],3,'0')}`
   }
 
   public async checkUser() {
