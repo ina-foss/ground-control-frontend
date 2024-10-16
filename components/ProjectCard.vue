@@ -80,7 +80,7 @@
 <script setup>
 import {bcStore} from '~/stores/breadcrumbs';
 import {defineEmits} from 'vue';
-import {ProjectService, TaskStatus} from '~/api/generate';
+import {ProjectService} from '~/api/generate';
 import {useAuth} from '../stores/auth';
 import {storeToRefs} from 'pinia';
 import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
