@@ -44,7 +44,6 @@ export default class ApplicationService {
         const minute: number = floor((time-hour)/60)
         const second: number = floor(time-hour-minute)
         const milli: number = floor(time-hour-minute-second,3)
-        console.log(milli);
   return `${padStart((hour.toString()),2,'0')}:${padStart(minute.toString(),2,'0')}:${pad(second.toString(),2,'0')}.${padEnd(milli.toString().split('.')[1],3,'0')}`
   }
 
@@ -72,10 +71,10 @@ export default class ApplicationService {
    * @returns {string}
    */
   public fontColorByBg(bgColor: string) {
-    let color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
-    let r = parseInt(color.substring(0, 2), 16); // hexToR
-    let g = parseInt(color.substring(2, 4), 16); // hexToG
-    let b = parseInt(color.substring(4, 6), 16); // hexToB
+    const color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
+    const r = parseInt(color.substring(0, 2), 16); // hexToR
+    const g = parseInt(color.substring(2, 4), 16); // hexToG
+    const b = parseInt(color.substring(4, 6), 16); // hexToB
     return ((r * 0.299) + (g * 0.587) + (b * 0.114)) <= 120 ? 'white' : 'black';
   }
 

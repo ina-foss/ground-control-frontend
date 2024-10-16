@@ -2,8 +2,19 @@
   <div v-if="!data.title">
     <LoadingSpinner/>
   </div>
-  <div v-else class="grid h-[80vh] p-3">
 
+  <div v-else class="grid h-[80vh] p-3">
+    <div class="p-3 w-[200px] ml-auto fixed z-30 right-0 mr-3" style=" top:65px">
+      <Dropdown
+        v-model="selectedStatus"
+        :options="statusOptions"
+        option-label="label"
+        placeholder="Statut"
+        class="w-full mb-4  h-[40px] " show-clear
+        style=" border-color: #0b7698 !important;
+    color: #0b7698 !important;"
+      />
+    </div>
     <DataTable
       v-model:expanded-rows="expandedRows" class=" overflow-scroll-full custom-data-table p-3" :context-menu=true
       :pt="{
@@ -20,7 +31,7 @@
         style: { backgroundColor: 'black', color: 'white' },
       },
       style: 'height:88px'
-    }" :row-hover=true :sort-order=0 :value="data.steps" breakpoint="300px" column-resize-mode="fit"
+    }" :row-hover=true :sort-order=0 :value="filteredProjects" breakpoint="300px" column-resize-mode="fit"
       @cell-edit-complete="onCellEditComplete">
       <template #empty>
         <div class="bg-white h-[calc(100vh-300px)] w-full flex flex-col gap-10 items-center justify-center ">
@@ -76,8 +87,8 @@
       <Column :row-editor="true" body-style="text-align:center" style="width: 5%; min-width: 5rem"  body-class="text-sm"/>
       <Column id="test" expander style="width: 5rem;" class="txt"  body-class="text-sm p-3"/>
 
-      <template #expansion="slotProps" class="p-0">
-        <div class="border-surface-200 border-4" style="border-width: 17px;">
+      <template #expansion="slotProps">
+        <div class="border-surface-200 border-4 p-0" style="border-width: 17px;">
           <DataTable
             :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
             class="overflow-scroll"
@@ -179,7 +190,7 @@
 import _ from 'lodash';
 import {ref} from 'vue';
 import {bcStore} from '~/stores/breadcrumbs';
-import {AnnotationService, AnnotationStatus} from '../../api/generate';
+import {AnnotationService, AnnotationStatus, StepStatus} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
 
@@ -208,7 +219,6 @@ const expandedRows = ref()
 const editMode = ref(false)
 const data = ref(getProject)
 
-console.log(data.value)
 const buttonItems = [
   {
     label: 'Un seul fichier',
@@ -241,6 +251,22 @@ const translations = {
 const translatedAnnotationStatus =(annotation_status)=> {
   return translations[annotation_status]
 }
+const translatedTaskStatus = $computed(() => {
+  return Object.values(StepStatus).map(status => ({
+    label: translations[status],
+    value: status,
+  }));
+})
+
+const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
+const statusOptions = translatedTaskStatus;
+
+// Filtrer les projets en fonction du statut sélectionné
+const filteredProjects = computed(() => {
+  if (!selectedStatus.value) return data.value.steps; // Si aucun statut n'est sélectionné, retourne toutes les étapes
+
+  return data.value.steps.filter((step) => step.status === selectedStatus.value.value); // Filtre les étapes en fonction du statut
+});
 
 // On affiche meme si c'es pas fini
 fetchTasks(route.params.id).then(() => {
