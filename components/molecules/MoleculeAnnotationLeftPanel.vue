@@ -12,8 +12,7 @@
     </div>
 
     <AtomTopicList :colors="colors" :topics="topics" />
-    <slot>
-    </slot>
+    <slot/>
   </div>
 </template>
 
@@ -24,7 +23,7 @@
   import { useService } from '#imports';
 
 
-  const amalia = useService().$amalia
+  const {$amalia, $application}  = useService()
 
 
   const activePlayer = ref(true)
@@ -56,16 +55,10 @@ const { locals, colors, topics, videoSrc } = props;
 
   const emits = defineEmits(['scroll-to-segment'])
 
-  function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
-    const millisecond = tc.split('.')[1]
-    const timeArray = tc.split('.')[0].split(':')
-    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
-    return videoTime
-  }
 
   const updateVideoTimecode = (event) => {
-    if (activePlayer.value) amalia.updateCurrentTc(unixToTimestamp(event.tcin) -1 )
-    else AtomVideoHlsRef.videoRef.currentTime = unixToTimestamp(event.tcin) - 1 // Set video time to given timecode minus 1s to hear full segment
+    if (activePlayer.value) $amalia.updateCurrentTc($application.unixToTimestamp(event.tcin) -1 )
+    else AtomVideoHlsRef.videoRef.currentTime =$application.unixToTimestamp(event.tcin) - 1 // Set video time to given timecode minus 1s to hear full segment
   }
 
   defineExpose({updateVideoTimecode})

@@ -8,6 +8,7 @@
 <script setup lang="js">
 
   import { Hls } from 'hls.js'
+  import { useService } from '#imports';
 
   const { locals, videoSrc } = defineProps(['locals','video-src'])
 
@@ -26,7 +27,7 @@
       let endIndex = locals.length
       while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
         const mid = Math.floor(((endIndex + startIndex) / 2))
-        unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
+        $application.unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
       }
       const bestIndex = endIndex
       emits('timecode-update',{lastIndex: lastIndex, bestIndex: bestIndex}) // emit time to scroll and modify css
@@ -35,12 +36,6 @@
     lastTimecode = currentTime
   }
 
-  function unixToTimestamp(tc) { // Conversion du format 'HH:MM:SS.mmmm' vers le timecode en seconde
-    const millisecond = tc.split('.')[1]
-    const timeArray = tc.split('.')[0].split(':')
-    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
-    return videoTime
-  }
 
   async function fetchVideoStream(url) {
     const response = await fetch(url);

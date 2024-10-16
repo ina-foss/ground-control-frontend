@@ -2,10 +2,14 @@
     <div>
         <Avatar
           v-tooltip.left="userEmail"
-          style="background-color: transparent;height: 28px"
+          style="background-color: transparent;"
  class="cursor-pointer" shape="circle"
                 @click="toggle" >
-          <img src="public/icons/icons-svg/icons-svg/account-icon.svg">
+          <img
+            style="height:24px;width:24px;
+          filter: brightness(0) saturate(100%) invert(11%) sepia(5%) saturate(250%) hue-rotate(180deg) brightness(90%) contrast(90%);"
+            src="public/icons/icons-svg/icons-svg/account-icon.svg"
+            alt="Account Icon">
         </Avatar>
 
         <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
