@@ -1,13 +1,11 @@
 <template>
   <div  ref="span" :class="`inline border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ' highlighted-text cursor-pointer' : 'text-black'}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
-    <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-l-2"></span> -->
     <div class="inline ">
       {{ (newText == '') ? text : newText }}
     </div>
     <span v-if="options.span == true">
       <span v-for="lbl in newLabel" class=" align-super text-[0.70rem] pl-[0.5rem] ">{{lbl}}</span>
     </span>
-    <!-- <span class="inline border-blue-400 cursor-ew-resize  hover:border-r-2"></span> -->
   </div>
 </template>
 
@@ -48,9 +46,6 @@ const focus = ref(false)
 const { $application } = useService()
 const { textColorPicker, computeColor } = $application
 
-watchEffect(()=>
-  console.log(options.span)
-)
 
 const handleClick = () => {
   emit('focusSpan', {index: newIndex })
