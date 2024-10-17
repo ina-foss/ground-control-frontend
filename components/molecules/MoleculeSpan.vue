@@ -226,7 +226,6 @@ const handleSelection = (spanArg: any) => {
   const detailRef = ref(null)
 
   const loadSpan = ()=>{
-    debugger
     console.log(locals)
     locals?.forEach((segment,index) => {
       if(segment.data.span){
