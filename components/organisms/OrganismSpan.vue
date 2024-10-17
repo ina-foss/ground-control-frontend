@@ -27,7 +27,7 @@
           ayant été traités, différencie les interlocuteurs.
         </p>
       </MoleculeAnnotationLeftPanel>
-      <MoleculeSpan :locals="locals"  />
+      <MoleculeSpan :locals="locals" />
     </div>
   </div>
 </template>
@@ -40,6 +40,7 @@
   import { useAuth } from '#imports';
 
   const authStore = useAuth()
+  const emits = defineEmits(['submitAnnotation', 'finish-annotation']);
 
   let colors = $ref(['#BEBEBE'])
   let topics = $ref([])
@@ -70,6 +71,36 @@
     }
     return []
   })
+
+
+  onMounted(()=>{
+
+
+    watch(()=> allFetched, async() => {
+        await nextTick()
+        if(allFetched == true){
+
+          videoSrc = annotations_in[0]?.result.asset.url
+        }
+    })
+  })
+
+  const handleSubmit = () => {
+    locals.forEach((phrase, index) => {
+      if (![undefined].includes(topics[index])) {
+        phrase.data.topic = topics[index]
+      }
+    })
+    emits('submit-annotation',{ locals: locals })
+  }
+  const handleFinish = () => {
+    locals.forEach((phrase, index) => {
+      if (![undefined].includes(topics[index])) {
+        phrase.data.topic = topics[index]
+      }
+    })
+    emits('finish-annotation', {locals: locals})
+  }
 
   onMounted(()=>{
     watch(()=> allFetched,() => {

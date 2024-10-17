@@ -1,5 +1,5 @@
 <template>
-    <div class=" col-span-4 flex flex-col overflow-y-auto   ">
+    <div class=" col-span-4 flex flex-col overflow-y-auto    ">
       <div class=" flex justify-center gap-10 sticky top-0">
         <SelectButton class="self-center " v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
         <div class="flex items-center">
@@ -7,13 +7,13 @@
           <Button icon="pi pi-plus" size='small' @click="addLabel()" />
         </div>
       </div>
-      <div class="flex flex-col  " v-for="local in locals">
+      <div class="flex flex-col  " ref="spans" v-for="local in locals">
         <AtomTranscriptionSpan @mouseup="handleSelection" :local="local" />
       </div>
     </div>
-    <div class=" h-full flex flex-col items-center place-content-center  gap-10 col-span-2">
-      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
-      <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
+    <div  class=" h-full flex flex-col items-center place-content-center  gap-10 col-span-2">
+      <AtomSpanOption  v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+      <AtomSpanDetail ref="detailRef" :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
       @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()" @focus-span="handleFocusSpan" />
     </div>
 </template>
@@ -28,6 +28,7 @@
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
   import _, { random } from 'lodash';
+
 
   const options = reactive({
     span: true,
@@ -60,6 +61,10 @@
     selection: null,
     range: null
   })
+
+
+  const divRef = useTemplateRef('spans')
+
 
 const selectionText = computed(() => {
   if (state.range != null) {
@@ -121,12 +126,40 @@ const handleUnselect = () => {
   currentFocus=undefined
 }
 
-const handleSelection = () => {
+  const recordSpan = (range,index,label) => {
+    console.log('salut')
+    const list =  range.startContainer.parentNode.parentNode.parentNode
+    const element = range.startContainer.parentNode
+    const segmentPart = (_.indexOf(element.childNodes,range.startContainer))
+    let offset = 0
+
+    if(element.hasChildNodes()){
+      let children = element.childNodes
+
+      children.forEach(function (currentValue,index) {
+        if (index < segmentPart){
+          offset += currentValue.firstChild?.firstChild.length || currentValue.length
+        }
+      });
+    }
+    const indexSegment = _.indexOf(list.childNodes, element.parentNode)
+
+    if(!locals[indexSegment-2].data.span) locals[indexSegment-2].data.span = []
+    if(!spanClicked) locals[indexSegment-2].data.span.push({id:index, label: label, start: offset+range.startOffset, end: offset+range.endOffset })
+    else{
+        let span = _.find(locals[indexSegment-2].data.span, (span)=> span.id == spanIndex)
+        if (span.start == offset + range.endOffset) span.start = range.startOffset+offset
+        else span.end += range.endOffset
+    }
+
+}
+
+const handleSelection = (spanArg: any) => {
   const currentSelection = document.getSelection()
-  if (currentSelection && currentSelection.toString() !== '' && labelSelected.value != '' ) {
+  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != '' || spanArg?.label )) {
     state.selection = currentSelection
-    const index = markRaw(spanCount.value)
-    const label =markRaw(labelSelected.value)
+    const index = spanArg?.index || markRaw(spanCount.value)
+    const label = spanArg?.label || markRaw(labelSelected.value)
     const direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
     if( state.selection.extentNode.data[state.selection.extentOffset-1] != ' '){
       state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
@@ -142,6 +175,7 @@ const handleSelection = () => {
         }
     }
     state.range = currentSelection.getRangeAt(0)
+    if ( spanArg.label == undefined ) recordSpan(state.range,index,label)
     const selectionTextString = selectionText.value
     state.selection.removeAllRanges()
     const span = document.createElement('span')
@@ -158,7 +192,7 @@ const handleSelection = () => {
             color: color,
             index: index,
             linkCss: linkCss,
-            options: options,
+            options: options as Object,
             ref: el => spanRefArray.value[index] = el,
             onSpanReady: ({element, index}) => {
               elementArray.value[index] = element
@@ -189,6 +223,29 @@ const handleSelection = () => {
   }
 }
 
+  const detailRef = ref(null)
+
+  const loadSpan = ()=>{
+    debugger
+    console.log(locals)
+    locals?.forEach((segment,index) => {
+      if(segment.data.span){
+        const sortedSpan = _.orderBy(segment.data.span,['start'],['desc'])
+        sortedSpan.forEach((span)=>{
+          const range = new Range()
+          range.setStart(divRef.value[index].firstChild.firstChild, span.start)
+          range.setEnd(divRef.value[index].firstChild.firstChild, span.end)
+          let selection = window.getSelection()
+          selection.empty()
+          selection.addRange(range)
+
+
+          handleSelection(span)
+        })
+      }
+    });
+  }
+
   const handleFocusSpan = ({index}) =>{
     if( linkMode ){
     relationArray.value.push({from: currentFocus, to: index})
@@ -210,5 +267,11 @@ const deleteSelection = () => {
 
 }
 
+  onMounted(async()=>{
+    await nextTick()
+    loadSpan()
+    console.log(locals)
+  })
+  defineExpose({ loadSpan})
 
 </script>
