@@ -30,7 +30,7 @@
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
     "primevue": "^3.53.0",
-    "vue": "^3.4.21",
+    "vue": "^3.5.12",
     "vue-lodash": "^2.1.2",
     "vue-router": "^4.3.0"
   },
