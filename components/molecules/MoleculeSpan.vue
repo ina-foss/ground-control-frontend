@@ -127,7 +127,6 @@ const handleUnselect = () => {
 }
 
   const recordSpan = (range,index,label) => {
-    console.log('salut')
     const list =  range.startContainer.parentNode.parentNode.parentNode
     const element = range.startContainer.parentNode
     const segmentPart = (_.indexOf(element.childNodes,range.startContainer))
@@ -158,8 +157,8 @@ const handleSelection = (spanArg: any) => {
   const currentSelection = document.getSelection()
   if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != '' || spanArg?.label )) {
     state.selection = currentSelection
-    const index = spanArg?.index || markRaw(spanCount.value)
-    const label = spanArg?.label || markRaw(labelSelected.value)
+    const index = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
+    const label = spanArg.label || markRaw(labelSelected.value)
     const direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
     if( state.selection.extentNode.data[state.selection.extentOffset-1] != ' '){
       state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
@@ -192,7 +191,7 @@ const handleSelection = (spanArg: any) => {
             color: color,
             index: index,
             linkCss: linkCss,
-            options: options as Object,
+            options: options,
             ref: el => spanRefArray.value[index] = el,
             onSpanReady: ({element, index}) => {
               elementArray.value[index] = element
@@ -226,7 +225,6 @@ const handleSelection = (spanArg: any) => {
   const detailRef = ref(null)
 
   const loadSpan = ()=>{
-    console.log(locals)
     locals?.forEach((segment,index) => {
       if(segment.data.span){
         const sortedSpan = _.orderBy(segment.data.span,['start'],['desc'])
@@ -269,7 +267,6 @@ const deleteSelection = () => {
   onMounted(async()=>{
     await nextTick()
     loadSpan()
-    console.log(locals)
   })
   defineExpose({ loadSpan})
 

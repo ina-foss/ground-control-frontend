@@ -33,7 +33,7 @@ const {label, text, color, index: index, linkCss, options} = defineProps({
     default: ()=>''
   },
   options: {
-    type: Array
+    type: Object
   }
 })
 
