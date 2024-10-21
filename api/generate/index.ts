@@ -15,7 +15,6 @@ export type { AnnotationTaskCreate } from './models/AnnotationTaskCreate';
 export { AnnotationType } from './models/AnnotationType';
 export type { AnnotationWithIdDto } from './models/AnnotationWithIdDto';
 export type { Body_task_inject_step__step_id__post } from './models/Body_task_inject_step__step_id__post';
-export type { ExceptionResponse } from './models/ExceptionResponse';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export { InOutEnum } from './models/InOutEnum';
 export type { MediaCreate } from './models/MediaCreate';

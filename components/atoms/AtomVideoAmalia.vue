@@ -13,7 +13,7 @@ const myplayer = ref()
 let lastIndex = 0
 
 let dynamicSrc = $ref()
-const { locals, videoSrc } = defineProps(['locals', 'videoSrc'])
+const { locals, videoSrc } = defineProps(['locals', 'video-src'])
 const emits = defineEmits(['timecode-update']);
 async function fetchVideoStream(url) {
   const response = await fetch(url);

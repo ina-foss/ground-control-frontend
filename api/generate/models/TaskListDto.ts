@@ -14,7 +14,6 @@ import type { TaskStatus } from './TaskStatus';
 export type TaskListDto = {
     name: string;
     instruction?: (string | null);
-    data: (Record<string, any> | null);
     data_type: TaskDataType;
     status: TaskStatus;
     lead_time: (number | null);
@@ -24,7 +23,7 @@ export type TaskListDto = {
     created_at: (string | null);
     updated_at: (string | null);
     annotations?: Array<AnnotationDto>;
-    taskComments?: Array<TaskCommentDto>;
+    task_comments?: Array<TaskCommentDto>;
     step: (StepProjectDto | null);
 };
 

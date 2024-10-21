@@ -10,7 +10,7 @@
   import { Hls } from 'hls.js'
   import { useService } from '#imports';
 
-  const { locals, videoSrc } = defineProps(['locals','videoSrc'])
+  const { locals, videoSrc } = defineProps(['locals','video-src'])
 
   const emits = defineEmits([ 'timecode-update' ]);
 

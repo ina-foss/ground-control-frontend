@@ -15,6 +15,7 @@ import {ref} from 'vue';
 import {bcStore} from '~/stores/breadcrumbs';
 import OrganismSegmentation from '~/components/organisms/OrganismSegmentation.vue';
 import OrganismTranscription from '~/components/organisms/OrganismTranscription.vue'
+import OrganismSpan from '~/components/organisms/OrganismSpan.vue';
 import { AnnotationService, AnnotationStatus} from '../../api/generate';
 import {useAuth} from '../../stores/auth';
 import {storeToRefs} from 'pinia';
@@ -42,6 +43,8 @@ const annotationComponent = $computed(() => {
     case 'transcription':
       return OrganismTranscription
 
+    case 'span':
+      return OrganismSpan
   }
 
 })
