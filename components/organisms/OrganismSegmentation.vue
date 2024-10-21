@@ -61,8 +61,10 @@
   import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
   import _ from 'lodash'
   import {AnnotationStatus} from '../../api/generate';
+  import { useService } from "#imports";
 
   const authStore = useAuth()
+  const { $application } = useService()
 
 
   const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
@@ -78,6 +80,7 @@
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
   const annotationStatus = AnnotationStatus.ENDED
+  const { computeColor } = $application
 
   const annotationInfo = $computed(() => {
     let info = null
@@ -146,7 +149,7 @@
     colors = ['#BEBEBE'] // reset colors before loading
     const max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
     while (colors.length <= max?.data.topic){ // Create all colors below this max
-     const randomcolor = generatePastelColor(colors.length)
+     const randomcolor = computeColor(colors.length-1).hex
       colors.push(randomcolor)
     }
     locals.forEach((phrase, index) => { // apppend topic number to each segments

@@ -1,14 +1,13 @@
 <template>
-  <div :style="dynamicStyle(newColors[topicIndex])" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg " >
+  <div :style="dynamicStyle(newColors[topicIndex])" ref="segment" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg " >
     <div class="flex items-center gap-2">
-      <Button
-:icon="iconBool" :label="topicText" :pt="{
+      <Button :icon="iconBool" :label="topicText"  :pt="{
         root: {
-          style: `max-width: 40px; min-width: 40px; background-color:${newColors[topicIndex]}; border:none `
+          style: `max-width: 40px; min-width: 40px; background-color:${newColors[topicIndex]}; border:none;  `
         }
       }" @click="handleSegmentation()" />
       <div
-v-tooltip.top="$application.timestampToUnix(phrase.tcin) + '-' + $application.timestampToUnix(phrase.tcout)"
+v-tooltip.top="timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout)"
         class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
         @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: props.index })">
         {{ $props.phrase.data.text[0] }}
@@ -23,6 +22,8 @@ import { useService } from '#imports';
 const props = defineProps(['phrase', 'colors', 'topics', 'index'])
 const emit = defineEmits(['segmentation', 'onSegmentClick'])
 const { $application } = useService()
+const { timestampToUnix, computeColor, textColorPicker } = $application
+const segment = ref(null)
 const newColors =props.colors;
 const newTopics =props.topics;
 const toast = useToast()
@@ -45,27 +46,26 @@ function generatePastelColor(tagNumber) {
 }
 function dynamicStyle(color) {
 
-  const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
-  if (props.topics[props.index] === props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
+  const hexMatch = color?.match(/^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$/);
+
+  // const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
+  if (props.topics[props.index] == props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
     if (hexMatch) {
       const [r, g, b] = extractRGB(color);
-      return {
-        backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
-        margintop: '0px',
-      };
+      if(props.index < 2 ) {
+      }
+      return `background-color: rgba(${r},${g},${b}, 0.5); margin-top: 0px; `;
     }
-    return {
-      backgroundColor: reduceOpacityOfColor(color, 0.5),
-      marginTop: '0px'
-    };
+    else{
+      return `background-color: ${reduceOpacityOfColor(color, 0.5)}; margin-top: 0px; `;
+    }
   } else {
     if (hexMatch) {
       const [r, g, b] = extractRGB(color);
-      return {
-        backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`,
-      };
+      return `background-color: rgba(${r},${g},${b}, 0.5); `;
     }
     return {
+      margintop: '1.25rem',
       backgroundColor: reduceOpacityOfColor(color, 0.5),
     };
   }
@@ -107,7 +107,7 @@ const handleSegmentation = () => {
 
   if (props.index === 0) { // Cas particulier de la premiere phrase
     if (topicIndex.value === 0) {
-      const randomColor = generatePastelColor(props.index + 1)
+      const randomColor = computeColor(props.index).hex
       newColors[1] = (randomColor)
       newTopics[props.index] = 1
     } else {
@@ -123,7 +123,7 @@ const handleSegmentation = () => {
 
   } else if (topicIndex.value === newColors.length - 1 && (props.topics[props.index - 1] === topicIndex.value)) { // On cree un nouveau topic
     //new topic
-    const randomColor = generatePastelColor(newColors.length)
+    const randomColor = computeColor(newColors.length-1).hex
     newColors.push(randomColor)
     newTopics[props.index]++
 
