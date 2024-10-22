@@ -1,19 +1,20 @@
 <template>
-    <div class=" col-span-4 flex flex-col overflow-y-auto    ">
+    <div :class="` col-span-4 ${ false==true ? 'flex flex-col': 'inline'} overflow-y-auto    `">
       <div class=" flex justify-center gap-10 sticky top-0">
-        <SelectButton class="self-center " v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
+        <SelectButton v-model="labelSelected" class="self-center " :unstyled="true" :options="labels" aria-labelledby="basic" />
         <div class="flex items-center">
           <InputText v-model="newLabel" size="small" />
           <Button icon="pi pi-plus" size='small' @click="addLabel()" />
         </div>
       </div>
-      <div class="flex flex-col  " ref="spans" v-for="local in locals">
-        <AtomTranscriptionSpan @mouseup="handleSelection" :local="local" />
+    <div v-for="(local,index) in locals" :key="index" ref="spans" :class= "`inline` ">
+        <AtomTranscriptionSpan :local="local" @mouseup="handleSelection" />
       </div>
     </div>
     <div  class=" h-full flex flex-col items-center place-content-center  gap-10 col-span-2">
       <AtomSpanOption  v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
-      <AtomSpanDetail ref="detailRef" :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
+      <AtomSpanDetail
+:relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
       @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()" @focus-span="handleFocusSpan" />
     </div>
 </template>
@@ -37,9 +38,9 @@
   })
 
 
-  const { locals } = defineProps(['locals'])
+  const locals = defineModel<Array>('locals')
 
-  let newLabel = ref('')
+  const newLabel = ref('')
 
   const app = createApp()
   app.directive('badge', BadgeDirective)
@@ -48,7 +49,6 @@
   const elementArray = ref([])
   let linkMode = $ref(false)
   const linkCss = $computed(()=> linkMode ? ' hover:border-2 ' : '')
-  const linkCursor = $computed(()=> linkMode ? ' cursor-crosshair ' : '')
   const spanCount = ref(spanRefArray.value.length)
   let spanIndex = $ref()
   const relationArray = ref([])
@@ -56,9 +56,13 @@
   let currentFocus = $ref(undefined)
   const labelSelected = ref('')
   const labels = $ref(['Person','Citation','Verbe'])
-  const text = ref('Mercredi soir, le chef d’Etat a évacué l’idée d’adouber Lucie Castets, candidate officielle de la coalition de gauche : "Le sujet n’est pas un nom donné par une formation politique. La question est quelle majorité peut se dégager à l’Assemblée pour que le gouvernement de la France puisse passer des réformes."')
-  const state = reactive({
-    selection: null,
+  interface State {
+    selection: Selection | null,
+    range: Range | null
+  }
+
+  const state: State = reactive({
+    selection: null ,
     range: null
   })
 
@@ -133,7 +137,7 @@ const handleUnselect = () => {
     let offset = 0
 
     if(element.hasChildNodes()){
-      let children = element.childNodes
+      const children = element.childNodes
 
       children.forEach(function (currentValue,index) {
         if (index < segmentPart){
@@ -143,13 +147,14 @@ const handleUnselect = () => {
     }
     const indexSegment = _.indexOf(list.childNodes, element.parentNode)
 
-    if(!locals[indexSegment-2].data.span) locals[indexSegment-2].data.span = []
-    if(!spanClicked) locals[indexSegment-2].data.span.push({id:index, label: label, start: offset+range.startOffset, end: offset+range.endOffset })
+    if(!locals.value[indexSegment-2].data.span) locals.value[indexSegment-2].data.span = []
+    if(!spanClicked) locals.value[indexSegment-2].data.span.push({id:index, label: label, start: offset+range.startOffset, end: offset+range.endOffset })
     else{
-        let span = _.find(locals[indexSegment-2].data.span, (span)=> span.id == spanIndex)
+        const span = _.find(locals.value[indexSegment-2].data.span, (span)=> span.id == spanIndex)
         if (span.start == offset + range.endOffset) span.start = range.startOffset+offset
         else span.end += range.endOffset
     }
+
 
 }
 
@@ -222,17 +227,15 @@ const handleSelection = (spanArg: any) => {
   }
 }
 
-  const detailRef = ref(null)
-
   const loadSpan = ()=>{
-    locals?.forEach((segment,index) => {
+    locals.value?.forEach((segment,index) => {
       if(segment.data.span){
         const sortedSpan = _.orderBy(segment.data.span,['start'],['desc'])
         sortedSpan.forEach((span)=>{
           const range = new Range()
           range.setStart(divRef.value[index].firstChild.firstChild, span.start)
           range.setEnd(divRef.value[index].firstChild.firstChild, span.end)
-          let selection = window.getSelection()
+          const selection = window.getSelection()
           selection.empty()
           selection.addRange(range)
 
@@ -254,15 +257,6 @@ const handleSelection = (spanArg: any) => {
     labelSelected.value = spanRefArray.value[currentFocus].label[0]
     }
   }
-const deleteSelection = () => {
-  if (state.selection) {
-    const span = document.createElement('sup')
-    span.style.backgroundColor = "red"
-    span.appendChild(selectionText.value)
-    state.range.insertNode(span)
-  }
-
-}
 
   onMounted(async()=>{
     await nextTick()

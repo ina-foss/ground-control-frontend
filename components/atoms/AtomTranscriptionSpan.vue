@@ -5,7 +5,13 @@
 </template>
 
 <script setup>
-const { local } = defineProps(['local'])
+
+const { local } = defineProps({
+  local: {
+    type: Object,
+    default : () => {}
+  }
+})
 
 
 

@@ -17,11 +17,11 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 
-const span = defineModel('span')
-const timecode = defineModel('timecode')
-const bloc = defineModel('bloc')
+const span = defineModel<boolean>('span')
+const timecode = defineModel<boolean>('timecode')
+const bloc = defineModel<boolean>('bloc')
 
 
 </script>

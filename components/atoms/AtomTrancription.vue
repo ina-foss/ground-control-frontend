@@ -75,7 +75,7 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
 </template>
 
 
-<script setup>
+<script setup lang="js">
 import Textarea from 'primevue/textarea';
 import { useService } from '#imports';
 
