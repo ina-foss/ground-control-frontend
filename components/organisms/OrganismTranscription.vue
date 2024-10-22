@@ -15,7 +15,7 @@
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" class="xs:sticky"
                                    :video-src="videoSrc"
                                    :data="data"
-                                   :locals="annotations_in[0].result.data.localisation[0].sublocalisations.localisation"
+                                   :locals="annotationsIn[0].result.data.localisation[0].sublocalisations.localisation"
                                    @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">Réconciliation de Transcriptions</h2>
         <p class="text-white p-3 md:block xs:hidden ">
@@ -71,23 +71,36 @@ import {AnnotationStatus} from '../../api/generate';
 const authStore = useAuth()
 const moleculeAnnotationLeftPanelRef = $ref()
 
-const {
-  data,
-  annotations_in,
-  annotations_out,
-  allFetched
-} = defineProps(['data', 'annotations_in', 'annotations_out', 'allFetched'])
+  const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
+    data: {
+      type: Object,
+      default: () => {}
+    },
+    annotationsIn: {
+      type: Array,
+      default: () => []
+    },
+    annotationsOut: {
+      type: Array,
+      default: () => []
+    },
+    allFetched: {
+      type: Boolean,
+
+    },
+
+  })
 const {userEmail} = storeToRefs(authStore)
 
 const emits = defineEmits(['submitAnnotation', 'finish-annotation']);
 let info = null
-let videoSrc = $ref(annotations_in[0]?.result.asset.url)
+let videoSrc = $ref(annotationsIn[0]?.result.asset.url)
 const MoleculeTranscriptionRef = $ref()
 const annotationStatus = AnnotationStatus.ENDED
 const annotationInfo = $computed(() => { // get user annotation position
 
   if (allFetched) {
-    annotations_out.forEach((annotation, index) => {
+    annotationsOut.forEach((annotation, index) => {
       if (annotation.user_email == userEmail.value) {
         info = {index: index, id: annotation.id}
       }
@@ -103,9 +116,9 @@ const updateVideoTimecode = (event) => {
 const transcriptions = $computed(() => { // format array to have all transcription version in the same array element
   const res = []
   if (allFetched) {
-    annotations_in[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index) => {
+    annotationsIn[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index) => {
       res.push([])
-      annotations_in.forEach((transcription) => {
+      annotationsIn.forEach((transcription) => {
         res[index].push(transcription.result.data.localisation[0].sublocalisations.localisation[index])
       })
     })
@@ -116,7 +129,7 @@ const transcriptions = $computed(() => { // format array to have all transcripti
 const userAnnotations = $computed(() => { // return array of users annotations
   let response = []
   if (allFetched && annotationInfo != null) {
-    const annotation = annotations_out[annotationInfo.index];
+    const annotation = annotationsOut[annotationInfo.index];
 
     if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
       response = [...annotation.result.data.localisation[0].sublocalisations.localisation];
@@ -160,7 +173,7 @@ const handleFinish = () => {
 const algos = $computed(() => { // List the name of the algorithm
   const res = []
   if (allFetched) {
-    annotations_in.forEach((annotation) => {
+    annotationsIn.forEach((annotation) => {
       res.push(annotation.result.data.algorithm)
     })
   }
@@ -170,7 +183,7 @@ const algos = $computed(() => { // List the name of the algorithm
 
 watchEffect(() => {
   if (allFetched)
-    videoSrc = annotations_in[0]?.result.asset.url
+    videoSrc = annotationsIn[0]?.result.asset.url
 })
 
 </script>

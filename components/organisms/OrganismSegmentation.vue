@@ -67,15 +67,31 @@
   const { $application } = useService()
 
 
-  const { data, annotations_in, annotations_out, allFetched } = defineProps(['data','annotations_in','annotations_out','allFetched'])
+  const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
+    data: {
+      type: Object,
+      default: () => {}
+    },
+    annotationsIn: {
+      type: Array,
+      default: () => []
+    },
+    annotationsOut: {
+      type: Array,
+      default: () => []
+    },
+    allFetched: {
+      type: Boolean,
 
+    },
 
+  })
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
   let colors = $ref(['#BEBEBE'])
   let topics = $ref([])
-  let videoSrc = $ref(annotations_in[0]?.result.asset.url)
+  let videoSrc = $ref(annotationsIn[0]?.result.asset.url)
   const moleculeSegmentationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
@@ -85,7 +101,7 @@
   const annotationInfo = $computed(() => {
     let info = null
     if (allFetched ) {
-      annotations_out.forEach((annotation, index) => {
+      annotationsOut.forEach((annotation, index) => {
         if (annotation.user_email == userEmail.value) {
           info = { index: index, id: annotation.id }
         }
@@ -97,8 +113,8 @@
   const locals = $computed(() => {
     if(allFetched){
     return (annotationInfo == null)
-      ? annotations_in[0]?.result.data.localisation[0].sublocalisations.localisation
-      : annotations_out[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation
+      ? annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
+      : annotationsOut[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation
     }
     return []
   })
@@ -132,18 +148,6 @@
     emits('finish-annotation', {locals: locals})
   }
 
-  function generatePastelColor(tagNumber) {
-    // Use tag number to create a seed (this is a basic example, there are better ways to do this)
-    const seed = tagNumber * 123456789;
-    const random = s => ((seed * s) % 155) + 100;  // Between 100 and 255
-
-    const r = random(3);
-    const g = random(5);
-    const b = random(7);
-
-    return `rgb(${r}, ${g}, ${b}, 1)`;
-
-  }
 
   const loadTopics = () => {
     colors = ['#BEBEBE'] // reset colors before loading
@@ -162,7 +166,7 @@
 
   watch(()=> allFetched,() => {
       if(allFetched == true){
-        videoSrc = annotations_in[0]?.result.asset.url
+        videoSrc = annotationsIn[0]?.result.asset.url
 
           loadTopics()
       }
