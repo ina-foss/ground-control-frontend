@@ -232,12 +232,12 @@ const handleSelection = (spanArg: any) => {
       if(segment.data.span){
         const sortedSpan = _.orderBy(segment.data.span,['start'],['desc'])
         sortedSpan.forEach((span)=>{
-          const range = new Range()
+          const range : Range = new Range()
           range.setStart(divRef.value[index].firstChild.firstChild, span.start)
           range.setEnd(divRef.value[index].firstChild.firstChild, span.end)
-          const selection = window.getSelection()
-          selection.empty()
-          selection.addRange(range)
+          const selection : Selection | null = window.getSelection()
+          selection?.empty()
+          selection?.addRange(range)
 
 
           handleSelection(span)

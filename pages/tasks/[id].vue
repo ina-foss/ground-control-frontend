@@ -2,7 +2,7 @@
   <div style="height: 88%;">
     <component
 :is="annotationComponent" :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
-               :annotations-out="annotations_out" class="overflow-y-hidden"
+               :annotations-out="annotations_out"
                @submit-annotation="handleSubmit($event,'submit')"
                @finish-annotation="handleSubmit($event,'end')"/>
   </div>

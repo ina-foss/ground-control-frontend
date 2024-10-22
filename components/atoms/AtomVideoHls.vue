@@ -12,6 +12,8 @@
 
   const { locals, videoSrc } = defineProps(['locals','video-src'])
 
+  const { $application } = useService()
+
   const emits = defineEmits([ 'timecode-update' ]);
 
   const videoRef = ref()
