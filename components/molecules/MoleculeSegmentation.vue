@@ -59,7 +59,16 @@
     segmentationRefs[firstIndex].scrollIntoView({ behavior: "smooth"})
   }
 
-  defineExpose( {segmentationRefs: $$(segmentationRefs) })
+  const segmentationFunction = (localSubmit) => {
+    localSubmit.forEach((phrase, index) => {
+      if (![undefined].includes(topics[index])) {
+        phrase.data.topic = topics[index]
+      }
+    })
+    return localSubmit
+  }
+
+  defineExpose( {listRefs: $$(segmentationRefs), annotationFunction: segmentationFunction })
 </script>
 
 <style scoped lang="postcss">

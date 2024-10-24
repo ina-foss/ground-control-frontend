@@ -262,6 +262,11 @@ const handleSelection = (spanArg: any) => {
     await nextTick()
     loadSpan()
   })
-  defineExpose({ loadSpan})
+
+  const saveSpan = (local) =>{
+    return local
+  }
+
+  defineExpose({ annotationFunction: saveSpan})
 
 </script>

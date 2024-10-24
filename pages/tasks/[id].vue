@@ -1,7 +1,7 @@
 <template>
   <div style="height: 88%;">
-    <component
-:is="annotationComponent" :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
+    <OrganismBase
+ :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
                :annotations-out="annotations_out"
                @submit-annotation="handleSubmit($event,'submit')"
                @finish-annotation="handleSubmit($event,'end')"/>
@@ -20,6 +20,7 @@ import { AnnotationService, AnnotationStatus} from '../../api/generate';
 import {useAuth} from '../../stores/auth';
 import {storeToRefs} from 'pinia';
 import {useRefreshStore} from '#imports';
+import OrganismBase from '~/components/organisms/OrganismBase.vue';
 
 const refresh = useRefreshStore()
 const store = bcStore()
@@ -35,19 +36,6 @@ const {fetchAnnotations} = refresh
 const data = ref(getData)
 const savedItems = localStorage.getItem('breadcrumbItems');
 
-const annotationComponent = $computed(() => {
-  switch (data.value.step.annotation_type) {
-    case 'segmentation':
-      return OrganismSegmentation
-
-    case 'transcription':
-      return OrganismTranscription
-
-    case 'span':
-      return OrganismSpan
-  }
-
-})
 
 onBeforeRouteLeave((to,from,next)=>{
   if(window.onbeforeunload != null) {
