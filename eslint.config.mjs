@@ -18,7 +18,6 @@ export default withNuxt(
         'components/molecules/MoleculeSegmentation.vue' ,
         'components/molecules/MoleculeFormTask.vue',
         'components/molecules/MoleculeFormProject.vue',
-        'components/atoms/AtomVideoHls.vue',
         'components/atoms/AtomVideoAmalia.vue',
         'components/atoms/AtomTrancription.vue',
         'components/atoms/AtomSpanDetail.vue',
