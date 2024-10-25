@@ -12,7 +12,7 @@
       />
     </div>
     <div ref="dashboardRef" class="p-3 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
-      <ProjectCard
+      <MoleculeProjectCard
         v-for="(project,index) in filteredProjects " :key="index" :project=project
         @refresh-data="handleRefresh"/>
     </div>
@@ -53,6 +53,7 @@ import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
 import {bcStore} from "~/stores/breadcrumbs";
 import {ProjectStatus} from "../api/generate";
+import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
 
 const refreshStore = useRefreshStore()
 const {fetchProject} = refreshStore
