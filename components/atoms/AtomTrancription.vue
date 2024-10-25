@@ -113,7 +113,8 @@ if (userAnnotation != null) { // Update values if user had already annoted this 
 }
 
 // if the selectedTranscriptoin has been edited
-const isEdited = computed(() => (editedTranscription.text == '' || editedTranscription.text == transcriptions[editedTranscription.index].data.text[0]) ? false : true)
+const isEdited = computed(() => (editedTranscription.text == '' || editedTranscription.text == transcriptions[editedTranscription.index]?.data.text[0]) ? false : true)
+
 
 const editTranscriptionTag = computed(() => { // Value to display in edit Tag
   const editedTag = isEdited.value ? 'custom' : ''

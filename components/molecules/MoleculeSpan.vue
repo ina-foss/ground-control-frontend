@@ -49,6 +49,7 @@
   const elementArray = ref([])
   let linkMode = $ref(false)
   const linkCss = $computed(()=> linkMode ? ' hover:border-2 ' : '')
+  const emit = defineEmits([ 'on-segment-click' ]);
   const spanCount = ref(spanRefArray.value.length)
   let spanIndex = $ref()
   const relationArray = ref([])
@@ -262,6 +263,11 @@ const handleSelection = (spanArg: any) => {
     await nextTick()
     loadSpan()
   })
-  defineExpose({ loadSpan})
+
+  const saveSpan = (local) =>{
+    return local
+  }
+
+  defineExpose({ annotationFunction: saveSpan})
 
 </script>

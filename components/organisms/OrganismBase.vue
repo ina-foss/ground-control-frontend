@@ -38,7 +38,7 @@
     <Toast />
     <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" :topics="topics" @scroll-to-segment="scrollToSegment">
-        <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">Segmentation</h2>
+        <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
           Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
           Chaque segment correspond à une thématique différente de la précédente.<br>
@@ -50,7 +50,7 @@
           ayant été traités, différencie les interlocuteurs.
         </p>
       </MoleculeAnnotationLeftPanel>
-      <MoleculeSegmentation ref="moleculeSegmentationRef" :colors="colors" :topics="topics" :locals="locals" @on-segment-click="updateVideoTimecode" />
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals"  @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
 </template>
@@ -58,7 +58,9 @@
 <script setup >
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
-  import MoleculeSegmentation from '../molecules/MoleculeSegmentation.vue'
+  import MoleculeSpan from "../molecules/MoleculeSpan.vue";
+  import MoleculeSegmentation from "../molecules/MoleculeSegmentation.vue";
+  import MoleculeTranscription from "../molecules/MoleculeTranscription.vue";
   import _ from 'lodash'
   import {AnnotationStatus} from '../../api/generate';
   import { useService } from "#imports";
@@ -87,12 +89,13 @@
 
   })
 
+
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
   let colors = $ref(['#BEBEBE'])
   let topics = $ref([])
   let videoSrc = $ref(annotationsIn[0]?.result.asset.url)
-  const moleculeSegmentationRef = $ref()
+  const moleculeAnnotationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
   const annotationStatus = AnnotationStatus.ENDED
@@ -110,6 +113,17 @@
     }
   });
 
+  const userAnnotations = $computed(() => { // return array of users annotations
+    let response = []
+    if (allFetched && annotationInfo != null) {
+      const annotation = annotationsOut[annotationInfo.index];
+
+      if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
+        response = [...annotation.result.data.localisation[0].sublocalisations.localisation];
+      }  }
+    return response
+  })
+
   const locals = $computed(() => {
     if(allFetched){
     return (annotationInfo == null)
@@ -119,38 +133,74 @@
     return []
   })
 
+const transcriptions = $computed(() => { // format array to have all transcription version in the same array element
+  const res = []
+  if (allFetched) {
+    annotationsIn[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index) => {
+      res.push([])
+      annotationsIn.forEach((transcription) => {
+        res[index].push(transcription.result.data.localisation[0].sublocalisations.localisation[index])
+      })
+    })
+  }
+  return res
+})
+
+const algos = $computed(() => { // List the name of the algorithm
+  const res = []
+  if (allFetched) {
+    annotationsIn.forEach((annotation) => {
+      res.push(annotation.result.data.algorithm)
+    })
+  }
+  return res
+})
 
   const updateVideoTimecode = (event) => {
     moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
   }
 
   const scrollToSegment = (event) => {
-    moleculeSegmentationRef.segmentationRefs[event.lastIndex].classList.remove('selected-segment')
-    moleculeSegmentationRef.segmentationRefs[event.bestIndex].classList.add('selected-segment')
-    moleculeSegmentationRef.segmentationRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
+    moleculeAnnotationRef.listRefs[event.lastIndex].classList.remove('selected-segment')
+    moleculeAnnotationRef.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
+    moleculeAnnotationRef.listRefs[event.bestIndex].classList.add('selected-segment')
   }
 
+const annotationComponent = $computed(() => {
+  switch (data.step?.annotation_type) {
+    case 'segmentation':
+        return {component: MoleculeSegmentation, props: {
+          locals: locals,
+          colors: colors,
+          topics: topics
+        }}
+    case 'transcription':
+      return {component: MoleculeTranscription, props: {
+        transcriptions: transcriptions,
+        userAnnotations: userAnnotations,
+        algos: algos,
+        status: data.annotations[0]?.annotation_status
+        }}
+
+    case 'span':
+        return { component :MoleculeSpan, props: {}}
+  }
+
+})
 
   const handleSubmit = () => {
-    locals.forEach((phrase, index) => {
-      if (![undefined].includes(topics[index])) {
-        phrase.data.topic = topics[index]
-      }
-    })
-    emits('submit-annotation',{ locals: locals })
+    let localSubmit = locals
+    if(moleculeAnnotationRef.locals) localSubmit = moleculeAnnotationRef.locals
+    emits('submit-annotation',{ locals: moleculeAnnotationRef.annotationFunction(localSubmit) })
   }
   const handleFinish = () => {
-    locals.forEach((phrase, index) => {
-      if (![undefined].includes(topics[index])) {
-        phrase.data.topic = topics[index]
-      }
-    })
-    emits('finish-annotation', {locals: locals})
+    let localSubmit = locals
+    if(moleculeAnnotationRef.locals) localSubmit = moleculeAnnotationRef.locals
+    emits('finish-annotation', {locals: moleculeAnnotationRef.annotationFunction(localSubmit) })
   }
 
 
   const loadTopics = () => {
-    colors = ['#BEBEBE'] // reset colors before loading
     const max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
     while (colors.length <= max?.data.topic){ // Create all colors below this max
      const randomcolor = computeColor(colors.length-1).hex
