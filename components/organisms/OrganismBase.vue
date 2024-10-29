@@ -1,4 +1,14 @@
 <template>
+  <div v-if="data.annotations[0]?.annotation_status !== annotationStatus"
+       class="fixed right-12 mr-4 absolute top-[-50px] z-[5]" >
+    <Button class="button button-prev mr-4" label="Soumettre" size="small" @click="handleSubmit()"/>
+    <Button
+      class="button"
+      label="Terminer"
+      size="small"
+      @click="handleFinish()"
+    />
+  </div>
   <div v-if=" !allFetched ">
     <div class="grid grid-cols-9  ">
       <div class="col-span-3 h-screen  bg-surface-700 gap-3 px-5 py-5">
@@ -23,18 +33,8 @@
       </div>
     </div>
   </div>
-  <div v-else class="h-full " >
-    <div v-if="data.annotations[0]?.annotation_status !== annotationStatus"
-         class="fixed z-30 right-12 mr-4" style="top: 18px;" >
-      <Button class="button button-prev mr-4" label="Soumettre" size="small" @click="handleSubmit()"/>
-      <Button
-        class="button"
-        label="Terminer"
-        size="small"
-        @click="handleFinish()"
-      />
+  <div v-else class="h-full" >
 
-    </div>
     <Toast />
     <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" :topics="topics" @scroll-to-segment="scrollToSegment">

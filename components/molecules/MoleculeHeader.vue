@@ -1,7 +1,7 @@
 <template>
   <div
-    class="h-[70px] z-30 w-full fixed flex items-center gap-2 px-3 border-b border-#EDEDED justify-between bg-surface-color dark:bg-surface-800 "
-       >
+    class="h-[70px] w-full flex items-center gap-2 px-3 border-b border-[#EDEDED] justify-between bg-surface-color dark:bg-surface-800 z-[1]"
+  >
     <div class="flex items-center">
       <AtomLogo size="md" />
       <div style="padding: 25px;font-size: 20px">

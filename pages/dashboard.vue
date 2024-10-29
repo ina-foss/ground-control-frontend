@@ -1,14 +1,16 @@
 <template>
-  <div class="overflow-y-auto h-full bg-neutral-color" style="background-color: #F7F7F7">
-    <div class="p-3 w-[200px] ml-auto fixed z-30 right-0 mr-0" style=" top:65px">
+  <div class="overflow-y-auto h-full bg-neutral-color">
+    <div
+      :class="['p-3 w-[220px] h-[33px] ml-auto fixed mr-12 flex top-[6px] z-[1]', isAdmin ? 'right-[145px]' : 'right-0']">
+      <label class="text-primary font-semibold p-2">Projets</label>
       <Dropdown
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
         placeholder="Statut"
-        class="w-full mb-4  h-[40px] " show-clear
-        style=" border-color: #0b7698 !important;
-    color: #0b7698 !important;"
+        class="w-full h-[33px] text-[#757575]"
+        show-clear
+        :pt="dropdownStyles"
       />
     </div>
     <div ref="dashboardRef" class="p-3 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
@@ -67,6 +69,10 @@ const totalRecords = $ref(getProjectNumber);
 const dashboardRef = ref()
 const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
+const { $application } = useService();
+
+const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+
 
 const translations = {
   draft: 'Brouillon',
@@ -84,6 +90,15 @@ const statusOptions = translatedProjectStatus;
 const getTotalRecords = () => {
   refreshStore.totalRecords()
 }
+
+ const dropdownStyles= computed(() => {
+    return {
+      root: { style: { padding: '8px' } },
+      input: { style: { padding: '0px' } },
+      trigger: { style: { width: '20px' } },
+      clearIcon: { style: { width: '12px', marginRight: '-15px' } },
+    };
+  });
 
 watch(() => first.value, () => {handleRefresh()})
 
@@ -135,6 +150,10 @@ while (getItems.value.length > 0) store.removeLastCrumb()
 .custom-paginator .paginator-button:active {
   color: #006180;
 }
-
+.custom-dropdown .p-dropdown-label  {
+  color: red;
+  border:red;
+  font-size: 14px; /* Taille de texte personnalisée */
+}
 
 </style>

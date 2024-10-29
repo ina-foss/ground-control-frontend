@@ -4,15 +4,28 @@
   </div>
 
   <div v-else class="grid h-[80vh] p-3">
-    <div class="p-3 w-[200px] ml-auto fixed z-30 right-0 mr-3" style=" top:65px">
+    <div class="p-3 w-[220px] h-[33px] ml-auto fixed z-40 right-0 mr-12 flex top-[7px]">
+      <label class="text-primary font-semibold p-2">Etapes</label>
       <Dropdown
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
         placeholder="Statut"
-        class="w-full mb-4  h-[40px] " show-clear
-        style=" border-color: #0b7698 !important;
-    color: #0b7698 !important;"
+        class="w-full  md:w-14rem  h-[33px]  text-[#757575]  " show-clear
+        :pt="{
+          root:{
+            style:{padding:'8px'},
+          },
+          input:{
+            style:{padding:'0px'},
+          },
+          trigger:{
+            style:{width:'20px'},
+          },
+          clearIcon:{
+            style:{width:'12px',marginRight:'-15px'},
+          },
+        }"
       />
     </div>
     <DataTable
