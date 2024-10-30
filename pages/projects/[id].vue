@@ -33,10 +33,10 @@
       :pt="{
       column: {
         bodycell:({ state }) => ({
-          style: {padding: '12px',...state['d_editing']},
+          style: {padding: '12px',color:'#212529',...state['d_editing']},
         }),
         headercell:({ state }) => ({
-          style: {padding: '12px',backgroundColor:'#EDEDED',...state['d_editing']},
+          style: {padding: '12px',backgroundColor:'#EDEDED',color:'#212529',...state['d_editing']}
         })
       },
       row:{
@@ -58,29 +58,29 @@
         </template>
       </Column>
       <Column field="id" header="ID" class="txt" style="width: 40px;" body-class="text-sm"/>
-      <Column field="annotation_type" class="txt" header="Type"  body-class="text-sm"/>
-      <Column header="Statut" class="txt"  body-class="text-sm">
+      <Column field="annotation_type" class="txt" header="Type"  body-class="text-sm" style="width : 9rem ; min-width: 70px;"/>
+      <Column header="Statut" class="txt"  body-class="text-sm" style="width : 9rem ; min-width: 70px;">
         <template #body="slotProps">
           <Tag  :class="getStatusClass(slotProps.data.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(slotProps.data.status) }}</Tag>
         </template>
       </Column>
       <Column field="description" header="Description" class="txt"  body-class="text-sm"/>
-      <Column header=" " style="width: 18%; "  body-class="text-sm">
+      <Column header=" " style="width: 17rem; "  body-class="text-sm">
         <template #body="slotProps">
-          <div class="flex justify-between min-w-[203px] gap-3 txt">
+          <div class="flex min-w-[203px] txt">
             <Button
               class="button button-prev txt"
-              style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;"
+              style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;margin-right:12px"
               outlined label="Créer un task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
             <div
-              class="flex items-center space-x-2 cursor-pointer txt border border-[#0B7698] bg-transparent text-[#0B7698] rounded-[5px]" :loading="loadingExport"
+              class="flex items-center cursor-pointer txt border border-[#0B7698] bg-transparent text-[#0B7698] rounded-[5px] h-[33px]" :loading="loadingExport"
                   @click="clickButtonMenu($event,slotProps.data) ">
             <Button
               class="txt button button-prev "
                     style="font-size:14px"
               label="Exporter" size="small" severity="secondary" text/>
               <img
-                style="height:15px;width:15px;filter: brightness(0) saturate(100%) invert(20%) sepia(12%) saturate(427%) hue-rotate(154deg) brightness(91%) contrast(92%);"
+                style="height:15px;width:15px;filter: brightness(0) saturate(100%) invert(20%) sepia(12%) saturate(427%) hue-rotate(154deg) brightness(91%) contrast(92%);margin-right:8px"
                    src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg"
                 alt="Arrow Down Icon">
           </div>
@@ -101,7 +101,7 @@
       <Column id="test" expander style="width: 5rem;" class="txt"  body-class="text-sm p-3"/>
 
       <template #expansion="slotProps">
-        <div class="border-surface-200 border-4 p-0" style="border-width: 17px;">
+        <div class="border-surface-200 shadow-lg table-border-left" style="box-shadow: 0 4px 6px rgba(237, 237, 237, 1);">
           <DataTable
             :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
             class="overflow-scroll"
@@ -121,10 +121,10 @@
         class:'p-3',
         style: { backgroundColor: 'black', color: 'white' },
       },
-       style: {height:'88px'}
+       style: {height:'88px',padding: '20px !important'}
     }"
             @row-click="handleRowClick($event)">
-            <Column class="txt" body-class="text-sm" field="name" header="Titre" style="width : 8rem ; min-width: 70px; ">
+            <Column  class="txt" body-class="text-sm" field="name" header="Titre" style="width : 8rem ; min-width: 70px;">
               <template #editor="{ index: nestedIndex }">
                 <InputText
                   v-model="data.steps[slotProps.index].tasks[nestedIndex].name"
@@ -154,7 +154,7 @@
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
-            <Column header="Statut" class="txt" style="max-width: 20px"  body-class="text-sm">
+            <Column header="Statut" class="txt" style="width: 20px"  body-class="text-sm">
               <template #body="{ data: nestedData }">
                 <Tag  :class="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
               </template>
@@ -407,6 +407,9 @@ const onCellEditComplete = () => {
 
 </script>
 <style scoped>
+.table-border-left {
+  border-left: 8px solid #006180;
+}
 .overflow-scroll {
   max-height: 500px;
   overflow-y: auto;
