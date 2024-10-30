@@ -1,24 +1,27 @@
 <template>
   <div  ref="span" :class="`inline border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ' highlighted-text cursor-pointer' : 'text-black'}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
-    <div class="inline ">
-      {{ (newText == '') ? text : newText }}
+    <div ref="spanText" class="inline ">
+      <slot/>
     </div>
     <span v-if="options.span == true">
-      <span v-for="lbl in newLabel" class=" align-super text-[0.70rem] pl-[0.5rem] ">{{lbl}}</span>
+      <span v-for="lbl in newLabel" class=" align-super text-[0.70rem] pl-[0.5rem] ">{{lbl}} </span>
     </span>
   </div>
 </template>
 
 
 <script setup>
-const {label, text, color, index: index, linkCss, options} = defineProps({
+
+const {label, tcIn, tcOut, color, index: index, linkCss, options} = defineProps({
   label: {
     type: Array,
     default: ()=>[]
   },
-  text: {
+  tcIn:{
     type: String,
-    default: ()=>''
+  },
+  tcOut:{
+    type: String,
   },
   color: {
     type: String,
@@ -39,9 +42,12 @@ const {label, text, color, index: index, linkCss, options} = defineProps({
 
 const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
-const newText = ref(text)
+const spanText = ref()
+const newText = ref('')
 const newIndex = $ref(index)
 const newLabel = $ref(label)
+let newTcin = $ref(tcIn)
+let newTcout = $ref(tcOut)
 const focus = ref(false)
 const { $application } = useService()
 const { textColorPicker, computeColor } = $application
@@ -49,14 +55,17 @@ const { textColorPicker, computeColor } = $application
 
 const handleClick = () => {
   emit('focusSpan', {index: newIndex })
-  // emit('deleteSpan',{element: span.value, text: newText.value})
 }
 const handleDrag = () =>{
   emit('editSpan', {index: newIndex })
 }
-onMounted(()=>{
-  watchEffect(()=>{
-
+onMounted(async()=>{
+    await nextTick()
+    const list = span.value?.firstElementChild?.children
+    for (let item of list) {
+      newText.value += (item.innerText + ' ')
+    }
+watchEffect(async ()=>{
     if(span.value){
       emit('spanReady', {element: span.value, index: newIndex})
     }
@@ -73,14 +82,16 @@ onMounted(()=>{
   })
 })
 
-const addLeftText = (editText) => {
-  newText.value = editText + newText.value
+const addLeftText = (node) => {
+  newTcin = node.firstElementChild?.getAttribute('tcin')
+  span.value.firstElementChild.insertBefore(node,span.value.firstElementChild.firstChild)
 }
-const addRightText = (editText) => {
-  newText.value =  newText.value + editText
+const addRightText = (node) => {
+  newTcout = node.lastElementChild?.getAttribute('tcout')
+  span.value.firstElementChild.appendChild(node)
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText, label:$$(newLabel), color: color, index:$$(newIndex)})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText,tcin: $$(newTcin), tcout: $$(newTcout), label:$$(newLabel), color: color, index:$$(newIndex)})
 
 </script>
 

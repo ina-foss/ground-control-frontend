@@ -25,7 +25,7 @@
   </div>
   <div v-else class="h-full " >
     <div v-if="data.annotations[0]?.annotation_status !== annotationStatus"
-         class="fixed z-30 right-12 mr-4" style="top: 18px;" >
+         class="fixed z-30 right-12 mr-4" style="top: 80px;" >
       <Button class="button button-prev mr-4" label="Soumettre" size="small" @click="handleSubmit()"/>
       <Button
         class="button"
@@ -201,13 +201,13 @@ const annotationComponent = $computed(() => {
 
 
   const loadTopics = () => {
-    const max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
+    const max = _.maxBy(locals, (local)=> local.data?.topic) // Search for maximum topic number
     while (colors.length <= max?.data.topic){ // Create all colors below this max
      const randomcolor = computeColor(colors.length-1).hex
       colors.push(randomcolor)
     }
     locals.forEach((phrase, index) => { // apppend topic number to each segments
-      if (![0, undefined].includes(phrase.data.topic)) {
+      if (![0, undefined].includes(phrase.data?.topic)) {
         topics[index] = phrase.data.topic
       }
     })

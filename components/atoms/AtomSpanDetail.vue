@@ -14,7 +14,7 @@
           <div :class="` bg-[color:${computeColor(focusSpan).color}] text-${textColorPicker(computeColor(focusSpan).hex)}  rounded-xl min-w-6 text-center transition-all duration-500`" >
             {{ focusSpan+1}}
           </div>
-            {{spanRefArray[focusSpan].text}}
+            {{spanRefArray[focusSpan].text + " "}}
           </div>
         <div>
           label(s):
@@ -39,7 +39,7 @@
         <div v-else class="border-gray-200 border-[1px] p-2 text-nowrap flex flex-col start-0 ">
         <div  v-for="(span,index) in spanRefArray" :key="index" class="flex flex-row hover:bg-surface-200 w-full py-2 justify-start gap-2 cursor-pointer" @click="emit('focusSpan',{index: index})" >
             <div  :class="` bg-[color:${computeColor(index).color}] text-${textColorPicker(computeColor(index).hex)} shrink rounded-xl min-w-6 text-center `" >{{ index +1 }}</div>
-              <p class="truncate"> {{span.text}} </p>
+              <p class="truncate"> {{"   "+span.text }} </p>
             </div>
         </div>
     </div>
