@@ -5,10 +5,10 @@
     <NuxtLink
       :to="{ name: 'projects-id', params: { id: project.id } }" @click="navigate">
       <div class="min-h-[75%]">
-      <div class="inline-block flex justify-between align-middle pl-2">
+      <div class=" flex justify-between align-middle pl-2">
         <p class="font-bold self-center exeeded_text">
           {{ project.title }} </p>
-        <p class="inline-block flex flex-col items-center">
+        <p class=" h-[66px]  flex flex-col items-center">
 
 
           <Button style="height:18px;width:18px; color:#212529;" class="mt-3"

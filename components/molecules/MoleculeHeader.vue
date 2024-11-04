@@ -40,7 +40,7 @@ const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 </script>
 <style>
-.button{
+.p-button{
   font-size: 14px;
   font-family: Lato,sans-serif;
   font-weight: bold;

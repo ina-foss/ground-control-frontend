@@ -4,28 +4,21 @@
   </div>
 
   <div v-else class="grid h-[80vh] p-3">
-    <div class="p-3 w-[220px] h-[33px] ml-auto fixed z-40 right-0 mr-12 flex top-[7px]">
+    <div class="p-3 w-fit h-[70px] ml-auto fixed z-40 right-[-5px] mr-12 flex items-center top-[0px]">
       <label class="text-primary font-semibold p-2">Etapes</label>
-      <Dropdown
+      <Select
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
+        class="w-fit  h-[33px]"
         placeholder="Statut"
-        class="w-full  md:w-14rem  h-[33px]  text-[#757575]  " show-clear
+        show-clear
         :pt="{
-          root:{
-            style:{padding:'8px'},
-          },
-          input:{
-            style:{padding:'0px'},
-          },
-          trigger:{
-            style:{width:'20px'},
-          },
-          clearIcon:{
-            style:{width:'12px',marginRight:'-15px'},
-          },
-        }"
+      root: { style: { padding: '4px' } },
+      label: { style: { padding: '0px', paddingLeft: '4px', paddingRight: '30px', overflow: 'visible' } },
+      dropdown: { style: { width: '22px',paddingLeft: '6px', paddingRight: '4px'  } },
+      clearIcon: { style: { width: '12px', marginRight: '-15px' } },
+    }"
       />
     </div>
     <DataTable
@@ -69,20 +62,13 @@
         <template #body="slotProps">
           <div class="flex min-w-[203px] txt">
             <Button
-              class="button button-prev txt"
               style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;margin-right:12px"
-              outlined label="Créer un task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
+              label="Créer un task" size="small" outlined  @click="stepCreate(slotProps.data.id)"/>
             <div
-              class="flex items-center cursor-pointer txt border border-[#0B7698] bg-transparent text-[#0B7698] rounded-[5px] h-[33px]" :loading="loadingExport"
+              class="flex items-center cursor-pointer txt    " :loading="loadingExport"
                   @click="clickButtonMenu($event,slotProps.data) ">
-            <Button
-              class="txt button button-prev "
-                    style="font-size:14px"
-              label="Exporter" size="small" severity="secondary" text/>
-              <img
-                style="height:15px;width:15px;filter: brightness(0) saturate(100%) invert(20%) sepia(12%) saturate(427%) hue-rotate(154deg) brightness(91%) contrast(92%);margin-right:8px"
-                   src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg"
-                alt="Arrow Down Icon">
+            <SplitButton
+              label="Exporter" size="small" outlined  />
           </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
@@ -172,16 +158,6 @@
             </Column>
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction"/>
 
-<!--             <Column header="Données"> -->
-<!--               <template #body=""> -->
-<!---->
-<!--                 <Button -->
-<!-- size="small" severity="secondary" -->
-<!--                         style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;" -->
-<!--                         outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/> -->
-<!---->
-<!--               </template> -->
-<!--             </Column> -->
           </DataTable>
         </div>
       </template>
@@ -435,9 +411,6 @@ const onCellEditComplete = () => {
 .success {
   background-color: #9ADC82;
   color: black;
-}
-.txt{
-  color:#212529;
 }
 
 </style>

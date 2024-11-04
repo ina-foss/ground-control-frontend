@@ -24,6 +24,7 @@
 import AtomTrancription from '../atoms/AtomTrancription.vue';
 import {AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
+const locals = defineModel('locals')
 let isChanged = false
 const transcriptionsRef = $ref([])
 const {transcriptions, algos, userAnnotations, status} = defineProps({
@@ -91,3 +92,8 @@ const transcriptionFunction = (localSubmit) => {
 defineExpose({locals: localChanges, listRefs: $$(transcriptionsRef), annotationFunction: transcriptionFunction })
 
 </script>
+<style lang="postcss">
+.selected-segment {
+@apply border-surface-500 border-2
+}
+</style>

@@ -50,7 +50,7 @@
           ayant été traités, différencie les interlocuteurs.
         </p>
       </MoleculeAnnotationLeftPanel>
-      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals"  @on-segment-click="updateVideoTimecode" />
+      <component v-model:locals="locals" :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"   @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
 </template>

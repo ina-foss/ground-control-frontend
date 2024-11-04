@@ -2,9 +2,14 @@
   <Dialog
     :visible="dialogVisible" modal header="Nouvelle tâche" :style="{ width: 'fit-content' }" class="bg-white "
     @hide="$emit('refreshData')" @after-hide="deleteDialog = false" @update:visible="emits('toggle-dialog')">
-    <Stepper>
-      <StepperPanel header="Informations">
-        <template #content="{nextCallback}">
+    <Stepper value="1">
+      <StepList >
+        <Step value="1">Informations</Step>
+        <Step value="2">Données</Step>
+      </StepList>
+      <StepPanels>
+
+      <StepPanel value="1" v-slot="{ activateCallback }" >
           <div class=" grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
             <span class="text-slate-400 ">Entrez la configuration de la tâche</span>
             <div class="flex">
@@ -37,14 +42,12 @@
               icon="pi pi-arrow-right" icon-pos="left"
               label="Suivant"
               size="small"
-              @click="nextCallback"
+              @click="activateCallback('2')"
             />
           </div>
-        </template>
 
-      </StepperPanel>
-      <StepperPanel header="Données">
-        <template #content="{prevCallback}">
+      </StepPanel>
+        <StepPanel value="2" v-slot="{ activateCallback }" >
           <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Télécharger des tâches </span>
             <FileUpload chooseLabel="Télécharger"
@@ -118,7 +121,7 @@
 
           <div class="flex justify-between pt-8">
             <Button class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left"
-                    size="small" @click="prevCallback"/>
+                    size="small" @click="activateCallback('1')"/>
             <Button
               class="button"
               icon="pi pi-check" icon-pos="left"
@@ -127,9 +130,9 @@
               @click="createTask"
             />
           </div>
-        </template>
 
-      </StepperPanel>
+      </StepPanel>
+      </StepPanels>
     </Stepper>
     <Toast/>
   </Dialog>

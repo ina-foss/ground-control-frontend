@@ -3,7 +3,7 @@
     <div class="flex items-center gap-2">
       <Button :icon="iconBool" :label="topicText"  :pt="{
         root: {
-          style: `max-width: 40px; min-width: 40px; background-color:${newColors[topicIndex]}; border:none;  `
+          style: `max-width: 40px; min-width: 40px; height: auto; background-color:${newColors[topicIndex]}; border:none;  `
         }
       }" @click="handleSegmentation()" />
       <div

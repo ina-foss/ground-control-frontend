@@ -1,14 +1,14 @@
 <template>
   <div class="overflow-y-auto h-full bg-neutral-color">
     <div
-      :class="['p-3 w-[220px] h-[33px] ml-auto fixed mr-12 flex top-[6px] z-[1]', isAdmin ? 'right-[145px]' : 'right-0']">
+      :class="['  w-fit h-[70px]  ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', isAdmin ? 'right-[145px]' : 'right-[5px]']">
       <label class="text-primary font-semibold p-2">Projets</label>
-      <Dropdown
+      <Select
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
+        class="w-fit  h-[33px]"
         placeholder="Statut"
-        class="w-full h-[33px] text-[#757575]"
         show-clear
         :pt="dropdownStyles"
       />
@@ -93,9 +93,9 @@ const getTotalRecords = () => {
 
  const dropdownStyles= computed(() => {
     return {
-      root: { style: { padding: '8px' } },
-      input: { style: { padding: '0px' } },
-      trigger: { style: { width: '20px' } },
+      root: { style: { padding: '4px' } },
+      label: { style: { padding: '0px', paddingLeft: '4px', paddingRight: '30px', overflow: 'visible' } },
+      dropdown: { style: { width: '22px',paddingLeft: '6px', paddingRight: '4px'  } },
       clearIcon: { style: { width: '12px', marginRight: '-15px' } },
     };
   });
