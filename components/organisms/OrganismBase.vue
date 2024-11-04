@@ -1,7 +1,7 @@
 <template>
   <div v-if="data.annotations[0]?.annotation_status !== annotationStatus"
        class="fixed right-12 mr-4 absolute top-[-50px] z-[5]" >
-    <Button class="button button-prev mr-4" label="Soumettre" size="small" @click="handleSubmit()"/>
+    <Button  class=" mr-4" outlined label="Soumettre" size="small" @click="handleSubmit()"/>
     <Button
       class="button"
       label="Terminer"
