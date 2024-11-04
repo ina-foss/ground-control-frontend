@@ -7,7 +7,7 @@
       <div
 class="flex cursor-pointer flex-start gap-2 "
            @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})">
-        <Tag :class="tcColor">
+        <Tag :severity="tcColor" class="!text-black" >
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
             <p class="text-sm">{{$application.timestampToUnix(transcriptions[0].tcin)  }}</p>
@@ -18,7 +18,7 @@ v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-cent
              :value="transcriptionTag"/>
 
       </div>
-      <Button v-if="status!=='ended'" icon="pi pi-pencil" size="small" severity="contrast" @click="onExpand()"/>
+      <Button v-if="status!=='ended'" icon="pi pi-pencil" size="small" severity="secondary" text @click="onExpand()"/>
     </div>
 
     <!-- In EDIT Mode -->

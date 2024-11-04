@@ -22,6 +22,13 @@ const MyPreset = definePreset(Lara, {
     },
   },
   components:{
+    tag:{
+      colorScheme: {
+        light: {
+          successBackground: '#9ADC82',
+        }
+      }
+    },
     button: {
       colorScheme: {
         light: {
