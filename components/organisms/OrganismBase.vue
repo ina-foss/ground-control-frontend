@@ -226,9 +226,4 @@ const annotationComponent = $computed(() => {
 
 </script>
 
-<style scoped lang="postcss">
-.selected-segment{
-  @apply border-black border-2;
-}
 
-</style>

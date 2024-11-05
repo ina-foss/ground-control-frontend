@@ -62,7 +62,7 @@ watchEffect(() => {
 })
 
 const handleSegmentClick = (event) => {
-  emits('on-segment-click', {tcin: event.tcin})
+  emits('on-segment-click', {tcin: event.tcin,tcout: event.tcout})
 }
 
 const handleConfirm = (event, index) => {
@@ -91,3 +91,11 @@ const transcriptionFunction = (localSubmit) => {
 defineExpose({locals: localChanges, listRefs: $$(transcriptionsRef), annotationFunction: transcriptionFunction })
 
 </script>
+
+<style scoped lang="postcss">
+
+.selected-segment div{
+  @apply border-surface-500 border-2 ;
+}
+
+</style>
