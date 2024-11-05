@@ -37,7 +37,7 @@
 
     <Toast />
     <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" :topics="topics" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0].result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
           Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
