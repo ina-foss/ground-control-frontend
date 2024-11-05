@@ -201,13 +201,13 @@ const annotationComponent = $computed(() => {
 
 
   const loadTopics = () => {
-    const max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
+    const max = _.maxBy(locals, (local)=> local.data?.topic) // Search for maximum topic number
     while (colors.length <= max?.data.topic){ // Create all colors below this max
      const randomcolor = computeColor(colors.length-1).hex
       colors.push(randomcolor)
     }
     locals.forEach((phrase, index) => { // apppend topic number to each segments
-      if (![0, undefined].includes(phrase.data.topic)) {
+      if (![0, undefined].includes(phrase.data?.topic)) {
         topics[index] = phrase.data.topic
       }
     })
