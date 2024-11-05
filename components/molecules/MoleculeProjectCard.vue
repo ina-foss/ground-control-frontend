@@ -14,12 +14,12 @@
           <Button style="height:18px;width:18px; color:#212529;" class="mt-3"
                   icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded size="small"
                   @click.stop.prevent="visible=true"/>
-          <Button style="padding:12px 0 0 0;margin:0;"
+          <Button v-if="isAdmin" style="padding:12px 0 0 0;margin:0;"
                   severity="primary" text rounded size="small"
                   @click.stop.prevent="deleteDialog=true">
             <img
               style="height:18px;width:18px;filter: sepia(1) saturate(0) brightness(0.6);"
-              src="public/icons/icons-svg/icons-svg/trash-icon.svg"
+              src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
               alt="Trash Icon"/>
           </Button>
           <!--Confirmation dialog to delete-->
@@ -78,13 +78,11 @@
 </template>
 
 <script setup>
-import {bcStore} from '~/stores/breadcrumbs';
 import {defineEmits} from 'vue';
-import {ProjectService} from '~/api/generate';
-import {useAuth} from '../stores/auth';
 import {storeToRefs} from 'pinia';
-import MoleculeFormProject from './molecules/MoleculeFormProject.vue';
-import {useRefreshStore} from '#imports';
+import MoleculeFormProject from './MoleculeFormProject.vue';
+import {bcStore, useRefreshStore, useService} from '#imports';
+import {ProjectService} from "../api/generate";
 
 const visible = ref(false)
 const deleteDialog = ref(false)
@@ -92,6 +90,10 @@ const store = bcStore()
 const {project} = defineProps(['project'])
 const authStore = useAuth()
 const {userEmail} = storeToRefs(authStore)
+
+const { $application } = useService();
+
+const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',

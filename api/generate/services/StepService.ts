@@ -33,8 +33,6 @@ export class StepService {
                 'step_id': stepId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -69,8 +67,6 @@ export class StepService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -91,8 +87,6 @@ export class StepService {
                 'step_id': stepId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -119,21 +113,19 @@ export class StepService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
     }
     /**
-     * Read Step
+     * Read Steps
      * Retrieve a list of steps with pagination support.
      * @param skip
      * @param limit
      * @returns StepDto Successful Response
      * @throws ApiError
      */
-    public static readStepStepsGet(
+    public static readStepsStepsGet(
         skip?: number,
         limit: number = 100,
     ): CancelablePromise<Array<StepDto>> {
@@ -145,8 +137,6 @@ export class StepService {
                 'limit': limit,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

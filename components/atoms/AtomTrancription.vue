@@ -6,7 +6,7 @@
     <div class="flex justify-between pb-2  ">
       <div
 class="flex cursor-pointer flex-start gap-2 "
-           @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})">
+           @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin,tcout: transcriptions[0].tcout})">
         <Tag :class="tcColor">
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
@@ -75,7 +75,7 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
 </template>
 
 
-<script setup>
+<script setup lang="js">
 import Textarea from 'primevue/textarea';
 import { useService } from '#imports';
 
@@ -97,7 +97,6 @@ const {transcriptions, algos, userAnnotation, status} = defineProps({
     type: String
   }
 })
-
 let isExpand = $ref(false) // Describe atom render
 let isFinished = $ref(false) // If the transcription has been corrected
 const confirmedTranscription = reactive({phrase: {}, index: null}) // store the whole amalia lvl 1, update when user confirm
@@ -113,7 +112,8 @@ if (userAnnotation != null) { // Update values if user had already annoted this 
 }
 
 // if the selectedTranscriptoin has been edited
-const isEdited = computed(() => (editedTranscription.text == '' || editedTranscription.text == transcriptions[editedTranscription.index].data.text[0]) ? false : true)
+const isEdited = computed(() => (editedTranscription.text == '' || editedTranscription.text == transcriptions[editedTranscription.index]?.data.text[0]) ? false : true)
+
 
 const editTranscriptionTag = computed(() => { // Value to display in edit Tag
   const editedTag = isEdited.value ? 'custom' : ''

@@ -26,15 +26,35 @@ export default class ApplicationService {
   }
 
   /**
+   * Return the css variable and the associated hex value from a integer
+   */
+  public computeColor= (seed: number)=>{
+    const color ='--extra-'+ (seed%10+1)
+    const hex = getComputedStyle(document.body).getPropertyValue(color)
+    return { color: color, hex: hex }
+  }
+
+  /**
+   * Return correct text color given the backgound color
+   * @param bgColor background color in hexadecimal format ex: '#4f425b'
+   */
+  public textColorPicker(bgColor: string) : "white" | "black"  {
+    const color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
+    const r = parseInt(color.substring(0, 2), 16); // hexToR
+    const g = parseInt(color.substring(2, 4), 16); // hexToG
+    const b = parseInt(color.substring(4, 6), 16); // hexToB
+    return ((r * 0.299) + (g * 0.587) + (b * 0.114)) <= 120 ? 'white' : 'black'
+  }
+  /**
    * Convert time in transcription to be used in video jump
    * @param tc
    * @returns {number}
    */
-  public unixToTimestamp(tc: string | number ){
+  public unixToTimestamp(tc: string | number ): number{
     if ( typeof tc != 'string') return tc
     const millisecond = tc.split('.')[1]
     const timeArray = tc.split('.')[0].split(':')
-    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + (parseInt(millisecond) / 1000)
+    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + floor((parseInt(millisecond) / 1000),2)
     return videoTime
   }
 
@@ -68,19 +88,6 @@ export default class ApplicationService {
         role: role
       }).then((response));
     }
-  }
-
-  /**
-   * Return the correct font color given the background color
-   * @param bgColor The background color in hex format
-   * @returns {string}
-   */
-  public fontColorByBg(bgColor: string) {
-    const color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
-    const r = parseInt(color.substring(0, 2), 16); // hexToR
-    const g = parseInt(color.substring(2, 4), 16); // hexToG
-    const b = parseInt(color.substring(4, 6), 16); // hexToB
-    return ((r * 0.299) + (g * 0.587) + (b * 0.114)) <= 120 ? 'white' : 'black';
   }
 
   public setupHeader() {

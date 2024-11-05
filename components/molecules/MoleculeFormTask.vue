@@ -48,6 +48,7 @@
           <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Télécharger des tâches </span>
             <FileUpload chooseLabel="Télécharger"
+              :multiple="true"
               ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
               invalid-file-type-message="Type invalide"  name="file[]" :pt="{
                   buttonbar: {

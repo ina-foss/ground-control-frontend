@@ -62,7 +62,7 @@ watchEffect(() => {
 })
 
 const handleSegmentClick = (event) => {
-  emits('on-segment-click', {tcin: event.tcin})
+  emits('on-segment-click', {tcin: event.tcin,tcout: event.tcout})
 }
 
 const handleConfirm = (event, index) => {
@@ -74,6 +74,28 @@ const handleConfirm = (event, index) => {
   isChanged = true
 }
 
-defineExpose({locals: localChanges, transcriptionsRef: $$(transcriptionsRef)})
+const transcriptionFunction = (localSubmit) => {
+  let locals = []
+  localSubmit?.forEach((el, index) => {
+    if (el == null) locals[index] = null
+    else {
+      el.phrase.data.algo = el.algo
+      el.phrase.data.edited = el.edited
+      el.phrase.data.algoIndex = el.index
+      locals[index] = el.phrase
+    }
+  })
+  return locals
+}
+
+defineExpose({locals: localChanges, listRefs: $$(transcriptionsRef), annotationFunction: transcriptionFunction })
 
 </script>
+
+<style scoped lang="postcss">
+
+.selected-segment div{
+  @apply border-surface-500 border-2 ;
+}
+
+</style>

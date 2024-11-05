@@ -128,13 +128,22 @@ export default class AmaliaPlayerService {
     }
     return players;
   }
+
   public callSeek() {
-    const players =this.getPlayers()
-    return players[0].mediaPlayerElement.getMediaPlayer().getCurrentTime();
+    const players = this.getPlayers()
+    if(players){
+      return players[0].mediaPlayerElement.getMediaPlayer().getCurrentTime();
+    }
   }
 
-  public updateCurrentTc(tc:any){
-    const players =this.getPlayers()
+  public updateCurrentTc(tc: any) {
+    const players = this.getPlayers()
     players[0].mediaPlayerElement.getMediaPlayer().setCurrentTime(tc);
   }
+
+  public onPause() {
+    const players = this.getPlayers()
+    players[0].mediaPlayerElement.getMediaPlayer().pause();
+  }
+
 }

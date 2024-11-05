@@ -24,7 +24,7 @@ export default defineNuxtConfig({
         public: {
         }
     },
-    modules: ['./node_modules/@vue-macros/nuxt','@nuxtjs/color-mode','nuxt-primevue', '@nuxtjs/tailwindcss', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
+    modules: ['./node_modules/@vue-macros/nuxt','@nuxtjs/tailwindcss','@nuxtjs/color-mode','nuxt-primevue', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
     colorMode: {
       classSuffix:'',
     },
@@ -44,6 +44,7 @@ export default defineNuxtConfig({
         }
     },
     tailwindcss: {
+        configPath: 'tailwind.config',
         config: {
             content: [
                 "presets/**/*.{js,vue,ts}"

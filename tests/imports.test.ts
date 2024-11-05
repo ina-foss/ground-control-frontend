@@ -31,7 +31,7 @@ describe('Dashboard.vue Tests', () => {
   });
 
   test('ProjectCard component imports as expected', async () => {
-    const cmp = await import('~/components/ProjectCard.vue');
+    const cmp = await import('~/components/molecules/MoleculeProjectCard.vue');
     expect(cmp).toBeDefined();
   });
 

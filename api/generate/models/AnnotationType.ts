@@ -12,4 +12,5 @@
 export enum AnnotationType {
     SEGMENTATION = 'segmentation',
     TRANSCRIPTION = 'transcription',
+    SPAN = 'span',
 }
