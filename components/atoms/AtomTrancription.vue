@@ -6,7 +6,7 @@
     <div class="flex justify-between pb-2  ">
       <div
 class="flex cursor-pointer flex-start gap-2 "
-           @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin})">
+           @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin,tcout: transcriptions[0].tcout})">
         <Tag :class="tcColor">
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
@@ -97,7 +97,6 @@ const {transcriptions, algos, userAnnotation, status} = defineProps({
     type: String
   }
 })
-
 let isExpand = $ref(false) // Describe atom render
 let isFinished = $ref(false) // If the transcription has been corrected
 const confirmedTranscription = reactive({phrase: {}, index: null}) // store the whole amalia lvl 1, update when user confirm

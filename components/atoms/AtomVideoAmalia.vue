@@ -43,7 +43,8 @@ const seek = async () => {
       const mid = Math.floor(((endIndex + startIndex) / 2))
       $application.unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
     }
-    const bestIndex = endIndex
+    const bestIndex = currentTime < $application.unixToTimestamp(locals[endIndex]?.tcin) ? startIndex : endIndex
+
     emits('timecode-update', { lastIndex: lastIndex, bestIndex: bestIndex }) // emit both times to scroll and adapt css
     lastIndex = bestIndex
 }}
