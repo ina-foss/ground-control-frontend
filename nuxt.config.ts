@@ -30,6 +30,8 @@ const MyPreset = definePreset(Lara, {
       }
     },
     button: {
+      borderRadius: '4px',
+      smPaddingX: '12px',
       colorScheme: {
         light: {
           outlinedPrimaryBorderColor: '{primary.color}',
@@ -74,6 +76,13 @@ export default defineNuxtConfig({
     },
     primevue: {
       options: {
+        pt: {
+          button: {
+            root: {
+              style: 'height: 33px;'
+            }
+          }
+        },
           theme: {
             preset: MyPreset,
             options: {
