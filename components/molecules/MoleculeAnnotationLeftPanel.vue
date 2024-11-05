@@ -50,7 +50,6 @@ const { locals, colors, topics, videoSrc } = props;
   }
 
   const checkCurrentTime = () => {
-    debugger
     currentTime.value = $amalia.callSeek();
   };
   onMounted(() => {
