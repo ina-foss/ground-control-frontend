@@ -25,7 +25,7 @@
   </div>
   <div v-else class="h-full " >
     <div v-if="data.annotations[0]?.annotation_status !== annotationStatus"
-         class="fixed z-30 right-12 mr-4" style="top: 80px;" >
+         class="fixed z-30 right-12 mr-4" style="top: 18px;" >
       <Button class="button button-prev mr-4" label="Soumettre" size="small" @click="handleSubmit()"/>
       <Button
         class="button"
