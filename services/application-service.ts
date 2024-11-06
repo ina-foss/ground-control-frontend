@@ -29,9 +29,10 @@ export default class ApplicationService {
    * Return the css variable and the associated hex value from a integer
    */
   public computeColor= (seed: number)=>{
-    const color ='--extra-'+ (seed%10+1)
-    const hex = getComputedStyle(document.body).getPropertyValue(color)
-    return { color: color, hex: hex }
+    const full = 'bg-extra'+ (seed%9+1)
+    const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(seed%9+1))
+    return {  hex: hex, full : full }
+
   }
 
   /**
