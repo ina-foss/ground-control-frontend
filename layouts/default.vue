@@ -1,7 +1,7 @@
 <template>
   <div>
     <MoleculeHeader />
-    <main class="h-[calc(100vh)] fixed w-full pb-5  bg-[#F7F7F7]">
+    <main class="h-[calc(100vh)] fixed w-full pb-5  bg-[--secondary-color]">
       <div class="flex-grow">
         <AtomBreadcrumbs />
       </div>

@@ -5,7 +5,7 @@
     <div class="flex items-center">
       <AtomLogo size="md" />
       <div style="padding: 25px;font-size: 20px">
-        <NuxtLink class="self-center font-bold dark:text-white" to="/">Ground Control</NuxtLink>
+        <NuxtLink class="self-center text-[--title] font-bold " to="/">Ground Control</NuxtLink>
       </div>
       <AtomIcon class="self-center" />
     </div>

@@ -1,17 +1,17 @@
 <template>
-    <div :class="` col-span-4 ${ false==true ? 'flex flex-col': 'inline'} overflow-y-auto    `">
-      <div class=" flex justify-center gap-10 sticky top-0">
-        <SelectButton v-model="labelSelected" class="self-center " :unstyled="true" :options="labels" aria-labelledby="basic" />
-        <div class="flex items-center">
-          <InputText v-model="newLabel" size="small" />
-          <Button icon="pi pi-plus" size='small' @click="addLabel()" />
+    <div :class="` col-span-4 ${ false==true ? 'flex flex-col': 'inline'} overflow-y-auto     `">
+      <div class=" h-[33px] mt-2 flex justify-center gap-10 sticky top-0">
+        <SelectButton v-model="labelSelected" size="small" class="  " :options="labels" aria-labelledby="basic" />
+        <div class="flex overflow-visible gap-1 items-center">
+          <InputText class="h-full  "  v-model="newLabel" size="small" />
+          <Button icon="pi pi-plus"  size='small' @click="addLabel()" />
         </div>
       </div>
     <div v-for="(local,index) in locals" :key="index" ref="spans" :class= "`inline` ">
         <AtomTranscriptionSpan :local="local" @mouseup="handleSelection" />
       </div>
     </div>
-    <div  class=" h-full flex flex-col items-center place-content-center  gap-10 col-span-2">
+    <div  class=" h-[80%] flex flex-col items-center place-content-center  gap-10 col-span-2">
       <AtomSpanOption  v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
       <AtomSpanDetail
 :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"

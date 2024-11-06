@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb :home="home" class="breadcrumb-container border-0 p-3" style="background-color: #F7F7F7; font-size: 14px;">
+  <Breadcrumb :home="home" class="breadcrumb-container border-0 p-3 " style="font-size: 14px;">
     <template #item="{ props }">
       <template v-for="(breadcrumbItem, index) in fullBreadcrumbs" :key="index" >
         <router-link v-if="breadcrumbItem.route" v-slot="{ navigate }" :to="breadcrumbItem.route" custom >
