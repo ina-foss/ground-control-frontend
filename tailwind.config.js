@@ -1,14 +1,15 @@
 /** @type {import('tailwindcss').Config} */
+import { extendConfig } from './node_modules/@ina/kit-ui/src/tailwindExtend.ts'
 
 export default {
   content: [],
   theme: {
     extend: {
       fontFamily: {
-        customFont: ["Lato"],
-      }
+        sans: ["Lato"],
+      },...extendConfig
     },
-    screens:{
+    screens: {
       'xs': { 'max': '769px' },
       'sm': '640px',
       'md': '768px',
