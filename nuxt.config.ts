@@ -19,6 +19,9 @@ const MyPreset = definePreset(Lara, {
       900: 'rgb(var(--primary-900))',
       950: 'rgb(var(--primary-950))',
     },
+    secondary:{
+      color: "var(--secondary-color)"
+    }
   },
   components:{
     breadcrumb: {
@@ -49,9 +52,14 @@ const MyPreset = definePreset(Lara, {
       }
     },
     datatable:{
+      headerCellPadding: '12px',
+      headerCellColor: 'var(--title)',
+      bodyCellPadding: '12px',
+      bodyCellColor: 'var(--title)',
       colorScheme: {
         light: {
           rowHoverBackground: '{surface.50}',
+          headerCellBackground: 'var(--neutral-color)'
         }
       }
     },
@@ -91,8 +99,6 @@ export default defineNuxtConfig({
             root: {
               style: 'height: 33px;'
             },
-            icon: {
-            }
           }
         },
           theme: {
