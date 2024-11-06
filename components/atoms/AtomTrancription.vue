@@ -1,6 +1,5 @@
 <template>
-  <div class="flex  flex-col p-4 gap-1 drop-shadow-lg rounded transition-all "
-  style="background-color: #EDEDED">
+  <div class="flex bg-disabled flex-col p-4 gap-1  rounded transition-all " >
 
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">

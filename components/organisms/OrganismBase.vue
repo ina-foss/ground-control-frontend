@@ -35,7 +35,7 @@
   <div v-else class="h-full" >
 
     <Toast />
-    <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
+    <div class="grid bg-secondary grid-cols-9 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" :topics="topics" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">

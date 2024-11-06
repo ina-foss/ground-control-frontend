@@ -24,14 +24,6 @@
     <DataTable
       v-model:expanded-rows="expandedRows" class=" overflow-scroll-full custom-data-table p-3" :context-menu=true
       :pt="{
-      column: {
-        bodycell:({ state }) => ({
-          style: {padding: '12px',color:'#212529',...state['d_editing']},
-        }),
-        headercell:({ state }) => ({
-          style: {padding: '12px',backgroundColor:'#EDEDED',color:'#212529',...state['d_editing']}
-        })
-      },
       row:{
         class:'p-3',
         style: { backgroundColor: 'black', color: 'white' },
@@ -93,16 +85,6 @@
             class="overflow-scroll"
              :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
-      column: {
-        bodycell:({ state }) => ({
-        class:'p-3',
-          style: {...state['d_editing']}
-        }),
-        headercell:({ state }) => ({
-        class:'p-3',
-          style: {backgroundColor:'#EDEDED',...state['d_editing']}
-        })
-      },
       row:{
         class:'p-3',
         style: { backgroundColor: 'black', color: 'white' },
