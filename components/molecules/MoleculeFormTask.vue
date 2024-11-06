@@ -26,12 +26,12 @@
             <div class="grid grid-cols-2 flex justify-between">
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1">Type de données</label>
-                <Dropdown class="custom-dropdown" v-model="dataType" :options="Object.values(TaskDataType)"
+                <Select class="custom-dropdown" v-model="dataType" :options="Object.values(TaskDataType)"
                           placeholder=""/>
               </div>
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
-                <Dropdown class="custom-dropdown" v-model="status" :options="translatedTaskStatus" optionLabel="label"
+                <Select class="custom-dropdown" v-model="status" :options="translatedTaskStatus" optionLabel="label"
                           placeholder=""/>
               </div>
             </div>
