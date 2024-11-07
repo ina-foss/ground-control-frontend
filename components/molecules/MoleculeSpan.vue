@@ -264,7 +264,7 @@ const handleSelection = (spanArg: any) => {
   })
 
   const saveSpan = (local) => {
-    _.remove(local,(el)=>!el.type)
+    _.remove(local,(el)=>!el.sublocalisations)
     spanRefArray.value.forEach((span)=>{
       local.push(formatSpan(span))
     })
