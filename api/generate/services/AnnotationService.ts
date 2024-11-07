@@ -31,6 +31,8 @@ export class AnnotationService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -52,6 +54,8 @@ export class AnnotationService {
                 'annotation_id': annotationId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -77,6 +81,8 @@ export class AnnotationService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -85,12 +91,14 @@ export class AnnotationService {
      * Get Annotation By Task Id
      * Get a list of annotations that match the task_id attributes
      * @param taskId
+     * @param userEmail user_email
      * @param direction Direction of the annotation ('in' or 'out')
      * @returns AnnotationDto Successful Response
      * @throws ApiError
      */
     public static getAnnotationByTaskIdAnnotationsTaskIdGet(
         taskId: number,
+        userEmail?: string,
         direction?: InOutEnum,
     ): CancelablePromise<Array<AnnotationDto>> {
         return __request(OpenAPI, {
@@ -100,9 +108,12 @@ export class AnnotationService {
                 'task_id': taskId,
             },
             query: {
+                'user_email': userEmail,
                 'direction': direction,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -128,6 +139,8 @@ export class AnnotationService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
