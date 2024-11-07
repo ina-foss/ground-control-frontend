@@ -319,7 +319,7 @@ const exportOut = async (step, group) => {
   for (const task of tasks) {
     try {
       // Fetch annotation data
-      const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id, 'out');
+      const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id,'','out');
 
       if (group == 'task') triggerDownload(annotations, task.name)
       else if (group == 'all') annotations.forEach((annotation) => triggerDownload(annotation, task.name + ' by ' + annotation.user_email.split('@')[0]))
