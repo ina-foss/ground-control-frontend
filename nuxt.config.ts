@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-import path from 'path';
 import Lara from '@primevue/themes/lara'
 import {definePreset} from '@primevue/themes'
 

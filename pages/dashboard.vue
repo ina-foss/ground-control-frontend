@@ -90,14 +90,6 @@ const getTotalRecords = () => {
   refreshStore.totalRecords()
 }
 
- const dropdownStyles= computed(() => {
-    return {
-      root: { style: { padding: '4px' } },
-      label: { style: { padding: '0px', paddingLeft: '4px', paddingRight: '30px', overflow: 'visible' } },
-      dropdown: { style: { width: '22px',paddingLeft: '6px', paddingRight: '4px'  } },
-      clearIcon: { style: { width: '12px', marginRight: '-15px' } },
-    };
-  });
 
 watch(() => first.value, () => {handleRefresh()})
 

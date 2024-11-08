@@ -291,7 +291,6 @@ const exportOut = async (step, group) => {
 }
 
 function triggerDownload(data, name) {
-  debugger
   const annotationsBlob = new Blob([JSON.stringify(data)], {type: 'application/json'});
 
   // Create a download link
@@ -304,7 +303,6 @@ function triggerDownload(data, name) {
 
   // Ensure filename is not null or empty
   if (a.download) {
-    return
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

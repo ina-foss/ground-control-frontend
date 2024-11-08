@@ -24,7 +24,6 @@
 import AtomTrancription from '../atoms/AtomTrancription.vue';
 import {AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
-const locals = defineModel('locals')
 let isChanged = false
 const transcriptionsRef = $ref([])
 const {transcriptions, algos, userAnnotations, status} = defineProps({
@@ -76,7 +75,7 @@ const handleConfirm = (event, index) => {
 }
 
 const transcriptionFunction = (localSubmit) => {
-  let locals = []
+  const locals = []
   localSubmit?.forEach((el, index) => {
     if (el == null) locals[index] = null
     else {

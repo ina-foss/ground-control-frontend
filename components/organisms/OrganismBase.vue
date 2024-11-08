@@ -1,5 +1,6 @@
 <template>
-  <div v-if="data.annotations[0]?.annotation_status !== annotationStatus"
+  <div
+v-if="data.annotations[0]?.annotation_status !== annotationStatus"
        class=" right-12 mr-4 absolute flex items-center top-[-70px] h-[70px] z-[5]" >
     <Button  class="mr-4" outlined label="Soumettre"  @click="handleSubmit()"/>
     <Button
@@ -48,7 +49,7 @@
           ayant été traités, différencie les interlocuteurs.
         </p>
       </MoleculeAnnotationLeftPanel>
-      <component v-model:locals="locals" :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"   @on-segment-click="updateVideoTimecode" />
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals"   @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
 </template>
@@ -90,8 +91,8 @@
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
-  let colors = $ref(['#BEBEBE'])
-  let topics = $ref([])
+  const colors = $ref(['#BEBEBE'])
+  const topics = $ref([])
   let videoSrc = $ref(annotationsIn[0]?.result.asset.url)
   const moleculeAnnotationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()

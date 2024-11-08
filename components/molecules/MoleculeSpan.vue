@@ -3,7 +3,7 @@
       <div class=" h-[33px] mt-2 flex justify-center gap-10 sticky top-0">
         <SelectButton v-model="labelSelected"  class="  " :options="labels" aria-labelledby="basic" />
         <div class="flex overflow-visible gap-1 items-center">
-          <InputText class="h-full  "  v-model="newLabel"  />
+           <InputText v-model="newLabel"  class="h-full  "  />
           <Button icon="pi pi-plus"   @click="addLabel()" />
         </div>
       </div>
@@ -28,7 +28,7 @@
   import AtomSpan from '~/components/atoms/AtomSpan.vue';
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
-  import _, { endsWith, random } from 'lodash';
+  import _, { random } from 'lodash';
 
 
   const options = reactive({
@@ -44,13 +44,11 @@
 
   const app = createApp()
   app.directive('badge', BadgeDirective)
-  let spanSaved = $ref([])
   let spanClicked = $ref(false)
   const spanRefArray = ref([])
   const elementArray = ref([])
   let linkMode = $ref(false)
   const linkCss = $computed(()=> linkMode ? ' hover:border-2 ' : '')
-  const emit = defineEmits([ 'on-segment-click' ]);
   const spanCount = ref(spanRefArray.value.length)
   let spanIndex = $ref()
   const relationArray = ref([])
@@ -70,17 +68,10 @@
   })
 
 
-  const divRef = useTemplateRef('spans')
 
   watch(spanRefArray.value,()=>{
   })
 
-const selectionText = computed(() => {
-  if (state.range != null) {
-    return state.range.toString()
-  }
-  return ''
-})
 
 watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
   lastFocus = oldFocus
@@ -139,11 +130,11 @@ const handleUnselect = () => {
 
 
   const formatSpan : any = (spanRef) => {
-    let span = {}
+    const span = {}
     span.id = spanRef.index
     span.tcin = spanRef.tcin
     span.tcout = spanRef.tcout
-    let property = {}
+    const property = {}
     property.key = "entityType"
     property.value = spanRef.label
     span.property = property
@@ -175,7 +166,7 @@ const handleSelection = (spanArg: any) => {
         state.range.setEndAfter(state.selection.focusNode)
       }
       else{
-        let startWord = state.selection.focusNode.parentNode
+        const startWord = state.selection.focusNode.parentNode
         state.range.setEndAfter(state.selection.anchorNode)
         state.range.setStartBefore(startWord)
       }
@@ -229,10 +220,10 @@ const handleSelection = (spanArg: any) => {
 }
 
   const loadSpan = ()=>{
-    locals.value?.forEach((segment,index) => {
+    locals.value?.forEach((segment) => {
       if(!segment.type){
-        let startNode = document.querySelector(`[tcin="${segment.tcin}"]`)
-        let endNode = document.querySelector(`[tcout="${segment.tcout}"]`)
+        const startNode = document.querySelector(`[tcin="${segment.tcin}"]`)
+        const endNode = document.querySelector(`[tcout="${segment.tcout}"]`)
         const range : Range = new Range()
         range.setStartBefore(startNode)
         range.setEndAfter(endNode)
