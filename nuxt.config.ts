@@ -119,7 +119,6 @@ export default defineNuxtConfig({
         }
     },
     tailwindcss: {
-        cssPath: '~/node_modules/@ina/kit-ui/src/css/base.css',
         configPath: 'tailwind.config',
         exposeConfig: false,
         config: {
