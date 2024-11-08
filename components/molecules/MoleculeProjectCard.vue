@@ -53,8 +53,6 @@
             class="pi pi-list-check "/></span>
           <Tag class="mb-1 scale-90" :class="statusSeverity">{{ translatedProjectStatus(project.status) }}</Tag>
         </div>
-        <div class="flex justify-between justify-items-stretch gap-3">
-        </div>
       </div>
       <div class="text-sm px-2 py-3 text-slate-500"
            style="color:#757575;font-size:12px;">
