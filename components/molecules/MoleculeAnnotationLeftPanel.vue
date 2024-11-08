@@ -42,10 +42,32 @@ const { locals, colors, topics, videoSrc } = props;
 
   const emits = defineEmits(['scroll-to-segment'])
 
-
+  let pauseTime = ref(0); // variable réactive
+  let currentTime = ref(0);
   const updateVideoTimecode = (event) => {
-    $amalia.updateCurrentTc($application.unixToTimestamp(event.tcin) -1 )
+    $amalia.updateCurrentTc($application.unixToTimestamp(event.tcin) )
+    pauseTime.value=$application.unixToTimestamp(event.tcout)
   }
+
+  const checkCurrentTime = () => {
+    currentTime.value = $amalia.callSeek();
+  };
+  onMounted(() => {
+    const interval = setInterval(() => {
+      checkCurrentTime();
+    }, 500);
+
+    onUnmounted(() => {
+      clearInterval(interval);
+    });
+  });
+
+  watch(currentTime, (newCurrentTime) => {
+    if (pauseTime.value !== 0 && newCurrentTime >= pauseTime.value) {
+      $amalia.onPause();
+      pauseTime.value=0;
+    }
+  });
 
   defineExpose({updateVideoTimecode})
 </script>

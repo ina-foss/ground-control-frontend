@@ -51,11 +51,11 @@
 
   const handleSegmentClick = (event) => {
     segmentationRefs[event.index].scrollIntoView({ behavior: "smooth" });
-    emits('on-segment-click', {tcin: event.tcin})
+    emits('on-segment-click', {tcin: event.tcin,tcout: event.tcout})
   }
 
   const jumpToTopic= (event) => {
-    const firstIndex = topics.findIndex((topic) =>  topic == event.topic )
+    const firstIndex = topics.findIndex((topic) =>  topic == event.topic  )
     segmentationRefs[firstIndex].scrollIntoView({ behavior: "smooth"})
   }
 

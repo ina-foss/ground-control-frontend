@@ -28,7 +28,7 @@
   import AtomSpan from '~/components/atoms/AtomSpan.vue';
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
-  import _, { random } from 'lodash';
+  import _, { endsWith, random } from 'lodash';
 
 
   const options = reactive({
@@ -44,6 +44,7 @@
 
   const app = createApp()
   app.directive('badge', BadgeDirective)
+  let spanSaved = $ref([])
   let spanClicked = $ref(false)
   const spanRefArray = ref([])
   const elementArray = ref([])
@@ -57,6 +58,7 @@
   let currentFocus = $ref(undefined)
   const labelSelected = ref('')
   const labels = $ref(['Person','Citation','Verbe'])
+
   interface State {
     selection: Selection | null,
     range: Range | null
@@ -70,6 +72,8 @@
 
   const divRef = useTemplateRef('spans')
 
+  watch(spanRefArray.value,()=>{
+  })
 
 const selectionText = computed(() => {
   if (state.range != null) {
@@ -122,7 +126,9 @@ const onDeleteSpan = ({ index } : { index : number }) => {
 
 watch(()=>labelSelected.value,(newLabel:any)=>{
   if(typeof currentFocus != 'undefined'){
+      const span = spanRefArray.value[currentFocus]
       spanRefArray.value[currentFocus].label[0] = newLabel
+      updateSpan(span.tcin,span.tcout,newLabel,span.index)
   }
 },{immediate: true})
 
@@ -131,118 +137,111 @@ const handleUnselect = () => {
   currentFocus=undefined
 }
 
-  const recordSpan = (range,index,label) => {
-    const list =  range.startContainer.parentNode.parentNode.parentNode
-    const element = range.startContainer.parentNode
-    const segmentPart = (_.indexOf(element.childNodes,range.startContainer))
-    let offset = 0
 
-    if(element.hasChildNodes()){
-      const children = element.childNodes
-
-      children.forEach(function (currentValue,index) {
-        if (index < segmentPart){
-          offset += currentValue.firstChild?.firstChild.length || currentValue.length
-        }
-      });
-    }
-    const indexSegment = _.indexOf(list.childNodes, element.parentNode)
-
-    if(!locals.value[indexSegment-2].data.span) locals.value[indexSegment-2].data.span = []
-    if(!spanClicked) locals.value[indexSegment-2].data.span.push({id:index, label: label, start: offset+range.startOffset, end: offset+range.endOffset })
-    else{
-        const span = _.find(locals.value[indexSegment-2].data.span, (span)=> span.id == spanIndex)
-        if (span.start == offset + range.endOffset) span.start = range.startOffset+offset
-        else span.end += range.endOffset
-    }
-
+  const formatSpan : any = (spanRef) => {
+    let span = {}
+    span.id = spanRef.index
+    span.tcin = spanRef.tcin
+    span.tcout = spanRef.tcout
+    let property = {}
+    property.key = "entityType"
+    property.value = spanRef.label
+    span.property = property
+    return span
 
 }
 
+
+
 const handleSelection = (spanArg: any) => {
-  const currentSelection = document.getSelection()
-  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != '' || spanArg?.label )) {
+  const currentSelection = window.getSelection()
+  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != '' || spanArg?.property )) {
     state.selection = currentSelection
     const index = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
-    const label = spanArg.label || markRaw(labelSelected.value)
-    const direction = (currentSelection.anchorOffset < currentSelection.extentOffset) ? 'forward' : 'backward'
-    if( state.selection.extentNode.data[state.selection.extentOffset-1] != ' '){
-      state.selection.modify('extend',direction,'word') // Extend the selection to the whole word
-    }
-    if(direction == 'forward'){
-       if( state.selection.extentNode.data[state.selection.extentOffset-1] == ' '){ // Delete the last characted if it's a space
-        state.selection.modify('extend','backward','character')
-        }
-    }
-    else {
-        if( state.selection.extentNode.data[state.selection.extentOffset] === ' '){ // Delete the last characted if it's a space
-          state.selection.modify('extend','forward','character')
-        }
-    }
+    const label = spanArg?.property?.value[0] || markRaw(labelSelected.value)
+    const spanTcin = spanArg?.tcin || currentSelection.anchorNode?.parentElement?.getAttribute('tcin')
+    const spanTcout = spanArg?.tcout || currentSelection.focusNode?.parentElement?.getAttribute('tcout')
     state.range = currentSelection.getRangeAt(0)
-    if ( spanArg.label == undefined ) recordSpan(state.range,index,label)
-    const selectionTextString = selectionText.value
+    let direction
+    if(!spanArg.tcin){
+      const indexStart = _.indexOf(currentSelection.anchorNode?.parentElement?.parentNode?.childNodes,currentSelection.anchorNode?.parentElement)
+      const indexEnd = _.indexOf(currentSelection.focusNode?.parentElement?.parentNode?.childNodes,currentSelection.focusNode?.parentElement)
+      direction = ( indexStart <= indexEnd ) ? 'forward' : 'backward'
+      if ( indexStart == indexEnd ){
+        direction = (state.selection.anchorOffset < state.selection.extentOffset) ? 'forward' : 'backward'
+      }
+      if( direction == 'forward'){
+        state.range.setStartBefore(state.selection.anchorNode?.parentNode)
+        state.range.setEndAfter(state.selection.focusNode)
+      }
+      else{
+        let startWord = state.selection.focusNode.parentNode
+        state.range.setEndAfter(state.selection.anchorNode)
+        state.range.setStartBefore(startWord)
+      }
+    }
     state.selection.removeAllRanges()
     const span = document.createElement('span')
-    state.range.deleteContents()
+    const docFragment = state.range.extractContents()
     state.selection.empty()
     state.selection = null
     const color =  spanRefArray.value[index] ? spanRefArray.value[index].color : generatePastelColor(random(0,15,true))
     if (!spanClicked){
-    const app = createApp({
-      render () {
-        return h(AtomSpan , {
-            label: [label],
-            text: selectionTextString,
-            color: color,
-            index: index,
-            linkCss: linkCss,
-            options: options,
-            ref: el => spanRefArray.value[index] = el,
-            onSpanReady: ({element, index}) => {
-              elementArray.value[index] = element
-            },
-            onEditSpan: ({index}) => {
-              spanClicked = true
-              spanIndex = index
-            },
-            onFocusSpan:(event)=> handleFocusSpan(event)
-
-
-        })
-      }
-    })
-      spanCount.value++
-     app.mount(span)
-    const fragment = document.createDocumentFragment()
-    Array.from(span.childNodes).forEach(node => {
-      fragment.appendChild(node)
-    });
-    state.range.insertNode(fragment)
+      const app = createApp({
+        render () {
+          return h(AtomSpan , {
+              label: [label],
+              // text: selectionTextString,
+              tcIn: spanTcin,
+              tcOut: spanTcout,
+              color: color,
+              index: index,
+              linkCss: linkCss,
+              options: options,
+              ref: el => spanRefArray.value[index] = el,
+              onSpanReady: ({element, index}) => {
+                elementArray.value[index] = element
+              },
+              onEditSpan: ({index}) => {
+                spanClicked = true
+                spanIndex = index
+              },
+              onFocusSpan:(event)=> handleFocusSpan(event)
+          })
+        }
+      })
+        spanCount.value++
+      app.mount(span) // Render the Span
+      const fragment = document.createDocumentFragment()
+      Array.from(span.childNodes).forEach(node => { // Add the content of the Span indise a document Fragment
+        fragment.appendChild(node)
+      });
+      fragment.firstChild?.firstChild?.appendChild(docFragment)
+      state.range.insertNode(fragment) // Add this document fragment to the DOM
     }
     else{
-      direction == 'forward' ? spanRefArray.value[spanIndex].addRight(selectionTextString) : spanRefArray.value[spanIndex].addLeft(selectionTextString)
+      direction == 'forward' ? spanRefArray.value[spanIndex].addRight(docFragment) : spanRefArray.value[spanIndex].addLeft(docFragment)
       spanClicked = false
     }
-
+    spanIndex = undefined
+    formatSpan(spanRefArray.value[spanRefArray.value.length-1])
   }
 }
 
   const loadSpan = ()=>{
     locals.value?.forEach((segment,index) => {
-      if(segment.data.span){
-        const sortedSpan = _.orderBy(segment.data.span,['start'],['desc'])
-        sortedSpan.forEach((span)=>{
-          const range : Range = new Range()
-          range.setStart(divRef.value[index].firstChild.firstChild, span.start)
-          range.setEnd(divRef.value[index].firstChild.firstChild, span.end)
-          const selection : Selection | null = window.getSelection()
-          selection?.empty()
-          selection?.addRange(range)
+      if(!segment.type){
+        let startNode = document.querySelector(`[tcin="${segment.tcin}"]`)
+        let endNode = document.querySelector(`[tcout="${segment.tcout}"]`)
+        const range : Range = new Range()
+        range.setStartBefore(startNode)
+        range.setEndAfter(endNode)
+        const selection : Selection | null = window.getSelection()
+        selection?.empty()
+        selection?.addRange(range)
 
 
-          handleSelection(span)
-        })
+        handleSelection(segment)
       }
     });
   }
@@ -264,10 +263,15 @@ const handleSelection = (spanArg: any) => {
     loadSpan()
   })
 
-  const saveSpan = (local) =>{
+  const saveSpan = (local) => {
+    _.remove(local,(el)=>!el.sublocalisations)
+    spanRefArray.value.forEach((span)=>{
+      local.push(formatSpan(span))
+    })
     return local
   }
 
   defineExpose({ annotationFunction: saveSpan})
 
 </script>
+

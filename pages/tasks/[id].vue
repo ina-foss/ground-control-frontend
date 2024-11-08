@@ -60,8 +60,8 @@ const annotation_bool = reactive({
 })
 const annotations_out = ref([])
 const annotations_in = ref([])
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,userEmail.value, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
 
 
 const allFetched = $computed(() => {
@@ -113,7 +113,7 @@ const submitExistantAnnotation =(locals,action)=>{
         window.onbeforeunload = null
       })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
       })
 
 
@@ -137,7 +137,7 @@ const submitNewAnnotation =(locals,action)=>{
     }
   })
     .then(() => {
-      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
     })
     .then(() => {
       window.onbeforeunload = null

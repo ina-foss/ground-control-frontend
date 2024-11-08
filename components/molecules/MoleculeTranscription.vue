@@ -63,7 +63,7 @@ watchEffect(() => {
 })
 
 const handleSegmentClick = (event) => {
-  emits('on-segment-click', {tcin: event.tcin})
+  emits('on-segment-click', {tcin: event.tcin,tcout: event.tcout})
 }
 
 const handleConfirm = (event, index) => {

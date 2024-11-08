@@ -70,7 +70,7 @@
         {{ formatDate($props.project.created_at) }}
       </p>
       <Avatar
-        v-tooltip.left="userEmail" :label=userEmail.charAt(0).toUpperCase()
+        v-tooltip.left="project.created_by" :label=project.created_by.charAt(0).toUpperCase()
         shape="circle" style="background-color:#0057FF;color: white;font-weight: 500;height:24px;width:24px"/>
     </div>
   </div>

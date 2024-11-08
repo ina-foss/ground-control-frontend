@@ -14,7 +14,7 @@
           <div :class="` ${computeColor(focusSpan).full} text-${textColorPicker(computeColor(focusSpan).hex)}  rounded-xl min-w-6 h-6 flex pl-[6px] items-center transition-all duration-500`" >
             {{ focusSpan+1}}
           </div>
-            {{spanRefArray[focusSpan].text}}
+            {{spanRefArray[focusSpan].text + " "}}
           </div>
         <div>
           label(s):

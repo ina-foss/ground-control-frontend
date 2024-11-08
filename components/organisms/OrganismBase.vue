@@ -35,7 +35,7 @@
 
     <Toast />
     <div class="grid bg-secondary grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="locals" :topics="topics" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0].result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
           Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
@@ -199,13 +199,13 @@ const annotationComponent = $computed(() => {
 
 
   const loadTopics = () => {
-    const max = _.maxBy(locals, (local)=> local.data.topic) // Search for maximum topic number
+    const max = _.maxBy(locals, (local)=> local.data?.topic) // Search for maximum topic number
     while (colors.length <= max?.data.topic){ // Create all colors below this max
      const randomcolor = computeColor(colors.length-1).hex
       colors.push(randomcolor)
     }
     locals.forEach((phrase, index) => { // apppend topic number to each segments
-      if (![0, undefined].includes(phrase.data.topic)) {
+      if (![0, undefined].includes(phrase.data?.topic)) {
         topics[index] = phrase.data.topic
       }
     })
@@ -224,9 +224,4 @@ const annotationComponent = $computed(() => {
 
 </script>
 
-<style scoped lang="postcss">
-.selected-segment{
-  @apply border-black border-2;
-}
 
-</style>
