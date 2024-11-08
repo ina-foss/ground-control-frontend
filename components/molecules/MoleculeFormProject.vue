@@ -50,7 +50,6 @@
                 class="button"
                 icon="pi pi-arrow-right" icon-pos="left"
                 label="Suivant"
-                size="small"
                 @click="activateCallback('2')"
               />
             </div>
@@ -74,7 +73,7 @@
             </div>
 
             <div class="flex justify-end pt-8">
-              <Button class="button button-prev mx-3" label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="activateCallback('1')"/>
+              <Button class="button button-prev mx-3" outlined label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="activateCallback('1')"/>
               <Button
                 class="button"
                 icon="pi pi-check" icon-pos="left"

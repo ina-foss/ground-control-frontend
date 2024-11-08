@@ -19,9 +19,11 @@
 
 <script setup lang="ts">
 
-const span = defineModel<boolean>('')
+const span = defineModel<boolean>('span')
 const timecode = defineModel<boolean>('timecode')
 const bloc = defineModel<boolean>('bloc')
+
+watchEffect(()=>console.log(span.value))
 
 
 </script>

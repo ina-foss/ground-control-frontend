@@ -1,13 +1,20 @@
 <template>
   <div :style="dynamicStyle(newColors[topicIndex])" ref="segment" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg " >
     <div class="flex items-center gap-2">
-      <Button :icon="iconBool" :label="topicText"  :pt="{
+      <Button :icon="iconBool" :label="topicText"
+        :pt="{
         root: {
-          style: `max-width: 40px; min-width: 40px; height: auto; background-color:${newColors[topicIndex]}; border:none;  `
+          style: `max-width:40px; min-width: 40px; height: 40px; background-color:${newColors[topicIndex]}; border:none;  `
         }
       }" @click="handleSegmentation()" />
       <div
-v-tooltip.top="timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout)"
+        v-tooltip.top="{ value : timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout),
+        pt: {
+          root:{
+            style : 'max-width: fit-content '
+          }
+        }
+        }"
         class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
         @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: props.index })">
         {{ $props.phrase.data.text[0] }}

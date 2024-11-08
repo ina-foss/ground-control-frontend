@@ -35,6 +35,7 @@ const MyPreset = definePreset(Lara, {
       colorScheme: {
         light: {
           successBackground: 'var(--success-state)',
+          dangerBackground: 'var(--error-state)',
         }
       }
     },
@@ -45,6 +46,8 @@ const MyPreset = definePreset(Lara, {
       borderRadius: '4px',
       iconOnlyWidth: '33px',
       smPaddingX: '12px',
+      paddingY: '0.5rem',
+      paddingX: '11px',
       colorScheme: {
         light: {
           outlinedPrimaryBorderColor: '{primary.color}',
@@ -97,9 +100,8 @@ export default defineNuxtConfig({
         pt: {
           button: {
             root: {
-              style: 'height: 33px;'
             },
-          }
+          },
         },
           theme: {
             preset: MyPreset,

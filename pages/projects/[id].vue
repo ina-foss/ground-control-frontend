@@ -10,7 +10,7 @@
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
-        class="w-fit  h-[33px]"
+        class="w-fit items-center h-[33px]"
         placeholder="Statut"
         show-clear
         :pt="{
@@ -37,22 +37,22 @@
           <h1 class="text-xl font-bold">Ce projet ne comporte aucune etapes</h1>
         </div>
       </template>
-      <Column field="name" header="Titre" class="txt" style="width : 8rem ; min-width: 70px;"   body-class="p-3 text-sm">
+      <Column field="name" header="Titre" class="txt" style="width : 8rem ; min-width: 70px;"   body-class="p-3 ">
         <template #body="slotProps">
           <p > {{ slotProps.data.title }}</p>
         </template>
       </Column>
-      <Column field="id" header="ID" class="txt" style="width: 40px;" body-class="text-sm"/>
-      <Column field="annotation_type" class="txt" header="Type"  body-class="text-sm" style="width : 9rem ; min-width: 70px;"/>
-      <Column header="Statut" class="txt"  body-class="text-sm" style="width : 9rem ; min-width: 70px;">
+      <Column field="id" header="ID" class="txt" style="width: 40px;" body-class=""/>
+      <Column field="annotation_type" class="txt" header="Type"  body-class="" style="width : 9rem ; min-width: 70px;"/>
+      <Column header="Statut" class="txt"  body-class="" style="width : 9rem ; min-width: 70px;">
         <template #body="slotProps">
           <Tag  :class="getStatusClass(slotProps.data.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(slotProps.data.status) }}</Tag>
         </template>
       </Column>
-      <Column field="description" header="Description" class="txt"  body-class="text-sm"/>
-      <Column header=" " style="width: 17rem; "  body-class="text-sm">
+      <Column field="description" header="Description" class="txt"  body-class=""/>
+      <Column header=" " style="width: 17rem; "  body-class="">
         <template #body="slotProps">
-          <div class="flex min-w-[203px] txt">
+          <div class="flex min-w-[240px] txt">
             <Button
               style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;margin-right:12px"
               label="Créer un task" size="small" outlined  @click="stepCreate(slotProps.data.id)"/>
@@ -291,6 +291,7 @@ const exportOut = async (step, group) => {
 }
 
 function triggerDownload(data, name) {
+  debugger
   const annotationsBlob = new Blob([JSON.stringify(data)], {type: 'application/json'});
 
   // Create a download link
@@ -303,6 +304,7 @@ function triggerDownload(data, name) {
 
   // Ensure filename is not null or empty
   if (a.download) {
+    return
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

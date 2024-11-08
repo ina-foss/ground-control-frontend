@@ -7,10 +7,9 @@
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
-        class="w-fit  h-[33px]"
+        class="w-fit items-center h-[33px]"
         placeholder="Statut"
         show-clear
-        :pt="dropdownStyles"
       />
     </div>
     <div ref="dashboardRef" class="p-3 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">

@@ -1,5 +1,5 @@
 <template>
-  <div  ref="span" :class="`inline border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ' highlighted-text cursor-pointer' : 'text-black'}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+  <div  ref="span" :class="`inline border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newIndex).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
     <div class="inline ">
       {{ (newText == '') ? text : newText }}
     </div>
@@ -64,10 +64,8 @@ onMounted(()=>{
   watchEffect(()=>{
     if( options.span == true ) {
         span.value.style.color = textColorPicker(computeColor(newIndex).hex)
-        span.value.style.backgroundColor = `var(${computeColor(newIndex).color})`
     }
     else{
-      span.value.style.backgroundColor = 'transparent'
       span.value.style.color = 'black'
     }
   })

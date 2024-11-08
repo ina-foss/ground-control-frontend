@@ -4,8 +4,8 @@
   >
     <div class="flex items-center">
       <AtomLogo size="md" />
-      <div style="padding: 25px;font-size: 20px">
-        <NuxtLink class="self-center text-[--title] font-bold " to="/">Ground Control</NuxtLink>
+      <div style="padding: 25px;">
+        <NuxtLink class="self-center text-title text-3xl font-black " to="/">Ground Control</NuxtLink>
       </div>
       <AtomIcon class="self-center" />
     </div>
@@ -19,7 +19,7 @@
       />
       <MoleculeFormProject :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false" />
     </div>
-    <div >
+    <div class="flex items-center" >
       <AtomAvatarHeader />
     </div>
     </div>

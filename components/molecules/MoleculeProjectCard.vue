@@ -6,16 +6,16 @@
       :to="{ name: 'projects-id', params: { id: project.id } }" @click="navigate">
       <div class="min-h-[75%]">
       <div class=" flex justify-between align-middle pl-2">
-        <p class="font-bold self-center exeeded_text">
+        <p class="font-bold text-3xl self-center ">
           {{ project.title }} </p>
-        <p class=" h-[66px]  flex flex-col items-center">
+        <p class=" h-[66px]  flex flex-col items-center gap-2 ">
 
 
           <Button style="height:18px;width:18px; color:#212529;" class="mt-3"
-                  icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded size="small"
+                  icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded
                   @click.stop.prevent="visible=true"/>
-          <Button v-if="isAdmin" style="padding:12px 0 0 0;margin:0;"
-                  severity="primary" text rounded size="small"
+          <Button v-if="isAdmin" style="height: 22px; padding:0 0 0 0;margin:0;"
+                  severity="warn" text rounded
                   @click.stop.prevent="deleteDialog=true">
             <img
               style="height:18px;width:18px;filter: sepia(1) saturate(0) brightness(0.6);"
@@ -147,11 +147,6 @@ const deleteProject = async () => {
 
 </script>
 <style>
-.exeeded_text {
-  font-size: 19px;
-  font-family: Lato;
-  color: #212529;
-}
 
 .warning {
   background-color: #F9D621;

@@ -16,6 +16,17 @@ export default {
   ],
   theme: {
     extend: {
+      fontSize: {
+        'xs': '12px',
+        sm: ['14px','17px'],
+        base: ['1rem','17px'],
+        xl: '16px',
+        '2xl': '18px',
+        '3xl': '20px',
+        '4xl': '22px',
+        '5xl': '25px',
+        '6xl': '28px',
+      },
       fontFamily: {
         sans: ["Lato"],
       },...extendConfig

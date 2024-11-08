@@ -1,5 +1,4 @@
 <template>
-    <div>
         <Avatar
           v-tooltip.left="userEmail"
           style="background-color: transparent;"
@@ -13,7 +12,6 @@
         </Avatar>
 
         <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
-    </div>
 </template>
 
 <script setup>
