@@ -1,21 +1,32 @@
 <template>
-    <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
-      <div class=" h-[33px] mt-2 flex justify-center gap-10 sticky top-0">
-        <SelectButton v-model="labelSelected"  class="  " :options="labels" aria-labelledby="basic" />
-        <div class="flex overflow-visible gap-1 items-center">
-           <InputText v-model="newLabel"  class="h-full  "  />
-          <Button icon="pi pi-plus"   @click="addLabel()" />
-        </div>
+  <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
+    <div class=" h-[33px] mt-2 flex justify-center gap-10 sticky top-0">
+      <SelectButton v-model="labelSelected" class="  " :options="labels" aria-labelledby="basic" />
+      <div class="flex overflow-visible gap-1 items-center">
+        <InputText v-model="newLabel" class="h-full  " />
+        <Button icon="pi pi-plus" @click="addLabel()" />
       </div>
-    <div v-for="(local,index) in locals" :key="index" ref="spans" :class= "`inline` ">
+    </div>
+    <div v-if="options.bloc">
+      <div v-for="(local, index) in locals" :key="index" ref="spans" :class="`inline`">
         <AtomTranscriptionSpan :local="local" @mouseup="handleSelection" />
       </div>
     </div>
-    <div  class=" h-[80%] top-[20%] flex flex-col items-center place-content-center  gap-10 col-span-2">
-      <AtomSpanOption  v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+    <div v-else>
+      <div
+v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)"
+        :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
+        @mouseup="handleSelection">
+        {{ word.data.text[0] }}
+      </div>
+    </div>
+  </div>
+    <div class=" h-[80%] top-[20%] flex flex-col items-center place-content-center  gap-10 col-span-2">
+      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
       <AtomSpanDetail
 :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
-      @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()" @focus-span="handleFocusSpan" />
+        @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
+        @focus-span="handleFocusSpan" />
     </div>
 </template>
 
@@ -31,14 +42,34 @@
   import _, { random } from 'lodash';
 
 
+
+  const { $application } = useService()
+  const { unixToTimestamp } = $application
+
+
+
   const options = reactive({
     span: true,
     timecode: false,
     bloc: true
   })
 
+  const emits = defineEmits([ 'on-segment-click' ]);
 
   const locals = defineModel<Array>('locals')
+
+  const aggregatedLocals =  computed(()=>{
+    const result = []
+    locals.value.forEach((local)=>{
+      local.sublocalisations?.localisation.forEach((word)=> result.push(word))
+    })
+    return result
+  })
+
+  watch(()=>options.bloc,async ()=> {
+    await nextTick()
+    loadSpan()
+  })
 
   const newLabel = ref('')
 
@@ -65,11 +96,6 @@
   const state: State = reactive({
     selection: null ,
     range: null
-  })
-
-
-
-  watch(spanRefArray.value,()=>{
   })
 
 
@@ -131,7 +157,7 @@ const handleUnselect = () => {
 
   const formatSpan : any = (spanRef) => {
     const span = {}
-    span.id = spanRef.index
+    span.id = spanRef.id
     span.tcin = spanRef.tcin
     span.tcout = spanRef.tcout
     const property = {}
@@ -146,10 +172,10 @@ const handleUnselect = () => {
 
 const handleSelection = (spanArg: any) => {
   const currentSelection = window.getSelection()
-  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != '' || spanArg?.property )) {
+  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != '' || spanArg)) {
     state.selection = currentSelection
-    const index = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
-    const label = spanArg?.property?.value[0] || markRaw(labelSelected.value)
+    const id = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
+    const label = spanArg?.property?.value[0] || spanArg.label[0] || markRaw(labelSelected.value)
     const spanTcin = spanArg?.tcin || currentSelection.anchorNode?.parentElement?.getAttribute('tcin')
     const spanTcout = spanArg?.tcout || currentSelection.focusNode?.parentElement?.getAttribute('tcout')
     state.range = currentSelection.getRangeAt(0)
@@ -176,7 +202,7 @@ const handleSelection = (spanArg: any) => {
     const docFragment = state.range.extractContents()
     state.selection.empty()
     state.selection = null
-    const color =  spanRefArray.value[index] ? spanRefArray.value[index].color : generatePastelColor(random(0,15,true))
+    const color =  spanRefArray.value[id] ? spanRefArray.value[id].color : generatePastelColor(random(0,15,true))
     if (!spanClicked){
       const app = createApp({
         render () {
@@ -186,10 +212,10 @@ const handleSelection = (spanArg: any) => {
               tcIn: spanTcin,
               tcOut: spanTcout,
               color: color,
-              index: index,
+              id: id,
               linkCss: linkCss,
               options: options,
-              ref: el => spanRefArray.value[index] = el,
+              ref: el => spanRefArray.value[id] = el,
               onSpanReady: ({element, index}) => {
                 elementArray.value[index] = element
               },
@@ -220,10 +246,23 @@ const handleSelection = (spanArg: any) => {
 }
 
   const loadSpan = ()=>{
-    locals.value?.forEach((segment) => {
-      if(!segment.type){
-        const startNode = document.querySelector(`[tcin="${segment.tcin}"]`)
-        const endNode = document.querySelector(`[tcout="${segment.tcout}"]`)
+    if(spanRefArray.value.length == 0){
+      locals.value?.forEach((segment) => {
+        if(!segment.tclevel  || segment.tclevel == 2 ){
+          createSpan(segment)
+        }
+      });
+    }
+    else{
+      spanRefArray.value?.forEach((segment) => {
+        createSpan(segment)
+      });
+    }
+  }
+
+  const createSpan = (span) =>{
+        const startNode = document.querySelector(`[tcin="${span.tcin}"]`)
+        const endNode = document.querySelector(`[tcout="${span.tcout}"]`)
         const range : Range = new Range()
         range.setStartBefore(startNode)
         range.setEndAfter(endNode)
@@ -232,9 +271,7 @@ const handleSelection = (spanArg: any) => {
         selection?.addRange(range)
 
 
-        handleSelection(segment)
-      }
-    });
+        handleSelection(span)
   }
 
   const handleFocusSpan = ({index}) =>{
