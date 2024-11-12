@@ -59,6 +59,7 @@ const MyPreset = definePreset(Lara, {
       bodyCellPadding: '12px',
       bodyCellColor: 'var(--title)',
       columnTitleFontWeight: '900',
+      rowColor:'var(--title)',
       colorScheme: {
         light: {
           rowHoverBackground: '{surface.50}',
