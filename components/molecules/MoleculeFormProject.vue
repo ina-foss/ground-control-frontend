@@ -12,84 +12,85 @@
     <template #header>
       <span class="header-title">{{ headerTitle }}</span>
     </template>
-    <Stepper class="transition-all">
-      <StepperPanel class="transition-all" header="Informations">
-        <template #content="{ nextCallback }">
-          <div class="grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
-            <span class="text-slate-400 ">Entrez la configuration du projet</span>
-            <div class="flex">
-              <label class="self-center basis-1/5 pr-4">Titre</label>
-              <InputText v-model="title" placeholder="Entrez le titre du projet" autocomplete="off" class=" input-box flex-auto custom-placeholder"/>
-              <InlineMessage class="input-box ml-3" v-if="errorVisible === true && !title">Le titre est requis</InlineMessage>
+    <Stepper value="1" class="transition-all">
+      <StepList>
+        <Step value="1">Informations</Step>
+        <Step value="2">Etapes</Step>
+      </StepList>
+      <StepPanels>
+        <StepPanel v-slot="{ activateCallback }" class="transition-all" value="1">
+            <div class="grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
+              <span class="text-slate-400 ">Entrez la configuration du projet</span>
+              <div class="flex">
+                <label class="self-center basis-1/5 pr-4">Titre</label>
+                <InputText v-model="title" placeholder="Entrez le titre du projet" autocomplete="off" class=" input-box flex-auto custom-placeholder"/>
+                <InlineMessage class="input-box ml-3" v-if="errorVisible === true && !title">Le titre est requis</InlineMessage>
+              </div>
+              <div class="flex ">
+                <label class="self-center basis-1/5 pr-4">Description</label>
+                <InputText
+                  v-model="description" placeholder="Entrez la description du projet" autocomplete="off"
+                  class="flex-auto input-box custom-placeholder"/>
+              </div>
+              <div class="flex">
+                <label class="self-center basis-1/5 pr-4">Statut</label>
+                <Dropdown class="custom-dropdown" v-model="status" :options="translatedProjectStatus"  optionLabel="label"/>
+              </div>
+              <div class="flex justify-between items-center">
+                <label style="color: black" class="self-center text-sm ">Publié ?</label>
+                <ToggleSwitch v-model="isPublished" class="scale-75"/>
+                <label style="color: black" class="self-center text-sm">Autoriser les annotations vides ?</label>
+                <ToggleSwitch v-model="emptyAnnotations" class="scale-75"/>
+                <label style="color: black" class="self-center text-sm">autoriser le saut ?</label>
+                <ToggleSwitch v-model="allowSkip" class="scale-75"/>
+              </div>
             </div>
-            <div class="flex ">
-              <label class="self-center basis-1/5 pr-4">Description</label>
-              <InputText
-                v-model="description" placeholder="Entrez la description du projet" autocomplete="off"
-                class="flex-auto input-box custom-placeholder"/>
+            <div class="flex justify-end pt-5">
+              <Button
+                class="button"
+                icon="pi pi-arrow-right" icon-pos="left"
+                label="Suivant"
+                @click="activateCallback('2')"
+              />
             </div>
-            <div class="flex">
-              <label class="self-center basis-1/5 pr-4">Statut</label>
-              <Dropdown class="custom-dropdown" v-model="status" :options="translatedProjectStatus"  optionLabel="label"/>
+        </StepPanel>
+        <StepPanel v-slot="{ activateCallback }" value="2">
+            <div class="w-[70vh] grid-cols-3 flex">
+              <div class="">
+                <label>Disponibles</label>
+                <Listbox v-model="selectedType" :options="availableType" multiple class="basis-1/3"/>
+              </div>
+              <span class=" flex justify-center items-center basis-1/3"><i class="pi pi-arrow-right scale-150"/></span>
+              <div class="basis-1/3">
+                <label>sélectionnés</label>
+                <ol v-if="selectedType.length !== 0" class="border-surface-300 border-[1px] py-3 rounded">
+                  <li
+                    v-for="(type, index) in selectedType" :key="index"
+                    class="leading-none px-5 py-3 self-center overflow-visible">{{ index + 1 }}. {{ type }}
+                  </li>
+                </ol>
+              </div>
             </div>
-            <div class="flex justify-between items-center">
-              <label style="color: black" class="self-center text-sm ">Publié ?</label>
-              <InputSwitch v-model="isPublished" class="scale-75"/>
-              <label style="color: black" class="self-center text-sm">Autoriser les annotations vides ?</label>
-              <InputSwitch v-model="emptyAnnotations" class="scale-75"/>
-              <label style="color: black" class="self-center text-sm">autoriser le saut ?</label>
-              <InputSwitch v-model="allowSkip" class="scale-75"/>
-            </div>
-          </div>
-          <div class="flex justify-end pt-5">
-            <Button
-              class="button"
-              icon="pi pi-arrow-right" icon-pos="left"
-              label="Suivant"
-              size="small"
-              @click="nextCallback"
-            />
-          </div>
-        </template>
-      </StepperPanel>
-      <StepperPanel header="Etapes">
-        <template #content="{ prevCallback }">
-          <div class="w-[70vh] grid-cols-3 flex">
-            <div class="">
-              <label>Disponibles</label>
-              <Listbox v-model="selectedType" :options="availableType" multiple class="basis-1/3"/>
-            </div>
-            <span class=" flex justify-center items-center basis-1/3"><i class="pi pi-arrow-right scale-150"/></span>
-            <div class="basis-1/3">
-              <label>sélectionnés</label>
-              <ol v-if="selectedType.length !== 0" class="border-surface-300 border-[1px] py-3 rounded">
-                <li
-                  v-for="(type, index) in selectedType" :key="index"
-                  class="leading-none px-5 py-3 self-center overflow-visible">{{ index + 1 }}. {{ type }}
-                </li>
-              </ol>
-            </div>
-          </div>
 
-          <div class="flex justify-end pt-8">
-            <Button class="button button-prev mx-3" label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="prevCallback"/>
-            <Button
-              class="button"
-              icon="pi pi-check" icon-pos="left"
-              v-if="!project" label="Créer"
-              size="small"
-              @click="createProject"
-            />
-            <Button
-              class="button"
-              icon="pi pi-check" icon-pos="left"
-              v-else label="sauvegarder"
-              size="small"
-              @click="updateProject"
-            />
-          </div>
-        </template>
-      </StepperPanel>
+            <div class="flex justify-end pt-8">
+              <Button class="button button-prev mx-3" outlined label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="activateCallback('1')"/>
+              <Button
+                class="button"
+                icon="pi pi-check" icon-pos="left"
+                v-if="!project" label="Créer"
+                size="small"
+                @click="createProject"
+              />
+              <Button
+                class="button"
+                icon="pi pi-check" icon-pos="left"
+                v-else label="sauvegarder"
+                size="small"
+                @click="updateProject"
+              />
+            </div>
+        </StepPanel>
+      </StepPanels>
     </Stepper>
   </Dialog>
 
@@ -254,9 +255,10 @@ label{
   align-items: center;
   height: 100%;
 }
-.button-prev{
-  background-color: transparent!important;
-  color: #0B7698!important;
-  border-color: #0B7698!important;
-}
+
+/* .button-prev{ */
+/*   background-color: transparent!important; */
+/*   color: #0B7698!important; */
+/*   border-color: #0B7698!important; */
+/* } */
 </style>

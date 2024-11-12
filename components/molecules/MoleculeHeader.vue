@@ -4,8 +4,8 @@
   >
     <div class="flex items-center">
       <AtomLogo size="md" />
-      <div style="padding: 25px;font-size: 20px">
-        <NuxtLink class="self-center font-bold dark:text-white" to="/">Ground Control</NuxtLink>
+      <div style="padding: 25px;">
+        <NuxtLink class="self-center text-title text-3xl font-black " to="/">Ground Control</NuxtLink>
       </div>
       <AtomIcon class="self-center" />
     </div>
@@ -13,14 +13,13 @@
       <div class="mr-4">
       <Button
         v-if="isAdmin && $route.name == 'dashboard'"
-        class="button"
         label="Nouveau projet"
         size="small"
         @click="dialogVisible = true"
       />
       <MoleculeFormProject :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false" />
     </div>
-    <div class="mt-1">
+    <div class="flex items-center" >
       <AtomAvatarHeader />
     </div>
     </div>
@@ -39,15 +38,3 @@ const { $application } = useService();
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 </script>
-<style>
-.button{
-  font-size: 14px;
-  font-family: Lato,sans-serif;
-  font-weight: bold;
-  height: 33px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  color: #FFFFFF;
-  background-color: #0B7698;
-}
-</style>

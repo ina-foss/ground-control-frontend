@@ -1,16 +1,15 @@
 <template>
-  <div class="overflow-y-auto h-full bg-neutral-color">
+  <div class="overflow-y-auto h-full  ">
     <div
-      :class="['p-3 w-[220px] h-[33px] ml-auto fixed mr-12 flex top-[6px] z-[1]', isAdmin ? 'right-[145px]' : 'right-0']">
+      :class="['  w-fit h-[70px]  ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', isAdmin ? 'right-[145px]' : 'right-[5px]']">
       <label class="text-primary font-semibold p-2">Projets</label>
-      <Dropdown
+      <Select
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
+        class="w-fit items-center h-[33px]"
         placeholder="Statut"
-        class="w-full h-[33px] text-[#757575]"
         show-clear
-        :pt="dropdownStyles"
       />
     </div>
     <div ref="dashboardRef" class="p-3 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
@@ -91,14 +90,6 @@ const getTotalRecords = () => {
   refreshStore.totalRecords()
 }
 
- const dropdownStyles= computed(() => {
-    return {
-      root: { style: { padding: '8px' } },
-      input: { style: { padding: '0px' } },
-      trigger: { style: { width: '20px' } },
-      clearIcon: { style: { width: '12px', marginRight: '-15px' } },
-    };
-  });
 
 watch(() => first.value, () => {handleRefresh()})
 

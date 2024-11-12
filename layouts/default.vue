@@ -1,7 +1,7 @@
 <template>
   <div>
     <MoleculeHeader />
-    <main class="h-[calc(100%-88px)] fixed w-full  bg-[#F7F7F7]">
+    <main class="h-[calc(100vh-70px)] fixed w-full pb-5 text-text  bg-neutral ">
       <div class="flex-grow">
         <AtomBreadcrumbs />
       </div>
@@ -19,3 +19,13 @@ import MoleculeHeader from '~/components/molecules/MoleculeHeader.vue';
 import AtomBreadcrumbs from "~/components/atoms/AtomBreadcrumbs.vue";
 
 </script>
+
+<style lang="postcss">
+  html {
+    font-size: 14px;
+  }
+
+  body {
+    @apply text-base text-text
+  }
+</style>

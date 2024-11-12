@@ -1,13 +1,12 @@
 <template>
-  <div class="flex  flex-col p-4 gap-1 drop-shadow-lg rounded transition-all "
-  style="background-color: #EDEDED">
+  <div class="flex bg-disabled flex-col p-4 gap-1  rounded transition-all " >
 
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
       <div
 class="flex cursor-pointer flex-start gap-2 "
-           @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin,tcout: transcriptions[0].tcout})">
-        <Tag :class="tcColor">
+        @click="$emit('onSegmentClick',{tcin: transcriptions[0].tcin,tcout: transcriptions[0].tcout})">
+        <Tag :severity="tcColor" class="!text-black" >
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
             <p class="text-sm">{{$application.timestampToUnix(transcriptions[0].tcin)  }}</p>
@@ -18,7 +17,7 @@ v-if="confirmedTranscription.index != null" severity="info" class="h-7 self-cent
              :value="transcriptionTag"/>
 
       </div>
-      <Button v-if="status!=='ended'" icon="pi pi-pencil" size="small" severity="contrast" @click="onExpand()"/>
+      <Button v-if="status!=='ended'" icon="pi pi-pencil" size="small" severity="secondary" text @click="onExpand()"/>
     </div>
 
     <!-- In EDIT Mode -->
@@ -41,19 +40,19 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
       </div>
       <!-- Selected transcription and Result  -->
       <div class="w-full bg-white flex-col items-center rounded p-2 ">
-        <div class="flex pb-2 " style="color: black">
+        <div class="flex pb-2 items-center " style="color: black">
           <h2 class="pr-3">
             Résultat : </h2>
           <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
                v-if="editedTranscription.index != null" severity="info" :value="editTranscriptionTag"/>
         </div>
+        <Textarea v-model="editedTranscription.text" :auto-resize="true" style="width: 95%;color: black"/>
         <div class="flex justify-center" style="color: black">
-          <Textarea v-model="editedTranscription.text" :auto-resize="true" style="width: 95%;color: black"/>
         </div>
       </div>
       <!-- Footer with Buttons -->
       <div class="flex justify-end gap-2">
-        <Button class="button button-prev mr-1" label="Annuler" size="small" @click="onCancel()"/>
+        <Button class=" mr-1" label="Annuler" outlined size="small" @click="onCancel()"/>
         <Button
           class="button"
           label="Confirmer"

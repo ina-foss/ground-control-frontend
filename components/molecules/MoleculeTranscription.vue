@@ -75,7 +75,7 @@ const handleConfirm = (event, index) => {
 }
 
 const transcriptionFunction = (localSubmit) => {
-  let locals = []
+  const locals = []
   localSubmit?.forEach((el, index) => {
     if (el == null) locals[index] = null
     else {
@@ -91,11 +91,8 @@ const transcriptionFunction = (localSubmit) => {
 defineExpose({locals: localChanges, listRefs: $$(transcriptionsRef), annotationFunction: transcriptionFunction })
 
 </script>
-
-<style scoped lang="postcss">
-
-.selected-segment div{
-  @apply border-surface-500 border-2 ;
+<style lang="postcss">
+.selected-segment {
+@apply border-surface-500 border-2
 }
-
 </style>

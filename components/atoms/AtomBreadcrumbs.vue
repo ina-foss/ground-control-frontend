@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb :home="home" class="breadcrumb-container border-0 p-3" style="background-color: #F7F7F7; font-size: 14px;">
+  <Breadcrumb :home="home" class="breadcrumb-container border-0 p-3 " style="font-size: 14px;">
     <template #item="{ props }">
       <template v-for="(breadcrumbItem, index) in fullBreadcrumbs" :key="index" >
         <router-link v-if="breadcrumbItem.route" v-slot="{ navigate }" :to="breadcrumbItem.route" custom >
@@ -11,12 +11,6 @@
             </span>
           </a>
         </router-link>
-<!--        <a v-else :href="breadcrumbItem.url" :target="breadcrumbItem.target" v-bind="props.action" class="breadcrumb-item" style="color: #757575">
-          <span :class="[{ 'text-primary font-bold': isSelected(breadcrumbItem.label, index) }]">
-            {{ breadcrumbItem.label }}
-            <span v-if="index < fullBreadcrumbs.length - 1" class="breadcrumb-separator"> / </span>
-          </span>
-        </a>-->
       </template>
     </template>
   </Breadcrumb>

@@ -1,11 +1,10 @@
 <template>
-  <div v-if="data.annotations[0]?.annotation_status !== annotationStatus"
-       class="fixed right-12 mr-4 absolute top-[-50px] z-[5]" >
-    <Button class="button button-prev mr-4" label="Soumettre" size="small" @click="handleSubmit()"/>
+  <div
+v-if="data.annotations[0]?.annotation_status !== annotationStatus"
+       class=" right-12 mr-4 absolute flex items-center top-[-70px] h-[70px] z-[5]" >
+    <Button  class="mr-4" outlined label="Soumettre"  @click="handleSubmit()"/>
     <Button
-      class="button"
       label="Terminer"
-      size="small"
       @click="handleFinish()"
     />
   </div>
@@ -36,7 +35,7 @@
   <div v-else class="h-full" >
 
     <Toast />
-    <div class="grid grid-cols-9 xs:flex xs:flex-col h-full">
+    <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0].result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
@@ -50,7 +49,7 @@
           ayant été traités, différencie les interlocuteurs.
         </p>
       </MoleculeAnnotationLeftPanel>
-      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals"  @on-segment-click="updateVideoTimecode" />
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals"   @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
 </template>
@@ -92,8 +91,8 @@
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
-  let colors = $ref(['#BEBEBE'])
-  let topics = $ref([])
+  const colors = $ref(['#BEBEBE'])
+  const topics = $ref([])
   let videoSrc = $ref(annotationsIn[0]?.result.asset.url)
   const moleculeAnnotationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()

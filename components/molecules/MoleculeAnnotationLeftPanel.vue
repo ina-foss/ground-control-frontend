@@ -42,8 +42,8 @@ const { locals, colors, topics, videoSrc } = props;
 
   const emits = defineEmits(['scroll-to-segment'])
 
-  let pauseTime = ref(0); // variable réactive
-  let currentTime = ref(0);
+  const pauseTime = ref(0); // variable réactive
+  const currentTime = ref(0);
   const updateVideoTimecode = (event) => {
     $amalia.updateCurrentTc($application.unixToTimestamp(event.tcin) )
     pauseTime.value=$application.unixToTimestamp(event.tcout)
