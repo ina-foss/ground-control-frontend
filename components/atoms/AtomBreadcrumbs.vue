@@ -11,12 +11,6 @@
             </span>
           </a>
         </router-link>
-<!--        <a v-else :href="breadcrumbItem.url" :target="breadcrumbItem.target" v-bind="props.action" class="breadcrumb-item" style="color: #757575">
-          <span :class="[{ 'text-primary font-bold': isSelected(breadcrumbItem.label, index) }]">
-            {{ breadcrumbItem.label }}
-            <span v-if="index < fullBreadcrumbs.length - 1" class="breadcrumb-separator"> / </span>
-          </span>
-        </a>-->
       </template>
     </template>
   </Breadcrumb>

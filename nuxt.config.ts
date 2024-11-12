@@ -26,7 +26,7 @@ const MyPreset = definePreset(Lara, {
     breadcrumb: {
       ColorScheme: {
         light: {
-          background: '{secondary.color}',
+          background: 'var(--neutral-color)',
         }
       }
     },
@@ -58,10 +58,11 @@ const MyPreset = definePreset(Lara, {
       headerCellColor: 'var(--title)',
       bodyCellPadding: '12px',
       bodyCellColor: 'var(--title)',
+      columnTitleFontWeight: '900',
       colorScheme: {
         light: {
           rowHoverBackground: '{surface.50}',
-          headerCellBackground: 'var(--neutral-color)'
+          headerCellBackground: 'var(--secondary-color)'
         }
       }
     },
@@ -97,8 +98,9 @@ export default defineNuxtConfig({
     primevue: {
       options: {
         pt: {
-          button: {
-            root: {
+          datatable: {
+            columnTitle: {
+              style: 'font-style: bold'
             },
           },
         },

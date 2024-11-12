@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-y-auto h-full bg-secondary ">
+  <div class="overflow-y-auto h-full  ">
     <div
       :class="['  w-fit h-[70px]  ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', isAdmin ? 'right-[145px]' : 'right-[5px]']">
       <label class="text-primary font-semibold p-2">Projets</label>

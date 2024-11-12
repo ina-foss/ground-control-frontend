@@ -55,12 +55,12 @@
           <div class="flex min-w-[240px] txt">
             <Button
               style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;margin-right:12px"
-              label="Créer un task" size="small" outlined  @click="stepCreate(slotProps.data.id)"/>
+              label="Créer un task"  outlined  @click="stepCreate(slotProps.data.id)"/>
             <div
               class="flex items-center cursor-pointer txt    " :loading="loadingExport"
                   @click="clickButtonMenu($event,slotProps.data) ">
             <SplitButton
-              label="Exporter" size="small" outlined  />
+              label="Exporter"  outlined  />
           </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
@@ -122,7 +122,7 @@
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
-            <Column header="Statut" class="txt" style="width: 20px"  body-class="text-sm">
+            <Column header="Statut" class="txt" style="width: 20px"   >
               <template #body="{ data: nestedData }">
                 <Tag  :class="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
               </template>
