@@ -14,10 +14,10 @@
     </div>
     <div v-else>
       <div
-v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)"
+v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" v-html="word.data.text[0]"
         :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
         @mouseup="handleSelection">
-        {{ word.data.text[0] }}
+
       </div>
     </div>
   </div>
@@ -40,6 +40,7 @@ v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tc
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
   import _, { random } from 'lodash';
+import dock from '~/presets/lara/dock';
 
 
 
@@ -62,12 +63,14 @@ v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tc
     const result = []
     locals.value.forEach((local)=>{
       local.sublocalisations?.localisation.forEach((word)=> result.push(word))
+      result.push({data:{text:['<br />']}})
     })
     return result
   })
 
   watch(()=>options.bloc,async ()=> {
     await nextTick()
+    spanCount.value = 0
     loadSpan()
   })
 
@@ -175,7 +178,7 @@ const handleSelection = (spanArg: any) => {
   if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != '' || spanArg)) {
     state.selection = currentSelection
     const id = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
-    const label = spanArg?.property?.value[0] || spanArg.label[0] || markRaw(labelSelected.value)
+    const label = spanArg?.property?.value[0] || spanArg?.label?.[0]  || markRaw(labelSelected.value)
     const spanTcin = spanArg?.tcin || currentSelection.anchorNode?.parentElement?.getAttribute('tcin')
     const spanTcout = spanArg?.tcout || currentSelection.focusNode?.parentElement?.getAttribute('tcout')
     state.range = currentSelection.getRangeAt(0)
@@ -208,7 +211,6 @@ const handleSelection = (spanArg: any) => {
         render () {
           return h(AtomSpan , {
               label: [label],
-              // text: selectionTextString,
               tcIn: spanTcin,
               tcOut: spanTcout,
               color: color,
