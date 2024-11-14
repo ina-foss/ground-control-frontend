@@ -1,6 +1,6 @@
 <template>
-  <div  ref="span" :class="`inline border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
-    <div ref="spanText" class="inline ">
+  <div  ref="span" style="display: ruby;" :class="`h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+    <div ref="spanText" class=" ">
       <slot/>
     </div>
     <span v-if="options.span == true">

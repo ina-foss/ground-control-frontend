@@ -8,14 +8,12 @@
       </div>
     </div>
     <div v-if="options.bloc">
-      <div v-for="(local, index) in locals" :key="index" ref="spans" :class="`inline`">
-        <AtomTranscriptionSpan :local="local" @mouseup="handleSelection" />
-      </div>
+      <AtomTranscriptionSpan v-for="(local, index) in locals" :local="local" @mouseup="handleSelection" :key="index"  />
     </div>
     <div v-else>
       <div
 v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" v-html="word.data.text[0]"
-        :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
+        :tcout="unixToTimestamp(word.tcout)" :class="`inline  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
         @mouseup="handleSelection">
 
       </div>
@@ -63,7 +61,6 @@ import dock from '~/presets/lara/dock';
     const result = []
     locals.value.forEach((local)=>{
       local.sublocalisations?.localisation.forEach((word)=> result.push(word))
-      result.push({data:{text:['<br />']}})
     })
     return result
   })
@@ -201,8 +198,8 @@ const handleSelection = (spanArg: any) => {
       }
     }
     state.selection.removeAllRanges()
-    const span = document.createElement('span')
-    const docFragment = state.range.extractContents()
+    const span = document.createElement('span') // temporary Element to create the span DOM
+    const docFragment = state.range.extractContents() // extract all the HTMLElements in the range
     state.selection.empty()
     state.selection = null
     const color =  spanRefArray.value[id] ? spanRefArray.value[id].color : generatePastelColor(random(0,15,true))
@@ -232,14 +229,46 @@ const handleSelection = (spanArg: any) => {
         spanCount.value++
       app.mount(span) // Render the Span
       const fragment = document.createDocumentFragment()
-      Array.from(span.childNodes).forEach(node => { // Add the content of the Span indise a document Fragment
+      Array.from(span.childNodes).forEach(node => { // Add the content of the temporary element inside a document Fragment
         fragment.appendChild(node)
       });
-      fragment.firstChild?.firstChild?.appendChild(docFragment)
-      state.range.insertNode(fragment) // Add this document fragment to the DOM
+        if (docFragment.firstChild?.firstChild?.nodeType == 1){
+          let blocs =  docFragment.childNodes
+          console.log(blocs)
+          const border = docFragment.firstChild.cloneNode(false)
+          const blocNb = blocs.length
+          blocs.forEach((previousBlock,index)=>{
+            let wordArray = previousBlock.childNodes
+            if(index==0){
+              wordArray.forEach((word)=>{
+              docFragment.appendChild(word.cloneNode(true))
+              })
+            }
+            else{
+              wordArray.forEach((word)=>{
+              docFragment.appendChild(word.cloneNode(true))
+              })
+            }
+          })
+          let i  = 0
+          while ( i< blocNb ){
+              docFragment.firstChild?.remove()
+            i ++
+          }
+          fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
+          border.appendChild(fragment)
+          state.range.insertNode(border) // Add this document fragment to the DOM
+        }
+
+        else{
+          fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
+          state.range.insertNode(fragment) // Add this document fragment to the DOM
+        }
+      console.log(fragment.children)
+
     }
     else{
-      direction == 'forward' ? spanRefArray.value[spanIndex].addRight(docFragment) : spanRefArray.value[spanIndex].addLeft(docFragment)
+      direction == '' ? spanRefArray.value[spanIndex].addRight(docFragment) : spanRefArray.value[spanIndex].addLeft(docFragment)
       spanClicked = false
     }
     spanIndex = undefined
