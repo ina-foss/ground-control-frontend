@@ -1,6 +1,6 @@
 <template>
-  <div  ref="span" style="display: ruby;" :class="`h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
-    <div ref="spanText" class=" ">
+  <div  ref="span" :class="` items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+    <div ref="spanText" class="inline ">
       <slot/>
     </div>
     <span v-if="options.span == true">
@@ -109,7 +109,7 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
   position: absolute;
   top: -2px;
   bottom: -2px;
-  right: 2px;
+  right: -4px;
   cursor: ew-resize;
   width: 8px;
 }
@@ -119,7 +119,7 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
   position: absolute;
   top: -2px;
   bottom: -2px;
-  left: -2px;
+  left: -4px;
   cursor: ew-resize;
   width: 8px;
 }
