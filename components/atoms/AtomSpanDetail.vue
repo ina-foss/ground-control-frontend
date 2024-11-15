@@ -36,10 +36,10 @@
       </Divider>
 
         <div v-if="spanRefArray.length == 0">No Regions created yet</div>
-        <div v-else class="border-gray-200 border-[1px] p-2 text-nowrap flex flex-col start-0 ">
+        <div v-else class="border-gray-200 border-[1px] p-2 text-nowrap flex flex-col start-0 overflow-y-auto max-h-[300px] ">
         <div  v-for="(span,index) in spanRefArray" :key="index" class="flex flex-row hover:bg-surface-200 w-full py-2 justify-start gap-2 cursor-pointer" @click="emit('focusSpan',{index: index})" >
-          <div  :class="` ${computeColor(index).full} text-${textColorPicker(computeColor(index).hex)}  rounded-xl min-w-6 h-6  flex items-center pl-[6px]  `" >{{ index +1 }}</div>
-              <p class="truncate"> {{span.text}} </p>
+          <div  :class="` ${computeColor(index).full} text-${textColorPicker(computeColor(index).hex)}  rounded-xl min-w-6 h-6  flex justify-center items-center `" ><div  >{{ index +1 }}</div></div>
+              <p class=""> {{span.text}} </p>
             </div>
         </div>
     </div>

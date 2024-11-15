@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 88%;">
+  <div class="h-full">
     <OrganismBase
  :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
                :annotations-out="annotations_out"

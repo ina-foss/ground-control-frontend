@@ -1,5 +1,5 @@
 <template>
-  <div  ref="span" :class="`inline border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newIndex).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+  <div  ref="span" :class="` items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
     <div ref="spanText" class="inline ">
       <slot/>
     </div>
@@ -12,7 +12,7 @@
 
 <script setup>
 
-const {label, tcIn, tcOut, color, index: index, linkCss, options} = defineProps({
+const {label, tcIn, tcOut, color, id , linkCss, options} = defineProps({
   label: {
     type: Array,
     default: ()=>[]
@@ -27,7 +27,7 @@ const {label, tcIn, tcOut, color, index: index, linkCss, options} = defineProps(
     type: String,
     default: ()=>''
   },
-  index: {
+  id: {
     type: Number,
     default: ()=>null
   },
@@ -44,7 +44,7 @@ const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
 const spanText = ref()
 const newText = ref('')
-const newIndex = $ref(index)
+const newId = $ref(id)
 const newLabel = $ref(label)
 let newTcin = $ref(tcIn)
 let newTcout = $ref(tcOut)
@@ -54,10 +54,10 @@ const { textColorPicker, computeColor } = $application
 
 
 const handleClick = () => {
-  emit('focusSpan', {index: newIndex })
+  emit('focusSpan', {index: newId })
 }
 const handleDrag = () =>{
-  emit('editSpan', {index: newIndex })
+  emit('editSpan', {index: newId })
 }
 onMounted(async()=>{
     await nextTick()
@@ -67,12 +67,12 @@ onMounted(async()=>{
     }
 watchEffect(async ()=>{
     if(span.value){
-      emit('spanReady', {element: span.value, index: newIndex})
+      emit('spanReady', {element: span.value, index: newId})
     }
   })
   watchEffect(()=>{
     if( options.span == true ) {
-        span.value.style.color = textColorPicker(computeColor(newIndex).hex)
+        span.value.style.color = textColorPicker(computeColor(newId).hex)
     }
     else{
       span.value.style.color = 'black'
@@ -89,7 +89,7 @@ const addRightText = (node) => {
   span.value.firstElementChild.appendChild(node)
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText,tcin: $$(newTcin), tcout: $$(newTcout), label:$$(newLabel), color: color, index:$$(newIndex)})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText,tcin: $$(newTcin), tcout: $$(newTcout), label:$$(newLabel), color: color, id:$$(newId)})
 
 </script>
 
@@ -109,7 +109,7 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
   position: absolute;
   top: -2px;
   bottom: -2px;
-  right: 2px;
+  right: -4px;
   cursor: ew-resize;
   width: 8px;
 }
@@ -119,7 +119,7 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
   position: absolute;
   top: -2px;
   bottom: -2px;
-  left: -2px;
+  left: -4px;
   cursor: ew-resize;
   width: 8px;
 }

@@ -3,15 +3,15 @@
     <b >Affichage</b>
     <div class="flex justify-between items-center self-stretch py-1 ">
       <span class="">Span</span>
-      <InputSwitch v-model="span" />
+      <ToggleSwitch v-model="span" />
     </div>
     <div class="flex justify-between items-center self-stretch py-1">
       <span>TC</span>
-      <InputSwitch v-model="timecode"/>
+      <ToggleSwitch v-model="timecode"/>
     </div>
     <div class="flex justify-between items-center self-stretch py-1">
       <span>Bloc</span>
-      <InputSwitch v-model="bloc"/>
+      <ToggleSwitch v-model="bloc"/>
     </div>
   </div>
 </template>
