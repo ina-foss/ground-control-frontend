@@ -38,7 +38,6 @@ v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tc
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
   import _, { random } from 'lodash';
-import dock from '~/presets/lara/dock';
 
 
 
@@ -176,27 +175,43 @@ const handleSelection = (spanArg: any) => {
     state.selection = currentSelection
     const id = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
     const label = spanArg?.property?.value[0] || spanArg?.label?.[0]  || markRaw(labelSelected.value)
-    const spanTcin = spanArg?.tcin || currentSelection.anchorNode?.parentElement?.getAttribute('tcin')
-    const spanTcout = spanArg?.tcout || currentSelection.focusNode?.parentElement?.getAttribute('tcout')
     state.range = currentSelection.getRangeAt(0)
     let direction
+    let indexStart
+    let indexEnd
+    let spanTcin = null
+    let spanTcout = null
     if(!spanArg.tcin){
-      const indexStart = _.indexOf(currentSelection.anchorNode?.parentElement?.parentNode?.childNodes,currentSelection.anchorNode?.parentElement)
-      const indexEnd = _.indexOf(currentSelection.focusNode?.parentElement?.parentNode?.childNodes,currentSelection.focusNode?.parentElement)
-      direction = ( indexStart <= indexEnd ) ? 'forward' : 'backward'
-      if ( indexStart == indexEnd ){
-        direction = (state.selection.anchorOffset < state.selection.extentOffset) ? 'forward' : 'backward'
-      }
-      if( direction == 'forward'){
-        state.range.setStartBefore(state.selection.anchorNode?.parentNode)
-        state.range.setEndAfter(state.selection.focusNode)
+      if(currentSelection.anchorNode?.parentElement?.parentNode == currentSelection.focusNode?.parentElement?.parentNode){
+         indexStart = _.indexOf(currentSelection.anchorNode?.parentElement?.parentNode?.childNodes,currentSelection.anchorNode?.parentElement)
+         indexEnd = _.indexOf(currentSelection.focusNode?.parentElement?.parentNode?.childNodes,currentSelection.focusNode?.parentElement)
+        direction = ( indexStart <= indexEnd ) ? 'forward' : 'backward'
       }
       else{
-        const startWord = state.selection.focusNode.parentNode
-        state.range.setEndAfter(state.selection.anchorNode)
-        state.range.setStartBefore(startWord)
-      }
+         indexStart = _.indexOf(currentSelection.anchorNode?.parentElement?.parentNode?.parentNode.childNodes,currentSelection.anchorNode?.parentElement?.parentElement)
+         indexEnd = _.indexOf(currentSelection.focusNode?.parentElement?.parentNode?.parentNode.childNodes,currentSelection.focusNode?.parentElement?.parentNode)
+        direction = ( indexStart <= indexEnd ) ? 'forward' : 'backward'
+
+        }
+        if ( indexStart == indexEnd ){
+          direction = (state.selection.anchorOffset < state.selection.extentOffset) ? 'forward' : 'backward'
+        }
+          spanTcin = getAttribute(direction,currentSelection,'tcin')
+          spanTcout = getAttribute(direction,currentSelection,'tcout')
+        if( direction == 'forward'){
+          state.range.setStartBefore(state.selection.anchorNode?.parentNode)
+          state.range.setEndAfter(state.selection.focusNode)
+        }
+        else{
+          const startWord = state.selection.focusNode.parentNode
+          state.range.setEndAfter(state.selection.anchorNode)
+          state.range.setStartBefore(startWord)
+        }
     }
+      debugger
+    console.log(direction)
+    if( spanTcin ==null) spanTcin = spanArg?.tcin
+    if( spanTcout == null) spanTcout = spanArg?.tcout
     state.selection.removeAllRanges()
     const span = document.createElement('span') // temporary Element to create the span DOM
     const docFragment = state.range.extractContents() // extract all the HTMLElements in the range
@@ -234,7 +249,6 @@ const handleSelection = (spanArg: any) => {
       });
         if (docFragment.firstChild?.firstChild?.nodeType == 1){
           let blocs =  docFragment.childNodes
-          console.log(blocs)
           const border = docFragment.firstChild.cloneNode(false)
           const blocNb = blocs.length
           blocs.forEach((previousBlock,index)=>{
@@ -264,17 +278,21 @@ const handleSelection = (spanArg: any) => {
           fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
           state.range.insertNode(fragment) // Add this document fragment to the DOM
         }
-      console.log(fragment.children)
 
     }
     else{
-      direction == '' ? spanRefArray.value[spanIndex].addRight(docFragment) : spanRefArray.value[spanIndex].addLeft(docFragment)
+      direction == 'forward' ? spanRefArray.value[spanIndex].addRight(docFragment) : spanRefArray.value[spanIndex].addLeft(docFragment)
       spanClicked = false
     }
     spanIndex = undefined
     formatSpan(spanRefArray.value[spanRefArray.value.length-1])
   }
 }
+
+  const getAttribute = (direction, selection,tc)=> {
+    if( ( direction == 'forward' && tc == 'tcin') || ( direction == 'backward' && tc == 'tcout') ) return selection.anchorNode?.parentElement?.getAttribute(tc)
+    else if ( ( direction=='forward' && tc == 'tcout') || ( direction == 'backward' && tc == 'tcin' )) return selection.focusNode?.parentElement.getAttribute(tc)
+  }
 
   const loadSpan = ()=>{
     if(spanRefArray.value.length == 0){
@@ -301,6 +319,7 @@ const handleSelection = (spanArg: any) => {
         selection?.empty()
         selection?.addRange(range)
 
+        debugger
 
         handleSelection(span)
   }
