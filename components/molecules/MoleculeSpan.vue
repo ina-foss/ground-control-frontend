@@ -208,8 +208,6 @@ const handleSelection = (spanArg: any) => {
           state.range.setStartBefore(startWord)
         }
     }
-      debugger
-    console.log(direction)
     if( spanTcin ==null) spanTcin = spanArg?.tcin
     if( spanTcout == null) spanTcout = spanArg?.tcout
     state.selection.removeAllRanges()
@@ -318,8 +316,6 @@ const handleSelection = (spanArg: any) => {
         const selection : Selection | null = window.getSelection()
         selection?.empty()
         selection?.addRange(range)
-
-        debugger
 
         handleSelection(span)
   }
