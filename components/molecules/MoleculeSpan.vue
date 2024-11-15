@@ -1,7 +1,7 @@
 <template>
   <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
     <div class=" h-[33px] mt-2 flex justify-center gap-10 sticky top-0">
-      <SelectButton v-model="labelSelected" class="  " :options="labels" aria-labelledby="basic" />
+      <SelectButton multiple v-model="labelSelected" class="  " :options="labels" aria-labelledby="basic" />
       <div class="flex overflow-visible gap-1 items-center">
         <InputText v-model="newLabel" class="h-full  " />
         <Button icon="pi pi-plus" @click="addLabel()" />
@@ -84,7 +84,7 @@ v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tc
   const relationArray = ref([])
   let lastFocus = $ref(undefined)
   let currentFocus = $ref(undefined)
-  const labelSelected = ref('')
+  const labelSelected = ref([])
   const labels = $ref(['Person','Citation','Verbe'])
 
   interface State {
@@ -143,14 +143,14 @@ const onDeleteSpan = ({ index } : { index : number }) => {
 watch(()=>labelSelected.value,(newLabel:any)=>{
   if(typeof currentFocus != 'undefined'){
       const span = spanRefArray.value[currentFocus]
-      spanRefArray.value[currentFocus].label[0] = newLabel
-      updateSpan(span.tcin,span.tcout,newLabel,span.index)
+      spanRefArray.value[currentFocus].label = newLabel
   }
 },{immediate: true})
 
 const handleUnselect = () => {
   spanRefArray.value[currentFocus].focus = false
   currentFocus=undefined
+  labelSelected.value = []
 }
 
 
@@ -159,9 +159,10 @@ const handleUnselect = () => {
     span.id = spanRef.id
     span.tcin = spanRef.tcin
     span.tcout = spanRef.tcout
-    const property = {}
-    property.key = "entityType"
-    property.value = spanRef.label
+    const property =  []
+    spanRef.label.forEach(label => {
+      property.push({key: 'entityType', value: label})
+    });
     span.property = property
     return span
 
@@ -171,10 +172,10 @@ const handleUnselect = () => {
 
 const handleSelection = (spanArg: any) => {
   const currentSelection = window.getSelection()
-  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != '' || spanArg)) {
+  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != [] || spanArg)) {
     state.selection = currentSelection
     const id = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
-    const label = spanArg?.property?.value[0] || spanArg?.label?.[0]  || markRaw(labelSelected.value)
+    const label = spanArg?.property.map((label)=>label.value) || spanArg?.label  || markRaw(labelSelected.value)
     state.range = currentSelection.getRangeAt(0)
     let direction
     let indexStart
@@ -220,7 +221,7 @@ const handleSelection = (spanArg: any) => {
       const app = createApp({
         render () {
           return h(AtomSpan , {
-              label: [label],
+              label: label,
               tcIn: spanTcin,
               tcOut: spanTcout,
               color: color,
@@ -328,7 +329,7 @@ const handleSelection = (spanArg: any) => {
     else{
     spanClicked = false
     currentFocus = index
-    labelSelected.value = spanRefArray.value[currentFocus].label[0]
+    labelSelected.value = spanRefArray.value[currentFocus].label
     }
   }
 
