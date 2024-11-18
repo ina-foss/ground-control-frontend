@@ -172,10 +172,10 @@ const handleUnselect = () => {
 
 const handleSelection = (spanArg: any) => {
   const currentSelection = window.getSelection()
-  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != [] || spanArg)) {
+  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value.length != 0  || spanArg?.tcin)) {
     state.selection = currentSelection
     const id = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
-    const label = spanArg?.property.map((label)=>label.value) || spanArg?.label  || markRaw(labelSelected.value)
+    const label = spanArg?.property?.map((label)=>label.value) || spanArg?.label  || markRaw(labelSelected.value)
     state.range = currentSelection.getRangeAt(0)
     let direction
     let indexStart
@@ -296,7 +296,7 @@ const handleSelection = (spanArg: any) => {
   const loadSpan = ()=>{
     if(spanRefArray.value.length == 0){
       locals.value?.forEach((segment) => {
-        if(!segment.tclevel  || segment.tclevel == 2 ){
+        if((!segment.sublocalisations) && ( segment.property?.[0].key=="entityType")){
           createSpan(segment)
         }
       });
@@ -306,6 +306,11 @@ const handleSelection = (spanArg: any) => {
         createSpan(segment)
       });
     }
+    locals.value?.forEach(segment => {
+        if((!segment.sublocalisations) && ( segment.property?.[0].key == 'relationType')){
+          relationArray.value.push({from: segment.from, to: segment.to})
+      }
+    });
   }
 
   const createSpan = (span) =>{
@@ -333,6 +338,18 @@ const handleSelection = (spanArg: any) => {
     }
   }
 
+  function formatRelation(relationArg: never): any {
+    let relation = {}
+    relation.property = []
+    let property = {}
+    property.key = 'relationType'
+    property.value = 'Indiciates'
+    relation.property.push(property)
+    relation.from = relationArg.from
+    relation.to = relationArg.to
+    return relation
+  }
+
   onMounted(async()=>{
     await nextTick()
     loadSpan()
@@ -343,10 +360,14 @@ const handleSelection = (spanArg: any) => {
     spanRefArray.value.forEach((span)=>{
       local.push(formatSpan(span))
     })
+    relationArray.value.forEach((relation)=>{
+      local.push(formatRelation(relation))
+    })
     return local
   }
 
   defineExpose({ annotationFunction: saveSpan})
+
 
 </script>
 
