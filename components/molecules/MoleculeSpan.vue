@@ -12,19 +12,20 @@
     </div>
     <div v-else>
       <div
-v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)"
-        :class="`inline  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`" @mouseup="handleSelection"
-         />
-      {{ word.data.text[0]}}
+        v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)"
+        :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
+        @mouseup="handleSelection">
+          {{ word.data.text[0] }}
+      </div>
     </div>
   </div>
-    <div class=" h-[80%] top-[20%] flex flex-col items-center place-content-center  gap-10 col-span-2">
-      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
-      <AtomSpanDetail
+  <div class=" h-[80%] top-[20%] flex flex-col items-center place-content-center  gap-10 col-span-2">
+    <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+    <AtomSpanDetail
 :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
-        @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
-        @focus-span="handleFocusSpan" />
-    </div>
+      @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
+      @focus-span="handleFocusSpan" />
+  </div>
 </template>
 
 
@@ -57,10 +58,14 @@ v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tc
   const aggregatedLocals =  computed(()=>{
     const result = []
     locals.value.forEach((local)=>{
-      local.sublocalisations?.localisation.forEach((word)=> result.push(word))
+      local.sublocalisations?.localisation.forEach((word)=>{
+        result.push(word)})
+
     })
     return result
   })
+
+
 
   watch(()=>options.bloc,async ()=> {
     await nextTick()
@@ -303,6 +308,7 @@ const handleSelection = (spanArg: any) => {
         createSpan(segment)
       });
     }
+    if(relationArray.value.length==0)
     locals.value?.forEach(segment => {
         if((!segment.sublocalisations) && ( segment.property?.[0].key == 'relationType')){
           relationArray.value.push({from: segment.from, to: segment.to})
