@@ -48,8 +48,8 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
           sujets
           ayant été traités, différencie les interlocuteurs.
         </p>
+        <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals" v-on="annotationComponent.events" />
       </MoleculeAnnotationLeftPanel>
-      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals"   @on-segment-click="updateVideoTimecode" />
     </div>
   </div>
 </template>
@@ -160,9 +160,9 @@ const algos = $computed(() => { // List the name of the algorithm
   }
 
   const scrollToSegment = (event) => {
-    moleculeAnnotationRef.listRefs[event.lastIndex].classList.remove('selected-segment')
-    moleculeAnnotationRef.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
-    moleculeAnnotationRef.listRefs[event.bestIndex].classList.add('selected-segment')
+    moleculeAnnotationRef.listRefs[event.lastIndex].firstElementChild.classList.remove('selected-segment')
+    moleculeAnnotationRef.listRefs[event.bestIndex].firstElementChild.scrollIntoView({ behavior: "smooth" });
+    moleculeAnnotationRef.listRefs[event.bestIndex].firstElementChild.classList.add('selected-segment')
   }
 
 const annotationComponent = $computed(() => {
@@ -172,14 +172,16 @@ const annotationComponent = $computed(() => {
           locals: locals,
           colors: colors,
           topics: topics
-        }}
+        },
+        events:{ 'on-segment-click': updateVideoTimecode }}
     case 'transcription':
       return {component: MoleculeTranscription, props: {
         transcriptions: transcriptions,
         userAnnotations: userAnnotations,
         algos: algos,
         status: data.annotations[0]?.annotation_status
-        }}
+        },
+        events:{ 'on-segment-click': updateVideoTimecode }}
 
     case 'span':
         return { component :MoleculeSpan, props: {}}

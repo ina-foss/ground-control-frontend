@@ -72,7 +72,7 @@
 
 <style scoped lang="postcss">
 
-.selected-segment div{
+.selected-segment {
   @apply border-surface-500 border-2 ;
 }
 
