@@ -8,7 +8,7 @@
       </div>
     </div>
     <div v-if="options.bloc">
-      <AtomTranscriptionSpan v-for="(local, index) in locals" :key="index" :local="local" @mouseup="handleSelection"  />
+      <AtomTranscriptionSpan v-for="(local, index) in locals" :key="index" :local="local" :tcToggle="options.timecode" @mouseup="handleSelection"  />
     </div>
     <div v-else>
       <div
