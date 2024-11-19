@@ -268,7 +268,7 @@ const handleSelection = (spanArg: any) => {
           let i  = 0
           while ( i< blocNb ){
               docFragment.firstChild?.remove()
-            i ++
+              i++
           }
           fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
           border.appendChild(fragment)
