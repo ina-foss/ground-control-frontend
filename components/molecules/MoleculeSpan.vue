@@ -1,31 +1,31 @@
 <template>
   <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
     <div class=" h-[33px] mt-2 flex justify-center gap-10 sticky top-0">
-      <SelectButton multiple v-model="labelSelected" class="  " :options="labels" aria-labelledby="basic" />
+      <SelectButton v-model="labelSelected" multiple class="  " :options="labels" aria-labelledby="basic" />
       <div class="flex overflow-visible gap-1 items-center">
         <InputText v-model="newLabel" class="h-full  " />
         <Button icon="pi pi-plus" @click="addLabel()" />
       </div>
     </div>
     <div v-if="options.bloc">
-      <AtomTranscriptionSpan v-for="(local, index) in locals" :local="local" @mouseup="handleSelection" :key="index"  />
+      <AtomTranscriptionSpan v-for="(local, index) in locals" :key="index" :local="local" @mouseup="handleSelection"  />
     </div>
     <div v-else>
       <div
-v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" v-html="word.data.text[0]"
-        :tcout="unixToTimestamp(word.tcout)" :class="`inline  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
+        v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)"
+        :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
         @mouseup="handleSelection">
-
+          {{ word.data.text[0] }}
       </div>
     </div>
   </div>
-    <div class=" h-[80%] top-[20%] flex flex-col items-center place-content-center  gap-10 col-span-2">
-      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
-      <AtomSpanDetail
+  <div class=" h-[80%] top-[20%] flex flex-col items-center place-content-center  gap-10 col-span-2">
+    <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+    <AtomSpanDetail
 :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
-        @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
-        @focus-span="handleFocusSpan" />
-    </div>
+      @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
+      @focus-span="handleFocusSpan" />
+  </div>
 </template>
 
 
@@ -52,17 +52,20 @@ v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tc
     bloc: true
   })
 
-  const emits = defineEmits([ 'on-segment-click' ]);
 
   const locals = defineModel<Array>('locals')
 
   const aggregatedLocals =  computed(()=>{
     const result = []
     locals.value.forEach((local)=>{
-      local.sublocalisations?.localisation.forEach((word)=> result.push(word))
+      local.sublocalisations?.localisation.forEach((word)=>{
+        result.push(word)})
+
     })
     return result
   })
+
+
 
   watch(()=>options.bloc,async ()=> {
     await nextTick()
@@ -142,7 +145,6 @@ const onDeleteSpan = ({ index } : { index : number }) => {
 
 watch(()=>labelSelected.value,(newLabel:any)=>{
   if(typeof currentFocus != 'undefined'){
-      const span = spanRefArray.value[currentFocus]
       spanRefArray.value[currentFocus].label = newLabel
   }
 },{immediate: true})
@@ -172,10 +174,10 @@ const handleUnselect = () => {
 
 const handleSelection = (spanArg: any) => {
   const currentSelection = window.getSelection()
-  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value != [] || spanArg)) {
+  if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value.length != 0  || spanArg?.tcin)) {
     state.selection = currentSelection
     const id = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
-    const label = spanArg?.property.map((label)=>label.value) || spanArg?.label  || markRaw(labelSelected.value)
+    const label = spanArg?.property?.map((label)=>label.value) || spanArg?.label  || markRaw(labelSelected.value)
     state.range = currentSelection.getRangeAt(0)
     let direction
     let indexStart
@@ -247,11 +249,11 @@ const handleSelection = (spanArg: any) => {
         fragment.appendChild(node)
       });
         if (docFragment.firstChild?.firstChild?.nodeType == 1){
-          let blocs =  docFragment.childNodes
+          const blocs =  docFragment.childNodes
           const border = docFragment.firstChild.cloneNode(false)
           const blocNb = blocs.length
           blocs.forEach((previousBlock,index)=>{
-            let wordArray = previousBlock.childNodes
+            const wordArray = previousBlock.childNodes
             if(index==0){
               wordArray.forEach((word)=>{
               docFragment.appendChild(word.cloneNode(true))
@@ -266,7 +268,7 @@ const handleSelection = (spanArg: any) => {
           let i  = 0
           while ( i< blocNb ){
               docFragment.firstChild?.remove()
-            i ++
+              i++
           }
           fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
           border.appendChild(fragment)
@@ -296,7 +298,7 @@ const handleSelection = (spanArg: any) => {
   const loadSpan = ()=>{
     if(spanRefArray.value.length == 0){
       locals.value?.forEach((segment) => {
-        if(!segment.tclevel  || segment.tclevel == 2 ){
+        if((!segment.sublocalisations) && ( segment.property?.[0].key=="entityType")){
           createSpan(segment)
         }
       });
@@ -306,6 +308,12 @@ const handleSelection = (spanArg: any) => {
         createSpan(segment)
       });
     }
+    if(relationArray.value.length==0)
+    locals.value?.forEach(segment => {
+        if((!segment.sublocalisations) && ( segment.property?.[0].key == 'relationType')){
+          relationArray.value.push({from: segment.from, to: segment.to})
+      }
+    });
   }
 
   const createSpan = (span) =>{
@@ -333,6 +341,18 @@ const handleSelection = (spanArg: any) => {
     }
   }
 
+  function formatRelation(relationArg: never): any {
+    const relation = {}
+    relation.property = []
+    const property = {}
+    property.key = 'relationType'
+    property.value = 'Indiciates'
+    relation.property.push(property)
+    relation.from = relationArg.from
+    relation.to = relationArg.to
+    return relation
+  }
+
   onMounted(async()=>{
     await nextTick()
     loadSpan()
@@ -343,10 +363,14 @@ const handleSelection = (spanArg: any) => {
     spanRefArray.value.forEach((span)=>{
       local.push(formatSpan(span))
     })
+    relationArray.value.forEach((relation)=>{
+      local.push(formatRelation(relation))
+    })
     return local
   }
 
   defineExpose({ annotationFunction: saveSpan})
+
 
 </script>
 
