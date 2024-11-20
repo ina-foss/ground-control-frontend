@@ -188,7 +188,7 @@ const handleUnselect = () => {
 }
 
 
-  const formatSpan : any = (spanRef) => {
+  const formatSpan : any = (spanRef: any) => {
     const span = {}
     span.id = spanRef.id
     span.tcin = spanRef.tcin
@@ -251,7 +251,6 @@ const handleSelection = (spanArg: any) => {
     const docFragment = state.range.extractContents() // extract all the HTMLElements in the range
     state.selection.empty()
     state.selection = null
-    const color =  spanRefArray.value[id] ? spanRefArray.value[id].color : generatePastelColor(random(0,15,true))
     if (!spanClicked){
       const app = createApp({
         render () {
@@ -259,7 +258,6 @@ const handleSelection = (spanArg: any) => {
               label: label,
               tcIn: spanTcin,
               tcOut: spanTcout,
-              color: color,
               id: id,
               linkCss: linkCss,
               options: options,
