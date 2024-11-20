@@ -8,7 +8,7 @@
       </div>
     </div>
     <div v-if="options.bloc" ref="blockArray">
-      <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :tc-toggle="options.timecode" @mouseup="handleSelection"  />
+      <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="handleSelection"  />
     </div>
     <div v-else>
       <div
@@ -37,7 +37,7 @@
   import AtomSpan from '~/components/atoms/AtomSpan.vue';
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
-  import _, { random } from 'lodash';
+  import _ from 'lodash';
     import { Tag } from 'primevue';
 
 
@@ -94,7 +94,7 @@ const addTimecodeDiv = (blocEl,target) => {
     }
 }
 
-  watch(()=>options.bloc,async (bloc)=> {
+  watch(()=>options.bloc,async ()=> {
     await nextTick()
     spanCount.value = 0
     loadSpan()
@@ -140,17 +140,6 @@ watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
 
 },{immediate:true})
 
-function generatePastelColor(tagNumber : number) {
-  // Use tag number to create a seed (this is a basic example, there are better ways to do this)
-  const seed = tagNumber * 123456789;
-  const random = s => ((seed * s) % 155) + 100;  // Between 100 and 255
-
-  const r = random(3);
-  const g = random(5);
-  const b = random(7);
-
-  return `rgb(${r}, ${g}, ${b}, `;
-}
 
   const addLabel = () => {
     labels.push(newLabel.value)
@@ -285,7 +274,7 @@ const handleSelection = (spanArg: any) => {
           const blocNb = blocs.length
 
 
-          blocs.forEach((previousBlock,index)=>{
+          blocs.forEach((previousBlock)=>{
             const wordArray = previousBlock.childNodes
             wordArray.forEach((word)=>{
             if( (word.nodeType == 1) && word.getAttribute('tcin') )

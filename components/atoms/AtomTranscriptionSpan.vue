@@ -9,20 +9,15 @@
 <script setup>
 import _ from 'lodash'
 import { useService } from '#imports';
-import { Tag } from 'primevue';
 
 const { $application } = useService()
-const { unixToTimestamp ,timestampToUnix } = $application
+const { unixToTimestamp } = $application
 
-const { local, tcToggle } = defineProps({
+const { local, } = defineProps({
   local: {
     type: Object,
     default : () => {}
   },
-  tcToggle:{
-    type: Boolean,
-    default : () => true
-  }
 })
 
 

@@ -12,7 +12,7 @@
 
 <script setup>
 
-const {label, tcIn, tcOut, color, id , linkCss, options} = defineProps({
+const {label, tcIn, tcOut, id , linkCss, options} = defineProps({
   label: {
     type: Array,
     default: ()=>[]
@@ -22,10 +22,6 @@ const {label, tcIn, tcOut, color, id , linkCss, options} = defineProps({
   },
   tcOut:{
     type: String,
-  },
-  color: {
-    type: String,
-    default: ()=>''
   },
   id: {
     type: Number,
@@ -97,7 +93,7 @@ const addRightText = (node) => {
     updateText()
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: $$(newText) ,tcin: $$(newTcin), tcout: $$(newTcout), label:$$(newLabel), color: color, id:$$(newId)})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: $$(newText) ,tcin: $$(newTcin), tcout: $$(newTcout), label:$$(newLabel),id:$$(newId)})
 
 </script>
 
