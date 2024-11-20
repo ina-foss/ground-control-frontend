@@ -1,5 +1,5 @@
 <template>
-  <div  ref="span" :class="` items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="` items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
     <div ref="spanText" class="inline ">
       <slot/>
     </div>
@@ -59,12 +59,18 @@ const handleClick = () => {
 const handleDrag = () =>{
   emit('editSpan', {index: newId })
 }
-onMounted(async()=>{
-    await nextTick()
+
+const updateText = () => {
+    newText.value = ''
     const list = span.value?.firstElementChild?.children
     for (let item of list) {
       newText.value += (item.innerText + ' ')
     }
+}
+
+onMounted(async()=>{
+    await nextTick()
+    updateText()
 watchEffect(async ()=>{
     if(span.value){
       emit('spanReady', {element: span.value, index: newId})
@@ -83,13 +89,15 @@ watchEffect(async ()=>{
 const addLeftText = (node) => {
   newTcin = node.firstElementChild?.getAttribute('tcin')
   span.value.firstElementChild.insertBefore(node,span.value.firstElementChild.firstChild)
+    updateText()
 }
 const addRightText = (node) => {
   newTcout = node.lastElementChild?.getAttribute('tcout')
   span.value.firstElementChild.appendChild(node)
+    updateText()
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText,tcin: $$(newTcin), tcout: $$(newTcout), label:$$(newLabel), color: color, id:$$(newId)})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: $$(newText) ,tcin: $$(newTcin), tcout: $$(newTcout), label:$$(newLabel), color: color, id:$$(newId)})
 
 </script>
 
