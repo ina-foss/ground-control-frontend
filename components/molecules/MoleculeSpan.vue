@@ -7,8 +7,8 @@
         <Button icon="pi pi-plus" @click="addLabel()" />
       </div>
     </div>
-    <div v-if="options.bloc">
-      <AtomTranscriptionSpan v-for="(local, index) in locals" :key="index" :local="local" :tcToggle="options.timecode" @mouseup="handleSelection"  />
+    <div v-if="options.bloc" ref="blockArray">
+      <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :tcToggle="options.timecode" @mouseup="handleSelection"  />
     </div>
     <div v-else>
       <div
@@ -32,17 +32,19 @@
 <script setup lang="ts">
 
   import BadgeDirective from 'primevue/badgedirective';
-  import {createApp} from 'vue'
+  import {createApp,  createVNode} from 'vue'
   import AtomTranscriptionSpan from '../atoms/AtomTranscriptionSpan.vue';
   import AtomSpan from '~/components/atoms/AtomSpan.vue';
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
   import _, { random } from 'lodash';
+  import { render } from 'vue'
+  import { Tag } from 'primevue';
 
 
 
   const { $application } = useService()
-  const { unixToTimestamp } = $application
+  const { timestampToUnix, unixToTimestamp } = $application
 
 
 
@@ -54,6 +56,7 @@
 
 
   const locals = defineModel<Array>('locals')
+  const blockArray = ref(null)
 
   const aggregatedLocals =  computed(()=>{
     const result = []
@@ -65,12 +68,38 @@
     return result
   })
 
+watch(() => options.timecode,async (timecode) => {
+  await nextTick()
+  blockArray.value?.childNodes.forEach((blocEl) => {
+    removeTimecodeDiv(blocEl)
+    if (timecode) {
+      addTimecodeDiv(blocEl)
+    }
+  })
+  },)
 
+const removeTimecodeDiv = (blocEl) => {
+  if (blocEl.nodeType == 1) {
+    if (blocEl.firstElementChild.classList.contains('timecode')) blocEl.removeChild(blocEl.firstElementChild)
+  }
+}
+const addTimecodeDiv = (blocEl,target) => {
+    if (blocEl.nodeType == 1) {
+      const divTag = document.createElement('div')
+      divTag.classList.add("timecode")
+      const tag = h(createVNode(Tag, { value: timestampToUnix(blocEl.firstElementChild?.getAttribute('tcin')), severity: 'secondary' }))
+      render(tag, divTag)
+      if (target) target.insertBefore(divTag, target.firstElementChild )
+      else blocEl.insertBefore(divTag, blocEl.firstElementChild)
 
-  watch(()=>options.bloc,async ()=> {
+    }
+}
+
+  watch(()=>options.bloc,async (bloc)=> {
     await nextTick()
     spanCount.value = 0
     loadSpan()
+
   })
 
   const newLabel = ref('')
@@ -89,6 +118,10 @@
   let currentFocus = $ref(undefined)
   const labelSelected = ref([])
   const labels = $ref(['Person','Citation','Verbe'])
+
+  const filteredLocal = computed(()=>{
+    return _.filter(locals.value, (local)=> local.sublocalisations)
+  })
 
   interface State {
     selection: Selection | null,
@@ -214,6 +247,7 @@ const handleSelection = (spanArg: any) => {
     if( spanTcin ==null) spanTcin = spanArg?.tcin
     if( spanTcout == null) spanTcout = spanArg?.tcout
     state.selection.removeAllRanges()
+    const nextContainerSibling = state.range.endContainer.nextSibling
     const span = document.createElement('span') // temporary Element to create the span DOM
     const docFragment = state.range.extractContents() // extract all the HTMLElements in the range
     state.selection.empty()
@@ -252,18 +286,14 @@ const handleSelection = (spanArg: any) => {
           const blocs =  docFragment.childNodes
           const border = docFragment.firstChild.cloneNode(false)
           const blocNb = blocs.length
+
+
           blocs.forEach((previousBlock,index)=>{
             const wordArray = previousBlock.childNodes
-            if(index==0){
-              wordArray.forEach((word)=>{
-              docFragment.appendChild(word.cloneNode(true))
-              })
-            }
-            else{
-              wordArray.forEach((word)=>{
-              docFragment.appendChild(word.cloneNode(true))
-              })
-            }
+            wordArray.forEach((word)=>{
+            if( (word.nodeType == 1) && word.getAttribute('tcin') )
+            docFragment.appendChild(word.cloneNode(true))
+            })
           })
           let i  = 0
           while ( i< blocNb ){
@@ -272,7 +302,12 @@ const handleSelection = (spanArg: any) => {
           }
           fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
           border.appendChild(fragment)
+          if(options.timecode ) {
+            addTimecodeDiv(border.firstChild.firstElementChild,border)
+            if(nextContainerSibling?.getAttribute('tcin')) addTimecodeDiv(nextContainerSibling?.parentNode)
+          }
           state.range.insertNode(border) // Add this document fragment to the DOM
+
         }
 
         else{
