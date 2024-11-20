@@ -8,7 +8,7 @@
       </div>
     </div>
     <div v-if="options.bloc" ref="blockArray">
-      <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :tcToggle="options.timecode" @mouseup="handleSelection"  />
+      <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :tc-toggle="options.timecode" @mouseup="handleSelection"  />
     </div>
     <div v-else>
       <div
@@ -32,14 +32,13 @@
 <script setup lang="ts">
 
   import BadgeDirective from 'primevue/badgedirective';
-  import {createApp,  createVNode} from 'vue'
+  import {createApp,  createVNode, render } from 'vue'
   import AtomTranscriptionSpan from '../atoms/AtomTranscriptionSpan.vue';
   import AtomSpan from '~/components/atoms/AtomSpan.vue';
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
   import _, { random } from 'lodash';
-  import { render } from 'vue'
-  import { Tag } from 'primevue';
+    import { Tag } from 'primevue';
 
 
 
@@ -210,7 +209,7 @@ const handleSelection = (spanArg: any) => {
   if (currentSelection && currentSelection.toString() !== '' && (labelSelected.value.length != 0  || spanArg?.tcin)) {
     state.selection = currentSelection
     const id = spanArg.id != undefined ? spanArg.id : markRaw(spanCount.value)
-    const label = spanArg?.property?.map((label)=>label.value) || spanArg?.label  || markRaw(labelSelected.value)
+    const label : Array<string> = spanArg?.property?.map((label: { value: any; })=>label.value) || spanArg?.label  || markRaw(labelSelected.value)
     state.range = currentSelection.getRangeAt(0)
     let direction
     let indexStart

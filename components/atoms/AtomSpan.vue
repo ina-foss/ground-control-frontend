@@ -3,8 +3,8 @@
     <div ref="spanText" class="inline ">
       <slot/>
     </div>
-    <span v-if="options.span == true">
-      <span v-for="lbl in newLabel" class=" align-super text-[0.70rem] pl-[0.5rem] ">{{lbl}} </span>
+    <span v-if="options.span == true" class="pl-[0.5rem]">
+      <span v-for="lbl in newLabel.map(String).join(' ')" class=" align-super text-[0.70rem]  ">{{lbl}} </span>
     </span>
   </div>
 </template>
