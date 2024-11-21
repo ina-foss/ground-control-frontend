@@ -48,8 +48,8 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
           sujets
           ayant été traités, différencie les interlocuteurs.
         </p>
-        <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals" v-on="annotationComponent.events" />
       </MoleculeAnnotationLeftPanel>
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals" v-on="annotationComponent.events" />
     </div>
   </div>
 </template>

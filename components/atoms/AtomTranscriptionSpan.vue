@@ -8,15 +8,16 @@
 
 <script setup>
 import _ from 'lodash'
+import { useService } from '#imports';
 
 const { $application } = useService()
 const { unixToTimestamp } = $application
 
-const { local } = defineProps({
+const { local, } = defineProps({
   local: {
     type: Object,
     default : () => {}
-  }
+  },
 })
 
 

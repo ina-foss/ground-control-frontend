@@ -64,8 +64,14 @@ export default class ApplicationService {
    * @param time
    * @returns {string}
    */
-  public timestampToUnix(time: number | string): string {
-    if ( typeof time != "number") return time
+  public timestampToUnix(timeArg: number | string): string {
+    let time : number
+    if ( typeof timeArg == "string" ){
+      if (timeArg.includes(':')) return timeArg // If the time is already at Unix format
+      else time = parseFloat(timeArg) // If the time is a timestamp as a string
+    }
+    else time = timeArg // if the time is a float
+
         const hour: number = floor(time/3600)
         const minute: number = floor((time % 3600 )/60)
         const second: number = floor(time % 60)
