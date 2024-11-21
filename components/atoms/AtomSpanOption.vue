@@ -36,7 +36,7 @@ watch(()=>bloc.value,(value)=>{
   else{
     timecode.value = previousTimecode
   }
-},{immediate: true})
+},{})
 
 watch(()=>timecode.value,(value)=>{
   if(!bloc.value && value == true){
