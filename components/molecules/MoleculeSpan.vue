@@ -1,11 +1,18 @@
 <template>
   <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
-    <div class=" h-[33px] mt-2 flex justify-center gap-10 sticky top-0">
-      <SelectButton v-model="labelSelected" multiple class="  " :options="labels" aria-labelledby="basic" />
-      <div class="flex overflow-visible gap-1 items-center">
-        <InputText v-model="newLabel" class="h-full  " />
-        <Button icon="pi pi-plus" @click="addLabel()" />
+    <div class=" h-[33px] mt-2 flex justify-between px-xl  sticky top-0">
+      <div class=" flex gap-5">
+        <SelectButton v-model="labelSelected" multiple class="  " :options="labels" aria-labelledby="basic" />
+        <div class="flex overflow-visible w-[120px] gap-1 items-center">
+          <div class="grow-0">
+            <InputText v-model="newLabel" class="h-full w-full " />
+          </div>
+          <div class="grow">
+            <Button icon="pi pi-plus grow " @click="addLabel()" />
+          </div>
+        </div>
       </div>
+    <AtomSearch :spans="spanRefArray" :labels="labels" />
     </div>
     <div v-if="options.bloc" ref="blockArray">
       <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="handleSelection"  />
@@ -37,6 +44,7 @@
   import AtomSpan from '~/components/atoms/AtomSpan.vue';
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
+  import AtomSearch from '~/components/atoms/AtomSearch.vue'
   import _ from 'lodash';
     import { Tag } from 'primevue';
 
@@ -117,6 +125,7 @@ const addTimecodeDiv = (blocEl,target) => {
   let currentFocus = $ref(undefined)
   const labelSelected = ref([])
   const labels = $ref(['Person','Citation','Verbe'])
+  const search = ref()
 
   const filteredLocal = computed(()=>{
     return _.filter(locals.value, (local)=> local.sublocalisations)
