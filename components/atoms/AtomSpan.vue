@@ -1,5 +1,5 @@
 <template>
-  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="`inline items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="`inline scroll-mt-12 items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
     <div ref="spanText" class="inline ">
       <slot/>
     </div>

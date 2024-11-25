@@ -1,6 +1,6 @@
 <template>
   <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
-    <div class=" h-[33px] mt-2 flex justify-between px-xl  sticky top-0">
+    <div class=" h-[33px] mt-2 flex justify-between px-xl z-50 bg-neutral sticky top-0">
       <div class=" flex gap-5">
         <SelectButton v-model="labelSelected" multiple class="  " :options="labels" aria-labelledby="basic" />
         <div class="flex overflow-visible w-[120px] gap-1 items-center">
@@ -12,7 +12,7 @@
           </div>
         </div>
       </div>
-    <AtomSearch :spans="spanRefArray" :labels="labels" />
+    <AtomSearch :spans="spanRefArray" :labels="labels" @find-span="handleFocusSpan" @unselect="handleUnselect" />
     </div>
     <div v-if="options.bloc" ref="blockArray">
       <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="handleSelection"  />

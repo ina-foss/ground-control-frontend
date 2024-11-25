@@ -2,7 +2,7 @@
   <div v-if="!searchInterface">
     <Button severity="contrast" icon="pi pi-search" label="Recherche" @click="invertInterface" />
   </div>
-  <div v-else class="flex w-[200px]  ">
+  <div v-else class="flex w-[200px] items-center ">
     <p>{{ selectedSpan.value }}</p>
     <div class="w-[75%]">
     <Select v-model="selectedSearch" :options="labels" editable show-clear class="" />
@@ -16,6 +16,8 @@
 </template>
 
 <script setup>
+
+const emits = defineEmits([ 'find-span', 'unselect' ]);
 
 const { spans } = defineProps({
     spans:{
@@ -47,16 +49,18 @@ const downIndex = () =>{
 
 watch(()=>selectedSpan.value,(array)=>{
   if( array.length > 0 ){
-     setTimeout(()=>array[searchIndex].scrollIntoView({behavior: 'smooth'}),100)
-
+     setTimeout(()=>array[searchIndex]?.scrollIntoView({behavior: 'smooth'}),100)
+    console.log(correspondingSpan(searchIndex).id)
+    emits('find-span',{index: correspondingSpan(searchIndex).id})
   }
+  else emits('unselect')
 })
 
 watch(()=>searchIndex,(index)=>{
   if( selectedSpan.value.length > 0 ){
-    console.log(index)
-     setTimeout(()=> selectedSpan.value[index].scrollIntoView({behavior: 'smooth'}),100)
-
+     setTimeout(()=> selectedSpan.value[index]?.scrollIntoView({behavior: 'smooth'}),100)
+    console.log(selectedSpan.value[index])
+     emits('find-span',{index: correspondingSpan(index).id})
   }
 })
 
@@ -71,7 +75,14 @@ watch(()=>selectedSearch.value,(value)=> {
     });
 
   }
+  else selectedSpan.value = []
 })
+
+const correspondingSpan = (searchIndex) =>{
+  const tcin = selectedSpan.value[searchIndex].getAttribute('tcin')
+  const spanRef = _.find(spans, (span)=> span.tcin == tcin)
+  return spanRef
+}
 
 const invertInterface = () => {
   searchInterface = !searchInterface
