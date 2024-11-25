@@ -1,15 +1,18 @@
 <template>
-  <div v-if="!searchInterface">
+  <div v-if="!searchInterface" class="flex items-center">
     <Button severity="contrast" icon="pi pi-search" label="Recherche" @click="invertInterface" />
   </div>
-  <div v-else class="flex w-[200px] items-center ">
-    <p>{{ selectedSpan.value }}</p>
+  <div v-else class="flex w-[250px] items-center bg-surface-800 ">
+    <Button severity="contrast" icon="pi pi-search" @click="invertInterface" />
     <div class="w-[75%]">
     <Select v-model="selectedSearch" :options="labels" editable show-clear class="" />
     </div>
+    <Tag v-if="selectedSpan.length > 0" severity="contrast" >
+      {{ searchIndex+1 }}/{{ selectedSpan.length }}
+    </Tag>
     <div class="grow flex flex-nowrap">
-      <Button icon="pi pi-arrow-left" @click="downIndex()" size="small" outlined severity="contrast" />
-      <Button icon="pi pi-arrow-right" @click="upIndex()" size="small" outlined severity="contrast" />
+      <Button icon="pi pi-arrow-left" size="small"  severity="contrast" @click="downIndex()" />
+      <Button icon="pi pi-arrow-right" size="small" severity="contrast" @click="upIndex()" />
     </div>
   </div>
 
@@ -68,7 +71,7 @@ watch(()=>selectedSearch.value,(value)=> {
   if( value &&  value != ''){
     selectedSpan.value = []
     spans.forEach(span => {
-     let spanDom = document.querySelector(`[tcin="${span.tcin}"]`)
+     const spanDom = document.querySelector(`[tcin="${span.tcin}"]`)
       if(spanDom.innerText.includes(selectedSearch.value)){
           selectedSpan.value.push(spanDom)
       }
