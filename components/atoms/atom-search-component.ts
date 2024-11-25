@@ -60,7 +60,7 @@ export default defineComponent({
             selectedSpan.value.push(spanDom)
           }
         });
-
+        searchIndex.value = 0
       }
       else selectedSpan.value = []
     })
