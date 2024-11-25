@@ -44,8 +44,8 @@ const MyPreset = definePreset(Lara, {
     button: {
       borderRadius: '4px',
       iconOnlyWidth: '33px',
-      smPaddingX: '12px',
-      paddingY: '0.5rem',
+      smPaddingX: '11px',
+      paddingY: '7px',
       paddingX: '11px',
       colorScheme: {
         light: {
@@ -67,6 +67,10 @@ const MyPreset = definePreset(Lara, {
         }
       }
     },
+    select:{
+      paddingX: '8px',
+      paddingY: '8px',
+    }
   }
 })
 

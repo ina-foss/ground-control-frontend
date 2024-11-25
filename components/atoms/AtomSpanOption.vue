@@ -7,7 +7,7 @@
     </div>
     <div class="flex justify-between items-center self-stretch py-1">
       <span>TC</span>
-      <ToggleSwitch v-model="timecode"/>
+      <ToggleSwitch v-model="timecode" :disabled="timecodeDisabled"/>
     </div>
     <div class="flex justify-between items-center self-stretch py-1">
       <span>Bloc</span>
@@ -18,13 +18,13 @@
 
 
 <script setup lang="ts">
-import { useToast } from '#imports';
 
 const span = defineModel<boolean>('span')
 const timecode = defineModel<boolean>('timecode')
 const bloc = defineModel<boolean>('bloc')
 
-const toast = useToast()
+
+let timecodeDisabled = $ref(false)
 
 let previousTimecode
 
@@ -32,17 +32,14 @@ watch(()=>bloc.value,(value)=>{
   if (!value){
     previousTimecode = markRaw(timecode.value)
     timecode.value = false
+    timecodeDisabled = !timecodeDisabled
   }
   else{
     timecode.value = previousTimecode
+    timecodeDisabled = !timecodeDisabled
   }
 },{})
 
-watch(()=>timecode.value,(value)=>{
-  if(!bloc.value && value == true){
-    toast.add({detail: "Impossible de visualiser les timecodes lorsque l'option bloc est desactivée", summary: 'Erreur', severity: 'error', life: 3000})
-    timecode.value = false }
-})
 
 
 
