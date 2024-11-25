@@ -1,6 +1,6 @@
 <template>
   <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
-    <div class=" h-[40px] py-1 mt-1 flex justify-between px-xl z-50 bg-neutral sticky top-0">
+    <div class=" h-[40px]  mt-1 flex justify-between px-xl z-50 bg-neutral sticky top-0">
       <div class=" flex items-center gap-5">
         <SelectButton v-model="labelSelected" multiple class="  " :options="labels" aria-labelledby="basic" />
         <div class="flex overflow-visible w-[120px] gap-1 items-center">
@@ -125,7 +125,6 @@ const addTimecodeDiv = (blocEl,target) => {
   let currentFocus = $ref(undefined)
   const labelSelected = ref([])
   const labels = $ref(['Person','Citation','Verbe'])
-  const search = ref()
 
   const filteredLocal = computed(()=>{
     return _.filter(locals.value, (local)=> local.sublocalisations)
