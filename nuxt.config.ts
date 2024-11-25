@@ -67,6 +67,10 @@ const MyPreset = definePreset(Lara, {
         }
       }
     },
+    select:{
+      paddingX: '8px',
+      paddingY: '8px',
+    }
   }
 })
 
