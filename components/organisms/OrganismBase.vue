@@ -98,7 +98,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const moleculeAnnotationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
-  const { player, transcription, options } = storeToRefs(optionStore)
+  const { options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
   const { computeColor } = $application
 

@@ -74,7 +74,6 @@
   })
 
 watch(() => options.value.timecode,async (timecode) => {
-    console.log('check tc')
   await nextTick()
   blockArray.value?.childNodes.forEach((blocEl) => {
     removeTimecodeDiv(blocEl)
@@ -92,7 +91,7 @@ const removeTimecodeDiv = (blocEl) => {
 const addTimecodeDiv = (blocEl : HTMLDivElement ,target) => {
     if (blocEl.nodeType == 1) {
       const divTag : HTMLDivElement = document.createElement('div')
-      divTag.addEventListener('click', (event)=> emit('on-segment-click', {tcin: blocEl.firstElementChild.nextSibling.getAttribute('tcin'),tcout: blocEl.lastElementChild?.getAttribute('tcout') }) )
+      divTag.addEventListener('click', ()=> emit('on-segment-click', {tcin: blocEl.firstElementChild.nextSibling.getAttribute('tcin'),tcout: blocEl.lastElementChild?.getAttribute('tcout') }) )
       divTag.classList.add("timecode")
       divTag.classList.add("cursor-pointer")
       const tag : VNode = h(createVNode(Tag, { value: timestampToUnix(blocEl.firstElementChild.getAttribute('tcin')), severity: 'secondary' }))
