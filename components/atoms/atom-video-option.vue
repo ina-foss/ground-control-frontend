@@ -3,11 +3,11 @@
     <b>Synchronisation</b>
     <div class="flex justify-between items-center self-stretch py-1 ">
       <span class="">Player</span>
-      <ToggleSwitch v-model="player" />
+      <ToggleSwitch v-model="options.player" />
     </div>
     <div class="flex justify-between items-center self-stretch py-1 ">
       <span class="">Transcriptions</span>
-      <ToggleSwitch v-model="transcription" />
+      <ToggleSwitch v-model="options.transcription" />
     </div>
   </div>
 </template>

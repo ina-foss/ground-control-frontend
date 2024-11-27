@@ -1,9 +1,9 @@
 <template>
-  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="`inline scroll-mt-16 items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+  <div  ref="span" :tcout="tcOut" :class="`inline scroll-mt-16 items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.value.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
     <div ref="spanText" class="inline ">
       <slot/>
     </div>
-    <span v-if="options.span == true" class="pl-[0.5rem]">
+    <span v-if="options.value.span == true" class="pl-[0.5rem]">
       <span v-for="lbl in newLabel.map(String).join(' ')" class=" align-super text-[0.70rem]  ">{{lbl}} </span>
     </span>
   </div>
@@ -73,7 +73,7 @@ watchEffect(async ()=>{
     }
   })
   watchEffect(()=>{
-    if( options.span == true ) {
+    if( options.value.span == true ) {
         span.value.style.color = textColorPicker(computeColor(newId).hex)
     }
     else{

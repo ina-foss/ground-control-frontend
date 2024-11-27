@@ -56,17 +56,7 @@
   const { $application } = useService()
   const { timestampToUnix, unixToTimestamp } = $application
 
-  const {player, transcription} = storeToRefs(useOptions())
-
-
-
-  const options = reactive({
-    span: true,
-    timecode: false,
-    bloc: true,
-  })
-
-
+  const {options} = storeToRefs(useOptions())
 
   const locals = defineModel<Array>('locals')
   const blockArray = ref(null)
@@ -82,7 +72,7 @@
     return result
   })
 
-watch(() => options.timecode,async (timecode) => {
+watch(() => options.value.timecode,async (timecode) => {
   await nextTick()
   blockArray.value?.childNodes.forEach((blocEl) => {
     removeTimecodeDiv(blocEl)
@@ -109,7 +99,7 @@ const addTimecodeDiv = (blocEl,target) => {
     }
 }
 
-  watch(()=>options.bloc,async ()=> {
+  watch(()=>options.value.bloc,async ()=> {
     await nextTick()
     spanCount.value = 0
     loadSpan()
@@ -303,7 +293,7 @@ const handleSelection = (spanArg: any) => {
           }
           fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
           border.appendChild(fragment)
-          if(options.timecode ) {
+          if(options.value.timecode ) {
             addTimecodeDiv(border.firstChild.firstElementChild,border)
             if(nextContainerSibling?.getAttribute('tcin')) addTimecodeDiv(nextContainerSibling?.parentNode)
           }

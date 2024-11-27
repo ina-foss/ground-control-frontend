@@ -98,7 +98,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const moleculeAnnotationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
-  const { player, transcription } = storeToRefs(optionStore)
+  const { player, transcription, options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
   const { computeColor } = $application
 
@@ -158,13 +158,13 @@ const algos = $computed(() => { // List the name of the algorithm
 })
 
   const updateVideoTimecode = (event) => {
-    if ( transcription.value == true ){
+    if ( options.value.transcription == true ){
         moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
       }
   }
 
   const scrollToSegment = (event) => {
-    if ( player.value == true) {
+    if ( options.value.player == true) {
       moleculeAnnotationRef.listRefs[event.lastIndex].classList.remove('selected-segment')
       moleculeAnnotationRef.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
       moleculeAnnotationRef.listRefs[event.bestIndex].classList.add('selected-segment')

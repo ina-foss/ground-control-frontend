@@ -5,7 +5,7 @@ export default defineComponent({
   name: "AtomVideoOption",
   setup(){
     const store = useOptions()
-    const {player, transcription} =storeToRefs(store)
+    const {options} =storeToRefs(store)
 
 
 
@@ -13,8 +13,7 @@ export default defineComponent({
 
 
     return{
-      player,
-      transcription
+      options
     }
   }
 })
