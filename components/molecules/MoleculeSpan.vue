@@ -26,8 +26,9 @@
       </div>
     </div>
   </div>
-  <div class=" h-[80%] top-[20%] flex flex-col items-center place-content-center  gap-10 col-span-2">
+  <div class="  overflow-y-auto flex flex-col items-center  gap-10 col-span-2">
     <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+    <atom-video-option />
     <AtomSpanDetail
 :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
       @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
@@ -38,6 +39,7 @@
 
 <script setup lang="ts">
 
+  import { useOptions } from "~/stores/annotation-options";
   import BadgeDirective from 'primevue/badgedirective';
   import {createApp,  createVNode, render } from 'vue'
   import AtomTranscriptionSpan from '../atoms/AtomTranscriptionSpan.vue';
@@ -45,6 +47,7 @@
   import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
   import AtomSpanOption from '~/components/atoms/AtomSpanOption.vue';
   import AtomSearch from '~/components/atoms/AtomSearch.vue'
+  import atomVideoOption from '../atoms/atom-video-option.vue';
   import _ from 'lodash';
     import { Tag } from 'primevue';
 
@@ -53,17 +56,21 @@
   const { $application } = useService()
   const { timestampToUnix, unixToTimestamp } = $application
 
+  const {player, transcription} = storeToRefs(useOptions())
+
 
 
   const options = reactive({
     span: true,
     timecode: false,
-    bloc: true
+    bloc: true,
   })
+
 
 
   const locals = defineModel<Array>('locals')
   const blockArray = ref(null)
+  const listSegment = computed(()=>blockArray.value?.children)
 
   const aggregatedLocals =  computed(()=>{
     const result = []
@@ -398,7 +405,7 @@ const handleSelection = (spanArg: any) => {
     return local
   }
 
-  defineExpose({ annotationFunction: saveSpan})
+  defineExpose({ annotationFunction: saveSpan, listRefs: listSegment })
 
 
 </script>

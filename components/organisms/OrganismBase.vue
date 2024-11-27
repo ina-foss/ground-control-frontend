@@ -32,7 +32,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
       </div>
     </div>
   </div>
-  <div v-else class="h-full" >
+  <div v-else class="h-full " >
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
@@ -65,6 +65,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   import { useService } from "#imports";
 
   const authStore = useAuth()
+  const optionStore = useOptions()
   const { $application } = useService()
 
 
@@ -97,6 +98,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const moleculeAnnotationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
+  const { player, transcription } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
   const { computeColor } = $application
 
@@ -156,13 +158,17 @@ const algos = $computed(() => { // List the name of the algorithm
 })
 
   const updateVideoTimecode = (event) => {
-    moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
+    if ( transcription.value == true ){
+        moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
+      }
   }
 
   const scrollToSegment = (event) => {
-    moleculeAnnotationRef.listRefs[event.lastIndex].firstElementChild.classList.remove('selected-segment')
-    moleculeAnnotationRef.listRefs[event.bestIndex].firstElementChild.scrollIntoView({ behavior: "smooth" });
-    moleculeAnnotationRef.listRefs[event.bestIndex].firstElementChild.classList.add('selected-segment')
+    if ( player.value == true) {
+      moleculeAnnotationRef.listRefs[event.lastIndex].classList.remove('selected-segment')
+      moleculeAnnotationRef.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
+      moleculeAnnotationRef.listRefs[event.bestIndex].classList.add('selected-segment')
+    }
   }
 
 const annotationComponent = $computed(() => {
