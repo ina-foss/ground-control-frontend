@@ -39,7 +39,7 @@ export default class AuthService {
         return this.userManager.signinCallback();
     }
 
-    public renewToken(): Promise<void> {
+    public renewToken(): Promise<User|null> {
         return this.userManager.signinSilent();
     }
 
