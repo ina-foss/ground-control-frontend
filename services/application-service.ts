@@ -52,7 +52,8 @@ export default class ApplicationService {
    * @returns {number}
    */
   public unixToTimestamp(tc: string | number ): number{
-    if ( typeof tc != 'string') return tc
+    if (typeof tc == 'number') return tc
+    if (!tc.includes(':')) return parseFloat(tc)
     const millisecond = tc.split('.')[1]
     const timeArray = tc.split('.')[0].split(':')
     const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + floor((parseInt(millisecond) / 1000),2)

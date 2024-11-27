@@ -190,9 +190,12 @@ const annotationComponent = $computed(() => {
         events:{ 'on-segment-click': updateVideoTimecode }}
 
     case 'span':
-        return { component :MoleculeSpan, props: {}}
+        return { component :MoleculeSpan,
+          props: {},
+          events:{ 'on-segment-click': updateVideoTimecode}
   }
 
+}
 })
 
   const handleSubmit = () => {
