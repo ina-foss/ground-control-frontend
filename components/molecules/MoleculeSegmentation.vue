@@ -12,7 +12,6 @@
         class="absolute"
         target="parent"
       />
-      <!-- TODO: use VitualScroller -->
       <li
         v-for="(phrase, index) in locals"
         :key="index"
@@ -73,7 +72,7 @@
 
 <style scoped lang="postcss">
 
-.selected-segment div{
+.selected-segment {
   @apply border-surface-500 border-2 ;
 }
 

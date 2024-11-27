@@ -5,24 +5,25 @@
     <NuxtLink
       :to="{ name: 'projects-id', params: { id: project.id } }" @click="navigate">
       <div class="min-h-[75%]">
-      <div class="inline-block flex justify-between align-middle pl-2">
-        <p class="font-bold self-center exeeded_text">
+      <div class=" flex justify-between align-middle pl-2">
+        <p class="font-bold text-3xl self-center ">
           {{ project.title }} </p>
-        <p class="inline-block flex flex-col items-center">
+        <p class=" h-[66px] w-[24px] flex flex-col items-center gap-2 ">
 
 
-          <Button style="height:18px;width:18px; color:#212529;" class="mt-3"
-                  icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded size="small"
+          <Button
+style="height:18px;width:18px; color:#212529;" class="mt-3"
+                  icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded
                   @click.stop.prevent="visible=true"/>
-          <Button v-if="isAdmin" style="padding:12px 0 0 0;margin:0;"
-                  severity="primary" text rounded size="small"
+          <Button
+v-if="!isAdmin" style="height: 22px; padding:0 0 0 0;margin:0;"
+                  severity="secondary" text rounded
                   @click.stop.prevent="deleteDialog=true">
             <img
               style="height:18px;width:18px;filter: sepia(1) saturate(0) brightness(0.6);"
               src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
-              alt="Trash Icon"/>
+              alt="Trash Icon">
           </Button>
-          <!--Confirmation dialog to delete-->
           <Dialog
             v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?"
             :style="{ width: '30rem'}" class="bg-white pb-0" :pt="{
@@ -38,7 +39,8 @@
             <div class="flex justify-end pb-0">
               <ButtonGroup class="justify-evenly flex">
                 <Button label="Non" class="button button-prev mr-3" size="small" @click="deleteDialog = false"/>
-                <Button v-if="deleteDialog === false" class="button" size="small" label="Supprimer"
+                <Button
+v-if="deleteDialog === false" class="button" size="small" label="Supprimer"
                         @click="deleteDialog = true"/>
                 <Button v-else class="button" size="small" label="Oui" @click="deleteProject"/>
               </ButtonGroup>
@@ -53,10 +55,9 @@
             class="pi pi-list-check "/></span>
           <Tag class="mb-1 scale-90" :class="statusSeverity">{{ translatedProjectStatus(project.status) }}</Tag>
         </div>
-        <div class="flex justify-between justify-items-stretch gap-3">
-        </div>
       </div>
-      <div class="text-sm px-2 py-3 text-slate-500"
+      <div
+class="text-sm px-2 py-3 text-slate-500"
            style="color:#757575;font-size:12px;">
         {{ $props.project.description.charAt(0).toUpperCase() + $props.project.description.slice(1) }}
       </div>
@@ -79,7 +80,6 @@
 
 <script setup>
 import {defineEmits} from 'vue';
-import {storeToRefs} from 'pinia';
 import MoleculeFormProject from './MoleculeFormProject.vue';
 import {bcStore, useRefreshStore, useService} from '#imports';
 import {ProjectService} from "../api/generate";
@@ -87,9 +87,7 @@ import {ProjectService} from "../api/generate";
 const visible = ref(false)
 const deleteDialog = ref(false)
 const store = bcStore()
-const {project} = defineProps(['project'])
-const authStore = useAuth()
-const {userEmail} = storeToRefs(authStore)
+const { project } = defineProps({ project: { type: Array, default: ()=>[] } })
 
 const { $application } = useService();
 
@@ -147,11 +145,6 @@ const deleteProject = async () => {
 
 </script>
 <style>
-.exeeded_text {
-  font-size: 19px;
-  font-family: Lato;
-  color: #212529;
-}
 
 .warning {
   background-color: #F9D621;

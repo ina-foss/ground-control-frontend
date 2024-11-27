@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 88%;">
+  <div class="h-full">
     <OrganismBase
  :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
                :annotations-out="annotations_out"
@@ -60,8 +60,8 @@ const annotation_bool = reactive({
 })
 const annotations_out = ref([])
 const annotations_in = ref([])
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,userEmail.value, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
 
 
 const allFetched = $computed(() => {
@@ -100,7 +100,7 @@ const submitExistantAnnotation =(locals,action)=>{
     promise.then(() => {
       toast.add({
         severity: 'info',
-        detail: action === "submit" ? 'Cette annotation a été mise à jour' : 'Cette annotation est terminée',
+        summary: action === "submit" ? 'Cette annotation a été mise à jour' : 'Cette annotation est terminée',
         life: 4000
       })
       if (action === "end") {
@@ -113,7 +113,7 @@ const submitExistantAnnotation =(locals,action)=>{
         window.onbeforeunload = null
       })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
       })
 
 
@@ -137,7 +137,7 @@ const submitNewAnnotation =(locals,action)=>{
     }
   })
     .then(() => {
-      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
     })
     .then(() => {
       window.onbeforeunload = null
@@ -146,7 +146,7 @@ const submitNewAnnotation =(locals,action)=>{
       toast.add(
         {
           severity: 'info',
-          detail: action === "submit" ? 'Annotation créée' : 'Annotation créée et terminée',
+          summary: action === "submit" ? 'Annotation créée' : 'Annotation créée et terminée',
           life: 5000
         })
       if (action === "end") {

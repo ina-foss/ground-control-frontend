@@ -4,41 +4,26 @@
   </div>
 
   <div v-else class="grid h-[80vh] p-3">
-    <div class="p-3 w-[220px] h-[33px] ml-auto fixed z-40 right-0 mr-12 flex top-[7px]">
+    <div class="p-3 w-fit h-[70px] ml-auto fixed z-40 right-[-5px] mr-12 flex items-center top-[0px]">
       <label class="text-primary font-semibold p-2">Etapes</label>
-      <Dropdown
+      <Select
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
+        class="w-fit items-center h-[33px]"
         placeholder="Statut"
-        class="w-full  md:w-14rem  h-[33px]  text-[#757575]  " show-clear
+        show-clear
         :pt="{
-          root:{
-            style:{padding:'8px'},
-          },
-          input:{
-            style:{padding:'0px'},
-          },
-          trigger:{
-            style:{width:'20px'},
-          },
-          clearIcon:{
-            style:{width:'12px',marginRight:'-15px'},
-          },
-        }"
+      root: { style: { padding: '4px' } },
+      label: { style: { padding: '0px', paddingLeft: '4px', paddingRight: '30px', overflow: 'visible' } },
+      dropdown: { style: { width: '22px',paddingLeft: '6px', paddingRight: '4px'  } },
+      clearIcon: { style: { width: '12px', marginRight: '-15px' } },
+    }"
       />
     </div>
     <DataTable
       v-model:expanded-rows="expandedRows" class=" overflow-scroll-full custom-data-table p-3" :context-menu=true
       :pt="{
-      column: {
-        bodycell:({ state }) => ({
-          style: {padding: '12px',color:'#212529',...state['d_editing']},
-        }),
-        headercell:({ state }) => ({
-          style: {padding: '12px',backgroundColor:'#EDEDED',color:'#212529',...state['d_editing']}
-        })
-      },
       row:{
         class:'p-3',
         style: { backgroundColor: 'black', color: 'white' },
@@ -52,37 +37,30 @@
           <h1 class="text-xl font-bold">Ce projet ne comporte aucune etapes</h1>
         </div>
       </template>
-      <Column field="name" header="Titre" class="txt" style="width : 8rem ; min-width: 70px;"   body-class="p-3 text-sm">
+      <Column field="name" header="Titre" class="txt" style="width : 8rem ; min-width: 70px;"   body-class="p-3 ">
         <template #body="slotProps">
           <p > {{ slotProps.data.title }}</p>
         </template>
       </Column>
-      <Column field="id" header="ID" class="txt" style="width: 40px;" body-class="text-sm"/>
-      <Column field="annotation_type" class="txt" header="Type"  body-class="text-sm" style="width : 9rem ; min-width: 70px;"/>
-      <Column header="Statut" class="txt"  body-class="text-sm" style="width : 9rem ; min-width: 70px;">
+      <Column field="id" header="ID" class="txt" style="width: 40px;" body-class=""/>
+      <Column field="annotation_type" class="txt" header="Type"  body-class="" style="width : 9rem ; min-width: 70px;"/>
+      <Column header="Statut" class="txt"  body-class="" style="width : 9rem ; min-width: 70px;">
         <template #body="slotProps">
           <Tag  :class="getStatusClass(slotProps.data.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(slotProps.data.status) }}</Tag>
         </template>
       </Column>
-      <Column field="description" header="Description" class="txt"  body-class="text-sm"/>
-      <Column header=" " style="width: 17rem; "  body-class="text-sm">
+      <Column field="description" header="Description" class="txt"  body-class=""/>
+      <Column header=" " style="width: 17rem; "  body-class="">
         <template #body="slotProps">
-          <div class="flex min-w-[203px] txt">
+          <div class="flex min-w-[240px] txt">
             <Button
-              class="button button-prev txt"
               style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;margin-right:12px"
-              outlined label="Créer un task" size="small" severity="secondary" @click="stepCreate(slotProps.data.id)"/>
+              label="Créer un task"  outlined  @click="stepCreate(slotProps.data.id)"/>
             <div
-              class="flex items-center cursor-pointer txt border border-[#0B7698] bg-transparent text-[#0B7698] rounded-[5px] h-[33px]" :loading="loadingExport"
+              class="flex items-center cursor-pointer txt    " :loading="loadingExport"
                   @click="clickButtonMenu($event,slotProps.data) ">
-            <Button
-              class="txt button button-prev "
-                    style="font-size:14px"
-              label="Exporter" size="small" severity="secondary" text/>
-              <img
-                style="height:15px;width:15px;filter: brightness(0) saturate(100%) invert(20%) sepia(12%) saturate(427%) hue-rotate(154deg) brightness(91%) contrast(92%);margin-right:8px"
-                   src="public/icons/icons-svg/icons-svg/arrow-down-icon.svg"
-                alt="Arrow Down Icon">
+            <SplitButton
+              label="Exporter"  outlined  />
           </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
@@ -107,16 +85,6 @@
             class="overflow-scroll"
              :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
-      column: {
-        bodycell:({ state }) => ({
-        class:'p-3',
-          style: {...state['d_editing']}
-        }),
-        headercell:({ state }) => ({
-        class:'p-3',
-          style: {backgroundColor:'#EDEDED',...state['d_editing']}
-        })
-      },
       row:{
         class:'p-3',
         style: { backgroundColor: 'black', color: 'white' },
@@ -154,7 +122,7 @@
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
-            <Column header="Statut" class="txt" style="width: 20px"  body-class="text-sm">
+            <Column header="Statut" class="txt" style="width: 20px"   >
               <template #body="{ data: nestedData }">
                 <Tag  :class="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
               </template>
@@ -172,16 +140,6 @@
             </Column>
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction"/>
 
-<!--             <Column header="Données"> -->
-<!--               <template #body=""> -->
-<!---->
-<!--                 <Button -->
-<!-- size="small" severity="secondary" -->
-<!--                         style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;" -->
-<!--                         outlined icon="pi pi-code" @click="openDialog(slotProps.data.id)"/> -->
-<!---->
-<!--               </template> -->
-<!--             </Column> -->
           </DataTable>
         </div>
       </template>
@@ -319,7 +277,7 @@ const exportOut = async (step, group) => {
   for (const task of tasks) {
     try {
       // Fetch annotation data
-      const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id, 'out');
+      const annotations = AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id,'','out');
 
       if (group == 'task') triggerDownload(annotations, task.name)
       else if (group == 'all') annotations.forEach((annotation) => triggerDownload(annotation, task.name + ' by ' + annotation.user_email.split('@')[0]))
@@ -435,9 +393,6 @@ const onCellEditComplete = () => {
 .success {
   background-color: #9ADC82;
   color: black;
-}
-.txt{
-  color:#212529;
 }
 
 </style>
