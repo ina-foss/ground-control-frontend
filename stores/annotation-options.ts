@@ -28,11 +28,6 @@ export type Options =  {
 
 export const useOptions = defineStore("annotation-options",() => {
 
-
-    const player = ref<boolean>(false)
-
-    const transcription = ref<boolean>(false)
-
     const options = reactive<Options>({
       span: true,
       timecode: false,
@@ -43,8 +38,6 @@ export const useOptions = defineStore("annotation-options",() => {
 
 
     return {
-      player,
-      transcription,
       options
   }
 })
