@@ -49,12 +49,13 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
           ayant été traités, différencie les interlocuteurs.
         </p>
       </MoleculeAnnotationLeftPanel>
-      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals" v-on="annotationComponent.events" />
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
     </div>
   </div>
 </template>
 
 <script setup >
+  import { provide} from 'vue'
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSpan from "../molecules/MoleculeSpan.vue";
@@ -231,6 +232,10 @@ const annotationComponent = $computed(() => {
           loadTopics()
       }
   })
+  })
+
+  provide('span',{
+   locals :  $$(locals)
   })
 
 
