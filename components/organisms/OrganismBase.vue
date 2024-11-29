@@ -32,7 +32,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
       </div>
     </div>
   </div>
-  <div v-else class="h-full" >
+  <div v-else class="h-full " >
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
@@ -49,12 +49,13 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
           ayant été traités, différencie les interlocuteurs.
         </p>
       </MoleculeAnnotationLeftPanel>
-      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals" v-on="annotationComponent.events" />
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
     </div>
   </div>
 </template>
 
 <script setup >
+  import { provide} from 'vue'
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSpan from "../molecules/MoleculeSpan.vue";
@@ -65,6 +66,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   import { useService } from "#imports";
 
   const authStore = useAuth()
+  const optionStore = useOptions()
   const { $application } = useService()
 
 
@@ -97,6 +99,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const moleculeAnnotationRef = $ref()
   const moleculeAnnotationLeftPanelRef= $ref()
   const { userEmail } = storeToRefs(authStore)
+  const { options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
   const { computeColor } = $application
 
@@ -156,13 +159,17 @@ const algos = $computed(() => { // List the name of the algorithm
 })
 
   const updateVideoTimecode = (event) => {
-    moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
+    if ( options.value.transcription == true ){
+        moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
+      }
   }
 
   const scrollToSegment = (event) => {
-    moleculeAnnotationRef.listRefs[event.lastIndex].firstElementChild.classList.remove('selected-segment')
-    moleculeAnnotationRef.listRefs[event.bestIndex].firstElementChild.scrollIntoView({ behavior: "smooth" });
-    moleculeAnnotationRef.listRefs[event.bestIndex].firstElementChild.classList.add('selected-segment')
+    if ( options.value.player == true) {
+      moleculeAnnotationRef.listRefs[event.lastIndex].classList.remove('selected-segment')
+      moleculeAnnotationRef.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
+      moleculeAnnotationRef.listRefs[event.bestIndex].classList.add('selected-segment')
+    }
   }
 
 const annotationComponent = $computed(() => {
@@ -184,9 +191,12 @@ const annotationComponent = $computed(() => {
         events:{ 'on-segment-click': updateVideoTimecode }}
 
     case 'span':
-        return { component :MoleculeSpan, props: {}}
+        return { component :MoleculeSpan,
+          props: {},
+          events:{ 'on-segment-click': updateVideoTimecode}
   }
 
+}
 })
 
   const handleSubmit = () => {
@@ -222,6 +232,10 @@ const annotationComponent = $computed(() => {
           loadTopics()
       }
   })
+  })
+
+  provide('span',{
+   locals :  $$(locals)
   })
 
 

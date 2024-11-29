@@ -71,7 +71,20 @@ const emit = defineEmits(['deleteSpan','unselect','link','focusSpan'])
 const { computeColor,textColorPicker } = $application
 
 
-const { focusSpan, spanRefArray, relationArray } = defineProps(['focusSpan', 'spanRefArray','relationArray'])
+const { focusSpan, spanRefArray, relationArray } = defineProps({
+  focusSpan: {
+    type: Number,
+    default: () => undefined
+  },
+  spanRefArray: {
+    type: Array,
+    default: () => []
+  },
+  relationArray: {
+    type: Array,
+    default: () => []
+  },
+})
 
 
 
