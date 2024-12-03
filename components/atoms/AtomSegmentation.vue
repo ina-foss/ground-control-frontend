@@ -1,5 +1,5 @@
 <template>
-  <div :style="dynamicStyle(newColors[topicIndex])" ref="segment" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg " >
+  <div :style="dynamicStyle(newColors[topicIndex])" ref="segment" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg" :data-tc=phrase.tcin  >
     <div class="flex items-center gap-2">
       <Button :icon="iconBool" :label="topicText"
         :pt="{
@@ -29,7 +29,7 @@ import { useService } from '#imports';
 const props = defineProps(['phrase', 'colors', 'topics', 'index'])
 const emit = defineEmits(['segmentation', 'onSegmentClick'])
 const { $application } = useService()
-const { timestampToUnix, computeColor, textColorPicker } = $application
+const { timestampToUnix, computeColor, textColorPicker,unixToTimestamp } = $application
 const segment = ref(null)
 const newColors =props.colors;
 const newTopics =props.topics;

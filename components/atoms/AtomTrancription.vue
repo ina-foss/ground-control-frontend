@@ -1,5 +1,5 @@
 <template>
-  <div class="flex bg-disabled flex-col p-4 gap-1  rounded transition-all " >
+  <div class="flex bg-disabled flex-col p-4 gap-1  rounded transition-all " :data-tc=transcriptions[0].tcin>
 
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
