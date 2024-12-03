@@ -125,6 +125,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   })
 
   const locals = $computed(() => {
+    debugger
     if(allFetched){
     return (annotationInfo == null)
       ? annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
@@ -168,8 +169,10 @@ const algos = $computed(() => { // List the name of the algorithm
   const seekOnBlockClicked =  (x) => {
     const currentTime = x
     let startIndex = 0
-    let localsIn = data.step?.annotation_type === 'transcription'? localsIn=annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation: locals;
-
+    let localsIn =  locals;
+    if( data.step?.annotation_type === 'transcription'){
+      localsIn=annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
+    }
        let endIndex = localsIn.length-1
       while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
         const mid = Math.floor(((endIndex + startIndex) / 2))
@@ -181,7 +184,7 @@ const algos = $computed(() => { // List the name of the algorithm
     }
 
   const scrollToSegment = (event) => {
-    if ( options.value.player == true) {
+    if ( options.value.player === true) {
       lastIndex=event.lastIndex
       bestIndex=event.bestIndex
       moleculeAnnotationRef?.listRefs.find(ref =>
@@ -307,6 +310,8 @@ const annotationComponent = $computed(() => {
     }
 
   }
+
+
 
   provide('span',{
    locals :  $$(locals)
