@@ -64,11 +64,10 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   import _ from 'lodash'
   import {AnnotationStatus} from '../../api/generate';
   import { useService } from "#imports";
-
   const authStore = useAuth()
   const optionStore = useOptions()
   const { $application } = useService()
-
+  const { unixToTimestamp } = $application
 
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
     data: {
@@ -89,7 +88,6 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     },
 
   })
-
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
@@ -159,16 +157,46 @@ const algos = $computed(() => { // List the name of the algorithm
 })
 
   const updateVideoTimecode = (event) => {
-    if ( options.value.transcription == true ){
+    if ( options.value.transcription === true ){
         moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
+      seekOnBlockClicked(unixToTimestamp(event.tcin))
       }
   }
 
+  let lastIndex = 0
+  let bestIndex = 0
+  const seekOnBlockClicked =  (x) => {
+    const currentTime = x
+    let startIndex = 0
+    let localsIn =  locals;
+    if( data.step?.annotation_type === 'transcription'){
+      localsIn=annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
+    }
+       let endIndex = localsIn.length-1
+      while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
+        const mid = Math.floor(((endIndex + startIndex) / 2))
+        $application.unixToTimestamp(localsIn[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
+      }
+       bestIndex = currentTime < $application.unixToTimestamp(localsIn[endIndex]?.tcin) ? startIndex : endIndex
+    scrollToSegment({lastIndex, bestIndex})
+      lastIndex = bestIndex
+    }
+
   const scrollToSegment = (event) => {
-    if ( options.value.player == true) {
-      moleculeAnnotationRef.listRefs[event.lastIndex].classList.remove('selected-segment')
-      moleculeAnnotationRef.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
-      moleculeAnnotationRef.listRefs[event.bestIndex].classList.add('selected-segment')
+    if ( options.value.player === true) {
+      lastIndex=event.lastIndex
+      bestIndex=event.bestIndex
+      if( data.step?.annotation_type === 'span'){
+        moleculeAnnotationRef.listRefs[lastIndex].classList.remove('selected-segment')
+      }
+      else{
+        moleculeAnnotationRef?.listRefs.find(ref =>
+        ref.classList && ref.classList.contains('selected-segment')
+        )?.classList.remove('selected-segment')
+      }
+
+      moleculeAnnotationRef?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
+      moleculeAnnotationRef?.listRefs[bestIndex].classList.add('selected-segment')
     }
   }
 
@@ -224,6 +252,7 @@ const annotationComponent = $computed(() => {
     })
   }
   onMounted(()=>{
+    window.addEventListener("keydown", globalKeydown);
 
   watch(()=> allFetched,() => {
       if(allFetched == true){
@@ -233,6 +262,60 @@ const annotationComponent = $computed(() => {
       }
   })
   })
+
+  const globalKeydown=(event) =>{
+    if(event.key){
+      const key = event.key.toUpperCase();
+        switch (key) {
+          case "W"://recule de 10
+            navigateWithkeyboard(-10);
+            break;
+          case "X"://recule de 5
+            navigateWithkeyboard(-5);
+            break;
+          case "C"://avance de 1
+            navigateWithkeyboard(1);
+            break;
+          case "V"://avance de 5
+            navigateWithkeyboard(5);
+            break;
+          case "B"://avance de 10
+            navigateWithkeyboard(10);
+            break;
+          default:
+            console.log("other key pressed");
+        }
+    }
+  }
+
+  const getSelectedSegment = () =>
+    moleculeAnnotationRef?.listRefs.find(ref =>
+      ref.classList?.contains('selected-segment')
+    );
+
+  const navigateWithkeyboard = (param) => {
+    let elementWithTestClass = getSelectedSegment();
+    if (bestIndex >= 0) {
+      bestIndex = (elementWithTestClass && bestIndex < moleculeAnnotationRef?.listRefs.length - 1) ?
+        bestIndex + param : bestIndex;
+      if (elementWithTestClass && bestIndex === moleculeAnnotationRef?.listRefs.length - 1) {
+        bestIndex = bestIndex + param
+      }
+      if (bestIndex > moleculeAnnotationRef?.listRefs.length - 1) {
+        bestIndex = moleculeAnnotationRef?.listRefs.length - 1
+      }
+      if (bestIndex < 0) {
+        bestIndex = 0
+      }
+      scrollToSegment({lastIndex, bestIndex})
+      elementWithTestClass = getSelectedSegment();
+      const dataTcValue = elementWithTestClass.children[0].getAttribute('data-tc');
+      updateVideoTimecode({tcin: dataTcValue, tcout: '0'})
+    }
+
+  }
+
+
 
   provide('span',{
    locals :  $$(locals)
