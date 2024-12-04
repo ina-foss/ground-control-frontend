@@ -2,9 +2,16 @@
   <div :style="dynamicStyle(newColors[topicIndex])" ref="segment" class="bg-gray-300 relative mt-5 p-3 pl-3 rounded-lg flex flex-col  " >
       <div v-if="topicIndex > 0 && isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-8 w-fit mb-3  p-3   `"  >
       </div>
-    <div ref="titleContainer" class=" absolute self-center top-0 pt-3 z-40">
-      <div v-if="topicIndex > 0 && isTopicFirstSegment" :class="`flex items-center sticky top-0 h-8 w-fit mb-3  p-3 ${computeColor(topicIndex).full} text-${textColorPicker(computeColor(topicIndex).hex)} `"  >
-        <b>Topic {{ topicIndex }}</b>
+    <div ref="titleContainer" class=" absolute flex  self-center top-0 pt-3 z-40">
+      <!-- FIX: focus issue with the input and the button i think -->
+      <div v-if="editTitle" v-focustrap >
+        <InputText v-model="editedTitle" @focusout="editTitle = false" autofocus />
+      </div>
+      <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8    "  >
+        <div :class="`h-8 p-3 ${computeColor(topicIndex).full} w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
+          <b>{{ editedTitle || topicTitle }}</b>
+        </div>
+        <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
       </div>
     </div>
     <div class="flex items-center gap-2">
@@ -21,8 +28,7 @@
         {{ $props.phrase.data.text[0] }}
       </div>
     </div>
-      <div v-if="isTopicsLastSegment" class="w-full bg-grey-300 h-2 translate-y-7 cursor-pointer hover:bg-title" @click="handleSegmentation">
-
+    <div  :class="` w-full bg-clip-padd bg-grey-300 h-1  z-30 ${isTopicsLastSegment ? 'translate-y-[21px]' : 'translate-y-[12px]'} cursor-pointer hover:bg-title hover:scale-y-[200%]  transition`" @click="handleSegmentation">
       </div>
   </div>
 </template>
@@ -39,12 +45,15 @@ const segment = ref(null)
 const newColors =props.colors;
 const newTopics =props.topics;
 const toast = useToast()
-const topicIndex = computed(()=> props.topics[props.index] ? props.topics[props.index] : 0)
+const topicIndex = computed(()=> topics[index] )
 const iconBool = ref('pi pi-tag')
 const topicText = ref(null)
 const titleContainer = ref(null)
 iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
 topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
+const topicTitle = computed(()=>'Topic '+ topicIndex.value)
+const editedTitle = ref(null)
+const editTitle = ref(false)
 
 
 const isTopicFirstSegment = computed(()=> {
@@ -54,23 +63,29 @@ const isTopicFirstSegment = computed(()=> {
   else return false
 })
 
-
-
-onMounted(()=>{
-  watchEffect(async()=>{
+const computeTopicHeight = async () => {
     if(isTopicFirstSegment.value){
       await nextTick()
-      const list = titleContainer?.value.parentElement?.parentElement?.parentElement
       let id = index
       let topicHeight = 0
       do {
-        topicHeight += segmentationRefs[id].firstElementChild.scrollHeight
+        topicHeight += segmentationRefs[id].firstElementChild.clientHeight
         id++
       } while (topics[id] == topics[id-1]);
       titleContainer.value.style.height = topicHeight + 'px'
-    }
+  }
+}
+
+
+onMounted( ()=>{
+  watch(()=>isTopicFirstSegment.value,()=>{
+      computeTopicHeight()
   })
+
+  window.addEventListener('resize', computeTopicHeight,{})
+
 })
+
 
 const isTopicsLastSegment = computed(()=>{
     if( topics[index+1] == undefined ) return true
