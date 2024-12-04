@@ -125,7 +125,6 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   })
 
   const locals = $computed(() => {
-    debugger
     if(allFetched){
     return (annotationInfo == null)
       ? annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
@@ -187,9 +186,14 @@ const algos = $computed(() => { // List the name of the algorithm
     if ( options.value.player === true) {
       lastIndex=event.lastIndex
       bestIndex=event.bestIndex
-      moleculeAnnotationRef?.listRefs.find(ref =>
+      if( data.step?.annotation_type === 'span'){
+        moleculeAnnotationRef.listRefs[lastIndex].classList.remove('selected-segment')
+      }
+      else{
+        moleculeAnnotationRef?.listRefs.find(ref =>
         ref.classList && ref.classList.contains('selected-segment')
-          )?.classList.remove('selected-segment')
+        )?.classList.remove('selected-segment')
+      }
 
       moleculeAnnotationRef?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
       moleculeAnnotationRef?.listRefs[bestIndex].classList.add('selected-segment')

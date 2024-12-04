@@ -19,7 +19,7 @@
     </div>
     <div v-else>
       <div
-        v-for="word in aggregatedLocals" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)"
+        v-for="word in aggregatedLocals" :key="word.tcin"  :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)"
         :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
         @mouseup="handleSelection">
           {{ word.data.text[0] }}
