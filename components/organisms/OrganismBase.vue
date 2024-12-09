@@ -66,8 +66,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   import { useService } from "#imports";
   const authStore = useAuth()
   const optionStore = useOptions()
-  const { $application } = useService()
-  const { unixToTimestamp } = $application
+
 
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
     data: {
@@ -99,7 +98,6 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const { userEmail } = storeToRefs(authStore)
   const { options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
-  const { computeColor } = $application
 
   const annotationInfo = $computed(() => {
     let info = null
@@ -238,19 +236,6 @@ const annotationComponent = $computed(() => {
     emits('finish-annotation', {locals: moleculeAnnotationRef.annotationFunction(localSubmit) })
   }
 
-
-  const loadTopics = () => {
-    const max = _.maxBy(locals, (local)=> local.data?.topic) // Search for maximum topic number
-    while (colors.length <= max?.data.topic){ // Create all colors below this max
-     const randomcolor = computeColor(colors.length-1).hex
-      colors.push(randomcolor)
-    }
-    locals.forEach((phrase, index) => { // apppend topic number to each segments
-      if (![0, undefined].includes(phrase.data?.topic)) {
-        topics[index] = phrase.data.topic
-      }
-    })
-  }
   onMounted(()=>{
     window.addEventListener("keydown", globalKeydown);
 
@@ -258,7 +243,6 @@ const annotationComponent = $computed(() => {
       if(allFetched == true){
         videoSrc = annotationsIn[0]?.result.asset.url
 
-          loadTopics()
       }
   })
   })
