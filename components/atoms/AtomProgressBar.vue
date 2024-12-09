@@ -36,16 +36,24 @@ defineEmits(['progressBarJump']);
 
 const groupedTopics = computed(() => {
   const grouped = {};
-
-  topics.forEach(topic => {
+  let ignoreCount = 1
+  topics.forEach((topic,index) => {
     if(topic != 0){
       if (!grouped[' ' + topic]) {
         grouped[' ' + topic] = 0;
       }
       grouped[' ' + topic] += 1;
     }
+    else{
+      if(!grouped[' null'+ignoreCount]){
+        grouped[' null'+ignoreCount] = 0
+      }
+        grouped[' null'+ignoreCount] ++
+      if(topics[index+1] != 0){
+        ignoreCount += 1
+      }
+    }
   });
-
 
   return Object.entries(grouped).map(([topic, count]) => ({
     topic,
@@ -54,6 +62,7 @@ const groupedTopics = computed(() => {
 
 });
 
+console.log(groupedTopics.value)
 
 </script>
 
