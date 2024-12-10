@@ -17,7 +17,7 @@ global.window = {
 describe('Dashboard.vue Tests', () => {
 
   test('Header component imports as expected', async () => {
-    const cmp = await import(path.resolve(__dirname, '../components/molecules/MoleculeHeader.vue'));
+    const cmp = await import(path.resolve(__dirname, '/app/components/molecules/MoleculeHeader.vue'));
     expect(cmp).toBeDefined();
   });
 
