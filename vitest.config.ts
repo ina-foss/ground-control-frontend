@@ -17,6 +17,7 @@ export default defineVitestConfig({
       },
         reporters: [
             'default',
+            'verbose',
             'junit',
             'html'
         ],
