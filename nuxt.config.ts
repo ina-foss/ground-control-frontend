@@ -125,13 +125,6 @@ export default defineNuxtConfig({
             autoprefixer: {},
         }
     },
-    tailwindcss: {
-        configPath: 'tailwind.config',
-        exposeConfig: false,
-        config: {
-        },
-        injectPosition: 0,
-    },
     eslint: {
         stylistic: true,
         files: './**/*.{ts,js,vue}'
