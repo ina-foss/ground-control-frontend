@@ -179,8 +179,8 @@ const visible = ref(false)
 const dialogContent = ref('')
 const clickedRowData = ref(null)
 const spinnerVisible = ref(true)
-let formStepClick = $ref()
-let loadingExport = $ref(false)
+const formStepClick = ref()
+const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
 
@@ -222,7 +222,7 @@ const translations = {
 const translatedAnnotationStatus =(annotation_status)=> {
   return translations[annotation_status]
 }
-const translatedTaskStatus = $computed(() => {
+const translatedTaskStatus = computed(() => {
   return Object.values(StepStatus).map(status => ({
     label: translations[status],
     value: status,
@@ -272,7 +272,7 @@ const clickButtonMenu = (event, step) => {
 
 const exportOut = async (step, group) => {
   const tasks = step.tasks
-  loadingExport = true
+  loadingExport.value = true
   const annos = {}
   for (const task of tasks) {
     try {
@@ -287,7 +287,7 @@ const exportOut = async (step, group) => {
     }
   }
   if (group == 'one') triggerDownload(annos, step.title)
-  loadingExport = false
+  loadingExport.value = false
 }
 
 function triggerDownload(data, name) {
@@ -327,7 +327,7 @@ const navigateToTask = (id) => {
 
 const stepCreate = (stepId) => {
 
-  formStepClick = _.find(data.value.steps, ['id', stepId], 0)
+  formStepClick.value = _.find(data.value.steps, ['id', stepId], 0)
 
   dialogVisible.value = true
 }

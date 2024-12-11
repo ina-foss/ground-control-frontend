@@ -24,7 +24,7 @@ const timecode = defineModel<boolean>('timecode')
 const bloc = defineModel<boolean>('bloc')
 
 
-let timecodeDisabled = $ref(false)
+const timecodeDisabled = ref(false)
 
 let previousTimecode
 
@@ -32,11 +32,11 @@ watch(()=>bloc.value,(value)=>{
   if (!value){
     previousTimecode = markRaw(timecode.value)
     timecode.value = false
-    timecodeDisabled = !timecodeDisabled
+    timecodeDisabled.value = !timecodeDisabled.value
   }
   else{
     timecode.value = previousTimecode
-    timecodeDisabled = !timecodeDisabled
+    timecodeDisabled.value = !timecodeDisabled.value
   }
 },{})
 

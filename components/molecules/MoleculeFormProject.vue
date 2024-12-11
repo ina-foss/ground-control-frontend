@@ -108,46 +108,46 @@ const errorVisible = ref(true);
 const {userEmail} = useAuth()
 const {dialogVisible, project} = defineProps(['dialogVisible', 'project'])
 const emits = defineEmits(['toggle-dialog', 'refreshData'])
-const deleteDialog = $ref(false)
+const deleteDialog = ref(false)
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
   ended: 'Terminé'
 }
-const translatedProjectStatus = $computed(() => {
+const translatedProjectStatus = computed(() => {
   return Object.values(ProjectStatus).map(status => ({
     label: translations[status],
     value: status,
   }));
 })
-let title = $ref(project?.title || '')
-let description = $ref(project?.description || '')
-let status = $ref(translatedProjectStatus.find(x=>x.value ===project?.status)|| translatedProjectStatus[0])
-let isPublished = $ref(project?.is_published || false)
-let allowSkip = $ref(project?.allow_skip || false)
-let emptyAnnotations = $ref(project?.empty_annotations || false)
-const availableType = $ref(Object.values(AnnotationType))
-let selectedType = $ref([])
+let title = ref(project?.title || '')
+let description = ref(project?.description || '')
+let status = ref(translatedProjectStatus.value.find(x=>x.value ===project?.status)|| translatedProjectStatus.value[0])
+let isPublished = ref(project?.is_published || false)
+let allowSkip = ref(project?.allow_skip || false)
+let emptyAnnotations = ref(project?.empty_annotations || false)
+const availableType = ref(Object.values(AnnotationType))
+let selectedType = ref([])
 const refreshStore = useRefreshStore()
 const toast = useToast()
 const headerTitle = !project ? 'Nouveau projet' : 'Modifier ' + project?.title
 if (project?.steps !== null && project?.steps !== undefined) {
   project?.steps.forEach(type => {
-    selectedType.push(type.annotation_type)
+    selectedType.value.push(type.annotation_type)
   })
 }
 const updateProject = async () => {
-  if (title === "") {
+  if (title.value === "") {
     toast.add({severity: "error", detail: 'Project could not be created', summary: 'Something went wrong'});
   } else {
     try {
       const response = await ProjectService.updateProjectProjectProjectIdPut(project?.id, {
-        title: title,
-        description: description,
+        title: title.value,
+        description: description.value,
         status: status.value,
-        is_published: isPublished,
-        empty_annotations: emptyAnnotations,
-        allow_skip: allowSkip,
+        is_published: isPublished.value,
+        empty_annotations: emptyAnnotations.value,
+        allow_skip: allowSkip.value,
         control_weights: 10,
         pinned_at: null,
         created_by: userEmail
@@ -175,17 +175,17 @@ const updateProject = async () => {
   }
 };
 const createProject = async () => {
-  if (title === '') {
+  if (title.value === '') {
     toast.add({severity: "error", detail: "Project could not be created", summary: "Something went wrong"})
   } else {
     const {userEmail} = useAuth()
     const response = ProjectService.createProjectProjectPost({
-      title: title,
-      description: description,
+      title: title.value,
+      description: description.value,
       status: status.value,
-      is_published: isPublished,
-      empty_annotations: emptyAnnotations,
-      allow_skip: allowSkip,
+      is_published: isPublished.value,
+      empty_annotations: emptyAnnotations.value,
+      allow_skip: allowSkip.value,
       control_weights: 10,
       pinned_at: null,
       created_by: userEmail,
@@ -211,7 +211,7 @@ const createProject = async () => {
         // reset dialog values of create new project
         title = '',
           description = '',
-          status = translatedProjectStatus[0],
+          status = translatedProjectStatus.value[0],
           isPublished = false,
           allowSkip = false,
           emptyAnnotations = false,

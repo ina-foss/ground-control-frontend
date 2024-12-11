@@ -29,7 +29,7 @@
         }
         }"
         class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer  transition-all hover:shadow-lg "
-        @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: props.index })">
+        @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
         {{ $props.phrase.data?.text[0] }}
       </div>
     </div>
@@ -219,12 +219,6 @@ const handleSegmentation = () => {
   topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 }
 
-const exposedData = $computed(()=>{
-  if( isTopicFirstSegment.value){
-    return {title: title, id: topicIndex }
-  }
-  else return {}
-})
     defineExpose({title: title, id: topicIndex,  })
 
 </script>

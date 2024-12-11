@@ -66,6 +66,8 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   import { useService } from "#imports";
   const authStore = useAuth()
   const optionStore = useOptions()
+  const {$application} = useService()
+  const { unixToTimestamp } = $application
 
 
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
@@ -90,16 +92,16 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
-  const colors = $ref(['#BEBEBE'])
-  const topics = $ref([])
-  let videoSrc = $ref(annotationsIn[0]?.result.asset.url)
-  const moleculeAnnotationRef = $ref()
-  const moleculeAnnotationLeftPanelRef= $ref()
+  const colors = ref(['#BEBEBE'])
+  const topics = ref([])
+  const videoSrc = ref(annotationsIn[0]?.result.asset.url)
+  const moleculeAnnotationRef = ref()
+  const moleculeAnnotationLeftPanelRef= ref()
   const { userEmail } = storeToRefs(authStore)
   const { options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
 
-  const annotationInfo = $computed(() => {
+  const annotationInfo = computed(() => {
     let info = null
     if (allFetched ) {
       annotationsOut.forEach((annotation, index) => {
@@ -111,10 +113,10 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     }
   });
 
-  const userAnnotations = $computed(() => { // return array of users annotations
+  const userAnnotations = computed(() => { // return array of users annotations
     let response = []
-    if (allFetched && annotationInfo != null) {
-      const annotation = annotationsOut[annotationInfo.index];
+    if (allFetched && annotationInfo.value != null) {
+      const annotation = annotationsOut[annotationInfo.value.index];
 
       if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
         response = [...annotation.result.data.localisation[0].sublocalisations.localisation];
@@ -122,16 +124,16 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     return response
   })
 
-  const locals = $computed(() => {
+  const locals = computed(() => {
     if(allFetched){
-    return (annotationInfo == null)
+    return (annotationInfo.value == null)
       ? annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
-      : annotationsOut[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation
+      : annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation
     }
     return []
   })
 
-const transcriptions = $computed(() => { // format array to have all transcription version in the same array element
+const transcriptions = computed(() => { // format array to have all transcription version in the same array element
   const res = []
   if (allFetched) {
     annotationsIn[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index) => {
@@ -144,7 +146,7 @@ const transcriptions = $computed(() => { // format array to have all transcripti
   return res
 })
 
-const algos = $computed(() => { // List the name of the algorithm
+const algos = computed(() => { // List the name of the algorithm
   const res = []
   if (allFetched) {
     annotationsIn.forEach((annotation) => {
@@ -156,7 +158,7 @@ const algos = $computed(() => { // List the name of the algorithm
 
   const updateVideoTimecode = (event) => {
     if ( options.value.transcription === true ){
-        moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
+        moleculeAnnotationLeftPanelRef.value.updateVideoTimecode(event)
       seekOnBlockClicked(unixToTimestamp(event.tcin))
       }
   }
@@ -166,16 +168,16 @@ const algos = $computed(() => { // List the name of the algorithm
   const seekOnBlockClicked =  (x) => {
     const currentTime = x
     let startIndex = 0
-    let localsIn =  locals;
+    const localsIn =  locals;
     if( data.step?.annotation_type === 'transcription'){
-      localsIn=annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
+      localsIn.value=annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
     }
-       let endIndex = localsIn.length-1
+       let endIndex = localsIn.value.length-1
       while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
         const mid = Math.floor(((endIndex + startIndex) / 2))
-        $application.unixToTimestamp(localsIn[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
+        $application.unixToTimestamp(localsIn.value[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
       }
-       bestIndex = currentTime < $application.unixToTimestamp(localsIn[endIndex]?.tcin) ? startIndex : endIndex
+       bestIndex = currentTime < $application.unixToTimestamp(localsIn.value[endIndex]?.tcin) ? startIndex : endIndex
     scrollToSegment({lastIndex, bestIndex})
       lastIndex = bestIndex
     }
@@ -185,33 +187,33 @@ const algos = $computed(() => { // List the name of the algorithm
       lastIndex=event.lastIndex
       bestIndex=event.bestIndex
       if( data.step?.annotation_type === 'span'){
-        moleculeAnnotationRef.listRefs[lastIndex].classList.remove('selected-segment')
+        moleculeAnnotationRef.value.listRefs[lastIndex].classList.remove('selected-segment')
       }
       else{
-        moleculeAnnotationRef?.listRefs.find(ref =>
+        moleculeAnnotationRef.value?.listRefs.find(ref =>
         ref.classList && ref.classList.contains('selected-segment')
         )?.classList.remove('selected-segment')
       }
-
-      moleculeAnnotationRef?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
-      moleculeAnnotationRef?.listRefs[bestIndex].classList.add('selected-segment')
+      console.log('test')
+      moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
+      moleculeAnnotationRef.value?.listRefs[bestIndex].classList.add('selected-segment')
     }
   }
 
-const annotationComponent = $computed(() => {
+const annotationComponent = computed(() => {
   switch (data.step?.annotation_type) {
     case 'segmentation':
         return {component: MoleculeSegmentation, props: {
-          locals: locals,
-          colors: colors,
-          topics: topics
+          locals: locals.value,
+          colors: colors.value,
+          topics: topics.value
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
     case 'transcription':
       return {component: MoleculeTranscription, props: {
-        transcriptions: transcriptions,
-        userAnnotations: userAnnotations,
-        algos: algos,
+        transcriptions: transcriptions.value,
+        userAnnotations: userAnnotations.value,
+        algos: algos.value,
         status: data.annotations[0]?.annotation_status
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
@@ -226,14 +228,14 @@ const annotationComponent = $computed(() => {
 })
 
   const handleSubmit = () => {
-    let localSubmit = locals
-    if(moleculeAnnotationRef.locals) localSubmit = moleculeAnnotationRef.locals
-    emits('submit-annotation',{ locals: moleculeAnnotationRef.annotationFunction(localSubmit) })
+    const localSubmit = locals
+    if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
+    emits('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
   }
   const handleFinish = () => {
-    let localSubmit = locals
-    if(moleculeAnnotationRef.locals) localSubmit = moleculeAnnotationRef.locals
-    emits('finish-annotation', {locals: moleculeAnnotationRef.annotationFunction(localSubmit) })
+    const localSubmit = locals
+    if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
+    emits('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
   }
 
   onMounted(()=>{
@@ -241,7 +243,7 @@ const annotationComponent = $computed(() => {
 
   watch(()=> allFetched,() => {
       if(allFetched == true){
-        videoSrc = annotationsIn[0]?.result.asset.url
+        videoSrc.value = annotationsIn[0]?.result.asset.url
 
       }
   })
@@ -273,20 +275,20 @@ const annotationComponent = $computed(() => {
   }
 
   const getSelectedSegment = () =>
-    moleculeAnnotationRef?.listRefs.find(ref =>
+    moleculeAnnotationRef.value?.listRefs.find(ref =>
       ref.classList?.contains('selected-segment')
     );
 
   const navigateWithkeyboard = (param) => {
     let elementWithTestClass = getSelectedSegment();
     if (bestIndex >= 0) {
-      bestIndex = (elementWithTestClass && bestIndex < moleculeAnnotationRef?.listRefs.length - 1) ?
+      bestIndex = (elementWithTestClass && bestIndex < moleculeAnnotationRef.value?.listRefs.length - 1) ?
         bestIndex + param : bestIndex;
-      if (elementWithTestClass && bestIndex === moleculeAnnotationRef?.listRefs.length - 1) {
+      if (elementWithTestClass && bestIndex === moleculeAnnotationRef.value?.listRefs.length - 1) {
         bestIndex = bestIndex + param
       }
-      if (bestIndex > moleculeAnnotationRef?.listRefs.length - 1) {
-        bestIndex = moleculeAnnotationRef?.listRefs.length - 1
+      if (bestIndex > moleculeAnnotationRef.value?.listRefs.length - 1) {
+        bestIndex = moleculeAnnotationRef.value?.listRefs.length - 1
       }
       if (bestIndex < 0) {
         bestIndex = 0
@@ -302,7 +304,7 @@ const annotationComponent = $computed(() => {
 
 
   provide('span',{
-   locals :  $$(locals)
+   locals :  locals
   })
 
 

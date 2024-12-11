@@ -25,7 +25,7 @@ import AtomTrancription from '../atoms/AtomTrancription.vue';
 import {AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
 let isChanged = false
-const transcriptionsRef = $ref([])
+const transcriptionsRef = ref([])
 const {transcriptions, algos, userAnnotations, status} = defineProps({
   transcriptions: { // all transcriptions by all algorithm group by sentence
     type: Array,
@@ -88,7 +88,7 @@ const transcriptionFunction = (localSubmit) => {
   return locals
 }
 
-defineExpose({locals: localChanges, listRefs: $$(transcriptionsRef), annotationFunction: transcriptionFunction })
+defineExpose({locals: localChanges, listRefs: transcriptionsRef, annotationFunction: transcriptionFunction })
 
 </script>
 <style lang="postcss">

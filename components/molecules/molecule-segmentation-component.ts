@@ -20,7 +20,6 @@ export default defineComponent({
     const { computeColor } = $application
 
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
-    const segmentations = $(segmentationRefs)
 
     const handleSegmentation = (event) => {
       window.onbeforeunload = function () {
@@ -106,13 +105,13 @@ export default defineComponent({
     }
 
     const handleSegmentClick = (event: {tcin: string|number, tcout: string|number, index:number}) => {
-      segmentations[event.index].scrollIntoView({ behavior: "smooth" });
+      segmentationRefs.value[event.index].scrollIntoView({ behavior: "smooth" });
       emit('on-segment-click', { tcin: event.tcin, tcout: event.tcout })
     }
 
     const jumpToTopic = (event: {topic: number }) => {
       const firstIndex = topics.findIndex((topic) => topic == event.topic)
-      segmentations[firstIndex].scrollIntoView({ behavior: "smooth" })
+      segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth" })
     }
 
     const segmentationFunction = (localSubmit) => {

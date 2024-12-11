@@ -96,7 +96,7 @@ export default defineNuxtConfig({
         public: {
         }
     },
-    modules: ['./node_modules/@vue-macros/nuxt','@nuxtjs/tailwindcss','@nuxtjs/color-mode','@primevue/nuxt-module', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
+    modules: ['@nuxtjs/tailwindcss','@nuxtjs/color-mode','@primevue/nuxt-module', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
     colorMode: {
       classSuffix:'',
     },

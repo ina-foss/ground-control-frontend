@@ -29,7 +29,7 @@
   const { topicList } = useTopicList()
 
 
-  const cleanedColors = $computed(()=>{ // delete the first element
+  const cleanedColors = computed(()=>{ // delete the first element
     const cleaned = {}
     colors.forEach((color,index)=>{
       if (index != 0 && _.findIndex(topics,(el)=> el == index) != -1 ) {
