@@ -96,7 +96,7 @@ export default defineNuxtConfig({
         public: {
         }
     },
-    modules: ['./node_modules/@vue-macros/nuxt','@nuxtjs/tailwindcss','@nuxtjs/color-mode','@primevue/nuxt-module', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
+    modules: ['@nuxtjs/tailwindcss','@nuxtjs/color-mode','@primevue/nuxt-module', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
     colorMode: {
       classSuffix:'',
     },
@@ -124,13 +124,6 @@ export default defineNuxtConfig({
             tailwindcss: {},
             autoprefixer: {},
         }
-    },
-    tailwindcss: {
-        configPath: 'tailwind.config',
-        exposeConfig: false,
-        config: {
-        },
-        injectPosition: 0,
     },
     eslint: {
         stylistic: true,

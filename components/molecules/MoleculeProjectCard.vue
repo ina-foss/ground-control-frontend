@@ -16,7 +16,7 @@ style="height:18px;width:18px; color:#212529;" class="mt-3"
                   icon="pi pi-ellipsis-h custom-icon-color" severity="secondary" text rounded
                   @click.stop.prevent="visible=true"/>
           <Button
-v-if="!isAdmin" style="height: 22px; padding:0 0 0 0;margin:0;"
+v-if="isAdmin" style="height: 22px; padding:0 0 0 0;margin:0;"
                   severity="secondary" text rounded
                   @click.stop.prevent="deleteDialog=true">
             <img

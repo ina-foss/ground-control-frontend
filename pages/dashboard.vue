@@ -63,7 +63,7 @@ const store = bcStore()
 const {getItems} = storeToRefs(store)
 const first = ref(0)
 const rows = ref(15)
-const totalRecords = $ref(getProjectNumber);
+const totalRecords = ref(getProjectNumber);
 
 const dashboardRef = ref()
 const data = ref(getData)
@@ -78,7 +78,7 @@ const translations = {
   pending: 'En attente',
   ended: 'Terminé'
 }
-const translatedProjectStatus = $computed(() => {
+const translatedProjectStatus = computed(() => {
   return Object.values(ProjectStatus).map(status => ({
     label: translations[status],
     value: status,

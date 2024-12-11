@@ -1,5 +1,6 @@
 import { expect, describe, test, vi } from 'vitest';
 import global from '~/presets/lara/global';
+import path from 'path';
 
 // Mock global window properties
 global.window = {
@@ -16,32 +17,32 @@ global.window = {
 describe('Dashboard.vue Tests', () => {
 
   test('Header component imports as expected', async () => {
-    const cmp = await import('~/components/molecules/MoleculeHeader.vue');
+    const cmp = await import('../components/molecules/MoleculeHeader.vue');
     expect(cmp).toBeDefined();
   });
 
   test('DataDialog component imports as expected', async () => {
-    const cmp = await import('~/components/DataDialog.vue');
+    const cmp = await import('../components/DataDialog.vue');
     expect(cmp).toBeDefined();
   });
 
   test('SegmentationMolecules component imports as expected', async () => {
-    const cmp = await import('~/components/molecules/MoleculeSegmentation.vue');
+    const cmp = await import('../components/molecules/MoleculeSegmentation.vue');
     expect(cmp).toBeDefined();
   });
 
   test('ProjectCard component imports as expected', async () => {
-    const cmp = await import('~/components/molecules/MoleculeProjectCard.vue');
+    const cmp = await import('../components/molecules/MoleculeProjectCard.vue');
     expect(cmp).toBeDefined();
   });
 
   test('LoadingSpinner component imports as expected', async () => {
-    const cmp = await import('~/components/LoadingSpinner.vue');
+    const cmp = await import('../components/LoadingSpinner.vue');
     expect(cmp).toBeDefined();
   });
 
   test('Default layout imports as expected', async () => {
-    const cmp = await import('~/layouts/default.vue');
+    const cmp = await import('../layouts/default.vue');
     expect(cmp).toBeDefined();
   });
 });

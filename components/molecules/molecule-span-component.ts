@@ -1,7 +1,7 @@
 import { defineComponent, inject,createApp, createVNode, render } from "vue"
 import { useOptions } from "~/stores/annotation-options";
 import BadgeDirective from 'primevue/badgedirective';
-import _ from 'lodash';
+import _  from 'lodash';
 import { Tag } from 'primevue';
 import AtomSpan from "../atoms/AtomSpan.vue";
 import AtomSpanDetail from "~/components/atoms/AtomSpanDetail.vue";
@@ -16,6 +16,7 @@ export default defineComponent({
   emits: ['on-segment-click'],
   setup(props, { emit, expose }) {
 
+    type AtomSpanType = InstanceType<typeof AtomSpan>
 
     const { $application } = useService()
     const { timestampToUnix, unixToTimestamp } = $application
@@ -38,19 +39,19 @@ export default defineComponent({
 
     const app = createApp()
     app.directive('badge', BadgeDirective)
-    let spanClicked = $ref(false)
-    const spanRefArray = ref<HTMLDivElement[]>([])
+    const spanClicked = ref(false)
+    const spanRefArray = ref<AtomSpanType[]>([])
     const elementArray = ref([])
     const newLabel = ref<string>('')
-    let linkMode = $ref(false)
-    const linkCss = $computed<string>(() => linkMode ? ' hover:border-2 ' : '')
+    const linkMode = ref(false)
+    const linkCss = computed<string>(() => linkMode.value ? ' hover:border-2 ' : '')
     const spanCount = ref<number>(spanRefArray.value.length)
-    let spanIndex = $ref<number>()
+    const spanIndex = ref<number>()
     const relationArray = ref<any[]>([])
-    let lastFocus = $ref<number | undefined>(undefined)
-    let currentFocus = $ref<number | undefined>(undefined)
+    const lastFocus = ref<number | undefined>(undefined)
+    const currentFocus = ref<number | undefined>(undefined)
     const labelSelected = ref([])
-    const labels = $ref<string[]>(['Person', 'Citation', 'Verbe'])
+    const labels = ref<string[]>(['Person', 'Citation', 'Verbe'])
     const filteredLocal = computed(() => {
       return _.filter(locals.value, (local) => local.sublocalisations)
     })
@@ -63,6 +64,12 @@ export default defineComponent({
     const state: State = reactive({
       selection: null,
       range: null
+    })
+
+watch(()=>labelSelected.value,(labels)=>{
+      if(currentFocus.value != undefined){
+          spanRefArray.value[currentFocus.value].label = labels
+      }
     })
 
 watch(() => options.value.timecode,async (timecode : boolean ) => {
@@ -102,16 +109,16 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
   })
 
 
-watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
-  lastFocus = oldFocus
-  if( typeof lastFocus == 'number' && spanRefArray.value[oldFocus]) spanRefArray.value[oldFocus].focus = false
-  if( typeof currentFocus == 'number') spanRefArray.value[newFocus].focus = true
+watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
+  lastFocus.value = oldFocus
+  if( typeof lastFocus.value == 'number' && spanRefArray.value[oldFocus]) spanRefArray.value[oldFocus].focus = false
+  if( typeof currentFocus.value == 'number') spanRefArray.value[newFocus].focus = true
 
 },{immediate:true})
 
 
   const addLabel = () => {
-    labels.push(newLabel.value)
+    labels.value.push(newLabel.value)
     newLabel.value = ''
   }
 
@@ -129,14 +136,14 @@ watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
       spanRefArray.value.forEach((span, index) => {
         span.index = index
       })
-      currentFocus = undefined
+      currentFocus.value = undefined
       spanCount.value--
     }
 
 
     const handleUnselect = () => {
-      spanRefArray.value[currentFocus].focus = false
-      currentFocus = undefined
+      spanRefArray.value[currentFocus.value].focus = false
+      currentFocus.value = undefined
       labelSelected.value = []
     }
 
@@ -203,7 +210,7 @@ watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
         const docFragment = state.range.extractContents() // extract all the HTMLElements in the range
         state.selection.empty()
         state.selection = null
-        if (!spanClicked) {
+        if (!spanClicked.value) {
           const app = createApp({
             render() {
               return h(AtomSpan, {
@@ -211,15 +218,15 @@ watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
                 tcIn: spanTcin,
                 tcOut: spanTcout,
                 id: id,
-                linkCss: linkCss,
+                linkCss: linkCss.value,
                 options: options,
                 ref: el => spanRefArray.value[id] = el,
                 onSpanReady: ({ element, index }) => {
                   elementArray.value[index] = element
                 },
                 onEditSpan: ({ index }) => {
-                  spanClicked = true
-                  spanIndex = index
+                  spanClicked.value = true
+                  spanIndex.value = index
                 },
                 onFocusSpan: (event) => handleFocusSpan(event)
               })
@@ -266,10 +273,10 @@ watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
 
         }
         else {
-          direction == 'forward' ? spanRefArray.value[spanIndex].addRight(docFragment) : spanRefArray.value[spanIndex].addLeft(docFragment)
-          spanClicked = false
+          direction == 'forward' ? spanRefArray.value[spanIndex.value].addRight(docFragment) : spanRefArray.value[spanIndex.value].addLeft(docFragment)
+          spanClicked.value = false
         }
-        spanIndex = undefined
+        spanIndex.value = undefined
         formatSpan(spanRefArray.value[spanRefArray.value.length - 1])
       }
     }
@@ -315,14 +322,14 @@ watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
     }
 
     const handleFocusSpan = ({ index }) => {
-      if (linkMode) {
-        relationArray.value.push({ from: currentFocus, to: index })
-        linkMode = false
+      if (linkMode.value) {
+        relationArray.value.push({ from: currentFocus.value, to: index })
+        linkMode.value = false
       }
       else {
-        spanClicked = false
-        currentFocus = index
-        labelSelected.value = spanRefArray.value[currentFocus].label
+        spanClicked.value = false
+        currentFocus.value = index
+        labelSelected.value = spanRefArray.value[currentFocus.value].label
       }
     }
 
@@ -361,7 +368,7 @@ watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
       labelSelected,
       relationArray,
       aggregatedLocals,
-      labels,
+      labels: labels,
       newLabel,
       addLabel,
       spanRefArray,
@@ -377,7 +384,7 @@ watch(()=>currentFocus,(newFocus:any, oldFocus:any)=>{
       onDeleteSpan,
       handleUnselect,
       options,
-      currentFocus : $$(currentFocus),
+      currentFocus : currentFocus,
       locals,
       _
     }

@@ -32,8 +32,8 @@ export const useOptions = defineStore("annotation-options",() => {
       span: true,
       timecode: false,
       bloc: true,
-      player: false,
-      transcription: false
+      player: true,
+      transcription: true
     })
 
 

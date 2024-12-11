@@ -1,12 +1,25 @@
 <template>
-  <div :style="dynamicStyle(newColors[topicIndex])" ref="segment" class="bg-gray-300 mt-5 p-3 pl-3 rounded-lg" :data-tc=phrase.tcin  >
+  <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :class="`bg-gray-300  transition-colors group relative mt-5 p-3 pl-3  flex flex-col ${topicIndex ==0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex== undefined ? 'rounded-t-lg': '' } ${isTopicsLastSegment ? 'rounded-b-lg': ''} `" >
+      <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-8 w-fit mb-3  p-3   `"  >
+      </div>
+    <div ref="titleContainer" class=" absolute flex self-center top-0 pt-3 z-40">
+      <div v-if="editTitle"  >
+        <InputText v-model="editedTitle" @focusout="editTitle = false"  />
+      </div>
+      <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8    "  >
+        <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic',{index: index})"/>
+        <div :class="`h-8 p-3 ${computeColor(topicIndex).full} w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
+          <b>{{ title }}</b>
+        </div>
+        <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
+      </div>
+      <div v-else-if="topicIndex == 0 && isTopicFirstSegment" class="h-8">
+        <div :class="`h-8 p-3  w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
+          <b>Ignoré</b>
+        </div>
+      </div>
+    </div>
     <div class="flex items-center gap-2">
-      <Button :icon="iconBool" :label="topicText"
-        :pt="{
-        root: {
-          style: `max-width:40px; min-width: 40px; height: 40px; background-color:${newColors[topicIndex]}; border:none;  `
-        }
-      }" @click="handleSegmentation()" />
       <div
         v-tooltip.top="{ value : timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout),
         pt: {
@@ -15,65 +28,122 @@
           }
         }
         }"
-        class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer hover:scale-[1.01] transition-all hover:shadow-lg "
-        @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: props.index })">
-        {{ $props.phrase.data.text[0] }}
+        class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer  transition-all hover:shadow-lg "
+        @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
+        {{ $props.phrase.data?.text[0] }}
       </div>
     </div>
+    <div  :class="` w-full bg-clip-padd bg-grey-300 h-1   z-50 ${isTopicsLastSegment ? 'translate-y-[21px]' : 'translate-y-[12px]'} cursor-pointer group-hover:bg-title hover:scale-y-[200%]  transition`" @click="handleSegmentation">
+      </div>
   </div>
 </template>
 
 <script setup>
 import { useService } from '#imports';
+import { defineExpose } from 'vue';
+import AtomTopicList from './AtomTopicList.vue';
 
-const props = defineProps(['phrase', 'colors', 'topics', 'index'])
-const emit = defineEmits(['segmentation', 'onSegmentClick'])
+const { phrase, colors, topics, index,topicList , segmentationRefs } = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
+const emit = defineEmits(['segmentation', 'onSegmentClick','deactivateTopic'])
 const { $application } = useService()
 const { timestampToUnix, computeColor, textColorPicker,unixToTimestamp } = $application
 const segment = ref(null)
-const newColors =props.colors;
-const newTopics =props.topics;
 const toast = useToast()
-const topicIndex = computed(()=> props.topics[props.index] ? props.topics[props.index] : 0)
+const topicIndex = computed(()=> topics[index] )
 const iconBool = ref('pi pi-tag')
 const topicText = ref(null)
+const titleContainer = ref(null)
 iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
 topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
+const editedTitle = ref(null)
+const title = computed(()=>{
+  if(isTopicFirstSegment.value){
+    return editedTitle.value ? editedTitle.value : 'Topic '+ topicIndex.value
+  }
+  else return null
+})
 
-function generatePastelColor(tagNumber) {
-  // Use tag number to create a seed (this is a basic example, there are better ways to do this)
-  const seed = tagNumber * 123456789;
-  const random = s => ((seed * s) % 155) + 100;  // Between 100 and 255
+const editTitle = ref(false)
 
-  const r = random(3);
-  const g = random(5);
-  const b = random(7);
 
-  return `rgb(${r}, ${g}, ${b}, 1)`;
+
+const isTopicFirstSegment = computed(()=> {
+  if( topics[index]!= undefined){
+    return topics[index] != topics[index-1]
+  }
+  else return false
+})
+
+const computeTopicHeight = async () => {
+    if(isTopicFirstSegment.value){
+      await nextTick()
+      let id = index
+      let topicHeight = 0
+      do {
+        topicHeight += segmentationRefs[id].clientHeight
+        id++
+      } while (topics[id] == topics[id-1]);
+      titleContainer.value.style.height = topicHeight + 'px'
+  }
 }
+
+
+onMounted( ()=>{
+  watchEffect(()=>{
+  })
+  watch(()=>editTitle.value,(newValue, oldValue)=>{
+    if(isTopicFirstSegment.value && newValue == false ){
+      topicList[topicIndex.value].title = editedTitle.value
+    }
+  })
+  watch(()=>isTopicFirstSegment.value,(newValue)=>{
+    if(newValue == true){
+      editedTitle.value =  topicList[topicIndex.value].title
+    }
+  })
+  watch(()=>isTopicFirstSegment.value,()=>{
+      computeTopicHeight()
+  })
+  watch(()=>topicList[topicIndex.value]?.title,(newTitle)=>{
+    if(isTopicFirstSegment.value ){
+      editedTitle.value = newTitle
+    }
+  },{immediate: true})
+
+
+  window.addEventListener('resize', computeTopicHeight,{})
+
+})
+
+
+const isTopicsLastSegment = computed(()=>{
+    if( topics[index+1] == undefined ) return true
+    return topics[index] != topics[index+1]
+})
+
 function dynamicStyle(color) {
 
   const hexMatch = color?.match(/^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$/);
 
   // const hexMatch = color?.match(/^#([0-9A-F]{3}|[0-9A-F]{6})$/);
-  if (props.topics[props.index] == props.topics[props.index - 1] && props.topics.length !== 0 && props.topics[props.index]) {
+  if (topics[index] == topics[index - 1] && topics.length !== 0 && topics[index] != undefined) {
     if (hexMatch) {
       const [r, g, b] = extractRGB(color);
-      if(props.index < 2 ) {
+      if(index < 2 ) {
       }
-      return `background-color: rgba(${r},${g},${b}, 0.5); margin-top: 0px; `;
+      return `background-color: rgba(${r},${g},${b}, 0.25); margin-top: 0px;  `;
     }
     else{
-      return `background-color: ${reduceOpacityOfColor(color, 0.5)}; margin-top: 0px; `;
+      return `background-color: ${reduceOpacityOfColor(color, 0.25)}; margin-top: 0px;   `;
     }
   } else {
     if (hexMatch) {
       const [r, g, b] = extractRGB(color);
-      return `background-color: rgba(${r},${g},${b}, 0.5); `;
+      return `background-color: rgba(${r},${g},${b}, 0.25);`;
     }
     return {
       margintop: '1.25rem',
-      backgroundColor: reduceOpacityOfColor(color, 0.5),
+      backgroundColor: reduceOpacityOfColor(color, 0.25),
     };
   }
 }
@@ -111,39 +181,11 @@ function hexToRgba(hex, opacity) {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 const handleSegmentation = () => {
-
-  if (props.index === 0) { // Cas particulier de la premiere phrase
-    if (topicIndex.value === 0) {
-      const randomColor = computeColor(props.index).hex
-      newColors[1] = (randomColor)
-      newTopics[props.index] = 1
-    } else {
-      newTopics[props.index] = 0;
-    }
-  } else if (topicIndex.value < props.topics[props.index - 1]) { //On rattrape le topic precedent
-    if (newTopics[props.index - 1] !== undefined) {
-      newTopics[props.index] = props.topics[props.index - 1]
-
-    } else {
-      toast.add({ severity: "info", detail: "Can't modify this sentence" })
-    }
-
-  } else if (topicIndex.value === newColors.length - 1 && (props.topics[props.index - 1] === topicIndex.value)) { // On cree un nouveau topic
-    //new topic
-    const randomColor = computeColor(newColors.length-1).hex
-    newColors.push(randomColor)
-    newTopics[props.index]++
-
-  } else if (topicIndex.value < newColors.length - 1  &&  topicIndex.value !=  props.topics[props.index+ 1] ) { // On itere parmi les topics existants
-    newTopics[props.index]++
-  } else if (topicIndex.value !== 0) { // Reset du topic a 0
-    newTopics[props.index] = 0;
-  }
-
-  emit('segmentation', props.index)
+  emit('segmentation',{index: index})
   iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
   topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 }
 
+    defineExpose({title: title, id: topicIndex,  })
 
 </script>

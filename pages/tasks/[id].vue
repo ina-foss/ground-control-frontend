@@ -64,11 +64,11 @@ AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,userEm
 AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
 
 
-const allFetched = $computed(() => {
+const allFetched = computed(() => {
   return annotation_bool.in && annotation_bool.out
 })
 
-const annotationInfo = $computed(() => {
+const annotationInfo = computed(() => {
   let info = null
   if (annotations_out.value) {
     annotations_out.value.forEach((annotation, index) => {

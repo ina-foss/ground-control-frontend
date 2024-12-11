@@ -40,20 +40,20 @@ const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
 const spanText = ref()
 const newText = ref('')
-const newId = $ref(id)
-const newLabel = $ref(label)
-let newTcin = $ref(tcIn)
-let newTcout = $ref(tcOut)
+const newId = ref(id)
+const newLabel = ref(label)
+const newTcin = ref(tcIn)
+const newTcout = ref(tcOut)
 const focus = ref(false)
 const { $application } = useService()
 const { textColorPicker, computeColor } = $application
 
 
 const handleClick = () => {
-  emit('focusSpan', {index: newId })
+  emit('focusSpan', {index: newId.value })
 }
 const handleDrag = () =>{
-  emit('editSpan', {index: newId })
+  emit('editSpan', {index: newId.value })
 }
 
 const updateText = () => {
@@ -69,12 +69,12 @@ onMounted(async()=>{
     updateText()
 watchEffect(async ()=>{
     if(span.value){
-      emit('spanReady', {element: span.value, index: newId})
+      emit('spanReady', {element: span.value, index: newId.value})
     }
   })
   watchEffect(()=>{
     if( options.value.span == true ) {
-        span.value.style.color = textColorPicker(computeColor(newId).hex)
+        span.value.style.color = textColorPicker(computeColor(newId.value).hex)
     }
     else{
       span.value.style.color = 'black'
@@ -83,17 +83,17 @@ watchEffect(async ()=>{
 })
 
 const addLeftText = (node) => {
-  newTcin = node.firstElementChild?.getAttribute('tcin')
+  newTcin.value = node.firstElementChild?.getAttribute('tcin')
   span.value.firstElementChild.insertBefore(node,span.value.firstElementChild.firstChild)
     updateText()
 }
 const addRightText = (node) => {
-  newTcout = node.lastElementChild?.getAttribute('tcout')
+  newTcout.value = node.lastElementChild?.getAttribute('tcout')
   span.value.firstElementChild.appendChild(node)
     updateText()
 }
 
-defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: $$(newText) ,tcin: $$(newTcin), tcout: $$(newTcout), label:$$(newLabel),id:$$(newId)})
+defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: newText ,tcin: newTcin, tcout: newTcout, label: newLabel,id: newId})
 
 </script>
 

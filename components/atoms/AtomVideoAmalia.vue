@@ -12,7 +12,7 @@ const {$amalia, $application }= useService()
 const myplayer = ref()
 let lastIndex = 0
 
-let dynamicSrc = $ref()
+let dynamicSrc = ref()
 const { locals, videoSrc } = defineProps(['locals', 'video-src'])
 const emits = defineEmits(['timecode-update']);
 async function fetchVideoStream(url) {
@@ -24,13 +24,13 @@ async function fetchVideoStream(url) {
 const hlsPlayer = async () => {
   const content = await fetchVideoStream(videoSrc)
   const src = `data:application/vnd.apple.mpegurl;base64,${content}`
-  dynamicSrc = src
+  dynamicSrc.value = src
 
 }
 
 watchEffect(() => {
-  if (dynamicSrc) {
-    myplayer.value.appendChild($amalia.createPlayer('PLAYER', dynamicSrc)) // add amalia player once src is ready
+  if (dynamicSrc.value) {
+    myplayer.value.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value)) // add amalia player once src is ready
   }
 })
 

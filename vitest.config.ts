@@ -3,6 +3,7 @@ import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
     test:{
+        watch: false,
         environment:'nuxt',
         environmentMatchGlobs:[
             ['tests', 'jsdom']
@@ -16,6 +17,7 @@ export default defineVitestConfig({
       },
         reporters: [
             'default',
+            'verbose',
             'junit',
             'html'
         ],
@@ -27,6 +29,7 @@ export default defineVitestConfig({
             '**/node_modules/**',
             '**/dist/**',
             '/api/**',
+            '**/shared/**',
             '**/tests/app.test.ts',
             '**/tests/pages/**', // exclude specific directories
             '**/*.config.ts',   // exclude files with specific patterns
