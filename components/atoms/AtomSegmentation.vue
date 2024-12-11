@@ -181,39 +181,6 @@ function hexToRgba(hex, opacity) {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 const handleSegmentation = () => {
-
-
-
-  // if (props.index === 0) { // Cas particulier de la premiere phrase
-  //   if (topicIndex.value === 0) {
-  //     const randomColor = computeColor(props.index).hex
-  //     newColors[1] = (randomColor)
-  //     newTopics[props.index] = 1
-  //   } else {
-  //     newTopics[props.index] = 0;
-  //   }
-  // } else if (topicIndex.value < props.topics[props.index - 1]) { //On rattrape le topic precedent
-  //   if (newTopics[props.index - 1] !== undefined) {
-  //     newTopics[props.index] = props.topics[props.index - 1]
-  //
-  //   } else {
-  //     toast.add({ severity: "info", detail: "Can't modify this sentence" })
-  //   }
-  //
-  // } else if (topicIndex.value === newColors.length - 1 && (props.topics[props.index - 1] === topicIndex.value)) { // On cree un nouveau topic
-  //   //new topic
-  //   const randomColor = computeColor(newColors.length-1).hex
-  //   newColors.push(randomColor)
-  //   newTopics[props.index]++
-  //
-  // } else if (topicIndex.value < newColors.length - 1  &&  topicIndex.value !=  props.topics[props.index+ 1] ) { // On itere parmi les topics existants
-  //   newTopics[props.index]++
-  // } else if (topicIndex.value !== 0) { // Reset du topic a 0
-  //   newTopics[props.index] = 0;
-  // }
-  //
-  //
-
   emit('segmentation',{index: index})
   iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
   topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
