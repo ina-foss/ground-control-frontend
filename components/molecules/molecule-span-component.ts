@@ -1,7 +1,7 @@
 import { defineComponent, inject,createApp, createVNode, render } from "vue"
 import { useOptions } from "~/stores/annotation-options";
 import BadgeDirective from 'primevue/badgedirective';
-import _ from 'lodash';
+import _  from 'lodash';
 import { Tag } from 'primevue';
 import AtomSpan from "../atoms/AtomSpan.vue";
 import AtomSpanDetail from "~/components/atoms/AtomSpanDetail.vue";
@@ -16,6 +16,7 @@ export default defineComponent({
   emits: ['on-segment-click'],
   setup(props, { emit, expose }) {
 
+    type AtomSpanType = InstanceType<typeof AtomSpan>
 
     const { $application } = useService()
     const { timestampToUnix, unixToTimestamp } = $application
@@ -39,7 +40,7 @@ export default defineComponent({
     const app = createApp()
     app.directive('badge', BadgeDirective)
     const spanClicked = ref(false)
-    const spanRefArray = ref<HTMLDivElement[]>([])
+    const spanRefArray = ref<AtomSpanType[]>([])
     const elementArray = ref([])
     const newLabel = ref<string>('')
     const linkMode = ref(false)
@@ -63,6 +64,12 @@ export default defineComponent({
     const state: State = reactive({
       selection: null,
       range: null
+    })
+
+watch(()=>labelSelected.value,(labels)=>{
+      if(currentFocus.value != undefined){
+          spanRefArray.value[currentFocus.value].label = labels
+      }
     })
 
 watch(() => options.value.timecode,async (timecode : boolean ) => {
