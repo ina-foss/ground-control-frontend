@@ -21,28 +21,28 @@ describe('Dashboard.vue Tests', () => {
     expect(cmp).toBeDefined();
   });
 
-  // test('DataDialog component imports as expected', async () => {
-  //   const cmp = await import('~/components/DataDialog.vue');
-  //   expect(cmp).toBeDefined();
-  // });
-  //
-  // test('SegmentationMolecules component imports as expected', async () => {
-  //   const cmp = await import('~/components/molecules/MoleculeSegmentation.vue');
-  //   expect(cmp).toBeDefined();
-  // });
-  //
-  // test('ProjectCard component imports as expected', async () => {
-  //   const cmp = await import('~/components/molecules/MoleculeProjectCard.vue');
-  //   expect(cmp).toBeDefined();
-  // });
-  //
-  // test('LoadingSpinner component imports as expected', async () => {
-  //   const cmp = await import('~/components/LoadingSpinner.vue');
-  //   expect(cmp).toBeDefined();
-  // });
-  //
-  // test('Default layout imports as expected', async () => {
-  //   const cmp = await import('~/layouts/default.vue');
-  //   expect(cmp).toBeDefined();
-  // });
+  test('DataDialog component imports as expected', async () => {
+    const cmp = await import(path.resolve(__dirname,'/app/components/DataDialog.vue'));
+    expect(cmp).toBeDefined();
+  });
+
+  test('SegmentationMolecules component imports as expected', async () => {
+    const cmp = await import(path.resolve(__dirname,'/app/components/molecules/MoleculeSegmentation.vue'));
+    expect(cmp).toBeDefined();
+  });
+
+  test('ProjectCard component imports as expected', async () => {
+    const cmp = await import(path.resolve(__dirname,'/app/components/molecules/MoleculeProjectCard.vue'));
+    expect(cmp).toBeDefined();
+  });
+
+  test('LoadingSpinner component imports as expected', async () => {
+    const cmp = await import(path.resolve(__dirname,'/app/components/LoadingSpinner.vue'));
+    expect(cmp).toBeDefined();
+  });
+
+  test('Default layout imports as expected', async () => {
+    const cmp = await import(path.resolve(__dirname,'/app/layouts/default.vue'));
+    expect(cmp).toBeDefined();
+  });
 });
