@@ -144,7 +144,7 @@ const updateProject = async () => {
       const response = await ProjectService.updateProjectProjectProjectIdPut(project?.id, {
         title: title.value,
         description: description.value,
-        status: status.value,
+        status: status.value.value,
         is_published: isPublished.value,
         empty_annotations: emptyAnnotations.value,
         allow_skip: allowSkip.value,
@@ -182,7 +182,7 @@ const createProject = async () => {
     const response = ProjectService.createProjectProjectPost({
       title: title.value,
       description: description.value,
-      status: status.value,
+      status: status.value.value,
       is_published: isPublished.value,
       empty_annotations: emptyAnnotations.value,
       allow_skip: allowSkip.value,
@@ -198,7 +198,7 @@ const createProject = async () => {
         summary: 'Something went wrong'
       })))
       .then((res) => {
-        selectedType.forEach((type, index) => {
+        selectedType.value.forEach((type, index) => {
           StepService.createStepStepPost({
             title: `Step #${index + 1}`,
             description: 'Step description',

@@ -228,12 +228,12 @@ const annotationComponent = computed(() => {
 })
 
   const handleSubmit = () => {
-    const localSubmit = locals
+    const localSubmit = locals.value
     if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
     emits('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
   }
   const handleFinish = () => {
-    const localSubmit = locals
+    const localSubmit = locals.value
     if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
     emits('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
   }

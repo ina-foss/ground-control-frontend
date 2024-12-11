@@ -82,19 +82,19 @@ const annotationInfo = computed(() => {
 
 const submitExistantAnnotation =(locals,action)=>{
 
-    const result = annotations_out.value[annotationInfo.index].result
+    const result = annotations_out.value[annotationInfo.value.index].result
     result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur a déjà une annotation associée à cette tâche
     let promise;
     if (action === 'submit') {
       promise = AnnotationService.updateAnnotationResultAnnotationIdPatch(
-        annotationInfo.id,
-        annotations_out.value[annotationInfo.index].result
+        annotationInfo.value.id,
+        annotations_out.value[annotationInfo.value.index].result
       )
     } else {
       promise = AnnotationService.finishAnnotationAnnotationFinishIdPatch(
-        annotationInfo.id,
-        annotations_out.value[annotationInfo.index].result
+        annotationInfo.value.id,
+        annotations_out.value[annotationInfo.value.index].result
       )
     }
     promise.then(() => {

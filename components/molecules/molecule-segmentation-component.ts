@@ -114,13 +114,13 @@ export default defineComponent({
       segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth" })
     }
 
-    const segmentationFunction = (localSubmit) => {
+    const segmentationFunction = (localSubmit: any[]) => {
       localSubmit.forEach((phrase, index) => {
         if (![undefined].includes(topics[index])) {
           phrase.data.topic = topics[index]
         }
       })
-      _.remove(localSubmit, (el) => !el.sublocalisations)
+      _.remove(localSubmit, (el) => !el?.sublocalisations)
       topicList.value.forEach((topic) => {
         localSubmit.push(topic)
       })
