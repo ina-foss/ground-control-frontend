@@ -159,7 +159,7 @@ const submitNewAnnotation =(locals,action)=>{
 const handleSubmit = (event, action) => {
   const locals = JSON.parse(JSON.stringify(event.locals))
 
-  if (annotationInfo != null) {
+  if (annotationInfo.value != null) {
     submitExistantAnnotation(locals,action);
 
   } else {
