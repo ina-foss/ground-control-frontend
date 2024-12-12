@@ -87,7 +87,7 @@ import {ProjectService} from "../api/generate";
 const visible = ref(false)
 const deleteDialog = ref(false)
 const store = bcStore()
-const { project } = defineProps({ project: { type: Array, default: ()=>[] } })
+const { project } = defineProps({ project: { type: Object, default: ()=>[] } })
 
 const { $application } = useService();
 

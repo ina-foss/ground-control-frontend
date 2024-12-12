@@ -62,8 +62,6 @@ const groupedTopics = computed(() => {
 
 });
 
-console.log(groupedTopics.value)
-
 </script>
 
 <style></style>
