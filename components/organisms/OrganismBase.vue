@@ -162,39 +162,14 @@ const algos = computed(() => { // List the name of the algorithm
     if ( options.value.transcription === true ){
         moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
       scrollToSegment({lastIndex: 0, bestIndex: event.index})
-      // seekOnBlockClicked(unixToTimestamp(event.tcin))
       }
   }
 
-  let lastIndex = 0
   let bestIndex = 0
-  const seekOnBlockClicked =  (x) => {
-    const currentTime = x
-    let startIndex = 0
-    const localsIn =  locals;
-    if( data.step?.annotation_type === 'transcription'){
-      localsIn.value=annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
-    }
-       let endIndex = localsIn.value.length-1
-      while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
-        const mid = Math.floor(((endIndex + startIndex) / 2))
-        $application.unixToTimestamp(localsIn.value[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
-      }
-       bestIndex = currentTime < $application.unixToTimestamp(localsIn.value[endIndex]?.tcin) ? startIndex : endIndex
-    scrollToSegment({lastIndex, bestIndex})
-      lastIndex = bestIndex
-    }
-
   const scrollToSegment = (event) => {
     if ( options.value.player === true) {
-      lastIndex=event.lastIndex
       bestIndex=event.bestIndex
-      // if( data.step?.annotation_type === 'span'){
-      //   moleculeAnnotationRef.value.listRefs[lastIndex].classList.remove('selected-segment')
-      // }
-      // else{
-       getSelectedSegment()?.classList?.remove('selected-segment')
-      // }
+      getSelectedSegment()?.classList?.remove('selected-segment')
       moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
       moleculeAnnotationRef.value?.listRefs[bestIndex].classList.add('selected-segment')
     }
@@ -295,7 +270,7 @@ const annotationComponent = computed(() => {
       if (bestIndex < 0) {
         bestIndex = 0
       }
-      scrollToSegment({lastIndex, bestIndex})
+      scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();
       const dataTcValue = elementWithTestClass?.querySelector('[tcin]')?.getAttribute('tcin') // return the first tcin value inside the selectedElement
       updateVideoTimecode({tcin: dataTcValue, tcout: '0', index: bestIndex})

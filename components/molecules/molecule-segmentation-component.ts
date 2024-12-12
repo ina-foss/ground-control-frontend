@@ -100,7 +100,6 @@ export default defineComponent({
         }
       })
       locals.filter((phrase) => !phrase?.sublocalisations).forEach((phrase ) => {
-        console.log(phrase)
         topicList.value[phrase?.id] = phrase
       })
     }
