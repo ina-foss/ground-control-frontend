@@ -170,7 +170,7 @@ const translatedTaskStatus = computed(() => {
 let name = ref()
 let instruction = ref()
 let dataType = ref(TaskDataType.LDD)
-let status = ref(translatedTaskStatus[0])
+let status = ref(translatedTaskStatus.value[0])
 const fileData = ref([])
 const deleteDialog = ref(false)
 
@@ -220,13 +220,13 @@ const createTask = async () => {
     TaskService.createTaskTaskPost({
       name: name.value,
       instruction: instruction.value,
-      data_type: dataType,
-      status: status.value,
+      data_type: dataType.value,
+      status: status.value.value,
       lead_time: null,
       step_id: stepObject.id,
       media_id: res.id
     }).catch((err) => console.error(err)).then((res) => {
-      fileData.forEach(file => {
+      fileData.value.forEach(file => {
         AnnotationService.createAnnotationAnnotationPost({
           annotation: {
             user_email: userEmail.value,
@@ -247,7 +247,7 @@ const createTask = async () => {
         name= '',
         instruction= '',
         dataType = TaskDataType.LDD,
-        status = translatedTaskStatus[0])
+        status = translatedTaskStatus.value[0])
   })
 
 
