@@ -105,8 +105,7 @@ export default defineComponent({
     }
 
     const handleSegmentClick = (event: {tcin: string|number, tcout: string|number, index:number}) => {
-      segmentationRefs.value[event.index].scrollIntoView({ behavior: "smooth" });
-      emit('on-segment-click', { tcin: event.tcin, tcout: event.tcout })
+      emit('on-segment-click', { tcin: event.tcin, tcout: event.tcout, index:event.index })
     }
 
     const jumpToTopic = (event: {topic: number }) => {

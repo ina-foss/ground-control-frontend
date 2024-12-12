@@ -362,7 +362,7 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
     }
 
 
-      expose({annotationFunction: saveSpan, listRefs: listSegment })
+      expose({annotationFunction: saveSpan, listRefs: Array.from(listSegment) })
 
     return{
       labelSelected,

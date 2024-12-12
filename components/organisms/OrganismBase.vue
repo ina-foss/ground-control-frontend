@@ -54,7 +54,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   </div>
 </template>
 
-<script setup >
+<script setup lang="ts">
   import { provide} from 'vue'
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
@@ -159,7 +159,8 @@ const algos = computed(() => { // List the name of the algorithm
   const updateVideoTimecode = (event) => {
     if ( options.value.transcription === true ){
         moleculeAnnotationLeftPanelRef.value.updateVideoTimecode(event)
-      seekOnBlockClicked(unixToTimestamp(event.tcin))
+      scrollToSegment({lastIndex: 0, bestIndex: event.index})
+      // seekOnBlockClicked(unixToTimestamp(event.tcin))
       }
   }
 
@@ -183,18 +184,18 @@ const algos = computed(() => { // List the name of the algorithm
     }
 
   const scrollToSegment = (event) => {
+    console.log(event)
     if ( options.value.player === true) {
       lastIndex=event.lastIndex
       bestIndex=event.bestIndex
-      if( data.step?.annotation_type === 'span'){
-        moleculeAnnotationRef.value.listRefs[lastIndex].classList.remove('selected-segment')
-      }
-      else{
+      // if( data.step?.annotation_type === 'span'){
+      //   moleculeAnnotationRef.value.listRefs[lastIndex].classList.remove('selected-segment')
+      // }
+      // else{
         moleculeAnnotationRef.value?.listRefs.find(ref =>
         ref.classList && ref.classList.contains('selected-segment')
         )?.classList.remove('selected-segment')
-      }
-      console.log('test')
+      // }
       moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
       moleculeAnnotationRef.value?.listRefs[bestIndex].classList.add('selected-segment')
     }
@@ -228,12 +229,12 @@ const annotationComponent = computed(() => {
 })
 
   const handleSubmit = () => {
-    const localSubmit = locals.value
+    const localSubmit = locals
     if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
     emits('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
   }
   const handleFinish = () => {
-    const localSubmit = locals.value
+    const localSubmit = locals
     if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
     emits('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
   }
@@ -274,13 +275,14 @@ const annotationComponent = computed(() => {
     }
   }
 
-  const getSelectedSegment = () =>
-    moleculeAnnotationRef.value?.listRefs.find(ref =>
+  const getSelectedSegment = () : HTMLDivElement =>{
+    return moleculeAnnotationRef.value?.listRefs.find(ref =>
       ref.classList?.contains('selected-segment')
     );
+  }
 
   const navigateWithkeyboard = (param) => {
-    let elementWithTestClass = getSelectedSegment();
+    let elementWithTestClass  = getSelectedSegment();
     if (bestIndex >= 0) {
       bestIndex = (elementWithTestClass && bestIndex < moleculeAnnotationRef.value?.listRefs.length - 1) ?
         bestIndex + param : bestIndex;
@@ -295,8 +297,8 @@ const annotationComponent = computed(() => {
       }
       scrollToSegment({lastIndex, bestIndex})
       elementWithTestClass = getSelectedSegment();
-      const dataTcValue = elementWithTestClass.children[0].getAttribute('data-tc');
-      updateVideoTimecode({tcin: dataTcValue, tcout: '0'})
+      const dataTcValue = elementWithTestClass.firstElementChild?.getAttribute('tcin')
+      updateVideoTimecode({tcin: dataTcValue, tcout: '0', index: bestIndex})
     }
 
   }
