@@ -158,7 +158,7 @@ const algos = computed(() => { // List the name of the algorithm
 
   const updateVideoTimecode = (event) => {
     if ( options.value.transcription === true ){
-        moleculeAnnotationLeftPanelRef.value.updateVideoTimecode(event)
+        moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
       scrollToSegment({lastIndex: 0, bestIndex: event.index})
       // seekOnBlockClicked(unixToTimestamp(event.tcin))
       }
@@ -184,7 +184,6 @@ const algos = computed(() => { // List the name of the algorithm
     }
 
   const scrollToSegment = (event) => {
-    console.log(event)
     if ( options.value.player === true) {
       lastIndex=event.lastIndex
       bestIndex=event.bestIndex
@@ -192,9 +191,7 @@ const algos = computed(() => { // List the name of the algorithm
       //   moleculeAnnotationRef.value.listRefs[lastIndex].classList.remove('selected-segment')
       // }
       // else{
-        moleculeAnnotationRef.value?.listRefs.find(ref =>
-        ref.classList && ref.classList.contains('selected-segment')
-        )?.classList.remove('selected-segment')
+       getSelectedSegment()?.classList?.remove('selected-segment')
       // }
       moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
       moleculeAnnotationRef.value?.listRefs[bestIndex].classList.add('selected-segment')
@@ -270,13 +267,14 @@ const annotationComponent = computed(() => {
             navigateWithkeyboard(10);
             break;
           default:
-            console.log("other key pressed");
         }
     }
   }
 
   const getSelectedSegment = () : HTMLDivElement =>{
-    return moleculeAnnotationRef.value?.listRefs.find(ref =>
+    let segmentArray : Array<HTMLDivElement> | HTMLCollection = moleculeAnnotationRef.value?.listRefs
+    if (segmentArray instanceof HTMLCollection) segmentArray = [...segmentArray]
+    return segmentArray?.find(ref =>
       ref.classList?.contains('selected-segment')
     );
   }
@@ -297,7 +295,7 @@ const annotationComponent = computed(() => {
       }
       scrollToSegment({lastIndex, bestIndex})
       elementWithTestClass = getSelectedSegment();
-      const dataTcValue = elementWithTestClass.firstElementChild?.getAttribute('tcin')
+      const dataTcValue = elementWithTestClass?.querySelector('[tcin]')?.getAttribute('tcin') // return the first tcin value inside the selectedElement
       updateVideoTimecode({tcin: dataTcValue, tcout: '0', index: bestIndex})
     }
 
