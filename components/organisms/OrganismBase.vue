@@ -36,7 +36,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0].result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
           Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
@@ -89,6 +89,8 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     },
 
   })
+
+
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
@@ -228,12 +230,12 @@ const annotationComponent = computed(() => {
   const handleSubmit = () => {
     const localSubmit = locals
     if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
-    emits('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
+    emits('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit.value) })
   }
   const handleFinish = () => {
     const localSubmit = locals
     if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
-    emits('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
+    emits('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit.value) })
   }
 
   onMounted(()=>{
