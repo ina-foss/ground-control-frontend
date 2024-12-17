@@ -31,7 +31,7 @@ export default class ApplicationService {
   public computeColor= (seed: number)=>{
     const full = 'bg-extra'+ (seed%9+1)
     const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(seed%9+1))
-    return {  hex: hex, full : full }
+    return {  hex: hex, full : full , fullHexTransparent: 'bg-['+hex+'4f]'}
 
   }
 
