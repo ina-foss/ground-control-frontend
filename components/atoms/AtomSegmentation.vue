@@ -1,5 +1,5 @@
 <template>
-  <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :class="`bg-gray-300  transition-colors group relative mt-5 p-3 pl-3  flex flex-col ${topicIndex ==0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex== undefined ? 'rounded-t-lg': '' } ${isTopicsLastSegment ? 'rounded-b-lg': ''} `" >
+  <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" :class="`bg-gray-300  transition-colors group relative mt-5 p-3 pl-3  flex flex-col ${topicIndex ==0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex== undefined ? 'rounded-t-lg': '' } ${isTopicsLastSegment ? 'rounded-b-lg': ''} `" >
       <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-8 w-fit mb-3  p-3   `"  >
       </div>
     <div ref="titleContainer" class=" absolute flex self-center top-0 pt-3 z-40">
@@ -98,7 +98,7 @@ onMounted( ()=>{
   })
   watch(()=>isTopicFirstSegment.value,(newValue)=>{
     if(newValue == true){
-      editedTitle.value =  topicList[topicIndex.value].title
+      editedTitle.value =  topicList[topicIndex.value]?.title
     }
   })
   watch(()=>isTopicFirstSegment.value,()=>{

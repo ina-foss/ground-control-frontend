@@ -36,7 +36,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0].result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
           Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
@@ -54,7 +54,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   </div>
 </template>
 
-<script setup >
+<script setup lang="ts">
   import { provide} from 'vue'
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
@@ -89,6 +89,8 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     },
 
   })
+
+
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
@@ -158,43 +160,16 @@ const algos = computed(() => { // List the name of the algorithm
 
   const updateVideoTimecode = (event) => {
     if ( options.value.transcription === true ){
-        moleculeAnnotationLeftPanelRef.value.updateVideoTimecode(event)
-      seekOnBlockClicked(unixToTimestamp(event.tcin))
+        moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
+      scrollToSegment({lastIndex: 0, bestIndex: event.index})
       }
   }
 
-  let lastIndex = 0
   let bestIndex = 0
-  const seekOnBlockClicked =  (x) => {
-    const currentTime = x
-    let startIndex = 0
-    const localsIn =  locals;
-    if( data.step?.annotation_type === 'transcription'){
-      localsIn.value=annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
-    }
-       let endIndex = localsIn.value.length-1
-      while(Math.abs(startIndex - endIndex) > 1 ){ // binary search of the 2 segments surruonding the videotime
-        const mid = Math.floor(((endIndex + startIndex) / 2))
-        $application.unixToTimestamp(localsIn.value[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
-      }
-       bestIndex = currentTime < $application.unixToTimestamp(localsIn.value[endIndex]?.tcin) ? startIndex : endIndex
-    scrollToSegment({lastIndex, bestIndex})
-      lastIndex = bestIndex
-    }
-
   const scrollToSegment = (event) => {
     if ( options.value.player === true) {
-      lastIndex=event.lastIndex
       bestIndex=event.bestIndex
-      if( data.step?.annotation_type === 'span'){
-        moleculeAnnotationRef.value.listRefs[lastIndex].classList.remove('selected-segment')
-      }
-      else{
-        moleculeAnnotationRef.value?.listRefs.find(ref =>
-        ref.classList && ref.classList.contains('selected-segment')
-        )?.classList.remove('selected-segment')
-      }
-      console.log('test')
+      getSelectedSegment()?.classList?.remove('selected-segment')
       moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
       moleculeAnnotationRef.value?.listRefs[bestIndex].classList.add('selected-segment')
     }
@@ -228,14 +203,14 @@ const annotationComponent = computed(() => {
 })
 
   const handleSubmit = () => {
-    const localSubmit = locals.value
+    const localSubmit = locals
     if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
-    emits('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
+    emits('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit.value) })
   }
   const handleFinish = () => {
-    const localSubmit = locals.value
+    const localSubmit = locals
     if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
-    emits('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit) })
+    emits('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit.value) })
   }
 
   onMounted(()=>{
@@ -269,18 +244,20 @@ const annotationComponent = computed(() => {
             navigateWithkeyboard(10);
             break;
           default:
-            console.log("other key pressed");
         }
     }
   }
 
-  const getSelectedSegment = () =>
-    moleculeAnnotationRef.value?.listRefs.find(ref =>
+  const getSelectedSegment = () : HTMLDivElement =>{
+    let segmentArray : Array<HTMLDivElement> | HTMLCollection = moleculeAnnotationRef.value?.listRefs
+    if (segmentArray instanceof HTMLCollection) segmentArray = [...segmentArray]
+    return segmentArray?.find(ref =>
       ref.classList?.contains('selected-segment')
     );
+  }
 
   const navigateWithkeyboard = (param) => {
-    let elementWithTestClass = getSelectedSegment();
+    let elementWithTestClass  = getSelectedSegment();
     if (bestIndex >= 0) {
       bestIndex = (elementWithTestClass && bestIndex < moleculeAnnotationRef.value?.listRefs.length - 1) ?
         bestIndex + param : bestIndex;
@@ -293,10 +270,10 @@ const annotationComponent = computed(() => {
       if (bestIndex < 0) {
         bestIndex = 0
       }
-      scrollToSegment({lastIndex, bestIndex})
+      scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();
-      const dataTcValue = elementWithTestClass.children[0].getAttribute('data-tc');
-      updateVideoTimecode({tcin: dataTcValue, tcout: '0'})
+      const dataTcValue = elementWithTestClass?.querySelector('[tcin]')?.getAttribute('tcin') // return the first tcin value inside the selectedElement
+      updateVideoTimecode({tcin: dataTcValue, tcout: '0', index: bestIndex})
     }
 
   }

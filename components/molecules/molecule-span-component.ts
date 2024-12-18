@@ -90,7 +90,7 @@ const removeTimecodeDiv = (blocEl: ChildNode) => {
 const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
     if (blocEl.nodeType == 1) {
       const divTag : HTMLDivElement = document.createElement('div')
-      divTag.addEventListener('click', ()=> emit('on-segment-click', {tcin: blocEl.firstElementChild.nextSibling.getAttribute('tcin'),tcout: blocEl.lastElementChild?.getAttribute('tcout') }) )
+      divTag.addEventListener('click', ()=> emit('on-segment-click', {tcin: blocEl.firstElementChild.nextSibling.getAttribute('tcin'),tcout: blocEl.lastElementChild?.getAttribute('tcout'), index: computeDivPositionInList(blocEl) }))
       divTag.classList.add("timecode")
       divTag.classList.add("cursor-pointer")
       const tag : VNode = h(createVNode(Tag, { value: timestampToUnix(blocEl.firstElementChild.getAttribute('tcin')), severity: 'secondary' }))
@@ -100,6 +100,9 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
 
     }
 }
+    function computeDivPositionInList(el: HTMLDivElement) {
+      return Array.prototype.indexOf.call(el.parentElement.children, el)
+    }
 
   watch(()=>options.value.bloc,async ()=> {
     await nextTick()

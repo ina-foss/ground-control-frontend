@@ -99,14 +99,13 @@ export default defineComponent({
           topics[index] = phrase.data.topic
         }
       })
-      locals.filter((phrase) => phrase?.title).forEach((phrase ) => {
-        topicList.value[phrase.id] = phrase
+      locals.filter((phrase) => !phrase?.sublocalisations).forEach((phrase ) => {
+        topicList.value[phrase?.id] = phrase
       })
     }
 
     const handleSegmentClick = (event: {tcin: string|number, tcout: string|number, index:number}) => {
-      segmentationRefs.value[event.index].scrollIntoView({ behavior: "smooth" });
-      emit('on-segment-click', { tcin: event.tcin, tcout: event.tcout })
+      emit('on-segment-click', { tcin: event.tcin, tcout: event.tcout, index:event.index })
     }
 
     const jumpToTopic = (event: {topic: number }) => {

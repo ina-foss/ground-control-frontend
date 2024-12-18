@@ -115,9 +115,8 @@ const submitExistantAnnotation =(locals,action)=>{
       .then(() => {
         AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
       })
-
-
 }
+
 const submitNewAnnotation =(locals,action)=>{
   const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
   result.data.localisation[0].sublocalisations.localisation = locals
@@ -159,7 +158,7 @@ const submitNewAnnotation =(locals,action)=>{
 const handleSubmit = (event, action) => {
   const locals = JSON.parse(JSON.stringify(event.locals))
 
-  if (annotationInfo != null) {
+  if (annotationInfo.value != null) {
     submitExistantAnnotation(locals,action);
 
   } else {
