@@ -1,12 +1,15 @@
 import { defineComponent } from 'vue';
+import { useOptions } from "~/stores/annotation-options";
 import AtomSegmentation from "~/components/atoms/AtomSegmentation.vue";
 import AtomProgressBar from "~/components/atoms/AtomProgressBar.vue";
+import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
+import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ from 'lodash'
 
 
 export default defineComponent({
   name: 'MoleculeSegmentation',
-  components: { AtomSegmentation, AtomProgressBar },
+  components: { AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption },
   emit: ['on-segment-click'],
   props: {
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
@@ -18,8 +21,9 @@ export default defineComponent({
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData } = useTopicList()
     const { computeColor } = $application
-
+    const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
+    const { options } = storeToRefs(useOptions())
 
     const handleSegmentation = (event) => {
       window.onbeforeunload = function () {
@@ -33,6 +37,29 @@ export default defineComponent({
         removeBreak(event.index)
       }
     }
+
+    watchEffect(()=>{
+      if(dragging.start != null && dragging.end != null){
+        if(dragging.start != dragging.end){
+          let {start,end} = dragging
+          const diff = end - start
+          while(start != end){
+            if ( diff > 0){
+              const extendTopic = topics[dragging.start]
+              start++
+              topics[start] = extendTopic
+            }
+            else{
+            const extendTopic = topics[dragging.start+1]
+            topics[start] = extendTopic
+            start --
+            }
+          }
+        }
+        dragging.start = null
+        dragging.end = null
+      }
+    })
 
     const filteredLocals = computed(() => {
       return _.filter(locals, (local) => local?.sublocalisations)
@@ -130,13 +157,20 @@ export default defineComponent({
       loadTopics()
     })
 
+
+
+
+
+
     expose( {listRefs: segmentationRefs, annotationFunction: segmentationFunction })
 
     return {
       locals,
       colors,
       topics,
+      options,
       topicList,
+      dragging,
       filteredLocals,
       segmentationRefs,
       handleSegmentation,
@@ -144,6 +178,7 @@ export default defineComponent({
       deactivateTopic,
       jumpToTopic,
     }
+
 
   }
 })
