@@ -15,18 +15,10 @@
               <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
             </div>
           </Tag>
-          <div v-if="editTitle" class="w-[130px]">
-            <InputText v-model="editedTitle" @focusout="editTitle = false" class="w-full" />
+          <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
+            <AtomPluginBlock  :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"  />
           </div>
-          <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
-            <div
-              :class="`h-8 text-lg w-fit px-3 flex items-center self-center  `">
-              <b class="max-w-[100px] truncate ">{{ title }}</b>
-            </div>
-            <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
-            <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
-          </div>
-          <div v-else-if="topicIndex == 0 && isTopicFirstSegment" class="h-8">
+          <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
             <div
               :class="`h-8 p-3  w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
               <b>Ignoré</b>
@@ -68,6 +60,8 @@
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
 import AtomTopicList from './AtomTopicList.vue';
+import { AutoComplete, MultiSelect } from 'primevue';
+import AtomPluginBlock from './AtomPluginBlock.vue';
 
 const { phrase, colors, topics, index, topicList, segmentationRefs } = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
@@ -79,18 +73,13 @@ const topicIndex = computed(() => topics[index])
 const iconBool = ref('pi pi-tag')
 const topicText = ref(null)
 const titleContainer = ref(null)
+const editTitle = ref(false)
 iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
 topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 const editedTitle = ref(null)
 const ruptureTemplate = ref()
-const title = computed(() => {
-  if (isTopicFirstSegment.value) {
-    return editedTitle.value ? editedTitle.value : 'Topic ' + topicIndex.value
-  }
-  else return null
-})
 
-const editTitle = ref(false)
+
 
 function startDrag(event: DragEvent) {
   event.stopPropagation()
@@ -114,6 +103,7 @@ function handleDrop(event: DragEvent) {
     el.classList?.remove('customHover')
   } )
 }
+
 
 function endDrag(event: DragEvent) {
   event.preventDefault()
@@ -178,28 +168,9 @@ const computeTopicHeight = async () => {
 
 
 onMounted(() => {
-  watchEffect(() => {
-  })
-  watch(() => editTitle.value, (newValue, oldValue) => {
-    if (isTopicFirstSegment.value && newValue == false && topicList[topicIndex.value]) {
-      topicList[topicIndex.value].title = editedTitle.value
-    }
-  })
-  watch(() => isTopicFirstSegment.value, (newValue) => {
-    if (newValue == true) {
-      editedTitle.value = topicList[topicIndex.value]?.title
-    }
-  })
   watch(() => isTopicFirstSegment.value, () => {
     computeTopicHeight()
   })
-  watch(() => topicList[topicIndex.value]?.title, (newTitle) => {
-    if (isTopicFirstSegment.value) {
-      editedTitle.value = newTitle
-    }
-  }, { immediate: true })
-
-
   window.addEventListener('resize', computeTopicHeight, {})
 
 })
@@ -282,7 +253,7 @@ const handleSegmentation = () => {
 }
 
 
-defineExpose({ title: title, id: topicIndex, })
+defineExpose({  id: topicIndex, })
 
 </script>
 
