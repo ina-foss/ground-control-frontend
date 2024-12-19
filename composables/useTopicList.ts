@@ -42,7 +42,9 @@ export function useTopicList() {
   function fusionTopicData(from:number, to: number) {
     if( topicList.value[to] != undefined && topicList.value[from]!=undefined ){
       const previousTitle: string | null = topicList.value[to].title
-      topicList.value[to].title =  topicList.value[from].title + previousTitle
+      const currentTitle: string | null = topicList.value[from].title
+      const resultStringArray = [currentTitle,previousTitle]
+      topicList.value[to].title = resultStringArray.filter(el=>el!=null && el != '').join(' - ')
     }
   }
 
