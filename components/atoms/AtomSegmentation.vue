@@ -5,7 +5,7 @@
     <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[40px] w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
-      class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-40 top-0 left-0   ">
+      class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
       <div :class="`w-full sticky top-0 h-[70px] left-0 bg-neutral  pointer-events-auto `">
         <div class="w-full flex h-full items-center  p-lg rounded-t-lg"
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
@@ -47,15 +47,15 @@
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
     </div>
-    <div class="relative gap-0  w-[calc(100%+40px)] ">
+    <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
       <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
       @click="handleSegmentation">
         <div ref="ruptureTemplate"
-          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary-400' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center  transition`"
+          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary-400' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"
            :draggable="isTopicsLastSegment && topics[topicIndex]!=null">
-          <i v-if="!isTopicsLastSegment || topicIndex == undefined" class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 " />
+          <i v-if="!isTopicsLastSegment || topicIndex == undefined" class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 "  />
           <div v-else class="flex justify-around w-[80px]" >
-            <i class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 z-50 "/>
+            <i class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 "/>
             <i class="pi pi-eraser bg-error p-[5px] rounded hover:bg-red-600"/>
           </div>
         </div>
@@ -108,8 +108,11 @@ function handleDrop(event: DragEvent) {
   if(listLiElement.item(1)?.tagName == 'LI'){
     const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(target.parentElement?.parentElement)
     emit('dragging-end',{index: index})
-
   }
+  const hoverList: NodeList = document.querySelectorAll('.customHover')
+  hoverList.forEach((el)=>{
+    el.classList?.remove('customHover')
+  } )
 }
 
 function endDrag(event: DragEvent) {
@@ -284,6 +287,7 @@ defineExpose({ title: title, id: topicIndex, })
 </script>
 
 <style lang="postcss">
+
 .customHover .rupture,
 .customHover + .rupture {
   @apply flex
@@ -295,6 +299,7 @@ defineExpose({ title: title, id: topicIndex, })
 .customHover + div {
   @extend .customHover
 }
+
 
 
 .over:hover .rupture {
