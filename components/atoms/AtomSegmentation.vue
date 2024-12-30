@@ -7,8 +7,9 @@
     <div v-if="isTopicFirstSegment" ref="titleContainer"
       class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
       <div :class="`w-full sticky top-0 h-[70px] left-0 bg-neutral  pointer-events-auto `">
-        <div class="w-full flex h-full items-center  p-lg rounded-t-lg"
+        <div class="w-full flex h-full justify-between p-lg rounded-t-lg"
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
+          <div class="flex flew-row items-center">
           <Tag severity="contrast">
             <div class="flex justify-center  items-center gap-3">
               <i class="pi pi-clock" />
@@ -24,6 +25,8 @@
               <b>Ignoré</b>
             </div>
           </div>
+        </div>
+        <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
         </div>
       </div>
     </div>
@@ -63,7 +66,7 @@ import AtomTopicList from './AtomTopicList.vue';
 import { AutoComplete, MultiSelect } from 'primevue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
 
-const { phrase, colors, topics, index, topicList, segmentationRefs } = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
+const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application

@@ -1,65 +1,37 @@
 import { defineComponent } from 'vue'
 import { useTopicList } from '../../composables/useTopicList'
+import AtomPluginAutocomplete from './AtomPluginAutocomplete.vue'
+import AtomPluginLabel from './AtomPluginLabel.vue'
 
 export default defineComponent({
   name: 'AtomPluginBlock',
+  components:{AtomPluginAutocomplete,AtomPluginLabel},
   props: {
     topicIndex: {type: Number},
     isTopicFirstSegment: {type: Boolean}
   },
-  emits:['deactivateTopic'],
   setup(props, {emit}){
 
     const { topicList } = useTopicList()
-    const editedTitle = ref(null)
-    const editTitle = ref(false)
     const {topicIndex,isTopicFirstSegment} = toRefs(props)
-    const localTitle = ref(editedTitle)
-    const value = ref("");
-    const items = ref([]);
-    const search = (event) => {
-        items.value = [...Array(10).keys()].map((item) => event.query + '-' + item);
+
+    const config = inject('plugin-config')
+
+    function selectComponent(pluginConfig) {
+      switch (pluginConfig.type) {
+        case 'autocomplete':
+          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,config: config }}
+        case 'label':
+          return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment } }
+        default:
+          break;
+      }
     }
 
-    const title = computed(() => {
-      if (isTopicFirstSegment.value) {
-        return editedTitle.value ? editedTitle.value : 'Topic ' + topicIndex.value
-      }
-      else return null
-    })
 
-    onMounted(() => {
-      if(isTopicFirstSegment.value == true){
-          editedTitle.value = topicList.value[topicIndex.value]?.title
-      }
-      watch(() => editTitle.value, (newValue, oldValue) => {
-        if (isTopicFirstSegment.value && newValue == false && topicList.value[topicIndex.value]) {
-          topicList.value[topicIndex.value].title = editedTitle.value
-        }
-      })
-      watch(() => isTopicFirstSegment.value, (newValue) => {
-        if (newValue == true) {
-          editedTitle.value = topicList.value[topicIndex.value]?.title
-        }
-      })
-      watch(() => topicList.value[topicIndex.value]?.title, (newTitle) => {
-        if (isTopicFirstSegment.value) {
-          editedTitle.value = newTitle
-        }
-      }, { immediate: true })
-
-    })
     return {
-      title,
-      localTitle,
-      editTitle,
-      editedTitle,
-      value,
-      items,
-      topicIndex,
-      isTopicFirstSegment,
-      search,
-      emit
+      config,
+      selectComponent
     }
   }
 })
