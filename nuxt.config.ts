@@ -30,7 +30,23 @@ const MyPreset = definePreset(Lara, {
         }
       }
     },
+    panel:{
+      colorScheme: {
+        light:{
+          headerBackground: 'white',
+          borderColor: 'white'
+        }
+      },
+      toggleableHeaderPadding: '12px',
+      borderRadius: '12px',
+      header:{
+        borderWidth: '0px',
+      }
+    }
+    ,
     tag:{
+      padding: "8px",
+      iconSize: '16px',
       colorScheme: {
         light: {
           successBackground: 'var(--success-state)',
