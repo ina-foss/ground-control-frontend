@@ -1,125 +1,194 @@
 <template>
-  <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" :class="`bg-gray-300  transition-colors group relative mt-5 p-3 pl-3  flex flex-col ${topicIndex ==0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex== undefined ? 'rounded-t-lg': '' } ${isTopicsLastSegment ? 'rounded-b-lg': ''} `" >
-      <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-8 w-fit mb-3  p-3   `"  >
-      </div>
-    <div ref="titleContainer" class=" absolute flex self-center top-0 pt-3 z-40">
-      <div v-if="editTitle"  >
-        <InputText v-model="editedTitle" @focusout="editTitle = false"  />
-      </div>
-      <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8    "  >
-        <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic',{index: index})"/>
-        <div :class="`h-8 p-3 ${computeColor(topicIndex).full} w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
-          <b>{{ title }}</b>
+  <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
+    @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
+    :class="`bg-gray-300 transition-colors group relative mt-5  last:gap-0 p-lg flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[40px] w-fit`">
+    </div>
+    <div v-if="isTopicFirstSegment" ref="titleContainer"
+      class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
+      <div :class="`w-full sticky top-0 h-[70px] left-0 bg-neutral  pointer-events-auto `">
+        <div class="w-full flex h-full justify-between p-lg rounded-t-lg"
+          :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
+          <div class="flex flew-row items-center">
+          <Tag severity="contrast">
+            <div class="flex justify-center  items-center gap-3">
+              <i class="pi pi-clock" />
+              <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
+            </div>
+          </Tag>
+          <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
+            <AtomPluginBlock  :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"  />
+          </div>
+          <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
+            <div
+              :class="`h-8 p-3  w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
+              <b>Ignoré</b>
+            </div>
+          </div>
         </div>
-        <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
-      </div>
-      <div v-else-if="topicIndex == 0 && isTopicFirstSegment" class="h-8">
-        <div :class="`h-8 p-3  w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
-          <b>Ignoré</b>
+        <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
         </div>
       </div>
     </div>
-    <div class="flex items-center gap-2">
-      <div
-        v-tooltip.top="{ value : timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout),
-        pt: {
-          root:{
-            style : 'max-width: fit-content '
-          }
+    <div v-tooltip.top="{
+      value: timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout),
+      pt: {
+        root: {
+          style: 'max-width: fit-content '
         }
-        }"
-        class="bg-white p-3 leading-tight text-sm col-auto grow rounded-md cursor-pointer  transition-all hover:shadow-lg "
-        @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
-        {{ $props.phrase.data?.text[0] }}
+      }
+    }"
+      :class="`bg-white p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '}  leading-tight text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
+      @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
+      {{ $props.phrase.data?.text[0] }}
+    </div>
+    <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
+      <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
+      @click="handleSegmentation">
+        <div ref="ruptureTemplate"
+          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary-400' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"
+           :draggable="isTopicsLastSegment && topics[topicIndex]!=null">
+          <i v-if="!isTopicsLastSegment || topicIndex == undefined" class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 "  />
+          <div v-else class="flex justify-around w-[80px]" >
+            <i class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 "/>
+            <i class="pi pi-eraser bg-error p-[5px] rounded hover:bg-red-600"/>
+          </div>
+        </div>
       </div>
     </div>
-    <div  :class="` w-full bg-clip-padd bg-grey-300 h-1   z-50 ${isTopicsLastSegment ? 'translate-y-[21px]' : 'translate-y-[12px]'} cursor-pointer group-hover:bg-title hover:scale-y-[200%]  transition`" @click="handleSegmentation">
-      </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
 import AtomTopicList from './AtomTopicList.vue';
+import { AutoComplete, MultiSelect } from 'primevue';
+import AtomPluginBlock from './AtomPluginBlock.vue';
 
-const { phrase, colors, topics, index,topicList , segmentationRefs } = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
-const emit = defineEmits(['segmentation', 'onSegmentClick','deactivateTopic'])
+const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
+const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
-const { timestampToUnix, computeColor, textColorPicker,unixToTimestamp } = $application
+const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
 const segment = ref(null)
 const toast = useToast()
-const topicIndex = computed(()=> topics[index] )
+const topicIndex = computed(() => topics[index])
 const iconBool = ref('pi pi-tag')
 const topicText = ref(null)
 const titleContainer = ref(null)
+const editTitle = ref(false)
 iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
 topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 const editedTitle = ref(null)
-const title = computed(()=>{
-  if(isTopicFirstSegment.value){
-    return editedTitle.value ? editedTitle.value : 'Topic '+ topicIndex.value
+const ruptureTemplate = ref()
+
+
+
+function startDrag(event: DragEvent) {
+  event.stopPropagation()
+  const target: HTMLDivElement = event.target as HTMLDivElement
+  target.style.opacity = '0.4'
+  const mainDiv: HTMLDivElement = target.parentElement
+}
+
+function handleDrop(event: DragEvent) {
+  document.querySelector('.customHover')?.classList.remove('customHover')
+  event.preventDefault()
+  event.stopPropagation()
+  const target: HTMLDivElement = event.target as HTMLDivElement
+  const listLiElement : HTMLCollection = target.parentElement?.parentElement?.parentElement?.children
+  if(listLiElement.item(1)?.tagName == 'LI'){
+    const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(target.parentElement?.parentElement)
+    emit('dragging-end',{index: index})
   }
-  else return null
-})
+  const hoverList: NodeList = document.querySelectorAll('.customHover')
+  hoverList.forEach((el)=>{
+    el.classList?.remove('customHover')
+  } )
+}
 
-const editTitle = ref(false)
+
+function endDrag(event: DragEvent) {
+  event.preventDefault()
+  event.stopPropagation()
+  const target: HTMLDivElement = event.target as HTMLDivElement
+  target.style.opacity = '1'
+  const listLiElement : HTMLCollection = target.parentElement?.parentElement?.parentElement?.parentElement?.parentElement?.children
+  const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(target.parentElement?.parentElement?.parentElement?.parentElement)
+  emit('dragging-start',{index: index})
+}
 
 
 
-const isTopicFirstSegment = computed(()=> {
-  if( topics[index]!= undefined){
-    return topics[index] != topics[index-1]
+function previewDrop(event: DragEvent) {
+  event.preventDefault()
+  event.stopPropagation()
+  let target: HTMLDivElement = event.target as HTMLDivElement
+  let mainDiv: HTMLDivElement = target.parentElement
+  if (!target.classList.contains('customHover')) {
+    target.classList.add('customHover')
+    target?.nextElementSibling?.classList.add('customHover')
+  }
+}
+
+function handleDragLeave(event: DragEvent) {
+  event.preventDefault()
+  event.stopPropagation()
+  let target: HTMLDivElement = event.target as HTMLDivElement
+  let mainDiv: HTMLDivElement = target.parentElement
+  if (target.classList.contains('customHover')) {
+    target.classList.remove('customHover')
+    target?.nextElementSibling?.classList.remove('customHover')
+
+  }
+}
+
+
+function computeDrag(event: DragEvent) {
+  event.preventDefault()
+  event.stopPropagation()
+}
+
+const isTopicFirstSegment = computed(() => {
+  if (topics[index] != undefined) {
+    return topics[index] != topics[index - 1]
   }
   else return false
 })
 
 const computeTopicHeight = async () => {
-    if(isTopicFirstSegment.value){
-      await nextTick()
-      let id = index
-      let topicHeight = 0
-      do {
-        topicHeight += segmentationRefs[id].clientHeight
-        id++
-      } while (topics[id] == topics[id-1]);
-      titleContainer.value.style.height = topicHeight + 'px'
+  if (isTopicFirstSegment.value) {
+    await nextTick()
+    let id = index
+    let topicHeight = 0
+    do {
+      topicHeight += segmentationRefs[id].clientHeight
+      id++
+    } while (topics[id] == topics[id - 1]);
+    titleContainer.value.style.height = topicHeight + 'px'
   }
 }
 
 
-onMounted( ()=>{
-  watchEffect(()=>{
+onMounted(() => {
+  watch(() => isTopicFirstSegment.value, () => {
+    computeTopicHeight()
   })
-  watch(()=>editTitle.value,(newValue, oldValue)=>{
-    if(isTopicFirstSegment.value && newValue == false ){
-      topicList[topicIndex.value].title = editedTitle.value
-    }
-  })
-  watch(()=>isTopicFirstSegment.value,(newValue)=>{
-    if(newValue == true){
-      editedTitle.value =  topicList[topicIndex.value]?.title
-    }
-  })
-  watch(()=>isTopicFirstSegment.value,()=>{
-      computeTopicHeight()
-  })
-  watch(()=>topicList[topicIndex.value]?.title,(newTitle)=>{
-    if(isTopicFirstSegment.value ){
-      editedTitle.value = newTitle
-    }
-  },{immediate: true})
-
-
-  window.addEventListener('resize', computeTopicHeight,{})
+  window.addEventListener('resize', computeTopicHeight, {})
 
 })
 
 
-const isTopicsLastSegment = computed(()=>{
-    if( topics[index+1] == undefined ) return true
-    return topics[index] != topics[index+1]
+const isTopicsLastSegment = computed(() => {
+  if (topics[index + 1] == undefined) return true
+  return topics[index] != topics[index + 1]
 })
+
+function applyHeaderColor(hex) {
+  if(topicIndex.value == 0)return 'background-color: #BEBEBE4c;'
+      const [r, g, b] = extractRGB(hex);
+      return `background-color: rgba(${r},${g},${b}, 0.25);`;
+}
 
 function dynamicStyle(color) {
 
@@ -129,11 +198,11 @@ function dynamicStyle(color) {
   if (topics[index] == topics[index - 1] && topics.length !== 0 && topics[index] != undefined) {
     if (hexMatch) {
       const [r, g, b] = extractRGB(color);
-      if(index < 2 ) {
+      if (index < 2) {
       }
       return `background-color: rgba(${r},${g},${b}, 0.25); margin-top: 0px;  `;
     }
-    else{
+    else {
       return `background-color: ${reduceOpacityOfColor(color, 0.25)}; margin-top: 0px;   `;
     }
   } else {
@@ -181,11 +250,34 @@ function hexToRgba(hex, opacity) {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 }
 const handleSegmentation = () => {
-  emit('segmentation',{index: index})
+  emit('segmentation', { index: index })
   iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
   topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 }
 
-    defineExpose({title: title, id: topicIndex,  })
+
+defineExpose({  id: topicIndex, })
 
 </script>
+
+<style lang="postcss">
+
+.customHover .rupture,
+.customHover + .rupture {
+  @apply flex
+}
+
+.customHover{
+}
+
+.customHover + div {
+  @extend .customHover
+}
+
+
+
+.over:hover .rupture {
+  @apply flex
+}
+
+</style>

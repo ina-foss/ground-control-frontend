@@ -4,7 +4,7 @@
       <AtomProgressBar class="xs:sticky top-0"  :colors="colors" :topics="topics" :topicList="topicList" :totalLength="locals.length" @progress-bar-jump="jumpToTopic($event)" />
     </div>
     <div class="flex overflow-y-auto h-[80vh]">
-    <ol class=" flex flex-col overflow-y-auto h-full ">
+    <ol class=" flex flex-col overflow-x-hidden overflow-y-auto h-full ">
       <ScrollTop
         :pt="{ root: { style: 'position: absolute; right: 35%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
@@ -26,6 +26,8 @@
           :topics="topics"
           :topicList="topicList"
           :segmentationRefs="segmentationRefs"
+          @dragging-start="dragging.start = $event.index"
+          @dragging-end="dragging.end = $event.index"
           @segmentation="handleSegmentation"
           @on-segment-click="handleSegmentClick($event)"
           @deactivate-topic="deactivateTopic"
@@ -34,6 +36,10 @@
     </ol>
     </div>
   </div>
+    <div class="  overflow-y-auto flex flex-col items-center gap-3 col-span-2">
+      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+      <atom-video-option />
+    </div>
 </template>
 
  <script src="./molecule-segmentation-component" lang="ts" >

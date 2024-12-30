@@ -62,7 +62,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   import MoleculeSegmentation from "../molecules/MoleculeSegmentation.vue";
   import MoleculeTranscription from "../molecules/MoleculeTranscription.vue";
   import _ from 'lodash'
-  import {AnnotationStatus} from '../../api/generate';
+  import {AnnotationStatus, PluginService} from '../../api/generate';
   import { useService } from "#imports";
   const authStore = useAuth()
   const optionStore = useOptions()
@@ -102,6 +102,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const { userEmail } = storeToRefs(authStore)
   const { options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
+  const config = ref(null)
 
   const annotationInfo = computed(() => {
     let info = null
@@ -114,6 +115,10 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
       return info
     }
   });
+
+  PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=> config.value = response  )
+
+
 
   const userAnnotations = computed(() => { // return array of users annotations
     let response = []
@@ -278,7 +283,7 @@ const annotationComponent = computed(() => {
 
   }
 
-
+  provide('plugin-config', config)
 
   provide('span',{
    locals :  locals
