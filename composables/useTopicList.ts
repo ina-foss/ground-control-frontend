@@ -6,14 +6,27 @@ interface Topic {
   */
   id: number,
   /**
-   * Title of the Topic
-   */
-  title: string | null,
-  /**
    * Array of `Category`
   */
-  labels: Array<string>
+  labels: Array<Label | string>
+
 }
+
+interface Label {
+  /**
+   * Identifier
+   */
+  id: number,
+  /**
+   * External identifier
+   */
+  extId: string,
+  /**
+   * Value of the label
+   */
+  label: string,
+}
+
 
   const topicList = ref<Array<Topic | undefined>>([])
 
