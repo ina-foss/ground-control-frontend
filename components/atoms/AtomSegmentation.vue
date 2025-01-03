@@ -70,27 +70,7 @@
   </div>
 
   <Popover ref="comment">
-    <div class="w-[300px] flex flex-col gap-[12px] ">
-      <!-- Header  -->
-      <div class="w-full flex justify-between items-center">
-        <b>Commentaires</b>
-        <i class="pi pi-times rounded-2xl p-1 hover:bg-secondary-color cursor-pointer"  text @click="comment.hide()" />
-      </div>
-      <!-- Text aera -->
-      <div v-if="!phrase.data.comments || phrase.data.comments.length == 0" class="flex w-full gap-2 justify-between">
-        <InputText v-model="commentText" placeholder="Ajouter un commentaire"  class="w-[90%]"/>
-        <Button icon="pi pi-arrow-right" @click="createComment" />
-      </div>
-      <div v-else>
-        <div class="flex flex-col gap-[12px]" v-for="comment in phrase.data.comments">
-          <InputText v-model=comment.text variant="filled" />
-          <div class="flex justify-between ">
-            <p> {{ comment.createdAt }}</p>
-            <p class="truncate max-w-[150px]"> {{ comment.createdBy }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+      <AtomComment :phrase="phrase" :overlay="comment" />
   </Popover>
 </template>
 
@@ -101,6 +81,7 @@ import AtomTopicList from './AtomTopicList.vue';
 import { AutoComplete, MultiSelect } from 'primevue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
 import { useAuth } from '#imports';
+import AtomComment from './AtomComment.vue';
 
 const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
@@ -119,21 +100,6 @@ topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 const editedTitle = ref(null)
 const ruptureTemplate = ref()
 const comment = ref(null)
-const commentText = ref('')
-
-
-function createComment() {
-    const date : Date = new Date(Date.now())
-    const formattedDate = date.toLocaleString('FR', { day: 'numeric', month:'short', year:'numeric' });
-    let a = { }
-    a.text = commentText.value
-    a.createdAt = formattedDate
-    a.type = 'COMMENT'
-    a.createdBy= userEmail
-    if(!phrase.data.comments) phrase.data.comments= []
-    phrase.data.comments.push(a)
-    console.log(phrase)
-}
 
 function startDrag(event: DragEvent) {
   event.stopPropagation()
