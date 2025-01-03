@@ -83,7 +83,7 @@
       </div>
       <div v-else>
         <div class="flex flex-col gap-[12px]" v-for="comment in phrase.data.comments">
-          <InputText v-model=comment.text />
+          <InputText v-model=comment.text variant="filled" />
           <div class="flex justify-between ">
             <p> {{ comment.createdAt }}</p>
             <p class="truncate max-w-[150px]"> {{ comment.createdBy }}</p>
@@ -235,8 +235,6 @@ onMounted(() => {
 
 
 const isTopicsLastSegment = computed(() => {
-  if ( isTopicFirstSegment ) console.log(topics[index +1])
-
   if (topics[index + 1] == undefined) return true
   return topics[index] != topics[index + 1]
 })
