@@ -1,62 +1,77 @@
 <template>
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
-    :class="`bg-gray-300 transition-colors group relative mt-5  last:gap-0 p-lg flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    :class="`bg-gray-300 transition-colors group relative mt-5  overflow-visible last:gap-0 p-lg flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
     <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[40px] w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
       class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
-      <div :class="`w-full sticky top-0 h-[70px] left-0 bg-neutral  pointer-events-auto `">
-        <div class="w-full flex h-full justify-between p-lg rounded-t-lg"
+      <div :class="`w-full sticky top-0 h-[70px] left-0 bg-neutral  pointer-events-auto z-50 `">
+        <div class="w-full flex h-full justify-between p-lg rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flew-row items-center">
-          <Tag severity="contrast">
-            <div class="flex justify-center  items-center gap-3">
-              <i class="pi pi-clock" />
-              <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
+            <Tag severity="contrast">
+              <div class="flex justify-center  items-center gap-3">
+                <i class="pi pi-clock" />
+                <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
+              </div>
+            </Tag>
+            <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
+              <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" />
             </div>
-          </Tag>
-          <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
-            <AtomPluginBlock  :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"  />
-          </div>
-          <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
-            <div
-              :class="`h-8 p-3  w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
-              <b>Ignoré</b>
+            <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
+              <div
+                :class="`h-8 p-3  w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
+                <b>Ignoré</b>
+              </div>
             </div>
           </div>
-        </div>
-        <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+          <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
         </div>
       </div>
     </div>
+    <OverlayBadge v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
+      :class="` overflow-visible !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
+    >
+    <Button icon="pi pi-comment"
+      @click="toggleComment" />
+    </OverlayBadge>
+    <Button v-else icon="pi pi-comment"
+      :class="` !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
+      @click="toggleComment" />
     <div v-tooltip.top="{
       value: timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout),
+      showDelay: 2000,
       pt: {
         root: {
           style: 'max-width: fit-content '
         }
       }
     }"
-      :class="`bg-white p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '}  leading-tight text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
+      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate leading-tight text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
-      {{ $props.phrase.data?.text[0] }}
+      <p class="z-50">{{ $props.phrase.data?.text[0] }}</p>
     </div>
     <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
       <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
-      @click="handleSegmentation">
+        @click="handleSegmentation">
         <div ref="ruptureTemplate"
           :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary-400' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"
-           :draggable="isTopicsLastSegment && topics[topicIndex]!=null">
-          <i v-if="!isTopicsLastSegment || topicIndex == undefined" class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 "  />
-          <div v-else class="flex justify-around w-[80px]" >
-            <i class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 "/>
-            <i class="pi pi-eraser bg-error p-[5px] rounded hover:bg-red-600"/>
+          :draggable="isTopicsLastSegment && topics[topicIndex]!=null">
+          <i v-if="!isTopicsLastSegment || topicIndex == undefined"
+            class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 " />
+          <div v-else class="flex justify-around w-[80px]">
+            <i class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 " />
+            <i class="pi pi-eraser bg-error p-[5px] rounded hover:bg-red-600" />
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <Popover ref="comment">
+      <AtomComment :phrase="phrase" :overlay="comment" />
+  </Popover>
 </template>
 
 <script setup lang="ts">
@@ -65,10 +80,13 @@ import { defineExpose } from 'vue';
 import AtomTopicList from './AtomTopicList.vue';
 import { AutoComplete, MultiSelect } from 'primevue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
+import { useAuth } from '#imports';
+import AtomComment from './AtomComment.vue';
 
 const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
+const { userEmail } = useAuth()
 const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
 const segment = ref(null)
 const toast = useToast()
@@ -81,8 +99,7 @@ iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
 topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 const editedTitle = ref(null)
 const ruptureTemplate = ref()
-
-
+const comment = ref(null)
 
 function startDrag(event: DragEvent) {
   event.stopPropagation()
@@ -105,6 +122,10 @@ function handleDrop(event: DragEvent) {
   hoverList.forEach((el)=>{
     el.classList?.remove('customHover')
   } )
+}
+
+function toggleComment(event) {
+    comment.value.toggle(event)
 }
 
 

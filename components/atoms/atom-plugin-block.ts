@@ -20,7 +20,7 @@ export default defineComponent({
     function selectComponent(pluginConfig) {
       switch (pluginConfig.type) {
         case 'autocomplete':
-          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,config: config }}
+          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment } }
         case 'label':
           return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment } }
         default:

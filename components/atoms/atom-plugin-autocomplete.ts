@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue'
 import { useTopicList } from '../../composables/useTopicList'
-import { find, remove } from 'lodash'
+import { remove } from 'lodash'
 import { PluginService } from '~/api/generate'
 
 
