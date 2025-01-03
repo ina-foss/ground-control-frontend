@@ -16,7 +16,7 @@ interface Label {
   /**
    * Identifier
    */
-  id: number,
+  id: string,
   /**
    * External identifier
    */

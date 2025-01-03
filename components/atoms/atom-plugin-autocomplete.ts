@@ -18,6 +18,9 @@ export default defineComponent({
     const items = ref([]);
     const chipList = ref([])
     const {topicIndex,isTopicFirstSegment, plugin} = toRefs(props)
+    onMounted(()=>{
+      chipList.value = topicList.value[topicIndex.value].labels
+    })
     const referenceAutoComplete = await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value.id, ' ')
     const search = (event) => {
         items.value =  referenceAutoComplete.filter((el)=> el.label.includes(event.query))
