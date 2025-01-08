@@ -296,6 +296,8 @@ const annotationComponent = computed(() => {
 
   provide('plugin-config', config)
 
+  provide('timecode-history', timecodeHistory)
+
   provide('data',data)
 
   provide('span',{
