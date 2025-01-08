@@ -164,11 +164,8 @@ const algos = computed(() => { // List the name of the algorithm
   return res
 })
 
-  function addTimecodeHistory (tc?){
-    if (tc) {
-        timecodeHistory.value.push(tc)
-      console.log(timecodeHistory.value)
-    }
+  function addTimecodeHistory (tc?: never){
+    if (tc) timecodeHistory.value.push(tc)
   }
 
 
