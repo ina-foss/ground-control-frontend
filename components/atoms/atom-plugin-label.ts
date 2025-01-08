@@ -39,7 +39,6 @@ export default defineComponent({
             editTitle(editedTitle.value)
           }
           else topicList.value[topicIndex.value].labels.push(editedTitle.value)
-          console.log(topicList.value[topicIndex.value].labels)
         }
       })
       watch(() => isTopicFirstSegment.value, (newValue) => {

@@ -1,9 +1,12 @@
 <template>
   <div id="PLAYER" ref="myplayer" class=" h-auto aspect-video w-full" @click="seek"/>
+  <div class="w-full flex justify-center  ">
+    <Button icon="pi pi-history" severity="secondary" :disabled="!showRollback"  rounded  @click="consumeTimecode()"/>
+  </div>
 </template>
 
 
-<script setup lang="js">
+<script setup lang="ts">
 
 import { useService } from '#imports';
 
@@ -19,6 +22,21 @@ async function fetchVideoStream(url) {
   const response = await fetch(url);
   const videoHls = response.text();
   return videoHls;
+}
+
+const timecodeHistory : Ref<never[]> | undefined = inject('timecode-history')
+
+const showRollback =  computed(()=>{
+  return timecodeHistory.value.length > 0
+})
+
+function consumeTimecode() {
+  if(timecodeHistory){
+    timecodeHistory.value.pop() // remove last timecode
+    const tc = timecodeHistory.value.pop() // use the new last timecode to update the player
+    $amalia.updateCurrentTc(tc)
+    seek()
+  }
 }
 
 const hlsPlayer = async () => {
@@ -45,7 +63,7 @@ const seek = async () => {
     }
     const bestIndex = currentTime < $application.unixToTimestamp(locals[endIndex]?.tcin) ? startIndex : endIndex
 
-    emits('timecode-update', { lastIndex: lastIndex, bestIndex: bestIndex }) // emit both times to scroll and adapt css
+    emits('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: history   }) // emit both times to scroll and adapt css
     lastIndex = bestIndex
 }}
 

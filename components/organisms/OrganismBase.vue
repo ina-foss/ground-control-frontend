@@ -103,6 +103,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const { options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
   const config = ref(null)
+  const timecodeHistory = ref([])
 
   const annotationInfo = computed(() => {
     let info = null
@@ -163,16 +164,23 @@ const algos = computed(() => { // List the name of the algorithm
   return res
 })
 
+  function addTimecodeHistory (tc?: never){
+    if (tc) timecodeHistory.value.push(tc)
+  }
+
+
   const updateVideoTimecode = (event) => {
     if ( options.value.transcription === true ){
+        addTimecodeHistory(event.tcin)
         moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
-      scrollToSegment({lastIndex: 0, bestIndex: event.index})
+        scrollToSegment({lastIndex: 0, bestIndex: event.index})
       }
   }
 
   let bestIndex = 0
   const scrollToSegment = (event) => {
     if ( options.value.player === true) {
+      addTimecodeHistory(event.tcin)
       bestIndex=event.bestIndex
       getSelectedSegment()?.classList?.remove('selected-segment')
       moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
@@ -284,6 +292,10 @@ const annotationComponent = computed(() => {
   }
 
   provide('plugin-config', config)
+
+  provide('timecode-history', timecodeHistory)
+
+  provide('data',data)
 
   provide('span',{
    locals :  locals
