@@ -17,6 +17,7 @@ export type { AnnotationWithIdDto } from './models/AnnotationWithIdDto';
 export type { Body_task_inject_step__step_id__post } from './models/Body_task_inject_step__step_id__post';
 export type { ConfigData } from './models/ConfigData';
 export { DisplayZone } from './models/DisplayZone';
+export type { ExceptionResponse } from './models/ExceptionResponse';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export { InOutEnum } from './models/InOutEnum';
 export type { MediaCreate } from './models/MediaCreate';
