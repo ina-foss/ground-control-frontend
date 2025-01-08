@@ -1,17 +1,19 @@
 <template>
   <div class="w-[250px] bg-white rounded-lg">
-  <Panel class="w-full" header="Alerte Message" toggleable collapsed ref="panel" >
-      <div class="flex flex-col gap-[10px]">
-        <div class="h-20">
-          <Textarea class="h-full" fluid placeholder="Entrez votre message" v-model="comment"/>
+    <OverlayBadge :value="comments?.length" severity="contrast">
+      <Panel ref="panel" class="w-full" header="Alerte Message" toggleable collapsed>
+        <div class="flex flex-col gap-[10px]">
+          <div class="h-20">
+            <Textarea v-model="comment" class="h-full" fluid placeholder="Entrez votre message" />
+          </div>
+          <div class="flex justify-end gap-3 ">
+            <Button label="Annuler" severity="secondary" @click="handleClearComment" />
+            <Button label="Envoyer" @click="handleCreateComment" />
+          </div>
         </div>
-        <div class="flex justify-end gap-3 " >
-          <Button label="Annuler" severity="secondary" @click="handleClearComment" />
-          <Button label="Envoyer" @click="handleCreateComment" />
-        </div>
-      </div>
-  </Panel>
-</div>
+      </Panel>
+    </OverlayBadge>
+  </div>
 </template>
 
 <script setup lang="ts" >
