@@ -14,6 +14,6 @@
   <Chip v-for="(chip,index) in chipList" :label="chip.label" removable v-on:remove="handleRemove(index)"  />
 </template>
 
-<script lang="ts" src="./atom-plugin-autocomplete.ts">
+<script lang="ts" src="./atom-plugin-autocomplete-component">
 
 </script>
