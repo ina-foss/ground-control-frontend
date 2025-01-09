@@ -141,6 +141,15 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     return []
   })
 
+  const result = computed(() => {
+    if(allFetched){
+    return (annotationInfo.value == null)
+      ? annotationsIn[0]?.result.data
+      : annotationsOut[annotationInfo.value.index]?.result.data
+    }
+    return {}
+  })
+
 const transcriptions = computed(() => { // format array to have all transcription version in the same array element
   const res = []
   if (allFetched) {
@@ -192,6 +201,7 @@ const annotationComponent = computed(() => {
   switch (data.step?.annotation_type) {
     case 'segmentation':
         return {component: MoleculeSegmentation, props: {
+          result: result.value,
           locals: locals.value,
           colors: colors.value,
           topics: topics.value
