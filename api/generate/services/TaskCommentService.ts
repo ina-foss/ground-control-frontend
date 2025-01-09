@@ -33,6 +33,31 @@ export class TaskCommentService {
                 'task_comment_id': taskCommentId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Read Task Comments By Task Id
+     * Retrieve a list of taskComments filtered on their `task_id` value.
+     * @param taskCommentTaskId
+     * @returns TaskCommentDto Successful Response
+     * @throws ApiError
+     */
+    public static readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(
+        taskCommentTaskId: number,
+    ): CancelablePromise<Array<TaskCommentDto>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/taskComments/{task_comment_task_id}',
+            path: {
+                'task_comment_task_id': taskCommentTaskId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -59,6 +84,8 @@ export class TaskCommentService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -93,6 +120,8 @@ export class TaskCommentService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -113,6 +142,8 @@ export class TaskCommentService {
                 'task_comment_id': taskCommentId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -137,6 +168,8 @@ export class TaskCommentService {
                 'limit': limit,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

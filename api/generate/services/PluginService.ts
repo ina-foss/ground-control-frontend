@@ -42,6 +42,8 @@ export class PluginService {
                 'query': query,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -69,6 +71,8 @@ export class PluginService {
                 'zone': zone,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -95,6 +99,8 @@ export class PluginService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -116,6 +122,8 @@ export class PluginService {
                 'plugin_id': pluginId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -137,6 +145,8 @@ export class PluginService {
                 'plugin_id': pluginId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

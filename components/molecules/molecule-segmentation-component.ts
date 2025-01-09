@@ -3,13 +3,14 @@ import { useOptions } from "~/stores/annotation-options";
 import AtomSegmentation from "~/components/atoms/AtomSegmentation.vue";
 import AtomProgressBar from "~/components/atoms/AtomProgressBar.vue";
 import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
+import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ from 'lodash'
 
 
 export default defineComponent({
   name: 'MoleculeSegmentation',
-  components: { AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption },
+  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption },
   emit: ['on-segment-click'],
   props: {
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
