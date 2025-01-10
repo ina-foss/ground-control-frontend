@@ -10,4 +10,4 @@
   </div>
 </template>
 
-<script src="./atom-plugin-label.ts"> </script>
+<script src="./atom-plugin-label-component.ts"> </script>

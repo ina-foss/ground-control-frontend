@@ -19,7 +19,7 @@ export default defineComponent({
     const chipList = ref([])
     const {topicIndex,isTopicFirstSegment, plugin} = toRefs(props)
     onMounted(()=>{
-      chipList.value = topicList.value[topicIndex.value].labels
+      chipList.value = topicList.value[topicIndex.value]?.labels
     })
     const referenceAutoComplete = await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value.id, ' ')
     const search = (event) => {
@@ -34,8 +34,8 @@ export default defineComponent({
     }
 
     watch(()=>value.value,(items)=>{
-      topicList.value[topicIndex.value].labels.push(items[0])
-      chipList.value.push(items.pop())
+      topicList.value[topicIndex.value]?.labels.push(items[0])
+      items.pop()
     })
 
     return {
