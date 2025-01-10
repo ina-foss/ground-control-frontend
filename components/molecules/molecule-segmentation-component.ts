@@ -13,11 +13,12 @@ export default defineComponent({
   components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption },
   emit: ['on-segment-click'],
   props: {
+    result: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []}
   },
-  setup({ colors, topics, locals }, { emit, expose }) {
+  setup({ colors, topics, locals , result}, { emit, expose }) {
 
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData } = useTopicList()
@@ -80,7 +81,7 @@ export default defineComponent({
       let currentIndex = index
       const topic = newTopic()
       const topTopic = topics[currentIndex]
-      createTopic({ id: topic, title: topicList.value[topTopic]?.title || null, labels: [] })
+      createTopic({ id: topic, labels: [] })
       do {
         topics[currentIndex] = topic
         currentIndex--
@@ -127,9 +128,11 @@ export default defineComponent({
           topics[index] = phrase.data.topic
         }
       })
-      locals.filter((phrase) => !phrase?.sublocalisations).forEach((phrase ) => {
-        topicList.value[phrase?.id] = phrase
-      })
+      if(result.topic_metadata ){
+        result.topic_metadata.forEach((topic ) => {
+          topicList.value[topic?.id] = topic
+        })
+      }
     }
 
     const handleSegmentClick = (event: {tcin: string|number, tcout: string|number, index:number}) => {
@@ -147,9 +150,9 @@ export default defineComponent({
           phrase.data.topic = topics[index]
         }
       })
-      _.remove(localSubmit, (el) => !el?.sublocalisations)
-      topicList.value.forEach((topic) => {
-        localSubmit.push(topic)
+      result.topic_metadata = []
+      topicList.value.forEach((topic)=>{
+        result.topic_metadata.push(topic)
       })
       return localSubmit
     }
