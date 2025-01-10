@@ -1,5 +1,5 @@
 <template>
-  <div id="PLAYER" ref="myplayer" class=" h-auto aspect-video w-full" @click="seek"/>
+  <div id="PLAYER" ref="myplayer" class=" h-auto aspect-video w-full" @click="seek()"/>
   <div class="w-full flex justify-center  ">
     <Button icon="pi pi-history" severity="secondary" :disabled="!showRollback"  rounded  @click="consumeTimecode()"/>
   </div>
@@ -33,9 +33,9 @@ const showRollback =  computed(()=>{
 function consumeTimecode() {
   if(timecodeHistory){
     timecodeHistory.value.pop() // remove last timecode
-    const tc = timecodeHistory.value.pop() // use the new last timecode to update the player
+    const tc = timecodeHistory.value[timecodeHistory.value.length-1] // use the new last timecode to update the player
     $amalia.updateCurrentTc(tc)
-    seek()
+    seek(true)
   }
 }
 
@@ -52,7 +52,11 @@ watchEffect(() => {
   }
 })
 
-const seek = async () => {
+function computeGap (a:number ,b: number){
+  return Math.abs(a-b)
+}
+
+const seek = async (fromHistory?: boolean) => {
   if (myplayer.value) {
     const currentTime = $amalia.callSeek() // retreive the current time of the video
     let startIndex = 0
@@ -61,9 +65,11 @@ const seek = async () => {
       const mid = Math.floor(((endIndex + startIndex) / 2))
       $application.unixToTimestamp(locals[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
     }
-    const bestIndex = currentTime < $application.unixToTimestamp(locals[endIndex]?.tcin) ? startIndex : endIndex
+    const startGap = computeGap(currentTime,$application.unixToTimestamp(locals[startIndex]?.tcin)) // Gap between currentTime and the in timecode of the startIndex
+    const endGap = computeGap(currentTime,$application.unixToTimestamp(locals[endIndex]?.tcin))// Gap between currentTime and the in timecode of the endIndex
+    let bestIndex = startGap < endGap  ? startIndex : endIndex
 
-    emits('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: history   }) // emit both times to scroll and adapt css
+    emits('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: fromHistory   }) // emit both times to scroll and adapt css
     lastIndex = bestIndex
 }}
 
