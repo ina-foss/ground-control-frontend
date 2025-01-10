@@ -2,6 +2,7 @@ import { defineComponent } from 'vue'
 import { useTopicList } from '../../composables/useTopicList'
 import AtomPluginAutocomplete from './AtomPluginAutocomplete.vue'
 import AtomPluginLabel from './AtomPluginLabel.vue'
+import {remove} from "lodash";
 
 export default defineComponent({
   name: 'AtomPluginBlock',
@@ -12,11 +13,16 @@ export default defineComponent({
   },
   setup(props, {emit}){
 
-    const { topicList } = useTopicList()
+    const { topicList,chipList } = useTopicList()
     const {topicIndex,isTopicFirstSegment} = toRefs(props)
 
     const config = inject('plugin-config')
-
+    function handleRemove(index){
+      remove(topicList.value,(el)=>chipList.value[index] == el)
+      remove(chipList.value,(el,removeIndex)=>{
+        removeIndex === index
+      })
+    }
     function selectComponent(pluginConfig) {
       switch (pluginConfig.type) {
         case 'autocomplete':
@@ -31,7 +37,9 @@ export default defineComponent({
 
     return {
       config,
-      selectComponent
+      selectComponent,
+      chipList,
+      handleRemove
     }
   }
 })
