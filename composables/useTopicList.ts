@@ -29,7 +29,7 @@ interface Label {
 
 
   const topicList = ref<Array<Topic | undefined>>([])
-
+  const chipList = ref([]);
 export function useTopicList() {
 
 
@@ -67,6 +67,7 @@ export function useTopicList() {
 
   return {
     topicList,
+    chipList,
     createTopic,
     deleteTopic,
     copyTopicData,

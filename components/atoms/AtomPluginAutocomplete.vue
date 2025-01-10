@@ -11,7 +11,6 @@
   <div v-else>
     <Button text severity="contrast" icon="pi pi-bookmark" @click="showInput = true" />
   </div>
-  <Chip v-for="(chip,index) in chipList" :label="chip.label" removable v-on:remove="handleRemove(index)"  />
 </template>
 
 <script lang="ts" src="./atom-plugin-autocomplete-component">

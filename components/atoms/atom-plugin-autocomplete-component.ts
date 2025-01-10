@@ -14,28 +14,20 @@ export default defineComponent({
   async setup(props){
     const showInput = ref(false)
     const value = ref([]);
-    const { topicList } = useTopicList()
+    const { topicList,chipList  } = useTopicList()
     const items = ref([]);
-    const chipList = ref([])
     const {topicIndex,isTopicFirstSegment, plugin} = toRefs(props)
     onMounted(()=>{
-      chipList.value = topicList.value[topicIndex.value]?.labels
+      chipList.value = topicList.value[topicIndex.value]?.labels || [];
     })
     const referenceAutoComplete = await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value.id, ' ')
     const search = (event) => {
         items.value =  referenceAutoComplete.filter((el)=> el.label.includes(event.query))
     }
 
-    function handleRemove(index){
-      remove(topicList.value,(el)=>chipList.value[index] == el)
-      remove(chipList.value,(el,removeIndex)=>{
-          removeIndex === index
-      })
-    }
-
     watch(()=>value.value,(items)=>{
       topicList.value[topicIndex.value]?.labels.push(items[0])
-      items.pop()
+      items.pop();
     })
 
     return {
@@ -44,7 +36,6 @@ export default defineComponent({
       items,
       chipList,
       search,
-      handleRemove
     }
   }
 })
