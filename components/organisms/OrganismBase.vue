@@ -174,13 +174,13 @@ const algos = computed(() => { // List the name of the algorithm
 })
 
   function addTimecodeHistory (tc?: never){
-    if (tc) timecodeHistory.value.push(tc)
+    if(timecodeHistory.value.length == 0 || timecodeHistory.value[timecodeHistory.value.length-1] != tc) timecodeHistory.value.push(tc)
+
   }
 
 
   const updateVideoTimecode = (event) => {
     if ( options.value.transcription === true ){
-        addTimecodeHistory(event.tcin)
         moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
         scrollToSegment({lastIndex: 0, bestIndex: event.index})
       }
@@ -189,7 +189,7 @@ const algos = computed(() => { // List the name of the algorithm
   let bestIndex = 0
   const scrollToSegment = (event) => {
     if ( options.value.player === true) {
-      addTimecodeHistory(event.tcin)
+      if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex].tcin)
       bestIndex=event.bestIndex
       getSelectedSegment()?.classList?.remove('selected-segment')
       moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
