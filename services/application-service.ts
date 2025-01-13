@@ -130,4 +130,9 @@ export default class ApplicationService {
       return roles?.includes(role) || rolesFromToken?.includes(role);
     }
 
+  public formatDate (dateString)  {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'long', year: 'numeric'});
+  }
+
 }

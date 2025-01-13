@@ -68,7 +68,7 @@ class="text-sm px-2 py-3 text-slate-500"
     </NuxtLink>
     <div class=" bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400" style="font-size: 12px">
       <p v-if="$props.project.created_at != null" class="self-center font-medium" style="color:#212529">
-        {{ formatDate($props.project.created_at) }}
+        {{$application.formatDate($props.project.created_at) }}
       </p>
       <Avatar
         v-tooltip.left="project.created_by" :label=project.created_by.charAt(0).toUpperCase()
@@ -101,10 +101,7 @@ const translations = {
 const translatedProjectStatus = (project_status) => {
   return translations[project_status]
 }
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'long', year: 'numeric'});
-}
+
 const navigate = () => {
   store.addCrumb({label: project.title, route: `/projects/${project.id}`})
 }

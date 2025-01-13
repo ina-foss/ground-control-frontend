@@ -248,7 +248,7 @@ const annotationComponent = computed(() => {
   })
 
   const globalKeydown=(event) =>{
-    if(event.key && event.target.tagName != "INPUT" ){
+    if((event.key && event.target.tagName != "INPUT") && (event.key && event.target.tagName != "TEXTAREA") ){
       const key = event.key.toUpperCase();
         switch (key) {
           case "W"://recule de 10

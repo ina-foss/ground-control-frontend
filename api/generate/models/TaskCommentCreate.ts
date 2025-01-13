@@ -8,5 +8,6 @@
 export type TaskCommentCreate = {
     comment: (string | null);
     task_id: number;
+    created_by: string;
 };
 
