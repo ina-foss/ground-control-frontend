@@ -33,6 +33,8 @@ const { phrase, overlay } = defineProps({
   overlay: {type: Object},
 })
 
+const { userEmail } = useAuth()
+
 const commentText = ref('')
 let lastText = ''
 const test = ref(document.activeElement?.tagName)

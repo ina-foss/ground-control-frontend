@@ -7,19 +7,16 @@ import { PluginService } from '~/api/generate'
 export default defineComponent({
   name: 'AtomPluginAutocomplete',
   props: {
-    topicIndex: {type: Number},
-    isTopicFirstSegment: {type: Boolean},
+    topicIndex: {type: Object},
     plugin: {},
   },
-  async setup(props){
+  emits:['add-to-chiplist'],
+  async setup(props, {emit}){
     const showInput = ref(false)
     const value = ref([]);
-    const { topicList,chipList  } = useTopicList()
+    const { topicList  } = useTopicList()
     const items = ref([]);
-    const {topicIndex,isTopicFirstSegment, plugin} = toRefs(props)
-    onMounted(()=>{
-      chipList.value = topicList.value[topicIndex.value]?.labels || [];
-    })
+    const {topicIndex, plugin} = toRefs(props)
     const referenceAutoComplete = await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value.id, ' ')
     const search = (event) => {
         items.value =  referenceAutoComplete.filter((el)=> el.label.includes(event.query))
@@ -34,7 +31,6 @@ export default defineComponent({
       showInput,
       value,
       items,
-      chipList,
       search,
     }
   }

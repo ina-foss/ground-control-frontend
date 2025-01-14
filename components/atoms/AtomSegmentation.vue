@@ -61,8 +61,8 @@
           <i v-if="!isTopicsLastSegment || topicIndex == undefined"
             class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 " />
           <div v-else class="flex justify-around w-[80px]">
-            <i class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 " />
-            <i class="pi pi-eraser bg-error p-[5px] rounded hover:bg-red-600" />
+            <i v-tooltip.left="{value:'Déplacer une rupture',showDelay: 400}" class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 "  />
+            <i v-tooltip.right="{value: 'Supprimer une rupture', showDelay: 400}" class="pi pi-eraser bg-error p-[5px] rounded hover:bg-red-600" />
           </div>
         </div>
       </div>

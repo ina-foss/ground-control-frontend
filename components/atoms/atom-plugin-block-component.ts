@@ -13,15 +13,16 @@ export default defineComponent({
   },
   setup(props, {emit}){
 
-    const { topicList,chipList } = useTopicList()
+    const { topicList} = useTopicList()
+    const chipList = ref([]);
     const {topicIndex,isTopicFirstSegment} = toRefs(props)
 
     const config = inject('plugin-config')
+    onMounted(()=>{
+      chipList.value = topicList.value[topicIndex.value]?.labels || [];
+    })
     function handleRemove(index){
-      remove(topicList.value,(el)=>chipList.value[index] == el)
-      remove(chipList.value,(el,removeIndex)=>{
-        removeIndex === index
-      })
+      remove(topicList.value[topicIndex.value]?.labels ,(el)=>chipList.value[index] == el)
     }
     function selectComponent(pluginConfig) {
       switch (pluginConfig.type) {
