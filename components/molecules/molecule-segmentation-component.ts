@@ -100,7 +100,6 @@ export default defineComponent({
         topics[currentIndex] = bottomTopic == undefined ? null : bottomTopic
         currentIndex--
       } while ((currentIndex >= 0) && (topTopic == topics[currentIndex]))
-      console.log(topics)
     }
 
 

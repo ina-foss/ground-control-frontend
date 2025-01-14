@@ -22,13 +22,7 @@ export default defineComponent({
       chipList.value = topicList.value[topicIndex.value]?.labels || [];
     })
     function handleRemove(index){
-      console.log(index)
-      console.log(chipList.value[index])
       remove(topicList.value[topicIndex.value]?.labels ,(el)=>chipList.value[index] == el)
-      console.log(topicList.value)
-      // remove(chipList.value,(el,removeIndex)=>{
-      //   removeIndex === index
-      // })
     }
     function selectComponent(pluginConfig) {
       switch (pluginConfig.type) {
