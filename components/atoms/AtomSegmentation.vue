@@ -50,7 +50,7 @@
     }"
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate leading-tight text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
-      <p class="z-50">{{ $props.phrase.data?.text[0] }}</p>
+       {{ $props.phrase.data?.text[0] }}
     </div>
     <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
       <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
@@ -82,6 +82,7 @@ import { AutoComplete, MultiSelect } from 'primevue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
 import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
+import { result } from 'lodash';
 
 const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
@@ -108,16 +109,25 @@ function startDrag(event: DragEvent) {
   const mainDiv: HTMLDivElement = target.parentElement
 }
 
+function getLiList(element,count) {
+  if (element.children.item(1)?.tagName== 'LI') return {list: element.children, deep: count}
+  return getLiList(element.parentElement,count+1)
+}
+
+function getDeepElement(element,deep){
+  if(deep==0) return element
+  return getDeepElement(element.parentElement, deep-1)
+}
+
 function handleDrop(event: DragEvent) {
   document.querySelector('.customHover')?.classList.remove('customHover')
   event.preventDefault()
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
-  const listLiElement : HTMLCollection = target.parentElement?.parentElement?.parentElement?.children
-  if(listLiElement.item(1)?.tagName == 'LI'){
-    const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(target.parentElement?.parentElement)
-    emit('dragging-end',{index: index})
-  }
+  const result = getLiList(target,0)
+  const listLiElement : HTMLCollection = result.list
+  const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
+  if( index != -1) emit('dragging-end',{index: index})
   const hoverList: NodeList = document.querySelectorAll('.customHover')
   hoverList.forEach((el)=>{
     el.classList?.remove('customHover')
