@@ -33,8 +33,6 @@ export class TagService {
                 'tag_key': tagKey,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -69,8 +67,6 @@ export class TagService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -91,8 +87,6 @@ export class TagService {
                 'tag_key': tagKey,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -115,12 +109,10 @@ export class TagService {
     ): CancelablePromise<TagCreate> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/tag/',
+            url: '/tag',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -139,14 +131,12 @@ export class TagService {
     ): CancelablePromise<Array<TagDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/tags/',
+            url: '/tags',
             query: {
                 'skip': skip,
                 'limit': limit,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

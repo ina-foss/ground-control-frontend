@@ -24,14 +24,12 @@ export class ProjectService {
     ): CancelablePromise<Array<ProjectDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/projects/',
+            url: '/projects',
             query: {
                 'skip': skip,
                 'limit': limit,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -48,12 +46,10 @@ export class ProjectService {
     ): CancelablePromise<ProjectDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/project/',
+            url: '/project',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -75,8 +71,6 @@ export class ProjectService {
                 'project_id': projectId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -102,8 +96,6 @@ export class ProjectService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -125,8 +117,6 @@ export class ProjectService {
                 'project_id': projectId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
