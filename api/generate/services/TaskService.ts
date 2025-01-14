@@ -35,8 +35,6 @@ export class TaskService {
                 'task_id': taskId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -71,8 +69,6 @@ export class TaskService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -95,12 +91,10 @@ export class TaskService {
     ): CancelablePromise<TaskWithIdDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/task/',
+            url: '/task',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -132,8 +126,6 @@ export class TaskService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

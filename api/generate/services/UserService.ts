@@ -29,14 +29,12 @@ export class UserService {
     ): CancelablePromise<Array<UserDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/users/',
+            url: '/users',
             query: {
                 'skip': skip,
                 'limit': limit,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -53,12 +51,10 @@ export class UserService {
     ): CancelablePromise<UserDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/user/',
+            url: '/user',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -79,8 +75,6 @@ export class UserService {
                 'email': email,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

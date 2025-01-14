@@ -33,8 +33,6 @@ export class StepService {
                 'step_id': stepId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -69,8 +67,6 @@ export class StepService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -91,8 +87,6 @@ export class StepService {
                 'step_id': stepId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -115,12 +109,10 @@ export class StepService {
     ): CancelablePromise<StepCreate> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/step/',
+            url: '/step',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -139,14 +131,12 @@ export class StepService {
     ): CancelablePromise<Array<StepDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/steps/',
+            url: '/steps',
             query: {
                 'skip': skip,
                 'limit': limit,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
