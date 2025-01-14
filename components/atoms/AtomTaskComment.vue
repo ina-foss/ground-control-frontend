@@ -29,7 +29,6 @@
   onMounted( async ()=>{
      // TaskCommentService.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id).then((comment)=>comments.value=comment)
     comments.value = getData.task_comments
-    console.log(comments.value)
   })
 
   const comment = ref('')

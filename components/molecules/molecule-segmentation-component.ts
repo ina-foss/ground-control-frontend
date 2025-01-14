@@ -97,9 +97,10 @@ export default defineComponent({
       fusionTopicData(topTopic, bottomTopic)
       deleteTopic(topTopic)
       do {
-        topics[currentIndex] = bottomTopic
+        topics[currentIndex] = bottomTopic == undefined ? null : bottomTopic
         currentIndex--
       } while ((currentIndex >= 0) && (topTopic == topics[currentIndex]))
+      console.log(topics)
     }
 
 
