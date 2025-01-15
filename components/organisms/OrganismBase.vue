@@ -103,6 +103,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const { options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
   const config = ref(null)
+  const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
   const timecodeHistory = ref([])
 
   const annotationInfo = computed(() => {
@@ -117,7 +118,19 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     }
   });
 
-  PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=> config.value = response  )
+  PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
+   config.value = response;
+    const transformedData = Promise.all(
+      response.map(async (item) => {
+        const result = await PluginService.searchPluginsPluginsPluginIdSearchGet(item.id, ' ')
+        return {
+          id: item.id,
+          data: result,
+        };
+      })
+    );
+    configItemPlugin.value = transformedData;
+  } )
 
 
 
@@ -302,6 +315,8 @@ const annotationComponent = computed(() => {
   }
 
   provide('plugin-config', config)
+
+  provide('plugin-items-config', configItemPlugin)
 
   provide('timecode-history', timecodeHistory)
 
