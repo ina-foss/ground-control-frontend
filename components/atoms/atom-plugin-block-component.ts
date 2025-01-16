@@ -3,6 +3,7 @@ import { useTopicList } from '../../composables/useTopicList'
 import AtomPluginAutocomplete from './AtomPluginAutocomplete.vue'
 import AtomPluginLabel from './AtomPluginLabel.vue'
 import {remove} from "lodash";
+import {PluginService} from "~/api/generate";
 
 export default defineComponent({
   name: 'AtomPluginBlock',
@@ -11,25 +12,30 @@ export default defineComponent({
     topicIndex: {type: Number},
     isTopicFirstSegment: {type: Boolean}
   },
-  setup(props, {emit}){
-
+  async setup(props, {emit}){
     const { topicList} = useTopicList()
     const chipList = ref([]);
     const {topicIndex,isTopicFirstSegment} = toRefs(props)
 
     const config = inject('plugin-config')
+    const pluginItemsConfig = inject('plugin-items-config')
     onMounted(()=>{
       chipList.value = topicList.value[topicIndex.value]?.labels || [];
     })
     function handleRemove(index){
       remove(topicList.value[topicIndex.value]?.labels ,(el)=>chipList.value[index] == el)
     }
+
     function selectComponent(pluginConfig) {
+      const itemlist=pluginItemsConfig.value
+        .then((list) => {
+          return list.find((item) => item.id === pluginConfig.id).data;
+        })
       switch (pluginConfig.type) {
         case 'autocomplete':
-          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment } }
+          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:itemlist } }
         case 'label':
-          return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment } }
+          return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:pluginItemsConfig } }
         default:
           break;
       }
@@ -40,7 +46,9 @@ export default defineComponent({
       config,
       selectComponent,
       chipList,
-      handleRemove
+      handleRemove,
+      pluginItemsConfig
+
     }
   }
 })

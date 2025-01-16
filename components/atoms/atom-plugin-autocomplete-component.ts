@@ -9,6 +9,7 @@ export default defineComponent({
   props: {
     topicIndex: {type: Object},
     plugin: {},
+    pluginItemsConfig:{},
   },
   emits:['add-to-chiplist'],
   async setup(props, {emit}){
@@ -16,12 +17,12 @@ export default defineComponent({
     const value = ref([]);
     const { topicList  } = useTopicList()
     const items = ref([]);
-    const {topicIndex, plugin} = toRefs(props)
-    const referenceAutoComplete = await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value.id, ' ')
+    const {topicIndex, plugin,pluginItemsConfig} = toRefs(props)
     const search = (event) => {
-        items.value =  referenceAutoComplete.filter((el)=> el.label.includes(event.query))
+      pluginItemsConfig.value.then((e)=>{
+        items.value =  e.filter((el)=> el.label.includes(event.query))
+      })
     }
-
     watch(()=>value.value,(items)=>{
       topicList.value[topicIndex.value]?.labels.push(items[0])
       items.pop();
