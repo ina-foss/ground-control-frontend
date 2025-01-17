@@ -49,7 +49,12 @@ const MyPreset = definePreset(Lara, {
       iconSize: '16px',
       colorScheme: {
         light: {
+          infoBackground: 'var(--info-state)',
+          infoColor: 'var(--text)',
+          warnBackground: 'var(--warning-state)',
+          warnColor: 'var(--text)',
           successBackground: 'var(--success-state)',
+          successColor: 'var(--text)',
           dangerBackground: 'var(--error-state)',
         }
       }

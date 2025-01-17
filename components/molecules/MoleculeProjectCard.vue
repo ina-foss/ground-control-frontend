@@ -53,7 +53,7 @@ v-if="deleteDialog === false" class="button" size="small" label="Supprimer"
         <div class="flex justify-between items-center  justify-items-stretch gap-3">
           <span class="font-bold"> <span style="color:#0057FF;" class="mr-2">{{ project.steps.length }} </span><i
             class="pi pi-list-check "/></span>
-          <Tag class="mb-1 scale-90" :class="statusSeverity">{{ translatedProjectStatus(project.status) }}</Tag>
+          <Tag class="mb-1 scale-90" :severity="statusSeverity" >{{ translatedProjectStatus(project.status) }}</Tag>
         </div>
       </div>
       <div
@@ -65,7 +65,6 @@ class="text-sm px-2 py-3 text-slate-500"
       <hr>
 
 
-    </NuxtLink>
     <div class=" bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400" style="font-size: 12px">
       <p v-if="$props.project.created_at != null" class="self-center font-medium" style="color:#212529">
         {{$application.formatDate($props.project.created_at) }}
@@ -74,6 +73,7 @@ class="text-sm px-2 py-3 text-slate-500"
         v-tooltip.left="project.created_by" :label=project.created_by.charAt(0).toUpperCase()
         shape="circle" style="background-color:#0057FF;color: white;font-weight: 500;height:24px;width:24px"/>
     </div>
+    </NuxtLink>
   </div>
 
 </template>
@@ -109,7 +109,7 @@ const navigate = () => {
 const statusSeverity = computed(() => {
   switch (project.status) {
     case 'pending':
-      return 'warning'
+      return 'warn'
 
     case 'draft':
       return 'info'
@@ -143,20 +143,6 @@ const deleteProject = async () => {
 </script>
 <style>
 
-.warning {
-  background-color: #F9D621;
-  color: black;
-}
-
-.info {
-  background-color: #B3DDF4;
-  color: black;
-}
-
-.success {
-  background-color: #9ADC82;
-  color: black;
-}
 .custom-icon-color .pi {
   color: #212529;
 }
