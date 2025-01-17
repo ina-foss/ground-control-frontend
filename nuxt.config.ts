@@ -34,7 +34,8 @@ const MyPreset = definePreset(Lara, {
       colorScheme: {
         light:{
           headerBackground: 'white',
-          borderColor: 'white'
+          borderColor: 'white',
+          headerColor: 'text-title'
         }
       },
       toggleableHeaderPadding: '12px',
@@ -42,8 +43,7 @@ const MyPreset = definePreset(Lara, {
       header:{
         borderWidth: '0px',
       }
-    }
-    ,
+    },
     tag:{
       padding: "8px",
       iconSize: '16px',
@@ -55,7 +55,7 @@ const MyPreset = definePreset(Lara, {
       }
     },
     toggleswitch:{
-      borderRadius: '8px',
+      borderRadius: '12px',
     },
     button: {
       borderRadius: '4px',
@@ -66,6 +66,7 @@ const MyPreset = definePreset(Lara, {
       colorScheme: {
         light: {
           outlinedPrimaryBorderColor: '{primary.color}',
+
         }
       }
     },

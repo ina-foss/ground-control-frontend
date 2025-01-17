@@ -1,21 +1,26 @@
 <template>
   <div class=" rounded-lg w-[250px] bg-white">
-    <Panel class="w-full" header="Affichage" toggleable>
-      <div class="flex flex-col gap-[10px] ">
-        <div class="flex justify-between items-center self-stretch py-1 ">
-          <span class="">Span</span>
-          <ToggleSwitch v-model="span" />
-        </div>
-        <div class="flex justify-between items-center self-stretch py-1">
-          <span>TC</span>
-          <ToggleSwitch v-model="timecode" :disabled="timecodeDisabled" />
-        </div>
-        <div class="flex justify-between items-center self-stretch py-1">
-          <span>Bloc</span>
-          <ToggleSwitch v-model="bloc" />
-        </div>
-      </div>
-    </Panel>
+    <Accordion class="w-full custom-accordion rounded" >
+      <AccordionPanel>
+        <AccordionHeader class="hover:!bg-white hover:!text-title rounded ">Affichage</AccordionHeader>
+        <AccordionContent>
+          <div class="flex flex-col gap-[10px] text-title ">
+            <div class="flex justify-between items-center self-stretch py-1 ">
+              <span>Span</span>
+              <ToggleSwitch v-model="span" />
+            </div>
+            <div class="flex justify-between items-center self-stretch py-1">
+              <span >TC</span>
+              <ToggleSwitch v-model="timecode" :disabled="timecodeDisabled" />
+            </div>
+            <div class="flex justify-between items-center self-stretch py-1">
+              <span >Bloc</span>
+              <ToggleSwitch v-model="bloc" />
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionPanel>
+    </Accordion>
   </div>
 </template>
 
@@ -47,3 +52,11 @@ watch(()=>bloc.value,(value)=>{
 
 
 </script>
+<style>
+.custom-accordion{
+  --p-accordion-header-active-background: white;
+  --p-accordion-header-active-color: #212927;
+  --p-accordion-header-background: white;
+  --p-accordion-header-color: #212927;
+}
+</style>
