@@ -10,7 +10,7 @@
         <div class="w-full flex h-full justify-between p-lg rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flew-row items-center">
-            <Tag severity="contrast">
+            <Tag v-if="options.timecode" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
                 <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
@@ -88,6 +88,7 @@ const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProp
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()
+const { options } = useOptions()
 const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
 const segment = ref(null)
 const toast = useToast()
