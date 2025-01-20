@@ -292,6 +292,14 @@ defineExpose({  id: topicIndex, })
 
 </script>
 
+<style scoped lang="postcss">
+
+.selected-segment > div {
+  @apply border-surface-500 border-2 ;
+}
+
+</style>
+
 <style lang="postcss">
 
 .customHover .rupture,
