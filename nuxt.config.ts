@@ -23,6 +23,13 @@ const MyPreset = definePreset(Lara, {
     }
   },
   components:{
+    accordion: {
+      header: {
+        color: 'var(--title)',
+        activeColor: 'var(--title)',
+        hoverColor:'var(--title)',
+      },
+    },
     breadcrumb: {
       ColorScheme: {
         light: {

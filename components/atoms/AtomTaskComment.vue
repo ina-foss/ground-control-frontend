@@ -1,10 +1,10 @@
 <template>
-  <div class="w-[250px] bg-white rounded-lg text-title">
+  <div class="w-[250px] rounded-lg text-title">
     <OverlayBadge :value="comments?.length" severity="contrast">
-      <div class=" rounded-lg w-[250px] bg-white">
-        <Accordion class="w-full custom-accordion rounded" >
+      <div class=" rounded-lg w-[250px]">
+        <Accordion class="w-full rounded" >
           <AccordionPanel>
-            <AccordionHeader class="hover:!bg-white hover:!text-title rounded ">Synchroniation</AccordionHeader>
+            <AccordionHeader class="!bg-white hover:!bg-white rounded ">Synchroniation</AccordionHeader>
             <AccordionContent>
               <div class="flex flex-col gap-[10px] text-title">        <!--List Messages-->
                 <div v-if="comments?.length != 0" :items="comments" :itemSize="50" class="mb-3 border border-surface-200 dark:border-surface-700 rounded " style="height:125px; overflow-y: auto">

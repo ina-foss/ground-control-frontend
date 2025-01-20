@@ -1,8 +1,8 @@
 <template>
-  <div class=" rounded-lg w-[250px] bg-white">
-    <Accordion class="w-full custom-accordion rounded" >
+  <div class=" rounded-lg w-[250px]">
+    <Accordion class="w-full rounded" >
       <AccordionPanel>
-        <AccordionHeader class="hover:!bg-white hover:!text-title rounded ">Affichage</AccordionHeader>
+        <AccordionHeader class="!bg-white hover:!bg-white rounded ">Affichage</AccordionHeader>
         <AccordionContent>
           <div class="flex flex-col gap-[10px] text-title ">
             <div class="flex justify-between items-center self-stretch py-1 ">
@@ -52,11 +52,3 @@ watch(()=>bloc.value,(value)=>{
 
 
 </script>
-<style>
-.custom-accordion{
-  --p-accordion-header-active-background: white;
-  --p-accordion-header-active-color: #212927;
-  --p-accordion-header-background: white;
-  --p-accordion-header-color: #212927;
-}
-</style>
