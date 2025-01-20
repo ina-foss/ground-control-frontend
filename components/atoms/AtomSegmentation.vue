@@ -33,11 +33,11 @@
     <OverlayBadge v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
       :class="` overflow-visible !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
     >
-    <Button icon="pi pi-comment"
+    <Button icon="pi pi-comment" class="hover:!bg-primary hover:!border-primary"
       @click="toggleComment" />
     </OverlayBadge>
     <Button v-else icon="pi pi-comment"
-      :class="` !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
+      :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
       @click="toggleComment" />
     <div v-tooltip.top="{
       value: timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout),
@@ -56,13 +56,13 @@
       <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
         @click="handleSegmentation">
         <div ref="ruptureTemplate"
-          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary-400' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"
+          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"
           :draggable="isTopicsLastSegment && topics[topicIndex]!=null">
           <i v-if="!isTopicsLastSegment || topicIndex == undefined"
             class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 " />
           <div v-else class="flex justify-around w-[80px]">
-            <i v-tooltip.left="{value:'Déplacer une rupture',showDelay: 400}" class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 "  />
-            <i v-tooltip.right="{value: 'Supprimer une rupture', showDelay: 400}" class="pi pi-eraser bg-error p-[5px] rounded hover:bg-red-600" />
+            <i v-tooltip.left="{value:'Déplacer une rupture',showDelay: 400}" class="pi pi-sort bg-primary p-[5px] cursor-ns-resize rounded hover:bg-primary-600 "  />
+            <i v-tooltip.right="{value: 'Supprimer une rupture', showDelay: 400}" class="pi pi-trash bg-error p-[5px] rounded hover:bg-red-600" />
           </div>
         </div>
       </div>
