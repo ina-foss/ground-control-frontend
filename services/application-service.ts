@@ -31,7 +31,7 @@ export default class ApplicationService {
   public computeColor= (seed: number)=>{
     const full = 'bg-extra'+ (seed%9+1)
     const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(seed%9+1))
-    return {  hex: hex, full : full }
+    return {  hex: hex, full : full , fullHexTransparent: 'bg-['+hex+'4f]'}
 
   }
 
@@ -52,7 +52,8 @@ export default class ApplicationService {
    * @returns {number}
    */
   public unixToTimestamp(tc: string | number ): number{
-    if ( typeof tc != 'string') return tc
+    if (typeof tc == 'number') return tc
+    if (!tc.includes(':')) return parseFloat(tc)
     const millisecond = tc.split('.')[1]
     const timeArray = tc.split('.')[0].split(':')
     const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + floor((parseInt(millisecond) / 1000),2)
@@ -128,5 +129,10 @@ export default class ApplicationService {
       const rolesFromToken: [] = this.getUserRolesFromToken();
       return roles?.includes(role) || rolesFromToken?.includes(role);
     }
+
+  public formatDate (dateString)  {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'long', year: 'numeric'});
+  }
 
 }

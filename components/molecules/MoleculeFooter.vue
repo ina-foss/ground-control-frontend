@@ -1,6 +1,6 @@
 <template>
   <div class="bottom-0 text-sm flex fixed bg-black text-white h-[70px] w-full  items-center" >
-    <p style="color:#BDBDBD;" class="font-normal text-sm text-left">V{{ config.version }} </p>
+    <p class="pl-2 font-normal text-sm text-left text-gray-400">v{{ config.version }} </p>
     <div class="centered-icon">
       <AtomLogo size="md" />
     </div>

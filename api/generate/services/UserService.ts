@@ -29,7 +29,7 @@ export class UserService {
     ): CancelablePromise<Array<UserDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/users/',
+            url: '/users',
             query: {
                 'skip': skip,
                 'limit': limit,
@@ -51,7 +51,7 @@ export class UserService {
     ): CancelablePromise<UserDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/user/',
+            url: '/user',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

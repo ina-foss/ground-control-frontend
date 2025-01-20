@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full">
+  <div class="h-[calc(100%-57px)]">
     <OrganismBase
  :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
                :annotations-out="annotations_out"
@@ -64,11 +64,11 @@ AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,userEm
 AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
 
 
-const allFetched = $computed(() => {
+const allFetched = computed(() => {
   return annotation_bool.in && annotation_bool.out
 })
 
-const annotationInfo = $computed(() => {
+const annotationInfo = computed(() => {
   let info = null
   if (annotations_out.value) {
     annotations_out.value.forEach((annotation, index) => {
@@ -82,19 +82,19 @@ const annotationInfo = $computed(() => {
 
 const submitExistantAnnotation =(locals,action)=>{
 
-    const result = annotations_out.value[annotationInfo.index].result
+    const result = annotations_out.value[annotationInfo.value.index].result
     result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur a déjà une annotation associée à cette tâche
     let promise;
     if (action === 'submit') {
       promise = AnnotationService.updateAnnotationResultAnnotationIdPatch(
-        annotationInfo.id,
-        annotations_out.value[annotationInfo.index].result
+        annotationInfo.value.id,
+        annotations_out.value[annotationInfo.value.index].result
       )
     } else {
       promise = AnnotationService.finishAnnotationAnnotationFinishIdPatch(
-        annotationInfo.id,
-        annotations_out.value[annotationInfo.index].result
+        annotationInfo.value.id,
+        annotations_out.value[annotationInfo.value.index].result
       )
     }
     promise.then(() => {
@@ -115,9 +115,8 @@ const submitExistantAnnotation =(locals,action)=>{
       .then(() => {
         AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
       })
-
-
 }
+
 const submitNewAnnotation =(locals,action)=>{
   const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
   result.data.localisation[0].sublocalisations.localisation = locals
@@ -159,7 +158,7 @@ const submitNewAnnotation =(locals,action)=>{
 const handleSubmit = (event, action) => {
   const locals = JSON.parse(JSON.stringify(event.locals))
 
-  if (annotationInfo != null) {
+  if (annotationInfo.value != null) {
     submitExistantAnnotation(locals,action);
 
   } else {

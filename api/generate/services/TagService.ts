@@ -109,7 +109,7 @@ export class TagService {
     ): CancelablePromise<TagCreate> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/tag/',
+            url: '/tag',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -131,7 +131,7 @@ export class TagService {
     ): CancelablePromise<Array<TagDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/tags/',
+            url: '/tags',
             query: {
                 'skip': skip,
                 'limit': limit,

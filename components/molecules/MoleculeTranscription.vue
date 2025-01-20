@@ -1,5 +1,5 @@
 <template>
-  <div class="col-span-5 flex relative flex-row w-full max-h-full justify-center overflow-y-auto">
+  <div class="col-span-4 flex relative flex-row w-full max-h-full justify-center overflow-y-auto">
     <ol class=" overflow-y-auto  h-full ">
       <ScrollTop
         :pt="{ root: { style: 'position: absolute ;right: 50%; top: 95%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
@@ -17,15 +17,19 @@
       </div>
     </ol>
   </div>
+  <div class=" col-span-2 overflow-y-auto flex flex-col items-center gap-3  ">
+      <atom-video-option />
+    </div>
 </template>
 
 
 <script setup>
 import AtomTrancription from '../atoms/AtomTrancription.vue';
+import AtomVideoOption from '../atoms/atom-video-option.vue'
 import {AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
 let isChanged = false
-const transcriptionsRef = $ref([])
+const transcriptionsRef = ref([])
 const {transcriptions, algos, userAnnotations, status} = defineProps({
   transcriptions: { // all transcriptions by all algorithm group by sentence
     type: Array,
@@ -88,10 +92,10 @@ const transcriptionFunction = (localSubmit) => {
   return locals
 }
 
-defineExpose({locals: localChanges, listRefs: $$(transcriptionsRef), annotationFunction: transcriptionFunction })
+defineExpose({locals: localChanges, listRefs: transcriptionsRef, annotationFunction: transcriptionFunction })
 
 </script>
-<style lang="postcss">
+<style scoped lang="postcss">
 .selected-segment {
 @apply border-surface-500 border-2
 }

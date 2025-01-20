@@ -160,20 +160,19 @@ const translations = {
   pending: 'En attente',
   ended: 'Terminé'
 }
-const translatedTaskStatus = $computed(() => {
+const translatedTaskStatus = computed(() => {
   return Object.values(TaskStatus).map(status => ({
     label: translations[status],
     value: status,
   }));
 })
 
-let name = $ref()
-let instruction = $ref()
-let dataType = $ref(TaskDataType.LDD)
-let status = $ref(translatedTaskStatus[0])
-const files = $ref([])
-const fileData = $ref([])
-const deleteDialog = $ref(false)
+let name = ref()
+let instruction = ref()
+let dataType = ref(TaskDataType.LDD)
+let status = ref(translatedTaskStatus.value[0])
+const fileData = ref([])
+const deleteDialog = ref(false)
 
 const onSelect = async (event) => {
   const reader = new FileReader();
@@ -191,9 +190,9 @@ const onSelect = async (event) => {
 }
 
 watchEffect(() => {
-  if (fileData.length > 1) {
-    for (let i = 1; i < fileData.length; i++) {
-      if (fileData[i].asset?.url !== fileData[i - 1].asset.url) {
+  if (fileData.value.length > 1) {
+    for (let i = 1; i < fileData.value.length; i++) {
+      if (fileData[i].asset?.url !== fileData.value[i - 1].asset.url) {
         toast.add({
           life: 5000,
           severity: 'error',
@@ -201,7 +200,7 @@ watchEffect(() => {
           summary: "Erreur d'import"
         });
         templateRef.value.remove(i)
-        fileData.pop()
+        fileData.value.pop()
       }
     }
   }
@@ -209,25 +208,25 @@ watchEffect(() => {
 
 const onReaderLoad = (event) => {
   const obj = JSON.parse(event.target.result);
-  fileData.push(obj)
+  fileData.value.push(obj)
 }
 
 const createTask = async () => {
 
   MediaService.createMediaMediaPost({
-    url: fileData[0].asset.url,
-    type: fileData[0].asset.media_type
+    url: fileData.value[0].asset.url,
+    type: fileData.value[0].asset.media_type
   }).then((res) => {
     TaskService.createTaskTaskPost({
-      name: name,
-      instruction: instruction,
-      data_type: dataType,
-      status: status.value,
+      name: name.value,
+      instruction: instruction.value,
+      data_type: dataType.value,
+      status: status.value.value,
       lead_time: null,
       step_id: stepObject.id,
       media_id: res.id
     }).catch((err) => console.error(err)).then((res) => {
-      fileData.forEach(file => {
+      fileData.value.forEach(file => {
         AnnotationService.createAnnotationAnnotationPost({
           annotation: {
             user_email: userEmail.value,
@@ -248,7 +247,7 @@ const createTask = async () => {
         name= '',
         instruction= '',
         dataType = TaskDataType.LDD,
-        status = translatedTaskStatus[0])
+        status = translatedTaskStatus.value[0])
   })
 
 

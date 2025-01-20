@@ -24,7 +24,7 @@ export class ProjectService {
     ): CancelablePromise<Array<ProjectDetailDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/projects/',
+            url: '/projects',
             query: {
                 'skip': skip,
                 'limit': limit,
@@ -46,7 +46,7 @@ export class ProjectService {
     ): CancelablePromise<ProjectDetailDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/project/',
+            url: '/project',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

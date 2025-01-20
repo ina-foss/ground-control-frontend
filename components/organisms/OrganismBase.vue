@@ -1,10 +1,10 @@
 <template>
   <div
 v-if="data.annotations[0]?.annotation_status !== annotationStatus"
-       class=" right-12 mr-4 absolute flex items-center top-[-70px] h-[70px] z-[5]" >
+       class=" right-12 mr-4 absolute flex items-center top-[-70px] h-[70px] z-[5] !hover:red" >
     <Button  class="mr-4" outlined label="Soumettre"  @click="handleSubmit()"/>
-    <Button
-      label="Terminer"
+    <Button class="button-overwrite"
+            label="Terminer"
       @click="handleFinish()"
     />
   </div>
@@ -32,11 +32,11 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
       </div>
     </div>
   </div>
-  <div v-else class="h-full" >
+  <div v-else class="h-full " >
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0].result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
           Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
@@ -49,23 +49,25 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
           ayant été traités, différencie les interlocuteurs.
         </p>
       </MoleculeAnnotationLeftPanel>
-      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" v-model:locals="locals" v-on="annotationComponent.events" />
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
     </div>
   </div>
 </template>
 
-<script setup >
+<script setup lang="ts">
+  import { provide} from 'vue'
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSpan from "../molecules/MoleculeSpan.vue";
   import MoleculeSegmentation from "../molecules/MoleculeSegmentation.vue";
   import MoleculeTranscription from "../molecules/MoleculeTranscription.vue";
   import _ from 'lodash'
-  import {AnnotationStatus} from '../../api/generate';
+  import {AnnotationStatus, PluginService} from '../../api/generate';
   import { useService } from "#imports";
-
   const authStore = useAuth()
-  const { $application } = useService()
+  const optionStore = useOptions()
+  const {$application} = useService()
+  const { unixToTimestamp } = $application
 
 
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
@@ -89,18 +91,22 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   })
 
 
+
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
-  const colors = $ref(['#BEBEBE'])
-  const topics = $ref([])
-  let videoSrc = $ref(annotationsIn[0]?.result.asset.url)
-  const moleculeAnnotationRef = $ref()
-  const moleculeAnnotationLeftPanelRef= $ref()
+  const colors = ref(['#BEBEBE'])
+  const topics = ref([])
+  const videoSrc = ref(annotationsIn[0]?.result.asset.url)
+  const moleculeAnnotationRef = ref()
+  const moleculeAnnotationLeftPanelRef= ref()
   const { userEmail } = storeToRefs(authStore)
+  const { options } = storeToRefs(optionStore)
   const annotationStatus = AnnotationStatus.ENDED
-  const { computeColor } = $application
+  const config = ref(null)
+  const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
+  const timecodeHistory = ref([])
 
-  const annotationInfo = $computed(() => {
+  const annotationInfo = computed(() => {
     let info = null
     if (allFetched ) {
       annotationsOut.forEach((annotation, index) => {
@@ -112,10 +118,26 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     }
   });
 
-  const userAnnotations = $computed(() => { // return array of users annotations
+  PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
+   config.value = response;
+    const transformedData = Promise.all(
+      response.map(async (item) => {
+        const result = await PluginService.searchPluginsPluginsPluginIdSearchGet(item.id, ' ')
+        return {
+          id: item.id,
+          data: result,
+        };
+      })
+    );
+    configItemPlugin.value = transformedData;
+  } )
+
+
+
+  const userAnnotations = computed(() => { // return array of users annotations
     let response = []
-    if (allFetched && annotationInfo != null) {
-      const annotation = annotationsOut[annotationInfo.index];
+    if (allFetched && annotationInfo.value != null) {
+      const annotation = annotationsOut[annotationInfo.value.index];
 
       if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
         response = [...annotation.result.data.localisation[0].sublocalisations.localisation];
@@ -123,16 +145,25 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     return response
   })
 
-  const locals = $computed(() => {
+  const locals = computed(() => {
     if(allFetched){
-    return (annotationInfo == null)
+    return (annotationInfo.value == null)
       ? annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
-      : annotationsOut[annotationInfo.index]?.result.data.localisation[0].sublocalisations.localisation
+      : annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation
     }
     return []
   })
 
-const transcriptions = $computed(() => { // format array to have all transcription version in the same array element
+  const result = computed(() => {
+    if(allFetched){
+    return (annotationInfo.value == null)
+      ? annotationsIn[0]?.result.data
+      : annotationsOut[annotationInfo.value.index]?.result.data
+    }
+    return {}
+  })
+
+const transcriptions = computed(() => { // format array to have all transcription version in the same array element
   const res = []
   if (allFetched) {
     annotationsIn[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index) => {
@@ -145,7 +176,7 @@ const transcriptions = $computed(() => { // format array to have all transcripti
   return res
 })
 
-const algos = $computed(() => { // List the name of the algorithm
+const algos = computed(() => { // List the name of the algorithm
   const res = []
   if (allFetched) {
     annotationsIn.forEach((annotation) => {
@@ -155,76 +186,152 @@ const algos = $computed(() => { // List the name of the algorithm
   return res
 })
 
+  function addTimecodeHistory (tc?: never){
+    if(timecodeHistory.value.length == 0 || timecodeHistory.value[timecodeHistory.value.length-1] != tc) timecodeHistory.value.push(tc)
+
+  }
+
+
   const updateVideoTimecode = (event) => {
-    moleculeAnnotationLeftPanelRef.updateVideoTimecode(event)
+    if ( options.value.transcription === true ){
+        moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
+        scrollToSegment({lastIndex: 0, bestIndex: event.index})
+      }
   }
 
+  let bestIndex = 0
   const scrollToSegment = (event) => {
-    moleculeAnnotationRef.listRefs[event.lastIndex].firstElementChild.classList.remove('selected-segment')
-    moleculeAnnotationRef.listRefs[event.bestIndex].firstElementChild.scrollIntoView({ behavior: "smooth" });
-    moleculeAnnotationRef.listRefs[event.bestIndex].firstElementChild.classList.add('selected-segment')
+    if ( options.value.player === true) {
+      if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex].tcin)
+      bestIndex=event.bestIndex
+      getSelectedSegment()?.classList?.remove('selected-segment')
+      moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
+      moleculeAnnotationRef.value?.listRefs[bestIndex].classList.add('selected-segment')
+    }
   }
 
-const annotationComponent = $computed(() => {
+const annotationComponent = computed(() => {
   switch (data.step?.annotation_type) {
     case 'segmentation':
         return {component: MoleculeSegmentation, props: {
-          locals: locals,
-          colors: colors,
-          topics: topics
+          result: result.value,
+          locals: locals.value,
+          colors: colors.value,
+          topics: topics.value
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
     case 'transcription':
       return {component: MoleculeTranscription, props: {
-        transcriptions: transcriptions,
-        userAnnotations: userAnnotations,
-        algos: algos,
+        transcriptions: transcriptions.value,
+        userAnnotations: userAnnotations.value,
+        algos: algos.value,
         status: data.annotations[0]?.annotation_status
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
 
     case 'span':
-        return { component :MoleculeSpan, props: {}}
+        return { component :MoleculeSpan,
+          props: {},
+          events:{ 'on-segment-click': updateVideoTimecode}
   }
 
+}
 })
 
   const handleSubmit = () => {
-    let localSubmit = locals
-    if(moleculeAnnotationRef.locals) localSubmit = moleculeAnnotationRef.locals
-    emits('submit-annotation',{ locals: moleculeAnnotationRef.annotationFunction(localSubmit) })
+    const localSubmit = locals
+    if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
+    emits('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit.value) })
   }
   const handleFinish = () => {
-    let localSubmit = locals
-    if(moleculeAnnotationRef.locals) localSubmit = moleculeAnnotationRef.locals
-    emits('finish-annotation', {locals: moleculeAnnotationRef.annotationFunction(localSubmit) })
+    const localSubmit = locals
+    if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
+    emits('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit.value) })
   }
 
-
-  const loadTopics = () => {
-    const max = _.maxBy(locals, (local)=> local.data?.topic) // Search for maximum topic number
-    while (colors.length <= max?.data.topic){ // Create all colors below this max
-     const randomcolor = computeColor(colors.length-1).hex
-      colors.push(randomcolor)
-    }
-    locals.forEach((phrase, index) => { // apppend topic number to each segments
-      if (![0, undefined].includes(phrase.data?.topic)) {
-        topics[index] = phrase.data.topic
-      }
-    })
-  }
   onMounted(()=>{
+    window.addEventListener("keydown", globalKeydown);
 
   watch(()=> allFetched,() => {
       if(allFetched == true){
-        videoSrc = annotationsIn[0]?.result.asset.url
+        videoSrc.value = annotationsIn[0]?.result.asset.url
 
-          loadTopics()
       }
   })
+  })
+
+  const globalKeydown=(event) =>{
+    if((event.key && event.target.tagName != "INPUT") && (event.key && event.target.tagName != "TEXTAREA") ){
+      const key = event.key.toUpperCase();
+        switch (key) {
+          case "W"://recule de 10
+            navigateWithkeyboard(-10);
+            break;
+          case "X"://recule de 5
+            navigateWithkeyboard(-5);
+            break;
+          case "C"://avance de 1
+            navigateWithkeyboard(1);
+            break;
+          case "V"://avance de 5
+            navigateWithkeyboard(5);
+            break;
+          case "B"://avance de 10
+            navigateWithkeyboard(10);
+            break;
+          default:
+        }
+    }
+  }
+
+  const getSelectedSegment = () : HTMLDivElement =>{
+    let segmentArray : Array<HTMLDivElement> | HTMLCollection = moleculeAnnotationRef.value?.listRefs
+    if (segmentArray instanceof HTMLCollection) segmentArray = [...segmentArray]
+    return segmentArray?.find(ref =>
+      ref.classList?.contains('selected-segment')
+    );
+  }
+
+  const navigateWithkeyboard = (param) => {
+    let elementWithTestClass  = getSelectedSegment();
+    if (bestIndex >= 0) {
+      bestIndex = (elementWithTestClass && bestIndex < moleculeAnnotationRef.value?.listRefs.length - 1) ?
+        bestIndex + param : bestIndex;
+      if (elementWithTestClass && bestIndex === moleculeAnnotationRef.value?.listRefs.length - 1) {
+        bestIndex = bestIndex + param
+      }
+      if (bestIndex > moleculeAnnotationRef.value?.listRefs.length - 1) {
+        bestIndex = moleculeAnnotationRef.value?.listRefs.length - 1
+      }
+      if (bestIndex < 0) {
+        bestIndex = 0
+      }
+      scrollToSegment({bestIndex})
+      elementWithTestClass = getSelectedSegment();
+      const dataTcValue = elementWithTestClass?.querySelector('[tcin]')?.getAttribute('tcin') // return the first tcin value inside the selectedElement
+      updateVideoTimecode({tcin: dataTcValue, tcout: '0', index: bestIndex})
+    }
+
+  }
+
+  provide('plugin-config', config)
+
+  provide('plugin-items-config', configItemPlugin)
+
+  provide('timecode-history', timecodeHistory)
+
+  provide('data',data)
+
+  provide('span',{
+   locals :  locals
   })
 
 
 </script>
 
-
+<style>
+.button-overwrite:hover {
+  background-color: #0C7DA2 !important;
+  border-color: #0C7DA2 !important;
+}
+</style>

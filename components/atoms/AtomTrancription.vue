@@ -1,5 +1,5 @@
 <template>
-  <div class="flex bg-disabled flex-col p-4 gap-1  rounded transition-all " >
+  <div class="flex bg-disabled flex-col p-4 gap-1  rounded transition-all " :data-tc=transcriptions[0].tcin>
 
     <!-- Header of the Atom -->
     <div class="flex justify-between pb-2  ">
@@ -96,8 +96,8 @@ const {transcriptions, algos, userAnnotation, status} = defineProps({
     type: String
   }
 })
-let isExpand = $ref(false) // Describe atom render
-let isFinished = $ref(false) // If the transcription has been corrected
+let isExpand = ref(false) // Describe atom render
+let isFinished = ref(false) // If the transcription has been corrected
 const confirmedTranscription = reactive({phrase: {}, index: null}) // store the whole amalia lvl 1, update when user confirm
 const editedTranscription = reactive({text: '', index: null}) // store just the text, update for every change
 
@@ -123,23 +123,23 @@ const editTranscriptionTag = computed(() => { // Value to display in edit Tag
 let transcriptionTag = toValue(editTranscriptionTag) // non-reactive version of editTranscriptionTag
 
 const tcColor = computed(() => {
-  return isFinished || (!isExpand && confirmedTranscription.index != null) ?
+  return isFinished.value || (!isExpand.value && confirmedTranscription.index != null) ?
     'success' :
     'danger'
 })
 
 const textColor = computed(() => {
-  return isFinished || (!isExpand && confirmedTranscription.index != null) ?
+  return isFinished.value || (!isExpand.value && confirmedTranscription.index != null) ?
     'text-black' :
     'black'
 })
 
 const onExpand = () => {
-  isExpand = true
+  isExpand.value= true
 }
 
 const onCancel = () => {
-  isExpand = false
+  isExpand.value = false
   if (confirmedTranscription.index != null) { // reset the edited value to previous confirmed value
     editedTranscription.index = confirmedTranscription.index
     editedTranscription.text = confirmedTranscription.phrase.data.text[0]
@@ -159,10 +159,10 @@ const onFinished = () => {
     confirmedTranscription.phrase = JSON.parse(JSON.stringify(transcriptions[confirmedTranscription.index]))
     confirmedTranscription.phrase.data.text[0] = editedTranscription.text
     confirmedTranscription.edited = isEdited.value
-    isFinished = true
+    isFinished.value = true
 
     emits('confirm', confirmedTranscription)
-    isExpand = false
+    isExpand.value = false
   }
 }
 

@@ -109,7 +109,7 @@ export class MediaService {
     ): CancelablePromise<MediaDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/media/',
+            url: '/media',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -131,7 +131,7 @@ export class MediaService {
     ): CancelablePromise<Array<MediaDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/medias/',
+            url: '/medias',
             query: {
                 'skip': skip,
                 'limit': limit,

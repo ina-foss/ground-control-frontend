@@ -27,12 +27,10 @@ export class AnnotationService {
     ): CancelablePromise<AnnotationDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/annotation/',
+            url: '/annotation',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -54,8 +52,6 @@ export class AnnotationService {
                 'annotation_id': annotationId,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -81,8 +77,6 @@ export class AnnotationService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -112,8 +106,6 @@ export class AnnotationService {
                 'direction': direction,
             },
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -139,8 +131,6 @@ export class AnnotationService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

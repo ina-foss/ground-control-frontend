@@ -38,6 +38,27 @@ export class TaskCommentService {
         });
     }
     /**
+     * Read Task Comments By Task Id
+     * Retrieve a list of taskComments filtered on their `task_id` value.
+     * @param taskCommentTaskId
+     * @returns TaskCommentDto Successful Response
+     * @throws ApiError
+     */
+    public static readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(
+        taskCommentTaskId: number,
+    ): CancelablePromise<Array<TaskCommentDto>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/taskComments/{task_comment_task_id}',
+            path: {
+                'task_comment_task_id': taskCommentTaskId,
+            },
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
      * Create Task Comment
      * Create a new taskComment.
      *
@@ -55,7 +76,7 @@ export class TaskCommentService {
     ): CancelablePromise<TaskCommentCreate> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/taskComment/',
+            url: '/taskComment',
             body: requestBody,
             mediaType: 'application/json',
             errors: {
@@ -131,7 +152,7 @@ export class TaskCommentService {
     ): CancelablePromise<Array<TaskCommentDto>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/taskComments/',
+            url: '/taskComments',
             query: {
                 'skip': skip,
                 'limit': limit,

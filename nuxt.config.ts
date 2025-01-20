@@ -23,6 +23,13 @@ const MyPreset = definePreset(Lara, {
     }
   },
   components:{
+    accordion: {
+      header: {
+        color: 'var(--title)',
+        activeColor: 'var(--title)',
+        hoverColor:'var(--title)',
+      },
+    },
     breadcrumb: {
       ColorScheme: {
         light: {
@@ -30,16 +37,37 @@ const MyPreset = definePreset(Lara, {
         }
       }
     },
+    panel:{
+      colorScheme: {
+        light:{
+          headerBackground: 'white',
+          borderColor: 'white',
+          headerColor: 'text-title'
+        }
+      },
+      toggleableHeaderPadding: '12px',
+      borderRadius: '12px',
+      header:{
+        borderWidth: '0px',
+      }
+    },
     tag:{
+      padding: "8px",
+      iconSize: '16px',
       colorScheme: {
         light: {
+          infoBackground: 'var(--info-state)',
+          infoColor: 'var(--text)',
+          warnBackground: 'var(--warning-state)',
+          warnColor: 'var(--text)',
           successBackground: 'var(--success-state)',
+          successColor: 'var(--text)',
           dangerBackground: 'var(--error-state)',
         }
       }
     },
     toggleswitch:{
-      borderRadius: '8px',
+      borderRadius: '12px',
     },
     button: {
       borderRadius: '4px',
@@ -50,6 +78,7 @@ const MyPreset = definePreset(Lara, {
       colorScheme: {
         light: {
           outlinedPrimaryBorderColor: '{primary.color}',
+
         }
       }
     },
@@ -96,7 +125,7 @@ export default defineNuxtConfig({
         public: {
         }
     },
-    modules: ['./node_modules/@vue-macros/nuxt','@nuxtjs/tailwindcss','@nuxtjs/color-mode','@primevue/nuxt-module', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
+    modules: ['@nuxtjs/tailwindcss','@nuxtjs/color-mode','@primevue/nuxt-module', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
     colorMode: {
       classSuffix:'',
     },
@@ -124,13 +153,6 @@ export default defineNuxtConfig({
             tailwindcss: {},
             autoprefixer: {},
         }
-    },
-    tailwindcss: {
-        configPath: 'tailwind.config',
-        exposeConfig: false,
-        config: {
-        },
-        injectPosition: 0,
     },
     eslint: {
         stylistic: true,

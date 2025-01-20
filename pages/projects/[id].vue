@@ -46,7 +46,7 @@
       <Column field="annotation_type" class="txt" header="Type"  body-class="" style="width : 9rem ; min-width: 70px;"/>
       <Column header="Statut" class="txt"  body-class="" style="width : 9rem ; min-width: 70px;">
         <template #body="slotProps">
-          <Tag  :class="getStatusClass(slotProps.data.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(slotProps.data.status) }}</Tag>
+          <Tag  :severity="getStatusClass(slotProps.data.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(slotProps.data.status) }}</Tag>
         </template>
       </Column>
       <Column field="description" header="Description" class="txt"  body-class=""/>
@@ -124,7 +124,7 @@
             </Column>
             <Column header="Statut" class="txt" style="width: 20px"   >
               <template #body="{ data: nestedData }">
-                <Tag  :class="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
+                <Tag  :severity="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" header="Annoté par" style="width: 12rem">
@@ -179,8 +179,8 @@ const visible = ref(false)
 const dialogContent = ref('')
 const clickedRowData = ref(null)
 const spinnerVisible = ref(true)
-let formStepClick = $ref()
-let loadingExport = $ref(false)
+const formStepClick = ref()
+const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
 
@@ -222,7 +222,7 @@ const translations = {
 const translatedAnnotationStatus =(annotation_status)=> {
   return translations[annotation_status]
 }
-const translatedTaskStatus = $computed(() => {
+const translatedTaskStatus = computed(() => {
   return Object.values(StepStatus).map(status => ({
     label: translations[status],
     value: status,
@@ -272,7 +272,7 @@ const clickButtonMenu = (event, step) => {
 
 const exportOut = async (step, group) => {
   const tasks = step.tasks
-  loadingExport = true
+  loadingExport.value = true
   const annos = {}
   for (const task of tasks) {
     try {
@@ -287,7 +287,7 @@ const exportOut = async (step, group) => {
     }
   }
   if (group == 'one') triggerDownload(annos, step.title)
-  loadingExport = false
+  loadingExport.value = false
 }
 
 function triggerDownload(data, name) {
@@ -327,7 +327,7 @@ const navigateToTask = (id) => {
 
 const stepCreate = (stepId) => {
 
-  formStepClick = _.find(data.value.steps, ['id', stepId], 0)
+  formStepClick.value = _.find(data.value.steps, ['id', stepId], 0)
 
   dialogVisible.value = true
 }
@@ -380,19 +380,5 @@ const onCellEditComplete = () => {
   overflow-x: hidden;
 }
 
-.warning {
-  background-color: #F9D621;
-  color: black;
-}
-
-.info {
-  background-color: #B3DDF4;
-  color: black;
-}
-
-.success {
-  background-color: #9ADC82;
-  color: black;
-}
 
 </style>

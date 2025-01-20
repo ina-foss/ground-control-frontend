@@ -91,7 +91,7 @@ export class TaskService {
     ): CancelablePromise<TaskWithIdDto> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/task/',
+            url: '/task',
             body: requestBody,
             mediaType: 'application/json',
             errors: {

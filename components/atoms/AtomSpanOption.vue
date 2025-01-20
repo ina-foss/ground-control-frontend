@@ -1,18 +1,26 @@
 <template>
-  <div class="flex items-start rounded-lg text-[#282828] gap-[10px] text-sm/4 flex-col w-[186px] p-3 p bg-white">
-    <b >Affichage</b>
-    <div class="flex justify-between items-center self-stretch py-1 ">
-      <span class="">Span</span>
-      <ToggleSwitch v-model="span" />
-    </div>
-    <div class="flex justify-between items-center self-stretch py-1">
-      <span>TC</span>
-      <ToggleSwitch v-model="timecode" :disabled="timecodeDisabled"/>
-    </div>
-    <div class="flex justify-between items-center self-stretch py-1">
-      <span>Bloc</span>
-      <ToggleSwitch v-model="bloc"/>
-    </div>
+  <div class=" rounded-lg w-[250px]">
+    <Accordion class="w-full rounded" >
+      <AccordionPanel>
+        <AccordionHeader class="!bg-white hover:!bg-white rounded ">Affichage</AccordionHeader>
+        <AccordionContent>
+          <div class="flex flex-col gap-[10px] text-title ">
+            <div class="flex justify-between items-center self-stretch py-1 ">
+              <span>Span</span>
+              <ToggleSwitch v-model="span" />
+            </div>
+            <div class="flex justify-between items-center self-stretch py-1">
+              <span >TC</span>
+              <ToggleSwitch v-model="timecode" :disabled="timecodeDisabled" />
+            </div>
+            <div class="flex justify-between items-center self-stretch py-1">
+              <span >Bloc</span>
+              <ToggleSwitch v-model="bloc" />
+            </div>
+          </div>
+        </AccordionContent>
+      </AccordionPanel>
+    </Accordion>
   </div>
 </template>
 
@@ -24,7 +32,7 @@ const timecode = defineModel<boolean>('timecode')
 const bloc = defineModel<boolean>('bloc')
 
 
-let timecodeDisabled = $ref(false)
+const timecodeDisabled = ref(false)
 
 let previousTimecode
 
@@ -32,11 +40,11 @@ watch(()=>bloc.value,(value)=>{
   if (!value){
     previousTimecode = markRaw(timecode.value)
     timecode.value = false
-    timecodeDisabled = !timecodeDisabled
+    timecodeDisabled.value = !timecodeDisabled.value
   }
   else{
     timecode.value = previousTimecode
-    timecodeDisabled = !timecodeDisabled
+    timecodeDisabled.value = !timecodeDisabled.value
   }
 },{})
 

@@ -1,10 +1,10 @@
 <template>
-  <div class="col-span-5 flex flex-row w-full max-h-min justify-center overflow-hidden grow " >
+  <div class="col-span-4 flex flex-row w-full max-h-min justify-center grow " >
     <div class="relative h-auto">
-      <AtomProgressBar class="xs:sticky top-0"  :colors="colors" :topics="topics" :total_length="locals.length" @progress-bar-jump="jumpToTopic($event)" />
+      <AtomProgressBar class="xs:sticky top-0"  :colors="colors" :topics="topics" :topicList="topicList" :totalLength="locals.length" @progress-bar-jump="jumpToTopic($event)" />
     </div>
-    <div class="flex overflow-y-auto h-[80vh]">
-    <ol class=" flex flex-col overflow-y-auto h-full ">
+    <div class="flex  h-[80vh]">
+    <ol class=" flex  flex-col w-fit h-full overflow-y-scroll overflow-x-visible pr-4">
       <ScrollTop
         :pt="{ root: { style: 'position: absolute; right: 35%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
@@ -13,67 +13,36 @@
         target="parent"
       />
       <li
-        v-for="(phrase, index) in locals"
+        v-for="(phrase, index) in filteredLocals"
         :key="index"
         :ref="el => segmentationRefs.push(el)"
-        class="rounded-lg scroll-mt-5"
+        class="rounded-lg scroll-mt-5 "
       >
         <AtomSegmentation
+          ref="segmentation"
           :colors="colors"
           :index="index"
           :phrase="phrase"
           :topics="topics"
-          @segmentation="handleSegmentation()"
+          :topicList="topicList"
+          :segmentationRefs="segmentationRefs"
+          @dragging-start="dragging.start = $event.index"
+          @dragging-end="dragging.end = $event.index"
+          @segmentation="handleSegmentation"
           @on-segment-click="handleSegmentClick($event)"
+          @deactivate-topic="deactivateTopic"
         />
       </li>
     </ol>
     </div>
   </div>
+    <div class="  overflow-y-auto flex flex-col items-center gap-3 col-span-2">
+      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+      <atom-video-option />
+      <AtomTaskComment />
+    </div>
 </template>
 
-<script setup>
-  import AtomSegmentation from '../atoms/AtomSegmentation.vue'
-  import AtomProgressBar from '../atoms/AtomProgressBar.vue';
-
-  const { colors, topics, locals } =  defineProps(['colors','topics','locals'])
-
-  const emits = defineEmits([ 'on-segment-click' ]);
-
-  const segmentationRefs = $ref([])
-
-  const handleSegmentation = () => {
-    window.onbeforeunload = function () {
-      return confirm("You didn't saved your progression")
-    }
-  }
-
-  const handleSegmentClick = (event) => {
-    segmentationRefs[event.index].scrollIntoView({ behavior: "smooth" });
-    emits('on-segment-click', {tcin: event.tcin,tcout: event.tcout})
-  }
-
-  const jumpToTopic= (event) => {
-    const firstIndex = topics.findIndex((topic) =>  topic == event.topic  )
-    segmentationRefs[firstIndex].scrollIntoView({ behavior: "smooth"})
-  }
-
-  const segmentationFunction = (localSubmit) => {
-    localSubmit.forEach((phrase, index) => {
-      if (![undefined].includes(topics[index])) {
-        phrase.data.topic = topics[index]
-      }
-    })
-    return localSubmit
-  }
-
-  defineExpose( {listRefs: $$(segmentationRefs), annotationFunction: segmentationFunction })
+ <script src="./molecule-segmentation-component" lang="ts" >
 </script>
 
-<style scoped lang="postcss">
-
-.selected-segment {
-  @apply border-surface-500 border-2 ;
-}
-
-</style>
