@@ -7,6 +7,7 @@ export default withNuxt(
   .prepend(
     {
       ignores: [
+      'shared',
       'presets',
       'api',//warnings
       'public',

@@ -63,13 +63,15 @@
               :draggable="isTopicsLastSegment && topics[topicIndex]!=null"
               class=" bg-primary  cursor-ns-resize rounded hover:bg-primary-600 flex items-center justify-center">
               <img  style="height:16px;width:16px;" class="pointer-events-none"
-                src="../../public/icons/icons-svg/icons-svg/move-icon.svg"  />
+                src="../../public/icons/icons-svg/icons-svg/move-icon.svg"
+                alt="move icon" />
             </div>
             <div style="height:24px;width:24px; "v-tooltip.right="{ value: 'Supprimer une rupture', showDelay: 400 }"
               class=" bg-red-500  cursor-pointer rounded hover:bg-red-600 flex items-center justify-center">
               <img
                 style="height:16px;width:16px;"
-                src="../../public/icons/icons-svg/icons-svg/trash-icon.svg" />
+                src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
+                alt="delete icon" />
             </div>
           </div>
         </div>
