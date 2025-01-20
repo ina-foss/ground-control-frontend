@@ -95,7 +95,7 @@ const transcriptionFunction = (localSubmit) => {
 defineExpose({locals: localChanges, listRefs: transcriptionsRef, annotationFunction: transcriptionFunction })
 
 </script>
-<style lang="postcss">
+<style scoped lang="postcss">
 .selected-segment {
 @apply border-surface-500 border-2
 }
