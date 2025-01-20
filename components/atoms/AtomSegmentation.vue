@@ -10,7 +10,7 @@
         <div class="w-full flex h-full justify-between p-lg rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flew-row items-center">
-            <Tag severity="contrast">
+            <Tag v-if="options.timecode" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
                 <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
@@ -31,13 +31,11 @@
       </div>
     </div>
     <OverlayBadge v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
-      :class="` overflow-visible !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
-    >
-    <Button icon="pi pi-comment"
-      @click="toggleComment" />
+      :class="` overflow-visible !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`">
+      <Button icon="pi pi-comment" class="hover:!bg-primary hover:!border-primary" @click="toggleComment" />
     </OverlayBadge>
     <Button v-else icon="pi pi-comment"
-      :class="` !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
+      :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
       @click="toggleComment" />
     <div v-tooltip.top="{
       value: timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout),
@@ -50,19 +48,31 @@
     }"
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate leading-tight text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
-       {{ $props.phrase.data?.text[0] }}
+      {{ $props.phrase.data?.text[0] }}
     </div>
     <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
       <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
         @click="handleSegmentation">
         <div ref="ruptureTemplate"
-          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary-400' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"
-          :draggable="isTopicsLastSegment && topics[topicIndex]!=null">
+          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"
+          >
           <i v-if="!isTopicsLastSegment || topicIndex == undefined"
             class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 " />
           <div v-else class="flex justify-around w-[80px]">
-            <i v-tooltip.left="{value:'Déplacer une rupture',showDelay: 400}" class="pi pi-sort bg-primary-400 p-[5px] cursor-ns-resize rounded hover:bg-primary-500 "  />
-            <i v-tooltip.right="{value: 'Supprimer une rupture', showDelay: 400}" class="pi pi-eraser bg-error p-[5px] rounded hover:bg-red-600" />
+            <div style="height:24px;width:24px;" v-tooltip.left="{ value: 'Déplacer une rupture', showDelay: 400 }"
+              :draggable="isTopicsLastSegment && topics[topicIndex]!=null"
+              class=" bg-primary  cursor-ns-resize rounded hover:bg-primary-600 flex items-center justify-center">
+              <img  style="height:16px;width:16px;" class="pointer-events-none"
+                src="../../public/icons/icons-svg/icons-svg/move-icon.svg"
+                alt="move icon" />
+            </div>
+            <div style="height:24px;width:24px; "v-tooltip.right="{ value: 'Supprimer une rupture', showDelay: 400 }"
+              class=" bg-red-500  cursor-pointer rounded hover:bg-red-600 flex items-center justify-center">
+              <img
+                style="height:16px;width:16px;"
+                src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
+                alt="delete icon" />
+            </div>
           </div>
         </div>
       </div>
@@ -70,7 +80,7 @@
   </div>
 
   <Popover ref="comment">
-      <AtomComment :phrase="phrase" :overlay="comment" />
+    <AtomComment :phrase="phrase" :overlay="comment" />
   </Popover>
 </template>
 
@@ -88,6 +98,7 @@ const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProp
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()
+const { options } = useOptions()
 const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
 const segment = ref(null)
 const toast = useToast()
@@ -106,7 +117,6 @@ function startDrag(event: DragEvent) {
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
   target.style.opacity = '0.4'
-  const mainDiv: HTMLDivElement = target.parentElement
 }
 
 function getLiList(element,count) {
@@ -125,8 +135,10 @@ function handleDrop(event: DragEvent) {
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
   const result = getLiList(target,0)
+  console.log(result)
   const listLiElement : HTMLCollection = result.list
   const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
+  console.log(index)
   if( index != -1) emit('dragging-end',{index: index})
   const hoverList: NodeList = document.querySelectorAll('.customHover')
   hoverList.forEach((el)=>{
@@ -144,8 +156,9 @@ function endDrag(event: DragEvent) {
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
   target.style.opacity = '1'
-  const listLiElement : HTMLCollection = target.parentElement?.parentElement?.parentElement?.parentElement?.parentElement?.children
-  const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(target.parentElement?.parentElement?.parentElement?.parentElement)
+  const result = getLiList(target,0)
+  const listLiElement : HTMLCollection = result.list
+  const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
   emit('dragging-start',{index: index})
 }
 
@@ -291,6 +304,14 @@ defineExpose({  id: topicIndex, })
 
 </script>
 
+<style scoped lang="postcss">
+
+.selected-segment > div {
+  @apply border-surface-500 border-2 ;
+}
+
+</style>
+
 <style lang="postcss">
 
 .customHover .rupture,
@@ -305,6 +326,11 @@ defineExpose({  id: topicIndex, })
   @extend .customHover
 }
 
+
+img { /* svg on an img tag */
+  -webkit-filter: invert(.75); /* safari 6.0 - 9.0 */
+          filter: invert(1);
+}
 
 
 .over:hover .rupture {

@@ -46,10 +46,3 @@
  <script src="./molecule-segmentation-component" lang="ts" >
 </script>
 
-<style scoped lang="postcss">
-
-.selected-segment {
-  @apply border-surface-500 border-2 ;
-}
-
-</style>

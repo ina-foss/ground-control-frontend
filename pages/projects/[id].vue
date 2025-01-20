@@ -46,7 +46,7 @@
       <Column field="annotation_type" class="txt" header="Type"  body-class="" style="width : 9rem ; min-width: 70px;"/>
       <Column header="Statut" class="txt"  body-class="" style="width : 9rem ; min-width: 70px;">
         <template #body="slotProps">
-          <Tag  :class="getStatusClass(slotProps.data.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(slotProps.data.status) }}</Tag>
+          <Tag  :severity="getStatusClass(slotProps.data.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(slotProps.data.status) }}</Tag>
         </template>
       </Column>
       <Column field="description" header="Description" class="txt"  body-class=""/>
@@ -124,7 +124,7 @@
             </Column>
             <Column header="Statut" class="txt" style="width: 20px"   >
               <template #body="{ data: nestedData }">
-                <Tag  :class="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
+                <Tag  :severity="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" header="Annoté par" style="width: 12rem">
@@ -380,19 +380,5 @@ const onCellEditComplete = () => {
   overflow-x: hidden;
 }
 
-.warning {
-  background-color: #F9D621;
-  color: black;
-}
-
-.info {
-  background-color: #B3DDF4;
-  color: black;
-}
-
-.success {
-  background-color: #9ADC82;
-  color: black;
-}
 
 </style>
