@@ -5,15 +5,15 @@
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Affichage</AccordionHeader>
         <AccordionContent>
           <div class="flex flex-col gap-[10px] text-title ">
-            <div v-if="showSpan" class="flex justify-between items-center self-stretch py-1 ">
+            <div class="flex justify-between items-center self-stretch py-1 "v-if="span != undefined">
               <span>Span</span>
               <ToggleSwitch v-model="span" />
             </div>
-            <div class="flex justify-between items-center self-stretch py-1">
+            <div class="flex justify-between items-center self-stretch py-1" v-if="timecode != undefined">
               <span >TC</span>
               <ToggleSwitch v-model="timecode" :disabled="timecodeDisabled" />
             </div>
-            <div v-if="showBloc" class="flex justify-between items-center self-stretch py-1">
+            <div class="flex justify-between items-center self-stretch py-1" v-if="bloc != undefined">
               <span >Bloc</span>
               <ToggleSwitch v-model="bloc" />
             </div>
@@ -27,21 +27,11 @@
 
 <script setup lang="ts">
 
-import {FAIterators} from "refa";
+const span = defineModel<boolean | undefined>('span',{default: undefined})
+const timecode = defineModel<boolean | undefined>('timecode',{default: undefined})
+const bloc = defineModel<boolean>('bloc',{default: undefined})
 
-const span = defineModel<boolean>('span')
-const timecode = defineModel<boolean>('timecode')
-const bloc = defineModel<boolean>('bloc')
-defineProps({
-  showBloc: {
-    type: Boolean,
-    default: true,
-  },
-  showSpan: {
-    type: Boolean,
-    default: true,
-  },
-});
+
 const timecodeDisabled = ref(false)
 
 let previousTimecode
