@@ -193,10 +193,10 @@ const algos = computed(() => { // List the name of the algorithm
 
 
   const updateVideoTimecode = (event) => {
-    if ( options.value.transcription === true ){
-        moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
+    if ( options.value.transcription === true ) {
+      moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
         scrollToSegment({lastIndex: 0, bestIndex: event.index})
-      }
+    }
   }
 
   const scrollToSegment = (event) => {
@@ -317,11 +317,12 @@ const annotationComponent = computed(() => {
         bestIndex = 0
       }
       if(moleculeAnnotationRef.value && action === true){
-        moleculeAnnotationRef.value.createBreak(bestIndex)
+        moleculeAnnotationRef.value.createBreak(bestIndex-1)
       }
       else if(moleculeAnnotationRef.value &&  action === false){
-        moleculeAnnotationRef.value.removeBreak(bestIndex)
+        moleculeAnnotationRef.value.removeBreak(bestIndex-1)
       }
+      scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();
       const dataTcValue = elementWithTestClass?.querySelector('[tcin]')?.getAttribute('tcin') // return the first tcin value inside the selectedElement
       updateVideoTimecode({tcin: dataTcValue, tcout: '0', index: bestIndex})
