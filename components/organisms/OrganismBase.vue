@@ -316,13 +316,12 @@ const annotationComponent = computed(() => {
       if (bestIndex < 0) {
         bestIndex = 0
       }
-      if(action === true){
+      if(moleculeAnnotationRef.value && action === true){
         moleculeAnnotationRef.value.createBreak(bestIndex)
       }
-      else if(action === false){
+      else if(moleculeAnnotationRef.value &&  action === false){
         moleculeAnnotationRef.value.removeBreak(bestIndex)
       }
-        scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();
       const dataTcValue = elementWithTestClass?.querySelector('[tcin]')?.getAttribute('tcin') // return the first tcin value inside the selectedElement
       updateVideoTimecode({tcin: dataTcValue, tcout: '0', index: bestIndex})
