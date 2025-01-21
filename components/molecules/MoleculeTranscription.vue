@@ -11,7 +11,7 @@
         <div v-for="(transcription, index) in transcriptions" :key="index" :ref="el => transcriptionsRef.push(el)">
           <AtomTrancription
 :user-annotation="userAnnotations[index]" :algos="algos"
-                            :transcriptions="transcription" :status="status" @on-segment-click="handleSegmentClick"
+            :transcriptions="transcription" :status="status" @on-segment-click="handleSegmentClick({...$event, index: index})"
                             @confirm="handleConfirm($event, index)"/>
         </div>
       </div>
@@ -66,7 +66,7 @@ watchEffect(() => {
 })
 
 const handleSegmentClick = (event) => {
-  emits('on-segment-click', {tcin: event.tcin,tcout: event.tcout})
+   emits('on-segment-click', { tcin: event.tcin, tcout: event.tcout, index:event.index })
 }
 
 const handleConfirm = (event, index) => {
