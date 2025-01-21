@@ -164,11 +164,7 @@ export default defineComponent({
     })
 
 
-
-
-
-
-    expose( {listRefs: segmentationRefs, annotationFunction: segmentationFunction })
+    expose( {listRefs: segmentationRefs, annotationFunction: segmentationFunction,createBreak,removeBreak })
 
     return {
       locals,
