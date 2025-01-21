@@ -163,14 +163,6 @@ export default defineComponent({
       loadTopics()
     })
 
-    document.addEventListener('trigger-create-break', (e: CustomEvent) => {
-      createBreak(e.detail.index);
-    });
-    document.addEventListener('trigger-remove-break', (e: CustomEvent) => {
-      debugger
-      removeBreak(e.detail.index);
-    });
-
 
     expose( {listRefs: segmentationRefs, annotationFunction: segmentationFunction,createBreak,removeBreak })
 

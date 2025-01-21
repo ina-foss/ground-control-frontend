@@ -259,15 +259,6 @@ const annotationComponent = computed(() => {
   })
   })
 
-  const triggerCreateBreak = (index: number) => {
-    const event = new CustomEvent('trigger-create-break', { detail: { index } });
-    document.dispatchEvent(event);
-  };
-  const triggerRemoveBreak = (index: number) => {
-    const event = new CustomEvent('trigger-remove-break', { detail: { index } });
-    document.dispatchEvent(event);
-  };
-
   const globalKeydown=(event) =>{
     if((event.key && event.target.tagName != "INPUT") && (event.key && event.target.tagName != "TEXTAREA") ){
       const key = event.key.toUpperCase();
@@ -326,10 +317,10 @@ const annotationComponent = computed(() => {
         bestIndex = 0
       }
       if(action){
-        triggerCreateBreak(bestIndex)
+        moleculeAnnotationRef.value.createBreak(bestIndex)
       }
       else if(!action){
-        triggerRemoveBreak(bestIndex)
+        moleculeAnnotationRef.value.removeBreak(bestIndex)
       }
         scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();
