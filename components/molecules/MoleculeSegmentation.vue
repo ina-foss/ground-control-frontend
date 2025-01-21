@@ -6,11 +6,8 @@
     <div class="flex  h-[80vh]">
     <ol class=" flex  flex-col w-fit h-full overflow-y-scroll overflow-x-visible pr-4">
       <ScrollTop
-        :pt="{ root: { style: 'position: absolute; right: 42%; top: 95%; width: 2rem; height: 2rem;',
-         class:['p-button-secondary','p-button-rounded']} }"
+        :pt="{ root: { style: 'position: absolute; left: 56%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
-        :unstyled="true"
-        class="absolute"
         target="parent"
       />
       <li

@@ -2,9 +2,8 @@
   <div class="col-span-4 flex relative flex-row w-full max-h-full justify-center overflow-y-auto">
     <ol class=" overflow-y-auto  h-full ">
       <ScrollTop
-        :pt="{ root: { style: 'position: absolute ;right: 50%; top: 95%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
+        :pt="{ root: { style: 'position: absolute; left: 56%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
-        :unstyled="true"
         target="parent"
       />
       <div class=" rounded flex flex-col gap-2 p-3 ">
