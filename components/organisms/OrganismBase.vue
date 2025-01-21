@@ -316,10 +316,10 @@ const annotationComponent = computed(() => {
       if (bestIndex < 0) {
         bestIndex = 0
       }
-      if(action){
+      if(action === true){
         moleculeAnnotationRef.value.createBreak(bestIndex)
       }
-      else if(!action){
+      else if(action === false){
         moleculeAnnotationRef.value.removeBreak(bestIndex)
       }
         scrollToSegment({bestIndex})
