@@ -6,7 +6,8 @@
     <div class="flex  h-[80vh]">
     <ol class=" flex  flex-col w-fit h-full overflow-y-scroll overflow-x-visible pr-4">
       <ScrollTop
-        :pt="{ root: { style: 'position: absolute; right: 35%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
+        :pt="{ root: { style: 'position: absolute; right: 42%; top: 95%; width: 2rem; height: 2rem;',
+         class:['p-button-secondary','p-button-rounded']} }"
         :threshold="100"
         :unstyled="true"
         class="absolute"
@@ -37,7 +38,7 @@
     </div>
   </div>
     <div class="  overflow-y-auto flex flex-col items-center gap-3 col-span-2">
-      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+      <AtomSpanOption v-model:timecode="options.timecode" :isSegmentation="True" />
       <atom-video-option />
       <AtomTaskComment />
     </div>
