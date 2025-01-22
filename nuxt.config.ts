@@ -3,7 +3,7 @@
 import Lara from '@primevue/themes/lara'
 import {definePreset} from '@primevue/themes'
 
-const MyPreset = definePreset(Lara, {
+const DSINAPreset = definePreset(Lara, {
   semantic:{
     primary:{
       50: 'rgb(var(--primary-50))',
@@ -139,9 +139,10 @@ export default defineNuxtConfig({
           },
         },
           theme: {
-            preset: MyPreset,
+            preset: DSINAPreset,
             options: {
-            }
+              darkModeSelector: ".dark",
+            },
           }
       },
       components: {
