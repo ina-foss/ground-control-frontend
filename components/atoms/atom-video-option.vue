@@ -2,7 +2,7 @@
   <div class=" rounded-lg w-[250px]">
     <Accordion class="w-full !bg-white rounded" >
       <AccordionPanel>
-        <AccordionHeader class="!bg-white hover:!bg-white rounded ">Synchroniation</AccordionHeader>
+        <AccordionHeader class="!bg-white hover:!bg-white rounded ">Synchronisation</AccordionHeader>
         <AccordionContent>
           <div class="flex flex-col gap-[10px] text-title">
             <div class="flex justify-between items-center self-stretch py-1 ">

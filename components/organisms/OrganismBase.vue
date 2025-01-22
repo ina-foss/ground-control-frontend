@@ -105,7 +105,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const config = ref(null)
   const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
   const timecodeHistory = ref([])
-
+  let bestIndex = 0
   const annotationInfo = computed(() => {
     let info = null
     if (allFetched ) {
@@ -193,13 +193,12 @@ const algos = computed(() => { // List the name of the algorithm
 
 
   const updateVideoTimecode = (event) => {
-    if ( options.value.transcription === true ){
-        moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
+    if ( options.value.transcription === true ) {
+      moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
         scrollToSegment({lastIndex: 0, bestIndex: event.index})
-      }
+    }
   }
 
-  let bestIndex = 0
   const scrollToSegment = (event) => {
     if ( options.value.player === true) {
       if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex].tcin)
@@ -265,19 +264,30 @@ const annotationComponent = computed(() => {
       const key = event.key.toUpperCase();
         switch (key) {
           case "W"://recule de 10
-            navigateWithkeyboard(-10);
+            navigateWithkeyboard(-10,null);
             break;
           case "X"://recule de 5
-            navigateWithkeyboard(-5);
+            navigateWithkeyboard(-5,null);
             break;
-          case "C"://avance de 1
-            navigateWithkeyboard(1);
+          case "C"://recule de 1
+            navigateWithkeyboard(-1,null);
             break;
-          case "V"://avance de 5
-            navigateWithkeyboard(5);
+          case "V"://avance de 1
+            navigateWithkeyboard(1,null);
             break;
-          case "B"://avance de 10
-            navigateWithkeyboard(10);
+          case "B"://avance de 5
+            navigateWithkeyboard(5,null);
+            break;
+          case "N"://avance de 10
+            navigateWithkeyboard(10,null);
+            break;
+          case (" "): // Gérer l'espace
+            if (event.ctrlKey) { //creation rupture apres
+              navigateWithkeyboard(1,false);
+            }
+            else{ //creation rupture avant
+              navigateWithkeyboard(1,true);
+            }
             break;
           default:
         }
@@ -292,7 +302,7 @@ const annotationComponent = computed(() => {
     );
   }
 
-  const navigateWithkeyboard = (param) => {
+  const navigateWithkeyboard = (param,action) => {
     let elementWithTestClass  = getSelectedSegment();
     if (bestIndex >= 0) {
       bestIndex = (elementWithTestClass && bestIndex < moleculeAnnotationRef.value?.listRefs.length - 1) ?
@@ -305,6 +315,12 @@ const annotationComponent = computed(() => {
       }
       if (bestIndex < 0) {
         bestIndex = 0
+      }
+      if(moleculeAnnotationRef.value && action === true){
+        moleculeAnnotationRef.value.createBreak(bestIndex-1)
+      }
+      else if(moleculeAnnotationRef.value &&  action === false){
+        moleculeAnnotationRef.value.removeBreak(bestIndex-1)
       }
       scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();
