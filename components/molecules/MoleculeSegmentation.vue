@@ -38,7 +38,7 @@
     </div>
   </div>
     <div class="  overflow-y-auto flex flex-col items-center gap-3 col-span-2">
-      <AtomSpanOption v-model:timecode="options.timecode" />
+      <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" :showSpan="false" :showBloc="false" />
       <atom-video-option />
       <AtomTaskComment />
     </div>
