@@ -19,7 +19,7 @@
             </div>
             <div class="flex justify-between items-center self-stretch py-1" v-if="timecode_segment != undefined">
               <span >TC segment</span>
-              <ToggleSwitch v-model="bloc" />
+              <ToggleSwitch v-model="timecode_segment" />
             </div>
           </div>
         </AccordionContent>
