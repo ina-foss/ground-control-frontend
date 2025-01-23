@@ -138,10 +138,8 @@ function handleDrop(event: DragEvent) {
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
   const result = getLiList(target,0)
-  console.log(result)
   const listLiElement : HTMLCollection = result.list
   const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
-  console.log(index)
   if( index != -1) emit('dragging-end',{index: index})
   const hoverList: NodeList = document.querySelectorAll('.customHover')
   hoverList.forEach((el)=>{

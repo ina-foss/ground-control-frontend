@@ -200,7 +200,6 @@ const algos = computed(() => { // List the name of the algorithm
   }
 
   const scrollToSegment = (event) => {
-    console.log(event)
     if ( options.value.player === true) {
       if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex]?.tcin | event.tcin)
       bestIndex=event.bestIndex
