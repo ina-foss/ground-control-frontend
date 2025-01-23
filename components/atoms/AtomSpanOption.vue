@@ -33,7 +33,7 @@
 
 const span = defineModel<boolean | undefined>('span',{default: undefined})
 const timecode_bloc = defineModel<boolean | undefined>('timecodeBloc',{default: undefined})
-const bloc = defineModel<boolean>('bloc',{default: undefined})
+const bloc = defineModel<boolean | undefined>('bloc',{default: undefined})
 const timecode_segment = defineModel<boolean | undefined>('timecodeSegment',{default: undefined})
 
 
