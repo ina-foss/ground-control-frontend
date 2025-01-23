@@ -8,7 +8,7 @@
             <InputText v-model="newLabel" class="h-full w-full " />
           </div>
           <div class="grow">
-            <Button icon="pi pi-plus grow " @click="addLabel()" />
+            <Button icon="pi pi-plus grow " @click="addLabel()" :disabled="newLabel == ''" />
           </div>
         </div>
       </div>

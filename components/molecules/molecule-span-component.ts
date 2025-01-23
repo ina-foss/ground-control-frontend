@@ -121,8 +121,10 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
 
 
   const addLabel = () => {
-    labels.value.push(newLabel.value)
-    newLabel.value = ''
+    if(newLabel.value != ''){
+      labels.value.push(newLabel.value)
+      newLabel.value = ''
+    }
   }
 
     const onDeleteSpan = ({ index }: { index: number }) => {
