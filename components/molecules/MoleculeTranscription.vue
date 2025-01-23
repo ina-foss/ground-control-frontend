@@ -2,16 +2,15 @@
   <div class="col-span-4 flex relative flex-row w-full max-h-full justify-center overflow-y-auto">
     <ol class=" overflow-y-auto  h-full ">
       <ScrollTop
-        :pt="{ root: { style: 'position: absolute ;right: 50%; top: 95%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
+        :pt="{ root: { style: 'position: fixed !important; right: 42%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
-        :unstyled="true"
         target="parent"
       />
       <div class=" rounded flex flex-col gap-2 p-3 ">
         <div v-for="(transcription, index) in transcriptions" :key="index" :ref="el => transcriptionsRef.push(el)">
           <AtomTrancription
 :user-annotation="userAnnotations[index]" :algos="algos"
-                            :transcriptions="transcription" :status="status" @on-segment-click="handleSegmentClick"
+            :transcriptions="transcription" :status="status" @on-segment-click="handleSegmentClick({...$event, index: index})"
                             @confirm="handleConfirm($event, index)"/>
         </div>
       </div>
@@ -66,7 +65,7 @@ watchEffect(() => {
 })
 
 const handleSegmentClick = (event) => {
-  emits('on-segment-click', {tcin: event.tcin,tcout: event.tcout})
+   emits('on-segment-click', { tcin: event.tcin, tcout: event.tcout, index:event.index })
 }
 
 const handleConfirm = (event, index) => {
