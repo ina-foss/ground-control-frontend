@@ -2,7 +2,7 @@
   <div class="col-span-4 flex relative flex-row w-full max-h-full justify-center overflow-y-auto">
     <ol class=" overflow-y-auto  h-full ">
       <ScrollTop
-        :pt="{ root: { style: 'position: absolute; left: 56%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
+        :pt="{ root: { style: 'position: fixed !important; right: 42%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
         target="parent"
       />
