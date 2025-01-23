@@ -5,7 +5,7 @@ import AtomProgressBar from "~/components/atoms/AtomProgressBar.vue";
 import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
 import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
-import _ from 'lodash'
+import _ , {sortBy} from 'lodash'
 
 
 export default defineComponent({
@@ -66,7 +66,7 @@ export default defineComponent({
     })
 
     const filteredLocals = computed(() => {
-      return _.filter(locals, (local) => local?.sublocalisations)
+      return _.sortBy(_.filter(locals, (local) => local?.sublocalisations),['tcin'] )
     })
 
     const deactivateTopic = ({ index }:{index: number}) => {
