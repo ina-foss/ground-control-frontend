@@ -41,9 +41,9 @@
       <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" :showSpan="false" :showBloc="false" />
       <atom-video-option />
       <AtomTaskComment />
+      <atom-topics-list/>
     </div>
 </template>
 
- <script src="./molecule-segmentation-component" lang="ts" >
+<script src="./molecule-segmentation-component" lang="ts" >
 </script>
-
