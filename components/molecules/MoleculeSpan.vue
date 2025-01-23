@@ -27,7 +27,7 @@
     </div>
   </div>
   <div class="  overflow-y-auto flex flex-col items-center  gap-10 col-span-2">
-    <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" />
+    <AtomSpanOption v-model:span="options.span" v-model:timecode-bloc="options.timecode_bloc" v-model:bloc="options.bloc" />
     <atom-video-option />
     <AtomSpanDetail
 :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
