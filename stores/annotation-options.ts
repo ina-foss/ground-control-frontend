@@ -10,6 +10,11 @@ export type Options =  {
    */
   transcription: boolean
 
+  /** If the player stops at the end of the selected segment
+   * @defaultValue `false`
+   */
+  loop_bloc: boolean
+
   /** if the span are displayed
    * @defaultValue `true`
    */
@@ -39,7 +44,8 @@ export const useOptions = defineStore("annotation-options",() => {
       timecode_segment:false,
       bloc: true,
       player: true,
-      transcription: true
+      transcription: true,
+      loop_bloc: false
     })
 
 

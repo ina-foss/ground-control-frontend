@@ -15,6 +15,7 @@
 
 
   const {$amalia, $application}  = useService()
+  const { options } = useOptions()
 
   const props = defineProps({
     data: {
@@ -63,7 +64,7 @@ const { locals, colors, topics, videoSrc } = props;
   });
 
   watch(currentTime, (newCurrentTime) => {
-    if (pauseTime.value !== 0 && newCurrentTime >= pauseTime.value) {
+    if (pauseTime.value !== 0 && newCurrentTime >= pauseTime.value && options.loop_bloc) {
       $amalia.onPause();
       pauseTime.value=0;
     }

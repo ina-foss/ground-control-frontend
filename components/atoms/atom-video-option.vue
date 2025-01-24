@@ -13,6 +13,10 @@
               <span>Transcriptions</span>
               <ToggleSwitch v-model="options.transcription" />
             </div>
+            <div class="flex justify-between items-center self-stretch py-1 ">
+              <span>Loop segment</span>
+              <ToggleSwitch v-model="options.loop_bloc" />
+            </div>
           </div>
         </AccordionContent>
       </AccordionPanel>
