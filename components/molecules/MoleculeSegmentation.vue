@@ -14,7 +14,7 @@
         v-for="(phrase, index) in filteredLocals"
         :key="index"
         :ref="el => segmentationRefs.push(el)"
-        class="rounded-lg scroll-mt-5 "
+        class="rounded-lg scroll-mt-52 "
       >
         <AtomSegmentation
           ref="segmentation"
