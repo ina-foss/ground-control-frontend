@@ -37,11 +37,11 @@
     </ol>
     </div>
   </div>
-    <div class="  overflow-y-auto flex flex-col items-center gap-3 col-span-2">
+    <div class=" h-[80vh] overflow-y-scroll flex flex-col items-center gap-3 col-span-2 mb-3">
       <AtomSpanOption v-model:span="options.span" v-model:timecode="options.timecode" v-model:bloc="options.bloc" :showSpan="false" :showBloc="false" />
       <atom-video-option />
       <AtomTaskComment />
-      <atom-topics-list/>
+      <AtomTopicList :colors="colors" :topics="topics"/>
     </div>
 </template>
 
