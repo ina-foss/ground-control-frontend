@@ -4,7 +4,7 @@
       <div class=" rounded-lg w-[250px]">
         <Accordion value="0" class="w-full rounded" >
           <AccordionPanel>
-            <AccordionHeader class="!bg-white hover:!bg-white rounded ">Commentaire</AccordionHeader>
+            <AccordionHeader class="!bg-white hover:!bg-white rounded ">Commentaires</AccordionHeader>
             <AccordionContent>
               <div class="flex flex-col gap-[10px] text-title">
                 <!--List Messages-->

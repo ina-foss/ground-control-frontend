@@ -72,7 +72,7 @@ watch(()=>labelSelected.value,(labels)=>{
       }
     })
 
-watch(() => options.value.timecode,async (timecode : boolean ) => {
+watch(() => options.value.timecode_bloc,async (timecode : boolean ) => {
   await nextTick()
   blockArray.value?.childNodes.forEach((blocEl)   => {
     removeTimecodeDiv(blocEl)
@@ -121,8 +121,10 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
 
 
   const addLabel = () => {
-    labels.value.push(newLabel.value)
-    newLabel.value = ''
+    if(newLabel.value != ''){
+      labels.value.push(newLabel.value)
+      newLabel.value = ''
+    }
   }
 
     const onDeleteSpan = ({ index }: { index: number }) => {
@@ -261,7 +263,7 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
             }
             fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
             border.appendChild(fragment)
-            if (options.value.timecode) {
+            if (options.value.timecode_bloc) {
               addTimecodeDiv(border.firstChild.firstElementChild, border)
               if (nextContainerSibling?.getAttribute('tcin')) addTimecodeDiv(nextContainerSibling?.parentNode)
             }
