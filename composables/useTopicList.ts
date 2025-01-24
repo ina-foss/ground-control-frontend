@@ -6,6 +6,10 @@ interface Topic {
   */
   id: number,
   /**
+  *
+  */
+  title: string,
+  /**
    * Array of `Category`
   */
   labels: Array<Label | string>

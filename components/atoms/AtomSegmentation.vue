@@ -17,6 +17,15 @@
               </div>
             </Tag>
             <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
+            <div v-if="editTitle"  >
+                <InputText v-model="editedTitle" @focusout="editTitle = false"  />
+              </div>
+              <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8    "  >
+                <div :class="`h-8 p-3  w-fit flex items-center mb-3  `">
+                  <b>{{ title }}</b>
+                </div>
+                <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
+              </div>
               <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" />
             </div>
             <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
@@ -115,6 +124,12 @@ topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 const editedTitle = ref(null)
 const ruptureTemplate = ref()
 const comment = ref(null)
+const title = computed(()=>{
+  if(isTopicFirstSegment.value){
+    return editedTitle.value ? editedTitle.value : 'Topic '+ topicIndex.value
+  }
+  else return null
+})
 
 function startDrag(event: DragEvent) {
   event.stopPropagation()
@@ -215,11 +230,31 @@ const computeTopicHeight = async () => {
 }
 
 
-onMounted(() => {
-  watch(() => isTopicFirstSegment.value, () => {
-    computeTopicHeight()
+onMounted( ()=>{
+  watchEffect(()=>{
   })
-  window.addEventListener('resize', computeTopicHeight, {})
+  watch(()=>editTitle.value,(newValue, oldValue)=>{
+    if(isTopicFirstSegment.value && newValue == false ){
+      topicList[topicIndex.value].title = editedTitle.value
+      console.log(topicList)
+    }
+  })
+  watch(()=>isTopicFirstSegment.value,(newValue)=>{
+    if(newValue == true){
+      editedTitle.value =  topicList[topicIndex.value].title
+    }
+  })
+  watch(()=>isTopicFirstSegment.value,()=>{
+      computeTopicHeight()
+  })
+  watch(()=>topicList[topicIndex.value]?.title,(newTitle)=>{
+    if(isTopicFirstSegment.value ){
+      editedTitle.value = newTitle
+    }
+  },{immediate: true})
+
+
+  window.addEventListener('resize', computeTopicHeight,{})
 
 })
 

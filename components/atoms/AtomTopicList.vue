@@ -3,7 +3,7 @@
         <div v-for="(color, index) in cleanedColors" :key="index">
           <div v-if="index != 0" class="flex h-8 items-center bg-white overflow-visible rounded border-surface-400 border-[1px]" >
             <div :style="`background-color: ${color}`" class="w-8 h-8 ml-[-1px]  rounded-sm flex justify-center z-10 items-center text-white font-bold text-sm ">#{{index}}</div>
-        <h2 class="px-2 font-semibold" >{{"Topic " + index}}</h2>
+        <h2 class="px-2 font-semibold" >{{preventDefaultTitle(topicList[index])}}</h2>
           </div>
         </div>
       </div>
@@ -12,6 +12,7 @@
 <script setup lang="js">
 
   import _ from 'lodash';
+  import { useTopicList } from '~/composables/useTopicList';
 
   const props = defineProps({
     colors: {
@@ -25,8 +26,14 @@
 
   });
 
+function preventDefaultTitle(topic){
+    if( !topic.title ) return "Topic "+ topic.id
+    return topic.title
+  }
+
 
   const { colors, topics } = props;
+  const { topicList} = useTopicList()
 
 
   const cleanedColors = computed(()=>{ // delete the first element
