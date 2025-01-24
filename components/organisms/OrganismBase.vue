@@ -283,10 +283,10 @@ const annotationComponent = computed(() => {
             break;
           case (" "): // Gérer l'espace
             if (event.ctrlKey) { //creation rupture apres
-              navigateWithkeyboard(1,false);
+              navigateWithkeyboard(0,false);
             }
             else{ //creation rupture avant
-              navigateWithkeyboard(1,true);
+              navigateWithkeyboard(0,true);
             }
             break;
           default:
@@ -317,10 +317,10 @@ const annotationComponent = computed(() => {
         bestIndex = 0
       }
       if(moleculeAnnotationRef.value && action === true){
-        moleculeAnnotationRef.value.createBreak(bestIndex-1)
+        moleculeAnnotationRef.value.handleSegmentation({index: bestIndex})
       }
       else if(moleculeAnnotationRef.value &&  action === false){
-        moleculeAnnotationRef.value.removeBreak(bestIndex-1)
+        moleculeAnnotationRef.value.handleSegmentation({index: bestIndex-1})
       }
       scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();
