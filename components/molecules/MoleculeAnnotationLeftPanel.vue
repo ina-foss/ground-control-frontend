@@ -3,7 +3,6 @@
 
     <AtomVideoAmalia :video-src="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
-    <AtomTopicList :colors="colors" :topics="topics" />
     <slot/>
   </div>
 </template>
@@ -26,20 +25,12 @@
       type: Object,
       default: () => null
     },
-    colors: {
-      type: Array,
-      default: () => []
-    },
-    topics: {
-      type: Array,
-      default: ()=>[]
-    },
     videoSrc: {
       type: String,
       default: ''
     }
   });
-const { locals, colors, topics, videoSrc } = props;
+const { locals, videoSrc } = props;
 
   const emits = defineEmits(['scroll-to-segment'])
 

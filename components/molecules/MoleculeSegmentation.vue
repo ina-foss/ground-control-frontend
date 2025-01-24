@@ -34,13 +34,14 @@
     </ol>
     </div>
   </div>
-    <div class="  overflow-y-auto flex flex-col items-center gap-3 col-span-2">
+    <div class=" h-[80vh] overflow-y-scroll flex flex-col items-center gap-3 col-span-2 mb-3">
       <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
       <atom-video-option />
       <AtomTaskComment />
+      <AtomTopicList :colors="colors" :topics="topics"/>
     </div>
 </template>
 
- <script src="./molecule-segmentation-component" lang="ts" >
+<script src="./molecule-segmentation-component" lang="ts" >
 </script>
 

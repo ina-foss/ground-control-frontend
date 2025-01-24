@@ -1,6 +1,6 @@
 <template>
   <div class=" rounded-lg w-[250px]">
-    <Accordion class="w-full rounded" >
+    <Accordion value="0" class="w-full rounded" >
       <AccordionPanel>
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Affichage</AccordionHeader>
         <AccordionContent>
