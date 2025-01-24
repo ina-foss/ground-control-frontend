@@ -186,26 +186,31 @@ const algos = computed(() => { // List the name of the algorithm
   return res
 })
 
-  function addTimecodeHistory (tc?: never){
+  function addTimecodeHistory (tc?: string|number){
     if(timecodeHistory.value.length == 0 || timecodeHistory.value[timecodeHistory.value.length-1] != tc) timecodeHistory.value.push(tc)
 
   }
 
 
-  const updateVideoTimecode = (event) => {
+  const updateVideoTimecode = (event: {tcin: string|number, index: number}) => { // Lorsqu'un segment est cliqué
+    highlightSegment(event.index)
     if ( options.value.transcription === true ) {
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
         scrollToSegment({lastIndex: 0, bestIndex: event.index})
     }
   }
 
-  const scrollToSegment = (event) => {
-    if ( options.value.player === true) {
-      if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex]?.tcin | event.tcin)
-      bestIndex=event.bestIndex
+
+  const highlightSegment = (index: number) => {
       getSelectedSegment()?.classList?.remove('selected-segment')
-      moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
-      moleculeAnnotationRef.value?.listRefs[bestIndex].classList.add('selected-segment')
+      moleculeAnnotationRef.value?.listRefs[index].classList.add('selected-segment')
+  }
+
+  const scrollToSegment = (event : {lastIndex: number ,bestIndex: number, fromHistory?: boolean, tcin?: number}) => { // Lorsque la video change de timecode
+    if ( options.value.player === true) {
+      highlightSegment(event.bestIndex)
+      if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex]?.tcin | event.tcin)
+      moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
     }
   }
 

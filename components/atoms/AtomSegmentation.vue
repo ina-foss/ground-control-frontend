@@ -236,7 +236,6 @@ onMounted( ()=>{
   watch(()=>editTitle.value,(newValue, oldValue)=>{
     if(isTopicFirstSegment.value && newValue == false ){
       topicList[topicIndex.value].title = editedTitle.value
-      console.log(topicList)
     }
   })
   watch(()=>isTopicFirstSegment.value,(newValue)=>{
