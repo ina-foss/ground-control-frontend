@@ -12,5 +12,7 @@ export type MediaDto = {
     type: MediaType;
     id: number;
     tasks: (Array<TaskBaseDto> | null);
+    player_parameters?: (Record<string, any> | null);
+    details?: (Record<string, any> | null);
 };
 

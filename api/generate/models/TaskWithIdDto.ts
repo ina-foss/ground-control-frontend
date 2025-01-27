@@ -16,6 +16,7 @@ export type TaskWithIdDto = {
     lead_time: (number | null);
     step_id: number;
     media_id: number;
+    documentation?: (string | null);
     id: number;
     annotations: Array<AnnotationWithIdDto>;
 };
