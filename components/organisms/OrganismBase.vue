@@ -36,7 +36,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :locals="annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
           Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
@@ -148,8 +148,8 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const locals = computed(() => {
     if(allFetched){
     return (annotationInfo.value == null)
-      ? annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
-      : annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation
+      ? _.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])
+      : _.sortBy(annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])
     }
     return []
   })
