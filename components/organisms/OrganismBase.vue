@@ -193,6 +193,7 @@ const algos = computed(() => { // List the name of the algorithm
 
 
   const updateVideoTimecode = (event: {tcin: string|number, index: number}) => { // Lorsqu'un segment est cliqué
+    bestIndex = event.index
     highlightSegment(event.index)
     if ( options.value.transcription === true ) {
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
@@ -302,9 +303,10 @@ const annotationComponent = computed(() => {
   const getSelectedSegment = () : HTMLDivElement =>{
     let segmentArray : Array<HTMLDivElement> | HTMLCollection = moleculeAnnotationRef.value?.listRefs
     if (segmentArray instanceof HTMLCollection) segmentArray = [...segmentArray]
-    return segmentArray?.find(ref =>
+    const selected_element : HTMLDivElement =  segmentArray?.find(ref =>
       ref.classList?.contains('selected-segment')
     );
+    return selected_element
   }
 
   const navigateWithkeyboard = (param,action) => {
