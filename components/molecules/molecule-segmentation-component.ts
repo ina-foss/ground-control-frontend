@@ -67,7 +67,7 @@ export default defineComponent({
     })
 
     const filteredLocals = computed(() => {
-      return _.sortBy(_.filter(locals, (local) => local?.sublocalisations),['tcin'] )
+      return _.filter(locals, (local) => local?.sublocalisations)
     })
 
     const deactivateTopic = ({ index }:{index: number}) => {
