@@ -24,7 +24,7 @@ async function fetchVideoStream(url) {
   return videoHls;
 }
 
-const timecodeHistory : Ref<never[]> | undefined = inject('timecode-history')
+const timecodeHistory : Ref<[]> | undefined = inject('timecode-history')
 
 const showRollback =  computed(()=>{
   return timecodeHistory.value.length > 0

@@ -10,15 +10,25 @@ export type Options =  {
    */
   transcription: boolean
 
+  /** If the player stops at the end of the selected segment
+   * @defaultValue `false`
+   */
+  loop_bloc: boolean
+
   /** if the span are displayed
    * @defaultValue `true`
    */
   span : boolean
 
-  /** if the timecode are showed
+  /** if the timecode are showed for each bloc
    * @defaultValue `false`
    */
-  timecode: boolean
+  timecode_bloc: boolean
+
+  /** if the timecode are showed for each segment
+   * @defaultValue `false`
+   */
+  timecode_segment: boolean
 
   /** if the annotations are divided by bloc
    * @defaultValue `false`
@@ -30,10 +40,12 @@ export const useOptions = defineStore("annotation-options",() => {
 
     const options = reactive<Options>({
       span: true,
-      timecode: false,
+      timecode_bloc: false,
+      timecode_segment:false,
       bloc: true,
       player: true,
-      transcription: true
+      transcription: true,
+      loop_bloc: false
     })
 
 

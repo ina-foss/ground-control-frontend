@@ -1,6 +1,6 @@
 <template>
   <div class=" rounded-lg w-[250px]">
-    <Accordion class="w-full !bg-white rounded" >
+    <Accordion  value="0" class="w-full !bg-white rounded" >
       <AccordionPanel>
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Synchronisation</AccordionHeader>
         <AccordionContent>
@@ -12,6 +12,10 @@
             <div class="flex justify-between items-center self-stretch py-1 ">
               <span>Transcriptions</span>
               <ToggleSwitch v-model="options.transcription" />
+            </div>
+            <div class="flex justify-between items-center self-stretch py-1 ">
+              <span>Loop segment</span>
+              <ToggleSwitch v-model="options.loop_bloc" />
             </div>
           </div>
         </AccordionContent>

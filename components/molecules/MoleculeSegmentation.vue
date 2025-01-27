@@ -6,18 +6,15 @@
     <div class="flex  h-[80vh]">
     <ol class=" flex  flex-col w-fit h-full overflow-y-scroll overflow-x-visible pr-4">
       <ScrollTop
-        :pt="{ root: { style: 'position: absolute; right: 42%; top: 95%; width: 2rem; height: 2rem;',
-         class:['p-button-secondary','p-button-rounded']} }"
+        :pt="{ root: { style: 'position: fixed !important; right: 42%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
-        :unstyled="true"
-        class="absolute"
         target="parent"
       />
       <li
         v-for="(phrase, index) in filteredLocals"
         :key="index"
         :ref="el => segmentationRefs.push(el)"
-        class="rounded-lg scroll-mt-5 "
+        class="rounded-lg scroll-mt-52 "
       >
         <AtomSegmentation
           ref="segmentation"
@@ -37,13 +34,14 @@
     </ol>
     </div>
   </div>
-    <div class="  overflow-y-auto flex flex-col items-center gap-3 col-span-2">
-      <AtomSpanOption v-model:timecode="options.timecode" />
+    <div class=" h-[80vh] overflow-y-scroll flex flex-col items-center gap-3 col-span-2 mb-3">
+      <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
       <atom-video-option />
       <AtomTaskComment />
+      <AtomTopicList :colors="colors" :topics="topics"/>
     </div>
 </template>
 
- <script src="./molecule-segmentation-component" lang="ts" >
+<script src="./molecule-segmentation-component" lang="ts" >
 </script>
 

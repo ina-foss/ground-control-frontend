@@ -10,13 +10,22 @@
         <div class="w-full flex h-full justify-between p-lg rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flew-row items-center">
-            <Tag v-if="options.timecode" severity="contrast">
+            <Tag v-if="options.timecode_bloc" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
                 <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
               </div>
             </Tag>
             <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
+            <div v-if="editTitle"  >
+                <InputText v-model="editedTitle" @focusout="editTitle = false"  />
+              </div>
+              <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8    "  >
+                <div :class="`h-8 p-3  w-fit flex items-center mb-3  `">
+                  <b>{{ title }}</b>
+                </div>
+                <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
+              </div>
               <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" />
             </div>
             <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
@@ -49,6 +58,9 @@
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate leading-tight text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
+    </div>
+    <div v-if="options.timecode_segment" class="absolute bottom-1 text-xs ">
+      <p>{{ timestampToUnix(phrase.tcin)}}</p>
     </div>
     <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
       <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
@@ -112,6 +124,12 @@ topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 const editedTitle = ref(null)
 const ruptureTemplate = ref()
 const comment = ref(null)
+const title = computed(()=>{
+  if(isTopicFirstSegment.value){
+    return editedTitle.value ? editedTitle.value : 'Topic '+ topicIndex.value
+  }
+  else return null
+})
 
 function startDrag(event: DragEvent) {
   event.stopPropagation()
@@ -135,10 +153,8 @@ function handleDrop(event: DragEvent) {
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
   const result = getLiList(target,0)
-  console.log(result)
   const listLiElement : HTMLCollection = result.list
   const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
-  console.log(index)
   if( index != -1) emit('dragging-end',{index: index})
   const hoverList: NodeList = document.querySelectorAll('.customHover')
   hoverList.forEach((el)=>{
@@ -214,11 +230,30 @@ const computeTopicHeight = async () => {
 }
 
 
-onMounted(() => {
-  watch(() => isTopicFirstSegment.value, () => {
-    computeTopicHeight()
+onMounted( ()=>{
+  watchEffect(()=>{
   })
-  window.addEventListener('resize', computeTopicHeight, {})
+  watch(()=>editTitle.value,(newValue, oldValue)=>{
+    if(isTopicFirstSegment.value && newValue == false ){
+      topicList[topicIndex.value].title = editedTitle.value
+    }
+  })
+  watch(()=>isTopicFirstSegment.value,(newValue)=>{
+    if(newValue == true){
+      editedTitle.value =  topicList[topicIndex.value].title
+    }
+  })
+  watch(()=>isTopicFirstSegment.value,()=>{
+      computeTopicHeight()
+  })
+  watch(()=>topicList[topicIndex.value]?.title,(newTitle)=>{
+    if(isTopicFirstSegment.value ){
+      editedTitle.value = newTitle
+    }
+  },{immediate: true})
+
+
+  window.addEventListener('resize', computeTopicHeight,{})
 
 })
 

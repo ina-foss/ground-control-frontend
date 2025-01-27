@@ -36,7 +36,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :colors="colors" :locals="annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation" :topics="topics" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
         <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
         <p class="text-white p-3 md:block xs:hidden ">
           Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
@@ -148,8 +148,8 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const locals = computed(() => {
     if(allFetched){
     return (annotationInfo.value == null)
-      ? annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
-      : annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation
+      ? _.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])
+      : _.sortBy(annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])
     }
     return []
   })
@@ -186,26 +186,31 @@ const algos = computed(() => { // List the name of the algorithm
   return res
 })
 
-  function addTimecodeHistory (tc?: never){
+  function addTimecodeHistory (tc?: string|number){
     if(timecodeHistory.value.length == 0 || timecodeHistory.value[timecodeHistory.value.length-1] != tc) timecodeHistory.value.push(tc)
 
   }
 
 
-  const updateVideoTimecode = (event) => {
+  const updateVideoTimecode = (event: {tcin: string|number, index: number}) => { // Lorsqu'un segment est cliqué
+    highlightSegment(event.index)
     if ( options.value.transcription === true ) {
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
         scrollToSegment({lastIndex: 0, bestIndex: event.index})
     }
   }
 
-  const scrollToSegment = (event) => {
-    if ( options.value.player === true) {
-      if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex].tcin)
-      bestIndex=event.bestIndex
+
+  const highlightSegment = (index: number) => {
       getSelectedSegment()?.classList?.remove('selected-segment')
-      moleculeAnnotationRef.value?.listRefs[bestIndex].scrollIntoView({ behavior: "smooth" });
-      moleculeAnnotationRef.value?.listRefs[bestIndex].classList.add('selected-segment')
+      moleculeAnnotationRef.value?.listRefs[index].classList.add('selected-segment')
+  }
+
+  const scrollToSegment = (event : {lastIndex: number ,bestIndex: number, fromHistory?: boolean, tcin?: number}) => { // Lorsque la video change de timecode
+    if ( options.value.player === true) {
+      highlightSegment(event.bestIndex)
+      if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex]?.tcin | event.tcin)
+      moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
     }
   }
 
@@ -283,10 +288,10 @@ const annotationComponent = computed(() => {
             break;
           case (" "): // Gérer l'espace
             if (event.ctrlKey) { //creation rupture apres
-              navigateWithkeyboard(1,false);
+              navigateWithkeyboard(0,false);
             }
             else{ //creation rupture avant
-              navigateWithkeyboard(1,true);
+              navigateWithkeyboard(0,true);
             }
             break;
           default:
@@ -317,10 +322,10 @@ const annotationComponent = computed(() => {
         bestIndex = 0
       }
       if(moleculeAnnotationRef.value && action === true){
-        moleculeAnnotationRef.value.createBreak(bestIndex-1)
+        moleculeAnnotationRef.value.handleSegmentation({index: bestIndex})
       }
       else if(moleculeAnnotationRef.value &&  action === false){
-        moleculeAnnotationRef.value.removeBreak(bestIndex-1)
+        moleculeAnnotationRef.value.handleSegmentation({index: bestIndex-1})
       }
       scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();

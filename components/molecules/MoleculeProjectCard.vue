@@ -26,7 +26,7 @@
             </Button>
             <Dialog
               v-model:visible="deleteDialog" modal header="Êtes-vous sûr de vouloir supprimer ce projet ?"
-              :style="{ width: '30rem'}" class="bg-white pb-0" :pt="{
+              :style="{ width: '31rem'}" class="bg-white pb-0" :pt="{
       header:{
         style:{color:'#212529'},
         class: 'flex justify-between items-center p-3',
@@ -37,13 +37,11 @@
     }"
               @after-hide="deleteDialog = false">
               <div class="flex justify-end pb-0">
-                <ButtonGroup class="justify-evenly flex">
-                  <Button label="Non" class="button button-prev mr-3" size="small" @click="deleteDialog = false"/>
+                  <Button label="Non" class="!bg-[#ffffff] !text-primary button button-prev mr-3" size="small" @click="deleteDialog = false"/>
                   <Button
                     v-if="deleteDialog === false" class="button" size="small" label="Supprimer"
                     @click="deleteDialog = true"/>
                   <Button v-else class="button" size="small" label="Oui" @click="deleteProject"/>
-                </ButtonGroup>
               </div>
             </Dialog>
             <MoleculeFormProject :dialog-visible="visible" :project="project" @toggle-dialog="visible=false"/>
