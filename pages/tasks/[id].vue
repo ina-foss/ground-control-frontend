@@ -113,7 +113,7 @@ const submitExistantAnnotation =(locals,action)=>{
         window.onbeforeunload = null
       })
       .then(() => {
-        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+        AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail.value,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
       })
 }
 
@@ -136,7 +136,7 @@ const submitNewAnnotation =(locals,action)=>{
     }
   })
     .then(() => {
-      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail.value,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
     })
     .then(() => {
       window.onbeforeunload = null
