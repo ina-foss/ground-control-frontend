@@ -36,7 +36,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :locals="annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
         <MoleculeTabs :data="data"/>
       </MoleculeAnnotationLeftPanel>
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
@@ -139,8 +139,8 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const locals = computed(() => {
     if(allFetched){
     return (annotationInfo.value == null)
-      ? annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation
-      : annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation
+      ? _.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])
+      : _.sortBy(annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])
     }
     return []
   })
@@ -184,6 +184,7 @@ const algos = computed(() => { // List the name of the algorithm
 
 
   const updateVideoTimecode = (event: {tcin: string|number, index: number}) => { // Lorsqu'un segment est cliqué
+    bestIndex = event.index
     highlightSegment(event.index)
     if ( options.value.transcription === true ) {
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
@@ -293,9 +294,10 @@ const annotationComponent = computed(() => {
   const getSelectedSegment = () : HTMLDivElement =>{
     let segmentArray : Array<HTMLDivElement> | HTMLCollection = moleculeAnnotationRef.value?.listRefs
     if (segmentArray instanceof HTMLCollection) segmentArray = [...segmentArray]
-    return segmentArray?.find(ref =>
+    const selected_element : HTMLDivElement =  segmentArray?.find(ref =>
       ref.classList?.contains('selected-segment')
     );
+    return selected_element
   }
 
   const navigateWithkeyboard = (param,action) => {

@@ -46,15 +46,7 @@
     <Button v-else icon="pi pi-comment"
       :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
       @click="toggleComment" />
-    <div v-tooltip.top="{
-      value: timestampToUnix(phrase.tcin) + '-' + timestampToUnix(phrase.tcout),
-      showDelay: 2000,
-      pt: {
-        root: {
-          style: 'max-width: fit-content '
-        }
-      }
-    }"
+    <div
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate leading-tight text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
