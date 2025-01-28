@@ -37,17 +37,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :locals="annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation" @scroll-to-segment="scrollToSegment">
-        <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
-        <p class="text-white p-3 md:block xs:hidden ">
-          Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
-          Chaque segment correspond à une thématique différente de la précédente.<br>
-          Chaque changement de segment correspond à un changement d'interlocuteur ou de sujet.<br><span
-            class="underline">Exemple</span> :
-          <br>si on souhaite retranscrire le contenu d'une émission qui dure 1h, grâce à la segmentation, nous pouvons
-          avoir un "résumé" du contenu de l'émission grâce aux différents segments. Ces derniers retracent les divers
-          sujets
-          ayant été traités, différencie les interlocuteurs.
-        </p>
+        <MoleculeTabs :data="data"/>
       </MoleculeAnnotationLeftPanel>
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
     </div>
@@ -64,6 +54,7 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   import _ from 'lodash'
   import {AnnotationStatus, PluginService} from '../../api/generate';
   import { useService } from "#imports";
+  import MoleculeTabs from "../molecules/MoleculeTabs.vue";
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
