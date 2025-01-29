@@ -278,6 +278,15 @@ const annotationComponent = computed(() => {
           case "N"://avance de 10
             navigateWithkeyboard(10,null);
             break;
+          case "A":
+            options.value.timecode_bloc = !options.value.timecode_bloc;
+            break;
+          case "Z":
+            options.value.timecode_segment = !options.value.timecode_segment;
+            break;
+          case "E":
+            options.value.player = !options.value.player;
+            break;
           case (" "): // Gérer l'espace
             if (event.ctrlKey) { //creation rupture apres
               navigateWithkeyboard(0,false);
