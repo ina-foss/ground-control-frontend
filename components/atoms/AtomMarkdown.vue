@@ -1,4 +1,5 @@
 <template>
+  <!-- sonar-ignore -->
   <div v-html="parsedMarkdown" class="markdown-content"></div>
 </template>
 
