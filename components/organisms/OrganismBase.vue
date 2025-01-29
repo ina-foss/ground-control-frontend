@@ -1,6 +1,6 @@
 <template>
   <div
-v-if="data.annotations[0]?.annotation_status !== annotationStatus"
+v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationStatus"
        class=" right-12 mr-4 absolute flex items-center top-[-70px] h-[70px] z-[5] !hover:red" >
     <Button  class="mr-4" outlined label="Soumettre"  @click="handleSubmit()"/>
     <Button class="button-overwrite"
@@ -221,7 +221,7 @@ const annotationComponent = computed(() => {
         transcriptions: transcriptions.value,
         userAnnotations: userAnnotations.value,
         algos: algos.value,
-        status: data.annotations[0]?.annotation_status
+        status: annotationsOut[annotationInfo.value?.index]?.annotation_status
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
 
