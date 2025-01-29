@@ -1,8 +1,15 @@
 <template>
   <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
     <div class=" h-[40px]  mt-1 flex justify-between px-xl z-50 bg-neutral sticky top-0">
-      <div class=" flex items-center gap-5">
-        <SelectButton v-model="labelSelected" multiple class="  " :options="labels" aria-labelledby="basic" />
+      <div class=" flex items-center gap-5 overflow-hidden relative">
+        <SelectButton v-model="labelSelected" multiple  :options="labels" aria-labelledby="basic" >
+        <template #option="slotProps"  >
+            <span >
+            {{ slotProps.option}}
+            </span>
+            <i @click.stop="_.pullAt(labels,slotProps.index)" class="pi pi-times absolute right-[-15px] top-[-8px] z-50 rounded-2xl p-[2px] text-[8px] overflow-visible hover:cursor-pointer hover:bg-disabled "  />
+        </template>
+          </SelectButton>
         <div class="flex overflow-visible w-[120px] gap-1 items-center">
           <div class="grow-0">
             <InputText v-model="newLabel" class="h-full w-full " />
