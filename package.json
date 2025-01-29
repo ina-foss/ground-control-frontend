@@ -25,6 +25,7 @@
     "@primevue/themes": "^4.1.1",
     "hls.js": "^1.5.8",
     "lodash": "^4.17.21",
+    "markdown-it": "^14.1.0",
     "nuxt": "^3.14.1592",
     "nuxt-socket-io": "^3.0.13",
     "oidc-client-ts": "^3.0.1",
