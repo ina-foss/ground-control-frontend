@@ -23,6 +23,7 @@
     "@nuxtjs/color-mode": "^3.4.1",
     "@pinia/nuxt": "^0.5.1",
     "@primevue/themes": "^4.1.1",
+    "dompurify": "^3.2.3",
     "hls.js": "^1.5.8",
     "lodash": "^4.17.21",
     "markdown-it": "^14.1.0",
