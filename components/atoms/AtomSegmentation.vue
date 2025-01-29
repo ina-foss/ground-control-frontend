@@ -232,7 +232,7 @@ onMounted( ()=>{
   })
   watch(()=>isTopicFirstSegment.value,(newValue)=>{
     if(newValue == true){
-      editedTitle.value =  topicList[topicIndex.value].title
+      editedTitle.value =  topicList[topicIndex.value]?.title
     }
   })
   watch(()=>isTopicFirstSegment.value,()=>{
