@@ -239,12 +239,6 @@ const filteredProjects = computed(() => {
   return data.value.steps.filter((step) => step.status === selectedStatus.value.value); // Filtre les étapes en fonction du statut
 });
 
-// On affiche meme si c'es pas fini
-fetchTasks(route.params.id).then(() => {
-  if (getItems.value.length == 2) {
-    store.removeLastCrumb()
-  }
-})
 
 
 localStorage.getItem('breadcrumbItems');
@@ -253,7 +247,7 @@ localStorage.getItem('breadcrumbItems');
 fetchTasks(route.params.id).then(() => {
   if (store.items.length === 0) { // When coming from dashboard
     store.addCrumb({label: data.value.title, route: data.value.id})
-  } else while (getItems.value.length > 2) { // When coming from task view
+  } else while (store.items.length > 1) { // When coming from task view
     store.removeLastCrumb()
   }
 })
