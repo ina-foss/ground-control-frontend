@@ -1,6 +1,6 @@
 <template>
   <div
-v-if="data.annotations[0]?.annotation_status !== annotationStatus"
+v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationStatus"
        class=" right-12 mr-4 absolute flex items-center top-[-70px] h-[70px] z-[5] !hover:red" >
     <Button  class="mr-4" outlined label="Soumettre"  @click="handleSubmit()"/>
     <Button class="button-overwrite"
@@ -97,17 +97,16 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
   const timecodeHistory = ref([])
   let bestIndex = 0
-  const annotationInfo = computed(() => {
-    let info = null
-    if (allFetched ) {
-      annotationsOut.forEach((annotation, index) => {
-        if (annotation.user_email == userEmail.value) {
-          info = { index: index, id: annotation.id }
-        }
-      })
-      return info
-    }
+  const annotationInfo = computed< {index: number, id: number} | null>(() => {
+    if (!allFetched) return null;
+    return annotationsOut.reduce<{index: number, id: number} | null>((info, annotation, index) => {
+      if (annotation.user_email === userEmail.value) {
+        return { index, id: annotation.id };
+      }
+      return info;
+    }, null);
   });
+
 
   PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
    config.value = response;
@@ -221,7 +220,7 @@ const annotationComponent = computed(() => {
         transcriptions: transcriptions.value,
         userAnnotations: userAnnotations.value,
         algos: algos.value,
-        status: data.annotations[0]?.annotation_status
+        status: annotationsOut[annotationInfo.value?.index]?.annotation_status
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
 
