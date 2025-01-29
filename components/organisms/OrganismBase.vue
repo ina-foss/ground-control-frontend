@@ -97,17 +97,16 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
   const timecodeHistory = ref([])
   let bestIndex = 0
-  const annotationInfo = computed(() => {
-    let info = null
-    if (allFetched ) {
-      annotationsOut.forEach((annotation, index) => {
-        if (annotation.user_email == userEmail.value) {
-          info = { index: index, id: annotation.id }
-        }
-      })
-      return info
-    }
+  const annotationInfo = computed< {index: number, id: number} | null>(() => {
+    if (!allFetched) return null;
+    return annotationsOut.reduce<{index: number, id: number} | null>((info, annotation, index) => {
+      if (annotation.user_email === userEmail.value) {
+        return { index, id: annotation.id };
+      }
+      return info;
+    }, null);
   });
+
 
   PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
    config.value = response;
