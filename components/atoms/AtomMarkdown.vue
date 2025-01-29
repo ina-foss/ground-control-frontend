@@ -4,6 +4,7 @@
 
 <script>
 import md from "@/utils/markdown";
+import DOMPurify from "dompurify";
 
 export default {
   props: {
@@ -14,13 +15,14 @@ export default {
   },
   computed: {
     parsedMarkdown() {
-      return md.render(this.content);
+      const html = md.render(this.content);
+      return DOMPurify.sanitize(html);
     },
   },
 };
 </script>
 
-<style scoped>
+<style>
 .markdown-content h1 {
   font-size: 2rem;
   margin-bottom: 1rem;
