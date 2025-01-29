@@ -1,11 +1,10 @@
 <template>
-  <!-- sonar-ignore -->
-  <div v-html="parsedMarkdown" class="markdown-content"></div>
+  <div v-safe-html="parsedMarkdown" class="markdown-content"></div>
+
 </template>
 
 <script>
 import md from "@/utils/markdown";
-import DOMPurify from "dompurify";
 
 export default {
   props: {
@@ -16,8 +15,7 @@ export default {
   },
   computed: {
     parsedMarkdown() {
-      const html = md.render(this.content);
-      return DOMPurify.sanitize(html);
+      return md.render(this.content);
     },
   },
 };

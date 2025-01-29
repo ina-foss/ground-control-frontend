@@ -119,6 +119,7 @@ export default defineNuxtConfig({
     '~/node_modules/@ina/kit-ui/src/css/base.css',
   ],
     plugins: [
+      '~/directives/v-safe-html.ts'
     // '~/plugins/01.backend-openapi-config',
   ],
     runtimeConfig: {
