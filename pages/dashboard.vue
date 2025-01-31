@@ -46,10 +46,12 @@
         class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="totalRecords"
         template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink" />
     </div>
+    <MoleculeFooter />
   </div>
 </template>
 
 <script setup>
+import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue';
 import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
 import {bcStore} from "~/stores/breadcrumbs";
