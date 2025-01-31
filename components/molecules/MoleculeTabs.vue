@@ -1,6 +1,6 @@
   <template>
-    <h2 class=" mt-3 text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
-    <div class="card h-[50%] !bg-[#212529]">
+    <h2 class=" mt-3 text-white  text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
+    <div class="card !bg-[#212529]">
       <Tabs :value="selectedTab" scrollable class="m-0  !bg-[#212529] text-white">
         <TabList :pt="{
         tablist:{
@@ -11,9 +11,9 @@
             {{ tab.title }}
           </Tab>
         </TabList>
-        <TabPanels v-if="tabs.length > 0" class=" h-[290px] !bg-[#212529] text-white md:block xs:hidden">
+        <TabPanels v-if="tabs.length > 0" class=" !bg-[#212529] text-white md:block xs:hidden">
           <TabPanel v-for="(tab,index) in tabs" :key="index" :value="index" class="h-full bg-[#212529] text-white p-3">
-            <ScrollPanel class="h-[240px]">
+            <ScrollPanel class="">
               <AtomMarkdown :content="tab.text"/>
             </ScrollPanel>
           </TabPanel>
