@@ -95,8 +95,8 @@ export default class AmaliaPlayerService {
   public createPlayer(playerId: string, src: string,media_params:any): HTMLElement {
     this.loadSource();
     if (!this.playerConfiguration) {
-      this.configurePlayer(src,undefined,media_params?.thumbnailBaseUrl,undefined,undefined,undefined,
-          undefined,media_params?.tcOffset)
+      this.configurePlayer(src,undefined,media_params?.thumbnail_base_url,undefined,undefined,undefined,
+          undefined,media_params?.tc_offset)
     }
     // Create web component
     this.player = document.createElement(AmaliaPlayerService.TAG_PLAYER_TAG);
