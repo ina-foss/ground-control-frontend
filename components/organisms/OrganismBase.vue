@@ -36,7 +36,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
 
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
         <MoleculeTabs :data="data"/>
       </MoleculeAnnotationLeftPanel>
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
