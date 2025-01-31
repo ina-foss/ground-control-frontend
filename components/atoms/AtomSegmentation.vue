@@ -13,7 +13,7 @@
             <Tag v-if="options.timecode_bloc" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
-                <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
+                <p class="text-sm">{{$application.timestampToUnix($props.tcOffset+phrase.tcin) }}</p>
               </div>
             </Tag>
             <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
@@ -52,7 +52,7 @@
       {{ $props.phrase.data?.text[0] }}
     </div>
     <div v-if="options.timecode_segment" class="absolute bottom-1 text-xs ">
-      <p>{{ timestampToUnix(phrase.tcin)}}</p>
+      <p>{{ timestampToUnix($props.tcOffset+phrase.tcin)}}</p>
     </div>
     <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
       <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
@@ -91,14 +91,11 @@
 <script setup lang="ts">
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
-import AtomTopicList from './AtomTopicList.vue';
-import { AutoComplete, MultiSelect } from 'primevue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
 import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
-import { result } from 'lodash';
 
-const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
+const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()

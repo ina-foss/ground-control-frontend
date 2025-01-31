@@ -9,7 +9,7 @@ class="flex cursor-pointer flex-start gap-2 "
         <Tag :severity="tcColor" class="!text-black" >
           <div class="flex justify-center  items-center gap-3">
             <i class="pi pi-clock" style="font-size: 1.5rem"/>
-            <p class="text-sm">{{$application.timestampToUnix(transcriptions[0].tcin)  }}</p>
+            <p class="text-sm">{{$application.timestampToUnix($props.tcOffset+transcriptions[0].tcin)  }}</p>
           </div>
         </Tag>
         <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
@@ -82,7 +82,7 @@ const emits = defineEmits(['confirm', 'onSegmentClick'])
 const toast = useToast()
 const { $application }  = useService()
 
-const {transcriptions, algos, userAnnotation, status} = defineProps({
+const {transcriptions, algos, userAnnotation, status,tcOffset} = defineProps({
   transcriptions: {
     type: Array
   },
@@ -94,6 +94,9 @@ const {transcriptions, algos, userAnnotation, status} = defineProps({
   },
   status: {
     type: String
+  },
+  tcOffset: {
+    type: Object
   }
 })
 let isExpand = ref(false) // Describe atom render

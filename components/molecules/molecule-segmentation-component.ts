@@ -17,10 +17,10 @@ export default defineComponent({
     result: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
-    locals: {type: Array, default: ()=> []}
+    locals: {type: Array, default: ()=> []},
+    tcOffset: {type: Object, default: ()=> 0}
   },
-  setup({ colors, topics, locals , result}, { emit, expose }) {
-
+  setup({ colors, topics, locals , result,tcOffset}, { emit, expose }) {
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData } = useTopicList()
     const { computeColor } = $application
@@ -180,6 +180,7 @@ export default defineComponent({
       handleSegmentClick,
       deactivateTopic,
       jumpToTopic,
+      tcOffset,
     }
 
 

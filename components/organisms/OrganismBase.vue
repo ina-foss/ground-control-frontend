@@ -212,7 +212,8 @@ const annotationComponent = computed(() => {
           result: result.value,
           locals: locals.value,
           colors: colors.value,
-          topics: topics.value
+          topics: topics.value,
+          tcOffset:data.media?.player_parameters.tcOffset,
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
     case 'transcription':
@@ -220,13 +221,16 @@ const annotationComponent = computed(() => {
         transcriptions: transcriptions.value,
         userAnnotations: userAnnotations.value,
         algos: algos.value,
-        status: annotationsOut[annotationInfo.value?.index]?.annotation_status
+        status: annotationsOut[annotationInfo.value?.index]?.annotation_status,
+        tcOffset:data.media?.player_parameters.tcOffset
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
 
     case 'span':
         return { component :MoleculeSpan,
-          props: {},
+          props: {
+            tcOffset:data.media?.player_parameters.tcOffset,
+          },
           events:{ 'on-segment-click': updateVideoTimecode}
   }
 

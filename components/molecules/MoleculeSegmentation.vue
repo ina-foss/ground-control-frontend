@@ -23,6 +23,7 @@
           :phrase="phrase"
           :topics="topics"
           :topicList="topicList"
+          :tcOffset="tcOffset"
           :segmentationRefs="segmentationRefs"
           @dragging-start="dragging.start = $event.index"
           @dragging-end="dragging.end = $event.index"
