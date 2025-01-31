@@ -32,8 +32,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
       </div>
     </div>
   </div>
-  <div v-else class="h-full " >
-
+  <div v-else class="h-full" >
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
@@ -177,7 +176,7 @@ const algos = computed(() => { // List the name of the algorithm
   return res
 })
 
-  function addTimecodeHistory (tc?: string|number){
+  function addTimecodeHistory (tc?: any){
     if(timecodeHistory.value.length == 0 || timecodeHistory.value[timecodeHistory.value.length-1] != tc) timecodeHistory.value.push(tc)
 
   }
@@ -201,7 +200,7 @@ const algos = computed(() => { // List the name of the algorithm
   const scrollToSegment = (event : {lastIndex: number ,bestIndex: number, fromHistory?: boolean, tcin?: number}) => { // Lorsque la video change de timecode
     if ( options.value.player === true) {
       highlightSegment(event.bestIndex)
-      if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex]?.tcin | event.tcin)
+      if(!event.fromHistory) addTimecodeHistory(event.tcin ?? locals.value[event.bestIndex]?.tcin  )
       moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
     }
   }

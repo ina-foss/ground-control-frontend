@@ -1,20 +1,20 @@
 <template>
-  <div>
+  <div class="h-screen max-h-screen flex flex-col">
     <MoleculeHeader />
-    <main class="h-[calc(100vh-140px)] fixed w-full  text-text  bg-neutral ">
-      <div class="flex-grow">
+    <div class="flex flex-col flex-grow">
+      <div class="h-fit"> <!-- Assuming the breadcrumbs have a height of 70px (16rem) -->
         <AtomBreadcrumbs />
       </div>
-      <slot />
-    </main>
-    <MoleculeFooter />
+      <main class="flex-grow  w-full text-text bg-neutral overflow-auto">
+        <slot />
+      </main>
+    </div>
   </div>
 </template>
 
 
 
 <script setup>
-import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue';
 import MoleculeHeader from '~/components/molecules/MoleculeHeader.vue';
 import AtomBreadcrumbs from "~/components/atoms/AtomBreadcrumbs.vue";
 
