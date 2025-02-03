@@ -4,6 +4,7 @@ import { useAuth } from "../stores/auth";
 import { storeToRefs } from "pinia";
 import { UserService } from "../api/generate/services/UserService";
 import { floor, padStart, padEnd } from "lodash";
+import {useTcOffset} from "~/composables/useTcOffset";
 
 /**
  * Services used throught the application
@@ -66,6 +67,7 @@ export default class ApplicationService {
    * @returns {string}
    */
   public timestampToUnix(timeArg: number | string): string {
+    const  {getTcOffset} = useTcOffset();
     let time : number
     if ( typeof timeArg == "string" ){
       if (timeArg.includes(':')) return timeArg // If the time is already at Unix format
@@ -73,6 +75,7 @@ export default class ApplicationService {
     }
     else time = timeArg // if the time is a float
 
+        time = time +getTcOffset()
         const hour: number = floor(time/3600)
         const minute: number = floor((time % 3600 )/60)
         const second: number = floor(time % 60)

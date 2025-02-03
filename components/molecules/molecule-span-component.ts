@@ -14,10 +14,7 @@ export default defineComponent({
   name: "MoleculeSpan",
   components: {AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption},
   emits: ['on-segment-click'],
-  props: {
-    tcOffset: {type: Object, default: () => 0}
-  },
-  setup({tcOffset}, { emit, expose }) {
+  setup(props, { emit, expose })  {
 
     type AtomSpanType = InstanceType<typeof AtomSpan>
 
@@ -373,7 +370,6 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
       expose({annotationFunction: saveSpan, listRefs: listSegment })
 
     return{
-      tcOffset,
       labelSelected,
       relationArray,
       aggregatedLocals,

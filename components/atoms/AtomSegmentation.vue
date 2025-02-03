@@ -13,7 +13,7 @@
             <Tag v-if="options.timecode_bloc" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
-                <p class="text-sm">{{$application.timestampToUnix($props.tcOffset+phrase.tcin) }}</p>
+                <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
               </div>
             </Tag>
             <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
@@ -52,7 +52,7 @@
       {{ $props.phrase.data?.text[0] }}
     </div>
     <div v-if="options.timecode_segment" class="absolute bottom-1 text-xs ">
-      <p>{{ timestampToUnix($props.tcOffset+phrase.tcin)}}</p>
+      <p>{{ timestampToUnix(phrase.tcin)}}</p>
     </div>
     <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
       <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
@@ -95,12 +95,12 @@ import AtomPluginBlock from './AtomPluginBlock.vue';
 import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
 
-const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset'])
+const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()
-const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
+const { timestampToUnix, computeColor, textColorPicker } = $application
 const segment = ref(null)
 const toast = useToast()
 const topicIndex = computed(() => topics[index])

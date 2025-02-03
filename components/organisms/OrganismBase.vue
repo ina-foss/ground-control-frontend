@@ -55,11 +55,12 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   import {AnnotationStatus, PluginService} from '../../api/generate';
   import { useService } from "#imports";
   import MoleculeTabs from "../molecules/MoleculeTabs.vue";
+  import {useTcOffset} from "~/composables/useTcOffset";
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
   const { unixToTimestamp } = $application
-
+  const{setTcOffset}= useTcOffset()
 
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
     data: {
@@ -213,7 +214,6 @@ const annotationComponent = computed(() => {
           locals: locals.value,
           colors: colors.value,
           topics: topics.value,
-          tcOffset:data.media?.player_parameters.tc_offset,
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
     case 'transcription':
@@ -222,15 +222,12 @@ const annotationComponent = computed(() => {
         userAnnotations: userAnnotations.value,
         algos: algos.value,
         status: annotationsOut[annotationInfo.value?.index]?.annotation_status,
-        tcOffset:data.media?.player_parameters.tc_offset
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
 
     case 'span':
         return { component :MoleculeSpan,
-          props: {
-            tcOffset:data.media?.player_parameters.tc_offset,
-          },
+          props: {},
           events:{ 'on-segment-click': updateVideoTimecode}
   }
 
@@ -254,7 +251,7 @@ const annotationComponent = computed(() => {
   watch(()=> allFetched,() => {
       if(allFetched == true){
         videoSrc.value = annotationsIn[0]?.result.asset.url
-
+        setTcOffset(data.media?.player_parameters.tc_offset||0)
       }
   })
   })

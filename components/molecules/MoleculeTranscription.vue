@@ -11,7 +11,7 @@
           <AtomTrancription
 :user-annotation="userAnnotations[index]" :algos="algos"
             :transcriptions="transcription" :status="status" @on-segment-click="handleSegmentClick({...$event, index: index})"
-                            @confirm="handleConfirm($event, index)" :tcOffset="tcOffset"/>
+                            @confirm="handleConfirm($event, index)"/>
         </div>
       </div>
     </ol>
@@ -29,7 +29,7 @@ import {AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
 let isChanged = false
 const transcriptionsRef = ref([])
-const {transcriptions, algos, userAnnotations, status,tcOffset} = defineProps({
+const {transcriptions, algos, userAnnotations, status} = defineProps({
   transcriptions: { // all transcriptions by all algorithm group by sentence
     type: Array,
     required: true
@@ -45,12 +45,7 @@ const {transcriptions, algos, userAnnotations, status,tcOffset} = defineProps({
   status: {
     type: String,
     default: AnnotationStatus.DRAFT
-  },
-  tcOffset: {
-    type: Object,
-    default:  0
   }
-
 })
 const localChanges = ref([]) // store all the annotations confirmed by user before submitting
 

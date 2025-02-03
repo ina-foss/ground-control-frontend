@@ -22,7 +22,7 @@
     <AtomSearch :spans="spanRefArray" :labels="labels" @find-span="handleFocusSpan" @unselect="handleSelection" />
     </div>
     <div v-if="options.bloc" ref="blockArray">
-      <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="handleSelection" :tcOffset="tcOffset"  />
+      <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="handleSelection"  />
     </div>
     <div v-else>
       <div
