@@ -1,4 +1,5 @@
   <template>
+    <h2 class=" mt-3 text-white  text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
     <div class="card !bg-[#212529]">
       <Tabs :value="selectedTab" scrollable class="m-0  !bg-[#212529] text-white">
         <TabList :pt="{
