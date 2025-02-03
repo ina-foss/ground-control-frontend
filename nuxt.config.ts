@@ -31,6 +31,7 @@ const DSINAPreset = definePreset(Lara, {
       },
     },
     breadcrumb: {
+      padding: '14px',
       ColorScheme: {
         light: {
           background: 'var(--neutral-color)',

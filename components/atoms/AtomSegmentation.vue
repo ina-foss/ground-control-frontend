@@ -1,13 +1,13 @@
 <template>
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
-    :class="`bg-gray-300 transition-colors group relative mt-5  overflow-visible last:gap-0 p-lg flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
-    <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[40px] w-fit`">
+    :class="`bg-gray-300 transition-colors group relative mt-3  overflow-visible last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[32px] w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
       class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
-      <div :class="`w-full sticky top-0 h-[70px] left-0 bg-neutral  pointer-events-auto z-50 `">
-        <div class="w-full flex h-full justify-between p-lg rounded-t-lg "
+      <div :class="`w-full sticky top-0 h-[54px] left-0 bg-neutral rounded-t-lg pointer-events-auto z-50 `">
+        <div class="w-full flex h-full justify-between p-sm  rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flew-row items-center">
             <Tag v-if="options.timecode_bloc" severity="contrast">
@@ -47,15 +47,15 @@
       :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
       @click="toggleComment" />
     <div
-      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate leading-tight text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
+      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
     </div>
-    <div v-if="options.timecode_segment" class="absolute bottom-1 text-xs ">
+    <div v-if="options.timecode_segment" class="absolute bottom-1 z-40 text-xs bg-black text-white right-2 opacity-60 ">
       <p>{{ timestampToUnix(phrase.tcin)}}</p>
     </div>
-    <div class="relative gap-0  w-[calc(100%+40px)] z-40 ">
-      <div class="absolute z-50 w-full top-[10px] left-[-20px] h-6 over pointer-events-auto cursor-pointer"
+    <div class="relative gap-0  w-[calc(100%+20px)] z-40 ">
+      <div :class="`absolute z-50 w-full ${ !isTopicsLastSegment ? 'top-[-10px]' : '' }  left-[-10px] h-6 over pointer-events-auto cursor-pointer`"
         @click="handleSegmentation">
         <div ref="ruptureTemplate"
           :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"

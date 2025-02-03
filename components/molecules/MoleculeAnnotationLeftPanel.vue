@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: #212529" class="col-span-3 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
+  <div style="background-color: #212529" class="col-span-3 px-5 py-5 h-full xs:max-h-[28%] overflow-auto">
 
     <AtomVideoAmalia :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 

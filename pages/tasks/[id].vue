@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100%-57px)]">
+  <div class="h-full" >
     <OrganismBase
  :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
                :annotations-out="annotations_out"
