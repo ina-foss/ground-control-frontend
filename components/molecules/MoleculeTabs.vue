@@ -1,19 +1,14 @@
   <template>
-    <h2 class=" mt-3 text-white  text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
-    <div class="card !bg-[#212529]">
-      <Tabs :value="selectedTab" scrollable class="m-0  !bg-[#212529] text-white">
-        <TabList :pt="{
-        tablist:{
-          style: 'background-color:#212529;'
-        }
-      }" v-if="tabs.length > 0" class="m-0  !bg-[#212529] text-white">
-          <Tab v-for="(tab,index) in tabs" :key="index" :value="index" class="m-0 !bg-[#212529] text-white">
+    <div class="card">
+      <Tabs :value="selectedTab" scrollable class="card rounded-b-lg  overflow-auto">
+        <TabList v-if="tabs.length > 0" >
+          <Tab v-for="(tab,index) in tabs" :key="index" :value="index" >
             {{ tab.title }}
           </Tab>
         </TabList>
-        <TabPanels v-if="tabs.length > 0" class=" !bg-[#212529] text-white md:block xs:hidden">
-          <TabPanel v-for="(tab,index) in tabs" :key="index" :value="index" class="h-full bg-[#212529] text-white p-3">
-            <ScrollPanel class="">
+        <TabPanels v-if="tabs.length > 0" class=" md:block xs:hidden">
+          <TabPanel v-for="(tab,index) in tabs" :key="index" :value="index" class="h-full p-1">
+            <ScrollPanel class="max-h-[450px] overflow-y-auto">
               <AtomMarkdown :content="tab.text"/>
             </ScrollPanel>
           </TabPanel>
