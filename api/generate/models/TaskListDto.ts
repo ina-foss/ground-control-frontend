@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AnnotationDto } from './AnnotationDto';
+import type { MediaDto } from './MediaDto';
 import type { StepProjectDto } from './StepProjectDto';
 import type { TaskCommentDto } from './TaskCommentDto';
 import type { TaskDataType } from './TaskDataType';
@@ -26,5 +27,6 @@ export type TaskListDto = {
     annotations?: Array<AnnotationDto>;
     task_comments?: Array<TaskCommentDto>;
     step: (StepProjectDto | null);
+    media: (MediaDto | null);
 };
 

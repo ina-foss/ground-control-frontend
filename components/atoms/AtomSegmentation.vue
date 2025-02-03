@@ -91,19 +91,16 @@
 <script setup lang="ts">
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
-import AtomTopicList from './AtomTopicList.vue';
-import { AutoComplete, MultiSelect } from 'primevue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
 import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
-import { result } from 'lodash';
 
 const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()
-const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
+const { timestampToUnix, computeColor, textColorPicker } = $application
 const segment = ref(null)
 const toast = useToast()
 const topicIndex = computed(() => topics[index])

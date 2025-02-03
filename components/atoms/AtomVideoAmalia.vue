@@ -16,7 +16,7 @@ const myplayer = ref()
 let lastIndex = 0
 
 let dynamicSrc = ref()
-const { locals, videoSrc } = defineProps(['locals', 'video-src'])
+const { locals, videoSrc,media_params } = defineProps(['locals', 'video-src','media_params'])
 const emits = defineEmits(['timecode-update']);
 async function fetchVideoStream(url) {
   const response = await fetch(url);
@@ -48,7 +48,7 @@ const hlsPlayer = async () => {
 
 watchEffect(() => {
   if (dynamicSrc.value) {
-    myplayer.value.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value)) // add amalia player once src is ready
+    myplayer.value.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params)) // add amalia player once src is ready
   }
 })
 
