@@ -3,8 +3,8 @@
     <Accordion  class="w-full !bg-white rounded" >
       <AccordionPanel>
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Derniers Timecodes</AccordionHeader>
-        <AccordionContent>
-          <ScrollPanel class="max-h-[100px]">
+        <AccordionContent class=" !h-fit !max-h-[100px] ">
+          <ScrollPanel >
           <div class="flex flex-col gap-[10px] text-title  ">
             <div v-for="(timecode,index) in timecodeHistory" class="flex items-center gap-3 "  >
               <span> {{timestampToUnix(timecode)}}</span>
