@@ -1,7 +1,7 @@
 <template>
-  <div style="background-color: #212529" class="col-span-3 px-5 py-5 h-full xs:max-h-[28%] overflow-auto">
+  <div class="col-span-3 pl-5 pt-5 h-full xs:max-h-[30%] overflow-auto">
 
-    <AtomVideoAmalia :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoAmalia class="rounded-lg" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
     <slot/>
   </div>
