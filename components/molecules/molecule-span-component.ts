@@ -14,7 +14,7 @@ export default defineComponent({
   name: "MoleculeSpan",
   components: {AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption},
   emits: ['on-segment-click'],
-  setup(props, { emit, expose })  {
+  setup(props, { emit, expose }) {
 
     type AtomSpanType = InstanceType<typeof AtomSpan>
 

@@ -17,7 +17,7 @@ const { local, } = defineProps({
   local: {
     type: Object,
     default : () => {}
-  }
+  },
 })
 
 

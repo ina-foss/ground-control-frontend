@@ -20,6 +20,7 @@ export default defineComponent({
     locals: {type: Array, default: ()=> []}
   },
   setup({ colors, topics, locals , result}, { emit, expose }) {
+
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData } = useTopicList()
     const { computeColor } = $application

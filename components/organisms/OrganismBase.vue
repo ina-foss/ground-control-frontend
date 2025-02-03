@@ -213,7 +213,7 @@ const annotationComponent = computed(() => {
           result: result.value,
           locals: locals.value,
           colors: colors.value,
-          topics: topics.value,
+          topics: topics.value
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
     case 'transcription':
@@ -221,7 +221,7 @@ const annotationComponent = computed(() => {
         transcriptions: transcriptions.value,
         userAnnotations: userAnnotations.value,
         algos: algos.value,
-        status: annotationsOut[annotationInfo.value?.index]?.annotation_status,
+        status: annotationsOut[annotationInfo.value?.index]?.annotation_status
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
 
