@@ -51,7 +51,7 @@
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
     </div>
-    <div v-if="options.timecode_segment" class="absolute bottom-1 text-xs ">
+    <div v-if="options.timecode_segment" class="absolute bottom-1 z-40 text-xs bg-black text-white right-2 opacity-60 ">
       <p>{{ timestampToUnix(phrase.tcin)}}</p>
     </div>
     <div class="relative gap-0  w-[calc(100%+20px)] z-40 ">
