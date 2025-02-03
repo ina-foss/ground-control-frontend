@@ -17,7 +17,7 @@
         :threshold="100"
         target="parent"
       />
-      <div
+      <ol
         v-for="(phrase, index) in filteredLocals"
         :key="index"
         :ref="el => segmentationRefs.push(el)"
@@ -37,7 +37,7 @@
           @on-segment-click="handleSegmentClick($event)"
           @deactivate-topic="deactivateTopic"
         />
-        </div>
+        </ol>
     </ScrollPanel>
   </div>
     <div class=" h- overflow-y-scroll flex flex-col items-center gap-3 col-span-2 mb-3">

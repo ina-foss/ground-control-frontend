@@ -127,7 +127,7 @@ function startDrag(event: DragEvent) {
 }
 
 function getLiList(element,count) {
-  if (element.children.item(1)?.tagName== 'LI') return {list: element.children, deep: count}
+  if (element.children.item(1)?.tagName== 'OL') return {list: element.children, deep: count}
   return getLiList(element.parentElement,count+1)
 }
 
