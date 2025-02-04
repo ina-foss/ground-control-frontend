@@ -3,7 +3,7 @@
     class="w-full bg-surface-color max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md hover:scale-105 transition-all  hover:shadow-xl"
     style="background-color: #FFFFFF">
     <NuxtLink
-      :to="{ name: 'projects-id', params: { id: project.id } }" @click="navigate">
+      :to="{ name: 'projects-id', params: { id: project.id } }" >
       <div class="min-h-[75%]">
         <div class=" flex justify-between align-middle pl-2">
           <p class="font-bold text-3xl self-center ">
@@ -79,12 +79,11 @@
 <script setup>
 import {defineEmits} from 'vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
-import {bcStore, useRefreshStore, useService} from '#imports';
+import { useRefreshStore, useService} from '#imports';
 import {ProjectService} from "../api/generate";
 
 const visible = ref(false)
 const deleteDialog = ref(false)
-const store = bcStore()
 const {project} = defineProps({project: {type: Object, default: () => []}})
 
 const {$application} = useService();
@@ -100,9 +99,6 @@ const translatedProjectStatus = (project_status) => {
   return translations[project_status]
 }
 
-const navigate = () => {
-  store.addCrumb({label: project.title, route: `/projects/${project.id}`})
-}
 
 const statusSeverity = computed(() => {
   switch (project.status) {

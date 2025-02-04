@@ -12,7 +12,6 @@
 <script setup>
 
 import {ref} from 'vue';
-import {bcStore} from '~/stores/breadcrumbs';
 import { AnnotationService, AnnotationStatus} from '../../api/generate';
 import {useAuth} from '../../stores/auth';
 import {storeToRefs} from 'pinia';
@@ -20,18 +19,15 @@ import {useRefreshStore} from '#imports';
 import OrganismBase from '~/components/organisms/OrganismBase.vue';
 
 const refresh = useRefreshStore()
-const store = bcStore()
 const route = useRoute()
 const toast = useToast()
 const authStore = useAuth()
 
 const {getData} = storeToRefs(refresh)
-const {getItems} = storeToRefs(store)
 const {userEmail} = storeToRefs(authStore)
 const {fetchAnnotations} = refresh
 
 const data = ref(getData)
-const savedItems = localStorage.getItem('breadcrumbItems');
 
 
 onBeforeRouteLeave((to,from,next)=>{
@@ -47,12 +43,6 @@ onBeforeRouteLeave((to,from,next)=>{
 
 await fetchAnnotations(route.params.id)
 
-if (getItems.value.length === 0 && JSON.parse(savedItems).length == 0) { // When coming from dashboard
-  store.addCrumb({label: data.value.step.project.title, route: `/projects/${data.value.step.project.id}`})
-}
-if (getItems.value.length === 1 && JSON.parse(savedItems).length == 1) { // When coming from project view
-  store.addCrumb({label: data.value.name, route: `/tasks/${data.value.id}`})
-}
 
 const annotation_bool = reactive({
   in: false,

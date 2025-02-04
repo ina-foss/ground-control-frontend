@@ -160,19 +160,16 @@
 
 import _ from 'lodash';
 import {ref} from 'vue';
-import {bcStore} from '~/stores/breadcrumbs';
 import {AnnotationService, AnnotationStatus, StepStatus} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
 
-const store = bcStore()
 const route = useRoute()
 const refreshStore = useRefreshStore()
 const toast = useToast()
 
 const {getProject} = storeToRefs(refreshStore)
 const {fetchTasks} = refreshStore
-const {getItems} = storeToRefs(store)
 
 const dialogVisible = ref(false)
 const visible = ref(false)
@@ -241,16 +238,9 @@ const filteredProjects = computed(() => {
 
 
 
-localStorage.getItem('breadcrumbItems');
 
 // On affiche meme si c'es pas fini
-fetchTasks(route.params.id).then(() => {
-  if (store.items.length === 0) { // When coming from dashboard
-    store.addCrumb({label: data.value.title, route: data.value.id})
-  } else while (store.items.length > 1) { // When coming from task view
-    store.removeLastCrumb()
-  }
-})
+fetchTasks(route.params.id)
 
 function getColorForAnnotation(annotation_status) {
   if (annotation_status === AnnotationStatus.ENDED) {
@@ -328,14 +318,6 @@ const stepCreate = (stepId) => {
 
 const handleRowClick = (event) => {
   clickedRowData.value = event.data;
-  if (localStorage.getItem('breadcrumbItems')) {
-
-      const breadcrumbItems = JSON.parse(localStorage.getItem('breadcrumbItems'));
-    if( !breadcrumbItems.some(item => item.label === clickedRowData.value.name)){
-      store.addCrumb({label: clickedRowData.value.name, route: `/tasks/${clickedRowData.value.id}`})
-
-    }
-    }
 
   if (editMode.value === false) navigateToTask(clickedRowData.value.id)
 
