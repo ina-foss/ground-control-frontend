@@ -1,18 +1,28 @@
   <template>
-    <div class="card">
-      <Tabs :value="selectedTab" scrollable class="card rounded-b-lg  overflow-auto">
+    <div class="card flex-grow h-0 max-h-full  pb-3">
+
+      <Tabs :value="selectedTab" scrollable class="card h-full rounded-b-lg !bg-white">
         <TabList v-if="tabs.length > 0" >
-          <Tab v-for="(tab,index) in tabs" :key="index" :value="index" >
+          <Tab v-for="(tab,index) in tabs" :key="index" :value="index" class="!bg-white">
             {{ tab.title }}
           </Tab>
         </TabList>
-        <TabPanels v-if="tabs.length > 0" class=" md:block xs:hidden">
-          <TabPanel v-for="(tab,index) in tabs" :key="index" :value="index" class="h-full p-1">
-            <ScrollPanel class="max-h-[450px] overflow-y-auto">
+        <ScrollPanel class="h-full" :dt="{
+      bar : {
+        background: 'var(--primary-color)',
+      },
+      barY:{
+        style : 'right: -10px;'
+        }
+    }">
+        <TabPanels v-if="tabs.length > 0" class=" md:block flex-grow h-0 max-h-full ">
+
+          <TabPanel v-for="(tab,index) in tabs" :key="index" :value="index">
+
               <AtomMarkdown :content="tab.text"/>
-            </ScrollPanel>
           </TabPanel>
         </TabPanels>
+        </ScrollPanel>
       </Tabs>
     </div>
   </template>

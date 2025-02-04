@@ -1,9 +1,10 @@
 <template>
-  <div class="col-span-4 flex flex-row grow-0 w-full h-0 min-h-full justify-center" >
-    <div class="relative h-full ">
+  <div class="col-span-4 flex flex-row w-full h-0 min-h-full" >
+    <div class="relative max-h-full ">
       <AtomProgressBar class="xs:sticky top-0"  :colors="colors" :topics="topics" :topicList="topicList" :totalLength="locals.length" @progress-bar-jump="jumpToTopic($event)" />
     </div>
-    <ScrollPanel class="w-full pr-2"
+    <div class="overflow-y-clip h-full">
+    <ScrollPanel class="h-full pr-2"
       :dt="{
       bar : {
         background: 'var(--primary-color)',
@@ -17,7 +18,7 @@
         :threshold="100"
         target="parent"
       />
-      <ol
+      <div
         v-for="(phrase, index) in filteredLocals"
         :key="index"
         :ref="el => segmentationRefs.push(el)"
@@ -37,10 +38,11 @@
           @on-segment-click="handleSegmentClick($event)"
           @deactivate-topic="deactivateTopic"
         />
-        </ol>
+        </div>
     </ScrollPanel>
+    </div>
   </div>
-    <div class=" h- overflow-y-scroll flex flex-col items-center gap-3 col-span-2 mb-3">
+    <div class=" max-h-full flex flex-col items-center gap-3 col-span-2 mb-3">
       <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
       <atom-video-option />
       <AtomTaskComment />
