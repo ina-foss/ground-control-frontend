@@ -3,20 +3,8 @@
 </template>
 
 <script setup>
-import { bcStore } from '~/stores/breadcrumbs';
 
 const router = useRouter()
-const store = bcStore()
-const { removeLastCrumb } = store
-const { getItems } = storeToRefs(store)
-
-
-onMounted(()=>{
-  const length = getItems.value.length // get breadcrumb list's length
-  for (let index = 0; index < length; index++) {  // remove every breadcrumb
-    removeLastCrumb()
-  }
-})
     router.push("/dashboard")
 
 </script>
