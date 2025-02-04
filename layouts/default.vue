@@ -5,7 +5,7 @@
       <div class="h-fit"> <!-- Assuming the breadcrumbs have a height of 70px (16rem) -->
         <AtomBreadcrumbs />
       </div>
-      <main class="flex-grow  w-full text-text bg-neutral overflow-auto">
+      <main class="flex-grow  w-full text-text bg-neutral">
         <slot />
       </main>
     </div>
