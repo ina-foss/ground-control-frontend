@@ -209,13 +209,13 @@ const createProject = async () => {
           }).catch((err) => console.error(err))
         })
         // reset dialog values of create new project
-        title = '',
-          description = '',
-          status = translatedProjectStatus.value[0],
-          isPublished = false,
-          allowSkip = false,
-          emptyAnnotations = false,
-          selectedType = []
+        title.value = '',
+        description.value = '',
+        status.value = translatedProjectStatus.value[0],
+        isPublished.value = false,
+        allowSkip.value = false,
+        emptyAnnotations.value = false,
+        selectedType.value = []
 
         emits('toggle-dialog')
 
