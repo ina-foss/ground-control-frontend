@@ -8,6 +8,7 @@
       :dt="{
       bar : {
         background: 'var(--primary-color)',
+        size:'4px'
       },
       barY:{
         style : 'right: -10px;'
@@ -42,12 +43,22 @@
     </ScrollPanel>
     </div>
   </div>
-    <div class=" max-h-full flex flex-col items-center gap-3 col-span-2 mb-3">
-      <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
-      <atom-video-option />
-      <AtomTaskComment />
-      <AtomTopicList :colors="colors" :topics="topics"/>
-      <AtomTimecodeList />
+    <div class=" flex flex-col col-span-2">
+      <div class="flex-grow h-0 overflow-y-clip pb-1" >
+          <ScrollPanel class="h-full pr-3" :dt="{
+      bar : {
+        background: 'var(--primary-color)',
+        size:'3px'
+      },
+      barY:{
+        style : 'right: 10px;'
+        }
+    }">
+            <div class=" max-h-full flex flex-col items-center gap-3 mb-1 !bg-black">
+              <AtomTopicList :colors="colors" :topics="topics"/>
+            </div>
+          </ScrollPanel>
+      </div>
     </div>
 </template>
 
