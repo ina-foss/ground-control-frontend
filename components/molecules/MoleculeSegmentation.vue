@@ -54,8 +54,12 @@
         style : 'right: 10px;'
         }
     }">
-            <div class=" max-h-full flex flex-col items-center gap-3 mb-1 !bg-black">
-              <AtomTopicList :colors="colors" :topics="topics"/>
+            <div class="h-full flex flex-col items-center gap-3">
+              <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
+              <atom-video-option />
+              <AtomTaskComment />
+              <AtomTimecodeList />
+              <AtomTopicList class="mb-2" :colors="colors" :topics="topics"/>
             </div>
           </ScrollPanel>
       </div>
