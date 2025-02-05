@@ -37,6 +37,9 @@ const shortcutList = [
   { key: "C", value: "Recul de 1 segments" },
   { key: "X", value: "Recul de 5 segments" },
   { key: "W", value: "Recul de 10 segments" },
+  { key: "A", value: "Activer/Désactiver les TC blocs" },
+  { key: "Z", value: "Activer/Désactiver les TC segments" },
+  { key: "E", value: "Activer/Désactiver la synchro player" },
   { key: "Espace", value: "Création d'une rupture avant" },
   { key: "Ctrl + Espace", value: "Création d'une rupture après" },
 ];

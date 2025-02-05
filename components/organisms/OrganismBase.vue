@@ -1,6 +1,6 @@
 <template>
   <div
-v-if="data.annotations[0]?.annotation_status !== annotationStatus"
+v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationStatus"
        class=" right-12 mr-4 absolute flex items-center top-[-70px] h-[70px] z-[5] !hover:red" >
     <Button  class="mr-4" outlined label="Soumettre"  @click="handleSubmit()"/>
     <Button class="button-overwrite"
@@ -32,22 +32,11 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
       </div>
     </div>
   </div>
-  <div v-else class="h-full " >
-
+  <div v-else class="h-full" >
     <Toast />
     <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :data="data" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
-        <h2 class="text-white text-3xl md:block xs:hidden p-3 font-semibold">{{data.step?.annotation_type}}</h2>
-        <p class="text-white p-3 md:block xs:hidden ">
-          Dans le cadre d'une segmentation par thématique, une transcription est découpée en segment.<br>
-          Chaque segment correspond à une thématique différente de la précédente.<br>
-          Chaque changement de segment correspond à un changement d'interlocuteur ou de sujet.<br><span
-            class="underline">Exemple</span> :
-          <br>si on souhaite retranscrire le contenu d'une émission qui dure 1h, grâce à la segmentation, nous pouvons
-          avoir un "résumé" du contenu de l'émission grâce aux différents segments. Ces derniers retracent les divers
-          sujets
-          ayant été traités, différencie les interlocuteurs.
-        </p>
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
+        <MoleculeTabs :data="data"/>
       </MoleculeAnnotationLeftPanel>
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
     </div>
@@ -64,11 +53,13 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   import _ from 'lodash'
   import {AnnotationStatus, PluginService} from '../../api/generate';
   import { useService } from "#imports";
+  import MoleculeTabs from "../molecules/MoleculeTabs.vue";
+  import {useTcOffset} from "~/composables/useTcOffset";
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
   const { unixToTimestamp } = $application
-
+  const{setTcOffset}= useTcOffset()
 
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
     data: {
@@ -106,17 +97,16 @@ v-if="data.annotations[0]?.annotation_status !== annotationStatus"
   const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
   const timecodeHistory = ref([])
   let bestIndex = 0
-  const annotationInfo = computed(() => {
-    let info = null
-    if (allFetched ) {
-      annotationsOut.forEach((annotation, index) => {
-        if (annotation.user_email == userEmail.value) {
-          info = { index: index, id: annotation.id }
-        }
-      })
-      return info
-    }
+  const annotationInfo = computed< {index: number, id: number} | null>(() => {
+    if (!allFetched) return null;
+    return annotationsOut.reduce<{index: number, id: number} | null>((info, annotation, index) => {
+      if (annotation.user_email === userEmail.value) {
+        return { index, id: annotation.id };
+      }
+      return info;
+    }, null);
   });
+
 
   PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
    config.value = response;
@@ -186,13 +176,14 @@ const algos = computed(() => { // List the name of the algorithm
   return res
 })
 
-  function addTimecodeHistory (tc?: string|number){
+  function addTimecodeHistory (tc?: any){
     if(timecodeHistory.value.length == 0 || timecodeHistory.value[timecodeHistory.value.length-1] != tc) timecodeHistory.value.push(tc)
 
   }
 
 
   const updateVideoTimecode = (event: {tcin: string|number, index: number}) => { // Lorsqu'un segment est cliqué
+    bestIndex = event.index
     highlightSegment(event.index)
     if ( options.value.transcription === true ) {
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
@@ -209,7 +200,7 @@ const algos = computed(() => { // List the name of the algorithm
   const scrollToSegment = (event : {lastIndex: number ,bestIndex: number, fromHistory?: boolean, tcin?: number}) => { // Lorsque la video change de timecode
     if ( options.value.player === true) {
       highlightSegment(event.bestIndex)
-      if(!event.fromHistory) addTimecodeHistory(locals.value[event.bestIndex]?.tcin | event.tcin)
+      if(!event.fromHistory) addTimecodeHistory(event.tcin ?? locals.value[event.bestIndex]?.tcin  )
       moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
     }
   }
@@ -229,7 +220,7 @@ const annotationComponent = computed(() => {
         transcriptions: transcriptions.value,
         userAnnotations: userAnnotations.value,
         algos: algos.value,
-        status: data.annotations[0]?.annotation_status
+        status: annotationsOut[annotationInfo.value?.index]?.annotation_status
         },
         events:{ 'on-segment-click': updateVideoTimecode }}
 
@@ -259,7 +250,7 @@ const annotationComponent = computed(() => {
   watch(()=> allFetched,() => {
       if(allFetched == true){
         videoSrc.value = annotationsIn[0]?.result.asset.url
-
+        setTcOffset(data.media?.player_parameters.tc_offset||0)
       }
   })
   })
@@ -286,6 +277,15 @@ const annotationComponent = computed(() => {
           case "N"://avance de 10
             navigateWithkeyboard(10,null);
             break;
+          case "A":
+            options.value.timecode_bloc = !options.value.timecode_bloc;
+            break;
+          case "Z":
+            options.value.timecode_segment = !options.value.timecode_segment;
+            break;
+          case "E":
+            options.value.player = !options.value.player;
+            break;
           case (" "): // Gérer l'espace
             if (event.ctrlKey) { //creation rupture apres
               navigateWithkeyboard(0,false);
@@ -302,9 +302,10 @@ const annotationComponent = computed(() => {
   const getSelectedSegment = () : HTMLDivElement =>{
     let segmentArray : Array<HTMLDivElement> | HTMLCollection = moleculeAnnotationRef.value?.listRefs
     if (segmentArray instanceof HTMLCollection) segmentArray = [...segmentArray]
-    return segmentArray?.find(ref =>
+    const selected_element : HTMLDivElement =  segmentArray?.find(ref =>
       ref.classList?.contains('selected-segment')
     );
+    return selected_element
   }
 
   const navigateWithkeyboard = (param,action) => {

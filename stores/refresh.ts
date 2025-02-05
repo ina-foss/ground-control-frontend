@@ -35,7 +35,7 @@ export const useRefreshStore = defineStore('refresh', {
     async fetchTasks(projectid: number) {
       const res = await ProjectService.readProjectProjectProjectIdGet(projectid)
       const data =  res
-      this.project = data;
+      this.data = data;
 
       return data
     },
@@ -49,7 +49,7 @@ export const useRefreshStore = defineStore('refresh', {
       return state.data
     },
     getProject(state){
-      return state.project
+      return state.data
     },
     getProjectNumber(state){
       return state.project_number

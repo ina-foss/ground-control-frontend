@@ -46,21 +46,20 @@
         class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="totalRecords"
         template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink" />
     </div>
+    <MoleculeFooter />
   </div>
 </template>
 
 <script setup>
+import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue';
 import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
-import {bcStore} from "~/stores/breadcrumbs";
 import {ProjectStatus} from "../api/generate";
 import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
 
 const refreshStore = useRefreshStore()
 const {fetchProject} = refreshStore
 const {getData, getProjectNumber} = storeToRefs(refreshStore)
-const store = bcStore()
-const {getItems} = storeToRefs(store)
 const first = ref(0)
 const rows = ref(15)
 const totalRecords = ref(getProjectNumber);
@@ -118,7 +117,6 @@ onMounted(() => {
   handleRefresh();
 })
 
-while (getItems.value.length > 0) store.removeLastCrumb()
 
 </script>
 <style >

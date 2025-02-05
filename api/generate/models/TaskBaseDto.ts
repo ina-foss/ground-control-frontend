@@ -15,5 +15,6 @@ export type TaskBaseDto = {
     lead_time: (number | null);
     step_id: number;
     media_id: number;
+    documentation?: (string | null);
 };
 

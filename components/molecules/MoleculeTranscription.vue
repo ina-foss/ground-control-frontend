@@ -79,7 +79,7 @@ const handleConfirm = (event, index) => {
 
 const transcriptionFunction = (localSubmit) => {
   const locals = []
-  localSubmit?.forEach((el, index) => {
+  localChanges.value?.forEach((el, index) => {
     if (el == null) locals[index] = null
     else {
       el.phrase.data.algo = el.algo

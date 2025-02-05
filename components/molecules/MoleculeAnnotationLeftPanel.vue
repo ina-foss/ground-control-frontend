@@ -1,14 +1,13 @@
 <template>
-  <div style="background-color: #212529" class="col-span-3 px-5 py-5 h-full max-h-full xs:max-h-[28%] overflow-auto">
+  <div class=" flex-col flex col-span-3 pl-5 pt-4 max-h-full ">
 
-    <AtomVideoAmalia :video-src="videoSrc" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoAmalia class="rounded-lg h-full" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
     <slot/>
   </div>
 </template>
 
 <script setup lang="js">
-  import AtomTopicList from '../atoms/AtomTopicList'
   import AtomVideoAmalia from '../atoms/AtomVideoAmalia.vue';
   import { useService } from '#imports';
 
@@ -17,7 +16,7 @@
   const { options } = useOptions()
 
   const props = defineProps({
-    data: {
+    media_params: {
       type: Object,
       default: () => null
     },

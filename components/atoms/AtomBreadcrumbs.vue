@@ -1,13 +1,13 @@
 <template>
-  <Breadcrumb :home="home" class="breadcrumb-container border-0 p-3 " style="font-size: 14px;">
+  <Breadcrumb :home="home" class="breadcrumb-container border-0 p-xs " style="font-size: 12px;line-height:14px;">
     <template #item="{ props }">
-      <template v-for="(breadcrumbItem, index) in fullBreadcrumbs" :key="index" >
-        <router-link v-if="breadcrumbItem.route" v-slot="{ navigate }" :to="breadcrumbItem.route" custom >
-          <a v-bind="props.action" class="breadcrumb-item" style="color: #757575;cursor: pointer;" @click.prevent="navigate()" >
+      <template v-for="(breadcrumbItem, index) in newBreadCrumbs" :key="index" >
+        <router-link v-if="breadcrumbItem.route" v-slot="{ navigate }" :to="breadcrumbItem.route" custom  >
+          <a v-bind="props.action" class="breadcrumb-item last:hl-bd " style="color: #757575;cursor: pointer;"  @click.prevent="navigate()" >
             <span :class="[breadcrumbItem.icon]" />
-            <span :class="[{ 'text-primary font-bold': isSelected(breadcrumbItem.label, index) }, 'font-semibold']">
+            <span :class="{ 'text-primary': true, 'font-bold' : index == newBreadCrumbs.length-1, 'font-semibold': index != newBreadCrumbs.length-1,  }">
               {{ breadcrumbItem.label }}
-                      <span v-if="index < fullBreadcrumbs.length - 1" class="breadcrumb-separator"> / </span>
+              <span v-if="index < newBreadCrumbs.length - 1 && newBreadCrumbs.length >1 " class="breadcrumb-separator"> / </span>
             </span>
           </a>
         </router-link>
@@ -17,49 +17,22 @@
 </template>
 
 <script setup>
-import { bcStore } from '../../stores/breadcrumbs.ts';
-import { ref, onMounted, watch } from 'vue';
-const store = bcStore()
 const home = { label: 'Projets', route: '/dashboard' }
-const {getItems} = storeToRefs(store)
+const refresh = useRefreshStore()
+const { getData } = storeToRefs(refresh)
 
-const items = ref(getItems)
-
-// Watch for changes in the breadcrumb items and update localStorage
-watch(items, (newItems) => {
-  localStorage.setItem('breadcrumbItems', JSON.stringify(newItems));
-}, { deep: true });
-
-// Initial breadcrumb setup as it was last pages
-// This means no loss when F5
-onMounted(() => {
-  const savedItems = localStorage.getItem('breadcrumbItems');
-  if (savedItems) {
-    JSON.parse(savedItems)?.forEach(item => {
-      store.addCrumb(item)
-    });
+const newBreadCrumbs = computed(()=>{
+  let bd = [home]
+  if (getData.value?.step){
+    bd.push({label:getData.value.step.project.title,route:`/projects/${getData.value.step.project.id}`})
+    bd.push({label:getData.value?.name,route:`/tasks/${getData.value?.id}`})
   }
-});
-
-
-const fullBreadcrumbs = computed(() => {
-  return [home, ...items.value];
-});
-const isSelected = (label, index) => {
-  const savedItems = localStorage.getItem('breadcrumbItems');
-  if (!label || !savedItems) {
-    return false;
+  else{
+    bd.push({label:getData.value?.title,route:`/projects/${getData.value?.id}`})
   }
 
-  const breadcrumbItems = JSON.parse(savedItems);
-  if (breadcrumbItems && breadcrumbItems.length > 0) {
-    return index === breadcrumbItems.length ;
-  }
-  if(index===0){
-    return true;
-  }
-  return false;
-};
+  return bd
+})
 
 
 </script>
