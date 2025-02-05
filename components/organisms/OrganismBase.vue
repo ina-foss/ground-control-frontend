@@ -163,7 +163,7 @@ const transcriptions = computed(() => { // format array to have all transcriptio
       })
     })
   }
-  return res
+  return _.sortBy(res,(array)=>array[0]?.tcin)
 })
 
 const algos = computed(() => { // List the name of the algorithm
