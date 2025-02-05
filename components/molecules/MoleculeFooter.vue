@@ -1,5 +1,5 @@
 <template>
-  <div class="bottom-0 text-sm flex fixed bg-black text-white h-[70px] w-full  items-center" >
+  <div class=" text-sm flex bg-black text-white h-[70px] w-full  items-center" >
     <p class="pl-2 font-normal text-sm text-left text-gray-400">v{{ config.version }} </p>
     <div class="centered-icon">
       <AtomLogo size="md" />
