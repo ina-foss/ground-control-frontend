@@ -1,31 +1,10 @@
 <template>
-  <div class=" rounded-lg w-[250px] gap-3">
-    <Accordion  class="w-full !bg-white rounded" >
-      <AccordionPanel>
-        <AccordionHeader class="!bg-white hover:!bg-white rounded ">Derniers Timecodes</AccordionHeader>
-        <AccordionContent >
-          <div class="overflow-y-clip  h-[100px]">
-          <ScrollPanel class="h-full" :dt="{
-      bar : {
-        background: 'var(--primary-color)',
-        size:'3px'
-      },
-      barY:{
-        style : 'right: -10px;'
-        }
-    }">
-          <div class="flex flex-col gap-[8px] text-title  ">
-            <div v-for="(timecode,index) in timecodeHistory" class="flex items-center gap-3 "  >
-              <span> {{timestampToUnix(timecode)}}</span>
-              <i :class="{'pi pi-arrow-left': true,
-              'opacity-0': index != timecodeHistory?.length -1 } " />
-            </div>
-          </div>
-          </ScrollPanel>
-          </div>
-        </AccordionContent>
-      </AccordionPanel>
-    </Accordion>
+  <div class="flex flex-col text-title gap-3 grid grid-cols-[1fr_1fr]">
+    <div v-for="(timecode,index) in timecodeHistory" class="flex items-center">
+      <span> {{ timestampToUnix(timecode) }}</span>
+      <i :class="{'pi pi-arrow-left': true,
+              'opacity-0': index != timecodeHistory?.length -1 } "/>
+    </div>
   </div>
 </template>
 
@@ -33,9 +12,11 @@
 <script setup lang="ts">
 
 
-const { $application } = useService()
-const { timestampToUnix } = $application
-const timecodeHistory : Ref<number[]> | undefined = inject('timecode-history')
+import type {Ref} from "vue";
+
+const {$application} = useService()
+const {timestampToUnix} = $application
+const timecodeHistory: Ref<number[]> | undefined = inject('timecode-history')
 
 </script>
 
@@ -45,7 +26,7 @@ const timecodeHistory : Ref<number[]> | undefined = inject('timecode-history')
   @apply p-2
 }
 
-.show-arrow i{
+.show-arrow i {
   @apply opacity-100
 }
 

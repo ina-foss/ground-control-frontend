@@ -7,12 +7,11 @@ import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
 import AtomTopicList from "~/components/atoms/AtomTopicList.vue";
-import AtomTimecodeList from "~/components/atoms/AtomTimecodeList.vue";
 
 
 export default defineComponent({
   name: 'MoleculeSegmentation',
-  components: { AtomTimecodeList, AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList},
+  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList},
   emit: ['on-segment-click'],
   props: {
     result: {type: Object, default: ()=> {} },
