@@ -70,17 +70,21 @@ export default class ApplicationService {
     const  {getTcOffset} = useTcOffset();
     let time : number
     if ( typeof timeArg == "string" ){
-      if (timeArg.includes(':')) return timeArg // If the time is already at Unix format
+      if (timeArg.includes(':')) time = this.unixToTimestamp(timeArg) // If the time is already at Unix format
       else time = parseFloat(timeArg) // If the time is a timestamp as a string
     }
     else time = timeArg // if the time is a float
 
-        time = time +getTcOffset()
-        const hour: number = floor(time/3600)
-        const minute: number = floor((time % 3600 )/60)
-        const second: number = floor(time % 60)
-        const milli: number = floor(time % 1,2)
-  return `${padStart((hour.toString()),2,'0')}:${padStart(minute.toString(),2,'0')}:${padStart(second.toString(),2,'0')}.${padEnd(milli.toString().split('.')[1],3,'0')}`
+    time = time + getTcOffset()
+    const optionalTime : Array<number> = []
+    const hour: number = floor(time/3600)
+    const minute: number = floor((time % 3600 )/60)
+    const second: number = floor(time % 60)
+    optionalTime.push(hour)
+    optionalTime.push(minute)
+    optionalTime.push(second)
+    const milli: number = floor(time % 1,2)
+    return `${optionalTime.map((el)=> padStart(el.toString(),2,'0')).filter((el,index)=> el != '00' || index != 0 ).join(':')}.${padEnd(milli.toString().split('.')[1],3,'0')}`
   }
 
   public async checkUser() {
