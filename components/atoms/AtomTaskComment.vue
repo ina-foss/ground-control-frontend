@@ -8,8 +8,8 @@
             <AccordionContent>
               <div class="flex-col">
 
-                <div class="overflow-y-clip mb-3 h-[125px]">
-                  <ScrollPanel class="h-full" :dt="{
+                <div class="overflow-y-clip overflow-x-hidden mb-3 min-h-fit max-h-[125px]">
+                  <ScrollPanel class="h-full " :dt="{
       bar : {
         background: 'var(--primary-color)',
         size:'3px'
