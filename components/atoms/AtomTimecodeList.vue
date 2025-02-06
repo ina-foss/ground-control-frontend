@@ -3,9 +3,18 @@
     <Accordion  class="w-full !bg-white rounded" >
       <AccordionPanel>
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Derniers Timecodes</AccordionHeader>
-        <AccordionContent class=" !h-fit !max-h-[100px] ">
-          <ScrollPanel >
-          <div class="flex flex-col gap-[10px] text-title  ">
+        <AccordionContent >
+          <div class="overflow-y-clip  h-[100px]">
+          <ScrollPanel class="h-full" :dt="{
+      bar : {
+        background: 'var(--primary-color)',
+        size:'3px'
+      },
+      barY:{
+        style : 'right: -10px;'
+        }
+    }">
+          <div class="flex flex-col gap-[8px] text-title  ">
             <div v-for="(timecode,index) in timecodeHistory" class="flex items-center gap-3 "  >
               <span> {{timestampToUnix(timecode)}}</span>
               <i :class="{'pi pi-arrow-left': true,
@@ -13,6 +22,7 @@
             </div>
           </div>
           </ScrollPanel>
+          </div>
         </AccordionContent>
       </AccordionPanel>
     </Accordion>

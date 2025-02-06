@@ -1,12 +1,21 @@
 <template>
-  <div class=" rounded-lg w-[250px] gap-3">
-    <Accordion  class="w-full !bg-white rounded" >
-      <AccordionPanel>
+  <div class=" rounded-lg w-[250px] gap-3  h-full">
+    <Accordion  class="w-full rounded  h-full" >
+      <AccordionPanel class="w-full rounded  !h-full">
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Topics</AccordionHeader>
-        <AccordionContent>
-          <div class="flex flex-col gap-[10px] text-title">
-            <div class="flex ">
-              <div v-if="cleanedColors?.length != 0" :items="cleanedColors" :itemSize="50" class="w-full ml-[-5px] " style="height:130px; overflow-x: auto">
+        <AccordionContent  class="w-full rounded  !h-full">
+          <div class="flex flex-col gap-[10px] text-title  !h-full">
+            <div class="flex  h-full">
+              <div v-if="cleanedColors?.length != 0" :items="cleanedColors" :itemSize="50" class="w-full h-full" >
+                <ScrollPanel class="h-full" :dt="{
+      bar : {
+        background: 'var(--primary-color)',
+        size:'3px'
+      },
+      barY:{
+        style : 'right: -10px;'
+        }
+    }">
                 <div v-for="(color, index) in cleanedColors" :key="index" >
                   <div class="flex pb-2 items-start gap-2 w-full">
                     <div v-if="index != 0" class="flex h-8 items-center " >
@@ -15,6 +24,7 @@
                     </div>
                   </div>
                 </div>
+                </ScrollPanel>
               </div>
             </div>
           </div>

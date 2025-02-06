@@ -10,6 +10,7 @@
         <ScrollPanel class="h-full" :dt="{
       bar : {
         background: 'var(--primary-color)',
+        size:'3px'
       },
       barY:{
         style : 'right: -10px;'

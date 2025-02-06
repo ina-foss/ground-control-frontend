@@ -250,7 +250,8 @@ const annotationComponent = computed(() => {
   watch(()=> allFetched,() => {
       if(allFetched == true){
         videoSrc.value = annotationsIn[0]?.result.asset.url
-        setTcOffset(data.media?.player_parameters.tc_offset||0)
+        const tcOffset = data.media?.player_parameters?.tc_offset ?? 0;
+        setTcOffset(tcOffset);
       }
   })
   })
