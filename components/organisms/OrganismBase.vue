@@ -204,7 +204,6 @@ const algos = computed(() => { // List the name of the algorithm
   }
 
   const scrollToSegment = (event : {bestIndex: number, fromHistory?: boolean, tcin?: number}) => { // Lorsque la video change de timecode
-      console.log(bestIndex)
       bestIndex = event.bestIndex
       highlightSegment(event.bestIndex)
       if(!event.fromHistory) addTimecodeHistory(event.tcin ?? locals.value[event.bestIndex]?.tcin  )
