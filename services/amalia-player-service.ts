@@ -92,10 +92,10 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.splice(elementIndex, 1);
   }
 
-  public createPlayer(playerId: string, src: string,media_params:any): HTMLElement {
+  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string): HTMLElement {
     this.loadSource();
     if (!this.playerConfiguration) {
-      this.configurePlayer(src,undefined,media_params?.thumbnail_base_url,undefined,undefined,undefined,
+      this.configurePlayer(src,undefined,dynamicTumbnails,undefined,undefined,undefined,
           undefined,media_params?.tc_offset)
     }
     // Create web component

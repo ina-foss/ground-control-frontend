@@ -16,6 +16,7 @@ const myplayer = ref()
 let lastIndex = 0
 
 let dynamicSrc = ref()
+let dynamicTumbnails = ref()
 const { locals, videoSrc,media_params } = defineProps(['locals', 'video-src','media_params'])
 const emits = defineEmits(['timecode-update']);
 async function fetchVideoStream(url) {
@@ -45,10 +46,21 @@ const hlsPlayer = async () => {
   dynamicSrc.value = src
 
 }
+async function fetchThumbnail(url) {
+  const response = await fetch(url).then((resp)=>{
+    return resp.text()
+  });
+  return response;
+}
+const thumbnailPlayer = async () => {
+  if(media_params?.thumbnail_base_url) {
+    dynamicTumbnails.value = await fetchThumbnail(media_params?.thumbnail_base_url)
+  }
+}
 
 watchEffect(() => {
   if (dynamicSrc.value) {
-    myplayer.value.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params)) // add amalia player once src is ready
+      myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params,dynamicTumbnails?.value || "")) // add amalia player once src is ready
   }
 })
 
@@ -73,9 +85,8 @@ const seek = async (fromHistory?: boolean) => {
     lastIndex = bestIndex
 }}
 
-onMounted(()=>{
-
-  hlsPlayer()
+onMounted(async ()=>{
+  await Promise.all([hlsPlayer(), thumbnailPlayer()]);
 
 })
 </script>
