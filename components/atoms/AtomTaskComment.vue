@@ -1,10 +1,11 @@
 <template>
-  <div class="w-[250px] rounded-lg text-title">
-    <OverlayBadge :value="comments?.length" severity="contrast">
-      <div class=" rounded-lg w-[250px]">
+  <div class="w-full rounded-lg text-title">
         <Accordion value="0" class="w-full rounded">
           <AccordionPanel>
-            <AccordionHeader class="!bg-white hover:!bg-white rounded ">Commentaires</AccordionHeader>
+            <AccordionHeader class="!bg-white hover:!bg-white rounded ">
+              <span>Commentaires</span>
+              <span v-if="comments?.length > 0" class="bg-accent text-white rounded-xl flex justify-center items-center h-[1.5rem] w-[1.5rem]   " >{{comments?.length}}</span>
+            </AccordionHeader>
             <AccordionContent>
               <div class="flex-col">
 
@@ -71,8 +72,6 @@
             </AccordionContent>
           </AccordionPanel>
         </Accordion>
-      </div>
-    </OverlayBadge>
   </div>
 </template>
 

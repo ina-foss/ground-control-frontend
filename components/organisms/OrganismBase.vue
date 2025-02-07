@@ -34,8 +34,8 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   </div>
   <div v-else class="h-full" >
     <Toast />
-    <div class="grid  grid-cols-9 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="scrollToSegment">
+    <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs :data="data"/>
       </MoleculeAnnotationLeftPanel>
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
@@ -58,7 +58,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
-  const { unixToTimestamp } = $application
+  const { unixToTimestamp, timestampToUnix } = $application
   const{setTcOffset}= useTcOffset()
 
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
@@ -182,12 +182,12 @@ const algos = computed(() => { // List the name of the algorithm
   }
 
 
-  const updateVideoTimecode = (event: {tcin: string|number, index: number}) => { // Lorsqu'un segment est cliqué
+  const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
     bestIndex = event.index
     highlightSegment(event.index)
+    scrollToSegment({bestIndex: event.index})
     if ( options.value.transcription === true ) {
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
-        scrollToSegment({lastIndex: 0, bestIndex: event.index})
     }
   }
 
@@ -197,12 +197,17 @@ const algos = computed(() => { // List the name of the algorithm
       moleculeAnnotationRef.value?.listRefs[index].classList.add('selected-segment')
   }
 
-  const scrollToSegment = (event : {lastIndex: number ,bestIndex: number, fromHistory?: boolean, tcin?: number}) => { // Lorsque la video change de timecode
+  const handleVideoTimelineClick = (event) => {
     if ( options.value.player === true) {
+      scrollToSegment(event)
+    }
+  }
+
+  const scrollToSegment = (event : {bestIndex: number, fromHistory?: boolean, tcin?: number}) => { // Lorsque la video change de timecode
+      bestIndex = event.bestIndex
       highlightSegment(event.bestIndex)
       if(!event.fromHistory) addTimecodeHistory(event.tcin ?? locals.value[event.bestIndex]?.tcin  )
-      moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({ behavior: "smooth" });
-    }
+      moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({block: 'center', behavior: 'smooth'});
   }
 
 const annotationComponent = computed(() => {
@@ -214,7 +219,7 @@ const annotationComponent = computed(() => {
           colors: colors.value,
           topics: topics.value
         },
-        events:{ 'on-segment-click': updateVideoTimecode }}
+        events:{ 'on-segment-click': handleSegmentClick }}
     case 'transcription':
       return {component: MoleculeTranscription, props: {
         transcriptions: transcriptions.value,
@@ -222,12 +227,12 @@ const annotationComponent = computed(() => {
         algos: algos.value,
         status: annotationsOut[annotationInfo.value?.index]?.annotation_status
         },
-        events:{ 'on-segment-click': updateVideoTimecode }}
+        events:{ 'on-segment-click': handleSegmentClick }}
 
     case 'span':
         return { component :MoleculeSpan,
           props: {},
-          events:{ 'on-segment-click': updateVideoTimecode}
+          events:{ 'on-segment-click': handleSegmentClick }
   }
 
 }
@@ -329,10 +334,9 @@ const annotationComponent = computed(() => {
       else if(moleculeAnnotationRef.value &&  action === false){
         moleculeAnnotationRef.value.handleSegmentation({index: bestIndex-1})
       }
-      scrollToSegment({bestIndex})
       elementWithTestClass = getSelectedSegment();
       const dataTcValue = elementWithTestClass?.querySelector('[tcin]')?.getAttribute('tcin') // return the first tcin value inside the selectedElement
-      updateVideoTimecode({tcin: dataTcValue, tcout: '0', index: bestIndex})
+      handleSegmentClick({tcin: dataTcValue, tcout: '0', index: bestIndex})
     }
 
   }

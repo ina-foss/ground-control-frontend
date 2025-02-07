@@ -1,7 +1,7 @@
 <template>
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
-    :class="`bg-gray-300 transition-colors group relative mt-3  overflow-visible last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    :class="`bg-gray-300 transition-colors group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
     <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[32px] w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
@@ -47,12 +47,12 @@
       :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
       @click="toggleComment" />
     <div
-      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
+      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
-    </div>
-    <div v-if="options.timecode_segment" class="absolute bottom-1 z-40 text-xs bg-black text-white right-2 opacity-60 ">
-      <p>{{ timestampToUnix(phrase.tcin)}}</p>
+      <div v-if="options.timecode_segment" class="absolute flex items-center h-full top-[0] left-[-90px] z-50 text-xs overflow-visible    ">
+        <p class="border-dashed border border-title py-1 px-2 rounded-sm ">{{ timestampToUnix(phrase.tcin)}}</p>
+      </div>
     </div>
     <div class="relative gap-0  w-[calc(100%+20px)] z-40 ">
       <div :class="`absolute z-50 w-full ${ !isTopicsLastSegment ? 'top-[-10px]' : '' }  left-[-10px] h-6 over pointer-events-auto cursor-pointer`"
@@ -100,7 +100,7 @@ const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','d
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()
-const { timestampToUnix, computeColor, textColorPicker } = $application
+const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
 const segment = ref(null)
 const toast = useToast()
 const topicIndex = computed(() => topics[index])
