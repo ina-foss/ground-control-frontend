@@ -31,9 +31,14 @@ const showRollback =  computed(()=>{
   return timecodeHistory.value.length > 0
 })
 
-function consumeTimecode() {
+function consumeTimecode(index?:any) {
   if(timecodeHistory){
-    timecodeHistory.value.pop() // remove last timecode
+    if(index){
+      timecodeHistory.value.splice(index+1,timecodeHistory.value.length-index-1)
+    }
+    else{
+      timecodeHistory.value.pop() // remove last timecode
+    }
     const tc = timecodeHistory.value[timecodeHistory.value.length-1] // use the new last timecode to update the player
     $amalia.updateCurrentTc(tc)
     seek(true)
@@ -84,6 +89,7 @@ const seek = async (fromHistory?: boolean) => {
     emits('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: fromHistory   }) // emit both times to scroll and adapt css
     lastIndex = bestIndex
 }}
+defineExpose({ seek,consumeTimecode });
 
 onMounted(async ()=>{
   await Promise.all([hlsPlayer(), thumbnailPlayer()]);
