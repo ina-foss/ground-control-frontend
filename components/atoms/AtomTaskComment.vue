@@ -1,7 +1,6 @@
 <template>
-  <div class="w-[250px] rounded-lg text-title">
     <OverlayBadge :value="comments?.length" severity="contrast">
-      <div class=" rounded-lg w-[250px]">
+  <div class="w-full rounded-lg text-title">
         <Accordion value="0" class="w-full rounded">
           <AccordionPanel>
             <AccordionHeader class="!bg-white hover:!bg-white rounded ">Commentaires</AccordionHeader>
@@ -71,7 +70,6 @@
             </AccordionContent>
           </AccordionPanel>
         </Accordion>
-      </div>
     </OverlayBadge>
   </div>
 </template>

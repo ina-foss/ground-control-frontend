@@ -1,5 +1,5 @@
 <template>
-  <div class=" rounded-lg w-[250px] gap-3">
+  <div class=" rounded-lg w-full gap-3">
     <Accordion  class="w-full !bg-white rounded" >
       <AccordionPanel>
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Derniers Timecodes</AccordionHeader>
@@ -34,7 +34,7 @@
 
 
 const { $application } = useService()
-const { timestampToUnix } = $application
+const { timestampToUnix, unixToTimestamp  } = $application
 const timecodeHistory : Ref<number[]> | undefined = inject('timecode-history')
 
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class=" rounded-lg w-[250px]">
+  <div class=" rounded-lg w-full ">
     <Accordion  value="0" class="w-full !bg-white rounded" >
       <AccordionPanel>
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Synchronisation</AccordionHeader>

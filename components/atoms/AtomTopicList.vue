@@ -1,5 +1,5 @@
 <template>
-  <div class=" rounded-lg w-[250px] gap-3  h-full">
+  <div class=" rounded-lg w-full gap-3  h-full">
     <Accordion  class="w-full rounded  h-full" >
       <AccordionPanel class="w-full rounded  !h-full">
         <AccordionHeader class="!bg-white hover:!bg-white rounded ">Topics</AccordionHeader>
