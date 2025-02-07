@@ -40,7 +40,7 @@ export default defineComponent({
       else {
         removeBreak(event.index)
       }
-      nextTick().then(()=>segmentationRefs.value[event.index].scrollIntoView({behavior: 'smooth', block:'center'}))
+      nextTick().then(()=>segmentationRefs.value[event.index].scrollIntoView({block:'center' }))
 
     }
 
