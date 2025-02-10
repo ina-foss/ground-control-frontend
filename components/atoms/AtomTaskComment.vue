@@ -9,8 +9,8 @@
             <AccordionContent>
               <div class="flex-col">
 
-                <div class="overflow-y-clip overflow-x-hidden mb-3 min-h-fit max-h-[125px]">
-                  <ScrollPanel class="h-full " :dt="{
+                <div v-if="comments?.length != 0" class="overflow-y-clip overflow-x-hidden mb-3 min-h-fit h-[125px] w-full">
+                  <ScrollPanel class="h-full" :dt="{
       bar : {
         background: 'var(--primary-color)',
         size:'3px'
@@ -18,8 +18,12 @@
       barY:{
         style : 'right: 10px;'
         }
+        ,
+      barX:{
+          style: 'display: none !important;'
+        }
     }">
-                    <div v-if="comments?.length != 0" :items="comments" :itemSize="50"
+                    <div  :items="comments" :itemSize="50"
                     >
                       <div v-for="(item, index) in comments" :key="index" class="flex items-center border-b">
 
