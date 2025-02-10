@@ -17,7 +17,7 @@
 import type {Ref} from "vue";
 import AtomVideoAmalia from "~/components/atoms/AtomVideoAmalia.vue";
 const {$application} = useService()
-const {timestampToUnix} = $application
+const {timestampToUnix, unixToTimestamp} = $application
 const timecodeHistory: Ref<number[]> | undefined = inject('timecode-history')
 const videoPlayer = inject("videoPlayer") as Ref<InstanceType<typeof AtomVideoAmalia> | null>;
 

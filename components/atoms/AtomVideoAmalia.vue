@@ -19,6 +19,7 @@ let dynamicSrc = ref()
 let dynamicTumbnails = ref()
 const { locals, videoSrc,media_params } = defineProps(['locals', 'video-src','media_params'])
 const emits = defineEmits(['timecode-update']);
+const {timestampToUnix, unixToTimestamp} = $application
 async function fetchVideoStream(url) {
   const response = await fetch(url);
   const videoHls = response.text();
@@ -40,7 +41,7 @@ function consumeTimecode(index?:any) {
       timecodeHistory.value.pop() // remove last timecode
     }
     const tc = timecodeHistory.value[timecodeHistory.value.length-1] // use the new last timecode to update the player
-    $amalia.updateCurrentTc(tc)
+    $amalia.updateCurrentTc(unixToTimestamp(tc))
     seek(true)
   }
 }
