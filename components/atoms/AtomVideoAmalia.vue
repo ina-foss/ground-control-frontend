@@ -33,7 +33,7 @@ const showRollback =  computed(()=>{
 
 function consumeTimecode(index?:any) {
   if(timecodeHistory){
-    if(index){
+    if(index != undefined){
       timecodeHistory.value.splice(index+1,timecodeHistory.value.length-index-1)
     }
     else{
