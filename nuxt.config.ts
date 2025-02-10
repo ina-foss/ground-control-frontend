@@ -34,7 +34,7 @@ const DSINAPreset = definePreset(Lara, {
       padding: '14px',
       ColorScheme: {
         light: {
-          background: 'var(--neutral-color)',
+          background: 'var(--secondary-color)',
         }
       }
     },
@@ -76,6 +76,7 @@ const DSINAPreset = definePreset(Lara, {
       smPaddingX: '11px',
       paddingY: '7px',
       paddingX: '11px',
+      hoverColor:'{primary.color}',
       colorScheme: {
         light: {
           outlinedPrimaryBorderColor: '{primary.color}',

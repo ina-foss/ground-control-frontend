@@ -2,8 +2,8 @@
   <div class=" rounded-lg w-full gap-3  h-full">
     <Accordion  class="w-full rounded  h-full" >
       <AccordionPanel class="w-full rounded  !h-full">
-        <AccordionHeader class="!bg-white hover:!bg-white rounded ">Topics</AccordionHeader>
-        <AccordionContent  class="w-full rounded  !h-full">
+        <AccordionHeader class="!bg-white hover:!bg-white rounded !border-t-transparent !border-l-transparent !border-r-transparent ">Topics</AccordionHeader>
+        <AccordionContent  class="w-full rounded  !h-full !border-transparent ">
           <div class="flex flex-col gap-[10px] text-title  !h-full">
             <div class="flex  h-full">
               <div v-if="cleanedColors?.length != 0" :items="cleanedColors" :itemSize="50" class="w-full h-full" >

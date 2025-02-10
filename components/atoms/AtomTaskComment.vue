@@ -1,12 +1,13 @@
 <template>
   <div class="w-full rounded-lg text-title">
-        <Accordion value="0" class="w-full rounded">
+        <Accordion value="0" class="w-full rounded ">
           <AccordionPanel>
-            <AccordionHeader class="!bg-white hover:!bg-white rounded ">
-              <span>Commentaires</span>
-              <span v-if="comments?.length > 0" class="bg-accent text-white rounded-xl flex justify-center items-center h-[1.5rem] w-[1.5rem]   " >{{comments?.length}}</span>
+            <AccordionHeader class="!bg-white hover:!bg-white rounded !border-t-transparent !border-l-transparent !border-r-transparent ">
+              <span class="-pr-2">Commentaires</span>
+              <span v-if="comments?.length > 0" class="bg-[#B3DDF4] text-white rounded-xl flex justify-center items-center h-[1.5rem] w-[1.5rem]" >{{comments?.length}}</span>
+              <span v-if="comments?.length == 0" class="bg-disabled text-white rounded-xl flex justify-center items-center h-[1.5rem] w-[1.5rem]" >{{comments?.length}}</span>
             </AccordionHeader>
-            <AccordionContent>
+            <AccordionContent class="!border-transparent ">
               <div class="flex-col">
 
                 <div v-if="comments?.length != 0" class="overflow-y-clip overflow-x-hidden mb-3 min-h-fit h-[125px] w-full">
@@ -65,7 +66,7 @@
                     <Textarea v-model="comment" class="h-full text-xs" fluid placeholder="Entrer votre message"/>
                   </div>
                   <div class="flex justify-center gap-3 ">
-                    <Button class="h-auto" label="Annuler" icon="pi pi-times" icon-pos="left" severity="secondary"
+                    <Button class="h-auto" outlined label="Annuler" icon="pi pi-times" icon-pos="left"
                             @click="handleClearComment"/>
                     <Button class="h-auto" label="Envoyer" icon="pi pi-arrow-right" icon-pos="left"
                             @click="handleCreateComment"/>

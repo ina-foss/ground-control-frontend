@@ -65,7 +65,7 @@
           <div v-else class="flex justify-around w-[80px]">
             <div style="height:24px;width:24px;" v-tooltip.left="{ value: 'Déplacer une rupture', showDelay: 400 }"
               :draggable="isTopicsLastSegment && topics[topicIndex]!=null"
-              class=" bg-primary  cursor-ns-resize rounded hover:bg-primary-600 flex items-center justify-center">
+              class=" bg-primary  cursor-ns-resize rounded hover:bg-[#0C7DA2] flex items-center justify-center">
               <img  style="height:16px;width:16px;" class="pointer-events-none"
                 src="../../public/icons/icons-svg/icons-svg/move-icon.svg"
                 alt="move icon" />

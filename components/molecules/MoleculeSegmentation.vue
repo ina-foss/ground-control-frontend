@@ -9,7 +9,7 @@
       :dt="{
       bar : {
         background: 'var(--primary-color)',
-        size:'4px'
+        size:'4px',
       },
       barY:{
         style : 'right: -10px;'
