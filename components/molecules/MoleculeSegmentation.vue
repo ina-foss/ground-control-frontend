@@ -60,7 +60,7 @@
               <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
               <atom-video-option />
               <AtomTaskComment />
-              <AtomTopicList class="mb-2" :colors="colors" :topics="topics"/>
+              <AtomTopicList class="mb-2" :colors="colors" :topics="topics" @topic-click="jumpToTopic"/>
             </div>
           </ScrollPanel>
       </div>
