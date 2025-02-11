@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
     :class="`bg-gray-300 transition-colors group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
@@ -40,12 +40,16 @@
       </div>
     </div>
     <OverlayBadge v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
-      :class="` overflow-visible !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`">
-      <Button icon="pi pi-comment" class="hover:!bg-primary hover:!border-primary" @click="toggleComment" />
+                  :class="`overflow-visible !absolute opacity-0 group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'} right-[4px]`">
+      <Button class="hover:!bg-primary hover:!border-primary" @click="toggleComment">
+        <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
+      </Button>
     </OverlayBadge>
-    <Button v-else icon="pi pi-comment"
+    <Button v-else
       :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
-      @click="toggleComment" />
+      @click="toggleComment" >
+      <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
+    </Button>
     <div
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
@@ -65,7 +69,7 @@
           <div v-else class="flex justify-around w-[80px]">
             <div style="height:24px;width:24px;" v-tooltip.left="{ value: 'Déplacer une rupture', showDelay: 400 }"
               :draggable="isTopicsLastSegment && topics[topicIndex]!=null"
-              class=" bg-primary  cursor-ns-resize rounded hover:bg-primary-600 flex items-center justify-center">
+              class=" bg-primary  cursor-ns-resize rounded hover:bg-[#0C7DA2] flex items-center justify-center">
               <img  style="height:16px;width:16px;" class="pointer-events-none"
                 src="../../public/icons/icons-svg/icons-svg/move-icon.svg"
                 alt="move icon" />
@@ -89,6 +93,8 @@
 </template>
 
 <script setup lang="ts">
+import commentIcon from '../../public/icons/icons-svg/icons-svg/comment-icon.svg';
+
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
 import AtomPluginBlock from './AtomPluginBlock.vue';

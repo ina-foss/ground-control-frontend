@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex justify-center content-center p-4">
+  <div class="h-full flex justify-center content-center p-4 pt-0">
     <div
       class="bg-gradient-to-t flex flex-col overflow-hidden from-surface-200 to-surface-200 h-full w-7 rounded-lg">
       <div
