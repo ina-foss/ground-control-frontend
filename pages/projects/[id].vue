@@ -68,7 +68,7 @@
                 <a
                   v-ripple v-tooltip="{ value: item.tooltip, showDelay: 1000 }" class="txt flex align-items-center"
                   v-bind="props.action">
-                  <p @click="item.command(event,selectedRow.value)">{{ item.label }}</p>
+                  <p  >{{ item.label }}</p>
                 </a>
               </template>
             </Menu>
@@ -261,11 +261,13 @@ const exportOut = async (step, group) => {
   for (const task of tasks) {
     try {
       // Fetch annotation data
-      const annotations = AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id,'','out');
+      const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id,'','out');
+      if(annotations.length > 0){
 
-      if (group == 'task') triggerDownload(annotations, task.name)
-      else if (group == 'all') annotations.forEach((annotation) => triggerDownload(annotation, task.name + ' by ' + annotation.user_email.split('@')[0]))
-      else if (group == 'one') annos[task.name] = (annotations)
+        if (group == 'task') triggerDownload(annotations, task.name)
+        else if (group == 'all') annotations.forEach((annotation) => triggerDownload(annotation, task.name + ' by ' + annotation.user_email.split('@')[0]))
+        else if (group == 'one') annos[task.name] = (annotations)
+      }
     } catch (error) {
       console.error('Error downloading file for task', task.id, error);
     }
@@ -290,7 +292,6 @@ function triggerDownload(data, name) {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    // alert('Your file ' + a.download + ' has downloaded!');
     toast.add({
       severity: 'success',
       summary: "Export done",
