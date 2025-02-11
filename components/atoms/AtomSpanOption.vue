@@ -57,3 +57,8 @@ watch(()=>bloc.value,(value)=>{
 
 
 </script>
+<style>
+.p-toggleswitch.p-toggleswitch-checked:hover .p-toggleswitch-slider {
+  background-color: #0C7DA2 !important;
+}
+</style>
