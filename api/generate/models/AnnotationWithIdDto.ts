@@ -3,6 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AnnotationStatus } from './AnnotationStatus';
+/**
+ * DTO base infos + its ID
+ */
 export type AnnotationWithIdDto = {
     user_email: string;
     annotation_status: AnnotationStatus;

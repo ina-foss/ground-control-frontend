@@ -19,10 +19,6 @@ export class DefaultService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/test',
-            errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
-            },
         });
     }
     /**
@@ -38,10 +34,6 @@ export class DefaultService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/management/health',
-            errors: {
-                401: `Unauthorized`,
-                403: `Forbidden`,
-            },
         });
     }
 }
