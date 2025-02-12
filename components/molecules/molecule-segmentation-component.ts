@@ -31,11 +31,30 @@ export default defineComponent({
     const { options } = storeToRefs(useOptions())
     const isAnnotationEditable = state != AnnotationStatus.ENDED && !useRoute().query.email
 
+
+
     const handleSegmentation = (event) => {
       if(!isAnnotationEditable) return
       window.onbeforeunload = function () {
         return confirm("You didn't saved your progression")
       }
+
+      const referenceDiv = segmentationRefs.value[event.index] // Get the HTML element of the div where your create/break the topic
+      const initialYPosition = referenceDiv.getBoundingClientRect().top // Get the vertical position of this div
+      const scrollerHtml = segmentationRefs.value[event.index].parentElement
+      let animationFrameId
+
+      const adjustScroll = () =>{
+        const newRect = referenceDiv.getBoundingClientRect();
+        const newY = newRect.top;
+        const scrollOffset = newY - initialYPosition;
+    
+        scrollerHtml.scrollBy(0, scrollOffset);
+    
+        // Continue the loop
+        animationFrameId = requestAnimationFrame(adjustScroll);
+      }
+
 
       if (topics[event.index] == topics[event.index + 1]) {
         createBreak(event.index)
@@ -43,7 +62,23 @@ export default defineComponent({
       else {
         removeBreak(event.index)
       }
-      nextTick().then(()=>segmentationRefs.value[event.index].scrollIntoView({block:'center' }))
+
+        animationFrameId = requestAnimationFrame(adjustScroll);
+      referenceDiv.addEventListener('transitionend', function onTransitionEnd(event) {
+          if (event.propertyName === 'margin-top' || event.propertyName === 'background-color' ) {
+              // Stop the animation loop
+              cancelAnimationFrame(animationFrameId);
+              // Remove the event listener after it has been triggered
+              referenceDiv.removeEventListener('transitionend', onTransitionEnd);
+          }
+      });
+      // nextTick().then(()=> {
+      //   const newYPosition = referenceDiv.getBoundingClientRect().top // Get the new vertical positon
+      //   const scrollOffset = newYPosition - initialYPosition
+      //   console.log(scrollOffset)
+      //   scrollerHtml.scrollBy(0,scrollOffset)
+      // })
+
 
     }
 
@@ -64,7 +99,7 @@ export default defineComponent({
             start --
             }
           }
-        }
+      }
         dragging.start = null
         dragging.end = null
       }
