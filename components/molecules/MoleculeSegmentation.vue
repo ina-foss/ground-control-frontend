@@ -39,6 +39,7 @@
           @segmentation="handleSegmentation"
           @on-segment-click="handleSegmentClick($event)"
           @deactivate-topic="deactivateTopic"
+          @activate-topic="activateTopic"
         />
         </div>
     </ScrollPanel>

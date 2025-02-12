@@ -35,7 +35,8 @@
               </div>
             </div>
           </div>
-          <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+          <Button v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+          <Button v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
         </div>
       </div>
     </div>
@@ -102,7 +103,7 @@ import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
 
 const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
-const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
+const emit = defineEmits(['segmentation', 'onSegmentClick','activateTopic', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()

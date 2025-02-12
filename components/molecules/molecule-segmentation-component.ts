@@ -74,10 +74,23 @@ export default defineComponent({
       let currentIndex = index
       const topic = 0
       const previousTopic = topics[currentIndex]
+      deleteTopic(previousTopic)
       do {
         topics[currentIndex] = topic
         currentIndex++
       } while (previousTopic == topics[currentIndex])
+    }
+
+    const activateTopic = ({ index }:{index: number})=>{
+        let currentIndex = index
+        const topic = newTopic()
+        createTopic({ id: topic, labels: [] })
+        do {
+          topics[currentIndex] = topic
+          currentIndex++
+        }while(topics[currentIndex] == 0 )
+
+
     }
 
     const createBreak = (index: number) => {
@@ -179,6 +192,7 @@ export default defineComponent({
       handleSegmentation,
       handleSegmentClick,
       deactivateTopic,
+      activateTopic,
       jumpToTopic,
     }
 
