@@ -83,6 +83,7 @@ export default defineComponent({
     const activateTopic = ({ index }:{index: number})=>{
         let currentIndex = index
         const topic = newTopic()
+        createTopic({ id: topic, labels: [] })
         do {
           topics[currentIndex] = topic
           currentIndex++
