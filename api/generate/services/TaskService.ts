@@ -74,6 +74,33 @@ export class TaskService {
         });
     }
     /**
+     * Delete Task
+     * Delete a task by ID.
+     *
+     * Args:
+     * task_id (int): The unique identifier of the task to delete
+     *
+     * Returns:
+     * TaskWithIdDto: The deleted task
+     * @param taskId
+     * @returns TaskWithIdDto Successful Response
+     * @throws ApiError
+     */
+    public static deleteTaskTaskTaskIdDelete(
+        taskId: number,
+    ): CancelablePromise<TaskWithIdDto> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/task/{task_id}',
+            path: {
+                'task_id': taskId,
+            },
+            errors: {
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
      * Create Task
      * Create a new task.
      *

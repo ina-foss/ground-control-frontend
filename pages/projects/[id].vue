@@ -139,6 +139,13 @@
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction"/>
+            <Column >
+              <template #body="{data: nestedData}">
+                <div class="flex justify-end px-4">
+                  <Button label="Supprimer" severity="danger" outlined @click="deleteTask(nestedData.id)"/>
+                </div>
+              </template>
+            </Column>
 
           </DataTable>
         </div>
@@ -160,7 +167,7 @@
 
 import _ from 'lodash';
 import {ref} from 'vue';
-import {AnnotationService, AnnotationStatus, StepStatus} from '../../api/generate';
+import {AnnotationService, AnnotationStatus, StepStatus, TaskService} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
 
@@ -214,6 +221,10 @@ const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
   ended: 'Terminé'
+}
+
+const deleteTask = (task_id) => {
+  TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> fetchTasks(route.params.id))
 }
 
 const translatedAnnotationStatus =(annotation_status)=> {
