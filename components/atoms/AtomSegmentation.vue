@@ -6,8 +6,8 @@
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
       class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
-      <div :class="`w-full sticky top-0 h-[54px] left-0 bg-neutral rounded-t-lg pointer-events-auto z-50 `">
-        <div class="w-full flex h-full justify-between p-sm  rounded-t-lg "
+      <div :class="`w-full sticky top-[-1px] h-[54px] left-0 bg-secondary rounded-lg pointer-events-auto z-50 `">
+        <div class="w-full flex h-full justify-between p-sm  rounded-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flew-row items-center">
             <Tag v-if="options.timecode_bloc" severity="contrast">
