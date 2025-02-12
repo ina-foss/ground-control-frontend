@@ -74,6 +74,7 @@ export default defineComponent({
       let currentIndex = index
       const topic = 0
       const previousTopic = topics[currentIndex]
+      deleteTopic(previousTopic)
       do {
         topics[currentIndex] = topic
         currentIndex++
