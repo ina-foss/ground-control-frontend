@@ -58,6 +58,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
+  const {addTimecodeHistory} = useTimecodeHistory()
   const { unixToTimestamp, timestampToUnix } = $application
   const{setTcOffset}= useTcOffset()
 
@@ -95,7 +96,6 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const annotationStatus = AnnotationStatus.ENDED
   const config = ref(null)
   const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
-  const timecodeHistory = ref([])
   let bestIndex = 0
   const annotationInfo = computed< {index: number, id: number} | null>(() => {
     if (!allFetched) return null;
@@ -175,11 +175,6 @@ const algos = computed(() => { // List the name of the algorithm
   }
   return res
 })
-
-  function addTimecodeHistory (tc?: any){
-    if(timecodeHistory.value.length == 0 || timecodeHistory.value[timecodeHistory.value.length-1] != tc) timecodeHistory.value.push(tc)
-
-  }
 
 
   const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
@@ -345,7 +340,6 @@ const annotationComponent = computed(() => {
 
   provide('plugin-items-config', configItemPlugin)
 
-  provide('timecode-history', timecodeHistory)
 
   provide('data',data)
 
