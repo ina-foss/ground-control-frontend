@@ -1,7 +1,7 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
-    :class="`bg-gray-300 transition-colors group relative mt-3  overflow-visible last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    :class="`bg-gray-300 transition-colors group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
     <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[32px] w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
@@ -35,24 +35,29 @@
               </div>
             </div>
           </div>
-          <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+          <Button v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+          <Button v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
         </div>
       </div>
     </div>
     <OverlayBadge v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
-      :class="` overflow-visible !absolute opacity-0  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`">
-      <Button icon="pi pi-comment" class="hover:!bg-primary hover:!border-primary" @click="toggleComment" />
+                  :class="`overflow-visible !absolute opacity-0 group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'} right-[4px]`">
+      <Button class="hover:!bg-primary hover:!border-primary" @click="toggleComment">
+        <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
+      </Button>
     </OverlayBadge>
-    <Button v-else icon="pi pi-comment"
+    <Button v-else
       :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
-      @click="toggleComment" />
+      @click="toggleComment" >
+      <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
+    </Button>
     <div
-      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all hover:shadow-lg `"
+      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
-    </div>
-    <div v-if="options.timecode_segment" class="absolute bottom-1 z-40 text-xs bg-black text-white right-2 opacity-60 ">
-      <p>{{ timestampToUnix(phrase.tcin)}}</p>
+      <div v-if="options.timecode_segment" class="absolute flex items-center h-full top-[0] left-[-90px] z-50 text-xs overflow-visible    ">
+        <p class="border-dashed border border-title py-1 px-2 rounded-sm ">{{ timestampToUnix(phrase.tcin)}}</p>
+      </div>
     </div>
     <div class="relative gap-0  w-[calc(100%+20px)] z-40 ">
       <div :class="`absolute z-50 w-full ${ !isTopicsLastSegment ? 'top-[-10px]' : '' }  left-[-10px] h-6 over pointer-events-auto cursor-pointer`"
@@ -65,7 +70,7 @@
           <div v-else class="flex justify-around w-[80px]">
             <div style="height:24px;width:24px;" v-tooltip.left="{ value: 'Déplacer une rupture', showDelay: 400 }"
               :draggable="isTopicsLastSegment && topics[topicIndex]!=null"
-              class=" bg-primary  cursor-ns-resize rounded hover:bg-primary-600 flex items-center justify-center">
+              class=" bg-primary  cursor-ns-resize rounded hover:bg-[#0C7DA2] flex items-center justify-center">
               <img  style="height:16px;width:16px;" class="pointer-events-none"
                 src="../../public/icons/icons-svg/icons-svg/move-icon.svg"
                 alt="move icon" />
@@ -89,6 +94,8 @@
 </template>
 
 <script setup lang="ts">
+import commentIcon from '../../public/icons/icons-svg/icons-svg/comment-icon.svg';
+
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
@@ -96,11 +103,11 @@ import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
 
 const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
-const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
+const emit = defineEmits(['segmentation', 'onSegmentClick','activateTopic', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()
-const { timestampToUnix, computeColor, textColorPicker } = $application
+const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
 const segment = ref(null)
 const toast = useToast()
 const topicIndex = computed(() => topics[index])

@@ -16,8 +16,10 @@ const myplayer = ref()
 let lastIndex = 0
 
 let dynamicSrc = ref()
+let dynamicTumbnails = ref()
 const { locals, videoSrc,media_params } = defineProps(['locals', 'video-src','media_params'])
 const emits = defineEmits(['timecode-update']);
+const {timestampToUnix, unixToTimestamp} = $application
 async function fetchVideoStream(url) {
   const response = await fetch(url);
   const videoHls = response.text();
@@ -30,11 +32,16 @@ const showRollback =  computed(()=>{
   return timecodeHistory.value.length > 0
 })
 
-function consumeTimecode() {
+function consumeTimecode(index?:any) {
   if(timecodeHistory){
-    timecodeHistory.value.pop() // remove last timecode
+    if(index != undefined){
+      timecodeHistory.value.splice(index+1,timecodeHistory.value.length-index-1)
+    }
+    else{
+      timecodeHistory.value.pop() // remove last timecode
+    }
     const tc = timecodeHistory.value[timecodeHistory.value.length-1] // use the new last timecode to update the player
-    $amalia.updateCurrentTc(tc)
+    $amalia.updateCurrentTc(unixToTimestamp(tc))
     seek(true)
   }
 }
@@ -45,10 +52,21 @@ const hlsPlayer = async () => {
   dynamicSrc.value = src
 
 }
+async function fetchThumbnail(url) {
+  const response = await fetch(url).then((resp)=>{
+    return resp.text()
+  });
+  return response;
+}
+const thumbnailPlayer = async () => {
+  if(media_params?.thumbnail_base_url) {
+    dynamicTumbnails.value = await fetchThumbnail(media_params?.thumbnail_base_url)
+  }
+}
 
 watchEffect(() => {
   if (dynamicSrc.value) {
-    myplayer.value.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params)) // add amalia player once src is ready
+      myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params,dynamicTumbnails?.value || "")) // add amalia player once src is ready
   }
 })
 
@@ -72,10 +90,10 @@ const seek = async (fromHistory?: boolean) => {
     emits('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: fromHistory   }) // emit both times to scroll and adapt css
     lastIndex = bestIndex
 }}
+defineExpose({ seek,consumeTimecode });
 
-onMounted(()=>{
-
-  hlsPlayer()
+onMounted(async ()=>{
+  await Promise.all([hlsPlayer(), thumbnailPlayer()]);
 
 })
 </script>

@@ -4,17 +4,18 @@
   >
     <div class="flex items-center">
       <AtomLogo size="md" />
-      <div style="padding: 25px;">
-        <NuxtLink class="self-center text-title text-3xl font-black " to="/">Ground Control</NuxtLink>
+      <div>
+        <NuxtLink class="self-center text-title text-3xl font-black p-6 pr-2" to="/">Ground Control</NuxtLink>
       </div>
       <AtomIcon class="self-center" />
     </div>
     <div class="flex justify-end items-center">
       <div class="mr-4">
-      <Button
+        <Button
         v-if="isAdmin && $route.name == 'dashboard'"
         label="Nouveau projet"
         size="small"
+        class="hover:!bg-primary"
         @click="dialogVisible = true"
       />
       <MoleculeFormProject :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false" />

@@ -1,10 +1,10 @@
 <template>
   <div
-    class="w-full bg-surface-color max-w-screen h-150 px-3 py-1 cursor-pointer  rounded-md hover:scale-105 transition-all  hover:shadow-xl"
+    class="w-full bg-surface-color max-w-screen  max-h-[190px]  px-3 py-1 cursor-pointer  rounded-md hover:scale-105 transition-all  hover:shadow-xl"
     style="background-color: #FFFFFF">
     <NuxtLink
       :to="{ name: 'projects-id', params: { id: project.id } }" >
-      <div class="min-h-[75%]">
+      <div class="min-h-[75%] max-h-full">
         <div class=" flex justify-between align-middle pl-2">
           <p class="font-bold text-3xl self-center ">
             {{formatTitle(project.title)}} </p>

@@ -1,25 +1,28 @@
   <template>
     <div class="card flex-grow h-0 max-h-full  pb-3">
 
-      <Tabs :value="selectedTab" scrollable class="card h-full rounded-b-lg !bg-white">
-        <TabList v-if="tabs.length > 0" >
-          <Tab v-for="(tab,index) in tabs" :key="index" :value="index" class="!bg-white">
+      <Tabs :value="0" scrollable class="card h-full rounded-b-lg !bg-white">
+        <TabList >
+          <Tab  v-if="tabs.length > 0" v-for="(tab,index) in tabs" :key="index" :value="index" class="!bg-white">
             {{ tab.title }}
           </Tab>
+          <Tab class="!bg-white" :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">Derniers Timecodes</Tab>
         </TabList>
         <ScrollPanel class="h-full" :dt="{
       bar : {
         background: 'var(--primary-color)',
+        size:'3px'
       },
       barY:{
         style : 'right: -10px;'
         }
     }">
-        <TabPanels v-if="tabs.length > 0" class=" md:block flex-grow h-0 max-h-full ">
-
-          <TabPanel v-for="(tab,index) in tabs" :key="index" :value="index">
-
+        <TabPanels  class=" md:block flex-grow h-0 max-h-full">
+          <TabPanel v-if="tabs.length > 0" v-for="(tab,index) in tabs" :key="index" :value="index">
               <AtomMarkdown :content="tab.text"/>
+          </TabPanel>
+          <TabPanel :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">
+            <AtomTimecodeList class="pb-4"/>
           </TabPanel>
         </TabPanels>
         </ScrollPanel>
@@ -29,12 +32,12 @@
 
   <script setup lang="ts">
 import AtomMarkdown from "../atoms/AtomMarkdown.vue";
+import AtomTimecodeList from "../atoms/AtomTimecodeList.vue";
   interface tabItem{
     title:string;
     text:string;
   }
   const tabs=ref<tabItem[]>([])
-  const selectedTab = ref(0);
   const props = defineProps({
     data: {
       type: Object,

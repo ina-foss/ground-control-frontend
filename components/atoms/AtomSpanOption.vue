@@ -1,9 +1,9 @@
 <template>
-  <div class=" rounded-lg w-[250px]">
+  <div class=" rounded-lg w-full">
     <Accordion value="0" class="w-full rounded" >
       <AccordionPanel>
-        <AccordionHeader class="!bg-white hover:!bg-white rounded ">Affichage</AccordionHeader>
-        <AccordionContent>
+        <AccordionHeader class="!bg-white hover:!bg-white rounded !border-t-transparent !border-l-transparent !border-r-transparent ">Affichage</AccordionHeader>
+        <AccordionContent class="!border-transparent">
           <div class="flex flex-col gap-[10px] text-title ">
             <div class="flex justify-between items-center self-stretch py-1 "v-if="span != undefined">
               <span>Span</span>
@@ -57,3 +57,8 @@ watch(()=>bloc.value,(value)=>{
 
 
 </script>
+<style>
+.p-toggleswitch.p-toggleswitch-checked:hover .p-toggleswitch-slider {
+  background-color: #0C7DA2 !important;
+}
+</style>

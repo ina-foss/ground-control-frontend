@@ -1,7 +1,7 @@
 <template>
-  <div class="overflow-y-auto h-full  ">
+  <div class="overflow-y-auto h-0 min-h-full flex flex-col   ">
     <div
-      :class="['  w-fit h-[70px]  ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', isAdmin ? 'right-[145px]' : 'right-[5px]']">
+      :class="['  w-fit h-[70px] grow ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', isAdmin ? 'right-[145px]' : 'right-[5px]']">
       <label class="text-primary font-semibold p-2">Projets</label>
       <Select
         v-model="selectedStatus"
@@ -12,18 +12,18 @@
         show-clear
       />
     </div>
-    <div ref="dashboardRef" class="p-3 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
+    <div ref="dashboardRef" class="p-3 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grow   ">
       <MoleculeProjectCard
         v-for="(project,index) in filteredProjects " :key="index" :project=project
         @refresh-data="handleRefresh"/>
     </div>
-    <div class="absolute bottom-[4.4rem] w-full">
+    <div class="w-full h-fit">
       <Paginator
         v-model:first="first"
         :pt="{
 
         root:{
-          style: { padding: '0px', height: '24px',backgroundColor:'transparent' },
+          style: { padding: '0px', height: 'fit-content',backgroundColor:'transparent' },
 
         },
         firstPageButton: {

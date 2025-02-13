@@ -2,13 +2,13 @@
    <div class="w-[300px] flex flex-col gap-[12px] ">
       <!-- Header  -->
       <div class="w-full flex justify-between items-center">
-      <b>{{ isEdited ? 'Edition' : 'Commentaires'}} </b>
+      <b>{{ isEdited ? 'Edition' : 'Commentaire'}} </b>
         <i class="pi pi-times rounded-2xl p-1 hover:bg-secondary-color cursor-pointer"  text @click="overlay.hide()" />
       </div>
       <!-- Text aera -->
       <div v-if="!phrase.data.comments || phrase.data.comments.length == 0" class="flex w-full gap-2 justify-between">
         <InputText v-model="commentText" placeholder="Ajouter un commentaire"  class="w-[90%]"/>
-        <Button icon="pi pi-arrow-right" @click="createComment" />
+        <Button class="hover:!bg-primary"  icon="pi pi-arrow-right" @click="createComment" />
       </div>
       <div v-else>
         <div class="flex flex-col gap-[12px]" v-for="comment in phrase.data.comments">
@@ -19,7 +19,7 @@
           </div>
           <div v-else class="flex gap-2 justify-end">
             <Button icon="pi pi-times" severity="secondary" @click="cancelEdit"  />
-            <Button icon="pi pi-check" @click="editComment" />
+            <Button class="hover:!bg-primary"  icon="pi pi-check" @click="editComment" />
           </div>
         </div>
       </div>

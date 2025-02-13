@@ -1,10 +1,10 @@
 <template>
-  <div class="h-full flex justify-center content-center p-4">
+  <div class="h-full flex justify-center content-center p-4 pt-0">
     <div
       class="bg-gradient-to-t flex flex-col overflow-hidden from-surface-200 to-surface-200 h-full w-7 rounded-lg">
       <div
-        v-for="(group, index) in groupedTopics" :key="index" v-tooltip="{value:'Aller à '+ topicList[parseInt(group.topic)]?.title} "
-        class="cursor-pointer w-full h-[--length] bg-[--color] hover:opacity-50" :style="`--color:${colors[parseInt(group.topic)]}; --length:${((100 / totalLength) * group.count) + '%'}`"
+        v-for="(group, index) in groupedTopics" :key="index" v-tooltip="preventDefaultTitle(topicList[parseInt(group.topic)])"
+        :class="{ 'cursor-pointer': topicList[parseInt(group.topic)] != undefined,  'w-full h-[--length] bg-[--color] hover:opacity-50': true }" :style="`--color:${colors[parseInt(group.topic)]}; --length:${((100 / totalLength) * group.count) + '%'}`"
         @click="$emit('progressBarJump',{topic: group.topic})"/>
 
     </div>
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="js">
-const {topics, colors, totalLength, topicList} = defineProps({
+const {topics, colors, totalLength,topicList} = defineProps({
 topics:{
   type: Array,
   default: () => []
@@ -31,8 +31,14 @@ topics:{
     default: () => []
   },
 })
+
 defineEmits(['progressBarJump']);
 
+function preventDefaultTitle(topic){
+    if (!topic) return null
+    if( !topic?.title) return "Topic "+ topic?.id
+    return topic?.title
+  }
 
 const groupedTopics = computed(() => {
   const grouped = {};
@@ -55,12 +61,15 @@ const groupedTopics = computed(() => {
     }
   });
 
+
   return Object.entries(grouped).map(([topic, count]) => ({
     topic,
     count
   }));
 
+
 });
+
 
 </script>
 

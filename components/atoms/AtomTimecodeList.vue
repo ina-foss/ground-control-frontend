@@ -1,21 +1,12 @@
 <template>
-  <div class=" rounded-lg w-[250px] gap-3">
-    <Accordion  class="w-full !bg-white rounded" >
-      <AccordionPanel>
-        <AccordionHeader class="!bg-white hover:!bg-white rounded ">Derniers Timecodes</AccordionHeader>
-        <AccordionContent class=" !h-fit !max-h-[100px] ">
-          <ScrollPanel >
-          <div class="flex flex-col gap-[10px] text-title  ">
-            <div v-for="(timecode,index) in timecodeHistory" class="flex items-center gap-3 "  >
-              <span> {{timestampToUnix(timecode)}}</span>
-              <i :class="{'pi pi-arrow-left': true,
-              'opacity-0': index != timecodeHistory?.length -1 } " />
-            </div>
-          </div>
-          </ScrollPanel>
-        </AccordionContent>
-      </AccordionPanel>
-    </Accordion>
+  <div class="flex flex-col text-title gap-3 grid grid-cols-[1fr_1fr]">
+    <div v-for="(timecode,index) in timecodeHistory" class="flex items-center ">
+      <div class="hover:text-[#0b7698] cursor-pointer" @click="videoPlayer.consumeTimecode(index)">
+      <span> {{ timestampToUnix(timecode) }}</span>
+      <i :class="{'pi pi-arrow-left': true,
+              'opacity-0': index != timecodeHistory?.length -1 } "/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -23,9 +14,12 @@
 <script setup lang="ts">
 
 
-const { $application } = useService()
-const { timestampToUnix } = $application
-const timecodeHistory : Ref<number[]> | undefined = inject('timecode-history')
+import type {Ref} from "vue";
+import AtomVideoAmalia from "~/components/atoms/AtomVideoAmalia.vue";
+const {$application} = useService()
+const {timestampToUnix, unixToTimestamp} = $application
+const timecodeHistory: Ref<number[]> | undefined = inject('timecode-history')
+const videoPlayer = inject("videoPlayer") as Ref<InstanceType<typeof AtomVideoAmalia> | null>;
 
 </script>
 
@@ -35,7 +29,7 @@ const timecodeHistory : Ref<number[]> | undefined = inject('timecode-history')
   @apply p-2
 }
 
-.show-arrow i{
+.show-arrow i {
   @apply opacity-100
 }
 

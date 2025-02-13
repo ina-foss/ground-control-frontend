@@ -7,12 +7,11 @@ import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
 import AtomTopicList from "~/components/atoms/AtomTopicList.vue";
-import AtomTimecodeList from "~/components/atoms/AtomTimecodeList.vue";
 
 
 export default defineComponent({
   name: 'MoleculeSegmentation',
-  components: { AtomTimecodeList, AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList},
+  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList},
   emit: ['on-segment-click'],
   props: {
     result: {type: Object, default: ()=> {} },
@@ -40,7 +39,7 @@ export default defineComponent({
       else {
         removeBreak(event.index)
       }
-      nextTick().then(()=>segmentationRefs.value[event.index].scrollIntoView({behavior: 'smooth', block:'center'}))
+      nextTick().then(()=>segmentationRefs.value[event.index].scrollIntoView({block:'center' }))
 
     }
 
@@ -75,10 +74,23 @@ export default defineComponent({
       let currentIndex = index
       const topic = 0
       const previousTopic = topics[currentIndex]
+      deleteTopic(previousTopic)
       do {
         topics[currentIndex] = topic
         currentIndex++
       } while (previousTopic == topics[currentIndex])
+    }
+
+    const activateTopic = ({ index }:{index: number})=>{
+        let currentIndex = index
+        const topic = newTopic()
+        createTopic({ id: topic, labels: [] })
+        do {
+          topics[currentIndex] = topic
+          currentIndex++
+        }while(topics[currentIndex] == 0 )
+
+
     }
 
     const createBreak = (index: number) => {
@@ -180,6 +192,7 @@ export default defineComponent({
       handleSegmentation,
       handleSegmentClick,
       deactivateTopic,
+      activateTopic,
       jumpToTopic,
     }
 
