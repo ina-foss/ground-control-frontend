@@ -1,16 +1,16 @@
 <template>
-  <div v-if="showInput" class="w-[130px]">
-    <AutoComplete v-model="value" :suggestions="items" multiple @before-hide="showInput=false"  @complete="search" class="w-[100px]" >
-      <template #option="slotProps">
-          <div class="flex items-center">
-              <div>{{ slotProps.option.label }}</div>
-          </div>
-      </template>
-    </AutoComplete>
+  <div v-if="indexPlugin<3" class="flex sticky pr-3">
+
+      <MultiSelect v-model="selectedItems" :options="options" optionLabel="label" filter :placeholder="pluginName"
+                   :maxSelectedLabels="1" class="w-[120px] " >
+    <template #option="slotProps">
+      <div class="flex items-center">
+        <div>{{ slotProps.option.label }}</div>
+      </div>
+    </template>
+      </MultiSelect>
   </div>
-  <div v-else>
-    <Button text severity="contrast" icon="pi pi-bookmark" @click="showInput = true" />
-  </div>
+
 </template>
 
 <script lang="ts" src="./atom-plugin-autocomplete-component">

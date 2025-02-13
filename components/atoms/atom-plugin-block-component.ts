@@ -40,7 +40,7 @@ export default defineComponent({
           break;
       }
     }
-
+    provide('chipList', chipList);
 
     return {
       config,
