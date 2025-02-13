@@ -27,6 +27,9 @@
                 <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
               </div>
               <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" />
+              <div>
+                <Button  icon="pi pi-ellipsis-h" severity="contrast" text/>
+              </div>
             </div>
             <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
               <div
