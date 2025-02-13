@@ -21,14 +21,15 @@
                 <InputText v-model="editedTitle" @focusout="editTitle = false"  />
               </div>
               <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8    "  >
-                <div :class="`h-8 p-3  w-fit flex items-center mb-3  `">
-                  <b>{{ title }}</b>
+                <div :class="`h-8 pt-3 pb-3 pl-3  w-fit flex items-center mb-3  `"
+                     style="word-break: break-word; white-space: pre-line;" v-tooltip.bottom="{ value: title, showDelay: 400,class:'single-line-tooltip' }">
+                  <b>{{ truncateText(title) }}</b>
                 </div>
                 <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
               </div>
               <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" />
               <div>
-                <Button  icon="pi pi-ellipsis-h" severity="contrast" text/>
+                <Button  icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true"/>
               </div>
             </div>
             <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
@@ -123,13 +124,22 @@ topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 const editedTitle = ref(null)
 const ruptureTemplate = ref()
 const comment = ref(null)
+const dialogVisible = ref(false);
 const title = computed(()=>{
   if(isTopicFirstSegment.value){
     return editedTitle.value ? editedTitle.value : 'Topic '+ topicIndex.value
   }
   else return null
 })
+function truncateText(text) {
+    if (!text) return "";
 
+    if (text.length <= 20) return text;
+    let firstPart = text.slice(0, 20);
+    let secondPart = text.slice(20, 40);
+
+    return text.length > 40 ? `${firstPart}\n${secondPart}...` : `${firstPart}\n${secondPart}`;
+}
 function startDrag(event: DragEvent) {
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
@@ -370,5 +380,10 @@ img { /* svg on an img tag */
 .over:hover .rupture {
   @apply flex
 }
-
+.single-line-tooltip {
+  white-space: nowrap !important;
+  max-width: none !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>
