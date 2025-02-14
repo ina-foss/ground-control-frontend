@@ -1,7 +1,7 @@
 <template>
   <div id="PLAYER" ref="myplayer" class="rounded-t-lg h-auto aspect-video w-full overflow-hidden" @click="seek()"/>
   <div class="w-full flex justify-center rounded-lg ">
-    <Button icon="pi pi-history" severity="secondary" :disabled="!showRollback"  rounded  @click="consumeTimecode()"/>
+    <Button icon="pi pi-history" severity="secondary" :disabled="!showRollback"  rounded  @click="handleRewindTimecode()"/>
   </div>
 </template>
 
@@ -20,30 +20,23 @@ let dynamicTumbnails = ref()
 const { locals, videoSrc,media_params } = defineProps(['locals', 'video-src','media_params'])
 const emits = defineEmits(['timecode-update']);
 const {timestampToUnix, unixToTimestamp} = $application
+const {getHistory, consumeTimecode} = useTimecodeHistory()
 async function fetchVideoStream(url) {
   const response = await fetch(url);
   const videoHls = response.text();
   return videoHls;
 }
 
-const timecodeHistory : Ref<[]> | undefined = inject('timecode-history')
+const timecodeHistory = getHistory
 
 const showRollback =  computed(()=>{
   return timecodeHistory.value.length > 0
 })
 
-function consumeTimecode(index?:any) {
-  if(timecodeHistory){
-    if(index != undefined){
-      timecodeHistory.value.splice(index+1,timecodeHistory.value.length-index-1)
-    }
-    else{
-      timecodeHistory.value.pop() // remove last timecode
-    }
-    const tc = timecodeHistory.value[timecodeHistory.value.length-1] // use the new last timecode to update the player
+function handleRewindTimecode(index?:any) {
+    const tc = consumeTimecode(index)
     $amalia.updateCurrentTc(unixToTimestamp(tc))
     seek(true)
-  }
 }
 
 const hlsPlayer = async () => {
@@ -90,7 +83,7 @@ const seek = async (fromHistory?: boolean) => {
     emits('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: fromHistory   }) // emit both times to scroll and adapt css
     lastIndex = bestIndex
 }}
-defineExpose({ seek,consumeTimecode });
+defineExpose({ seek,consumeTimecode: handleRewindTimecode });
 
 onMounted(async ()=>{
   await Promise.all([hlsPlayer(), thumbnailPlayer()]);
