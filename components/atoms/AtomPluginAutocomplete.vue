@@ -2,7 +2,7 @@
   <div v-if="indexPlugin<3" class="flex sticky pr-3">
 
       <MultiSelect v-model="selectedItems" :options="options" optionLabel="label" filter :placeholder="pluginName"
-                   :maxSelectedLabels="1" class="w-[120px] " >
+                   :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-[120px] " >
     <template #option="slotProps">
       <div class="flex items-center">
         <div>{{ slotProps.option.label }}</div>
