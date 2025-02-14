@@ -57,7 +57,7 @@ export default defineComponent({
       () => chipList.value,
       (newVal) => {
         const itemsChiplistPlugin = chipList.value.filter(item => item.plugin_id === plugin.value.id);
-        if (itemsChiplistPlugin.length < selectedItems.value.length) {
+        if (itemsChiplistPlugin.length < selectedItems?.value?.length) {
           selectedItems.value.forEach((item) => {
             const existsInChiplist = itemsChiplistPlugin.some(chipItem => chipItem.id === item.id);
             if (!existsInChiplist) {
