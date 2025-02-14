@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-row">
     <component v-for="(plugin, index) in config" :is="selectComponent(plugin)?.component"
       v-bind="selectComponent(plugin)?.props" :plugin="plugin" :index="index" />
 
