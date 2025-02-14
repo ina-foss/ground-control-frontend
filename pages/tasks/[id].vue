@@ -42,6 +42,7 @@ onBeforeRouteLeave((to,from,next)=>{
 })
 
 await fetchAnnotations(route.params.id)
+console.log(route.query.email)
 
 
 const annotation_bool = reactive({
@@ -50,7 +51,7 @@ const annotation_bool = reactive({
 })
 const annotations_out = ref([])
 const annotations_in = ref([])
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,userEmail.value, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,route.query.email ?? userEmail.value, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
 AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
 
 
@@ -62,7 +63,7 @@ const annotationInfo = computed(() => {
   let info = null
   if (annotations_out.value) {
     annotations_out.value.forEach((annotation, index) => {
-      if (annotation.user_email == userEmail.value) {
+      if (annotation.user_email == userEmail.value || annotation.user_email == route.query.email) {
         info = {index: index, id: annotation.id}
       }
     })

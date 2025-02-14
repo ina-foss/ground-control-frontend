@@ -7,6 +7,7 @@ import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
 import AtomTopicList from "~/components/atoms/AtomTopicList.vue";
+import { AnnotationStatus } from '~/api/generate';
 
 
 export default defineComponent({
@@ -17,9 +18,10 @@ export default defineComponent({
     result: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
-    locals: {type: Array, default: ()=> []}
+    locals: {type: Array, default: ()=> []},
+    state: {type: AnnotationStatus},
   },
-  setup({ colors, topics, locals , result}, { emit, expose }) {
+  setup({ colors, topics, locals , result, state}, { emit, expose }) {
 
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData } = useTopicList()
@@ -27,8 +29,10 @@ export default defineComponent({
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
+    const isAnnotationEditable = state != AnnotationStatus.ENDED && !useRoute().query.email
 
     const handleSegmentation = (event) => {
+      if(!isAnnotationEditable) return
       window.onbeforeunload = function () {
         return confirm("You didn't saved your progression")
       }
@@ -71,6 +75,7 @@ export default defineComponent({
     })
 
     const deactivateTopic = ({ index }:{index: number}) => {
+      if(!isAnnotationEditable) return
       let currentIndex = index
       const topic = 0
       const previousTopic = topics[currentIndex]
@@ -189,6 +194,7 @@ export default defineComponent({
       dragging,
       filteredLocals,
       segmentationRefs,
+      isAnnotationEditable,
       handleSegmentation,
       handleSegmentClick,
       deactivateTopic,

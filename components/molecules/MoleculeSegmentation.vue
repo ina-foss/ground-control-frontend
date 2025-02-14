@@ -1,5 +1,6 @@
 <template>
   <div :class="`col-span-5 w-full flex justify-center relative transition-all`"  >
+    <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center font-bold gap-1 justify-center top-[-30px]" v-html="useRoute().query.email ? `<p>Tâche annotée par<p><span class='px-2 py-1 bg-primary text-white font-bold rounded-md'>${useRoute().query.email}</span>` : 'Tâche Terminée ✅' " ></span>
     <div :class="`${options.timecode_segment ? 'w-full' : 'w-fit'} relative  justify-center flex flex-row  h-0 min-h-full transition-all`">
     <div class="h-full  left-0 top-0 transition-all  ">
       <AtomProgressBar class="xs:sticky top-0 transition-all"  :colors="colors" :topics="topics" :topicList="topicList" :totalLength="locals.length" @progress-bar-jump="jumpToTopic($event)" />
@@ -34,8 +35,8 @@
           :topics="topics"
           :topicList="topicList"
           :segmentationRefs="segmentationRefs"
-          @dragging-start="dragging.start = $event.index"
-          @dragging-end="dragging.end = $event.index"
+          @dragging-start="(event) => { if(isAnnotationEditable) dragging.start = event.index}"
+          @dragging-end="(event) => { if(isAnnotationEditable) dragging.end = event.index}"
           @segmentation="handleSegmentation"
           @on-segment-click="handleSegmentClick($event)"
           @deactivate-topic="deactivateTopic"
