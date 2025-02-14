@@ -134,6 +134,7 @@
                     v-for="(annotation, index) in nestedData.annotations" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
                     shape="circle" style="background-color:#0057FF;color: white;font-weight: 500;height:24px;width:24px"
+                    @click="handleRowClick(annotation.user_email)"
                     :style="{ backgroundColor: getColorForAnnotation(annotation.annotation_status) }"/>
                 </div>
               </template>
@@ -163,7 +164,7 @@
 </template>
 
 
-<script setup>
+<script setup lang="ts">
 
 import _ from 'lodash';
 import {ref} from 'vue';
@@ -315,9 +316,12 @@ function triggerDownload(data, name) {
   window.URL.revokeObjectURL(url);
 }
 
-const navigateToTask = (id) => {
+const navigateToTask = (id: number, email?: string) => {
   navigateTo({
-    path: `/tasks/${id}`
+    path: `/tasks/${id}`,
+    query: {
+      email: email
+    }
   })
 }
 
@@ -328,10 +332,13 @@ const stepCreate = (stepId) => {
   dialogVisible.value = true
 }
 
+let email_clicked
 const handleRowClick = (event) => {
+
+  if(typeof event == 'string') email_clicked = event
   clickedRowData.value = event.data;
 
-  if (editMode.value === false) navigateToTask(clickedRowData.value.id)
+  if (editMode.value === false) navigateToTask(clickedRowData.value.id,email_clicked)
 
 }
 

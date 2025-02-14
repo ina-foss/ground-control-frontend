@@ -1,7 +1,7 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
-    :class="`bg-gray-300 transition-colors group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    :class="`bg-gray-300 ${index == 0 ? '!mt-0': ''}  transition-all group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
     <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[32px] w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
@@ -41,8 +41,8 @@
       </div>
     </div>
     <OverlayBadge v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
-                  :class="`overflow-visible !absolute opacity-0 group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'} right-[4px]`">
-      <Button class="hover:!bg-primary hover:!border-primary" @click="toggleComment">
+                  :class="`overflow-visible !absolute    z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'} right-[4px]`">
+      <Button class="!bg-primary !border-primary"  @click="toggleComment">
         <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
       </Button>
     </OverlayBadge>
