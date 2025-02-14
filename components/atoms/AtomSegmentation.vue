@@ -17,15 +17,15 @@
               </div>
             </Tag>
             <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex flex-col w-full">
-              <div class="flex items-center  justify-start h-full  " >
+              <div class="flex items-center  justify-start h-full " >
                 <div v-if="editTitle">
                   <InputText v-model="editedTitle" @focusout="editTitle = false" />
                 </div>
-                <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8    ">
-                  <div :class="`h-8 pt-3 pb-3 pl-3  w-fit flex items-center mb-3  `"
+                <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8  flex-shrink-1  ">
+                  <div :class="`h-8 pt-3 pb-3 pl-3  w-fit flex items-center mb-3 truncate max-w-[150px]  `"
                     style="word-break: break-word; white-space: pre-line;"
                     v-tooltip.bottom="{ value: title, showDelay: 400, class: 'single-line-tooltip' }">
-                    <b>{{ truncateText(title) }}</b>
+                    <b class="truncate">{{title }}</b>
                   </div>
                   <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
                 </div>
@@ -34,6 +34,7 @@
                 <div>
                   <Button icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" />
                 </div>
+                <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
               </div>
               <div v-if=" chipList.length > 0 " class="px-2 py-1 border-dashed border border-black">
                 <Chip v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" removable
@@ -105,6 +106,7 @@ import AtomPluginBlock from './AtomPluginBlock.vue';
 import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
 import { remove } from 'lodash'
+import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
 
 const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick', 'deactivateTopic','dragging-start','dragging-end'])
