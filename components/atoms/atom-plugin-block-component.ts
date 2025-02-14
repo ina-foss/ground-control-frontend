@@ -10,21 +10,18 @@ export default defineComponent({
   components:{AtomPluginAutocomplete,AtomPluginLabel},
   props: {
     topicIndex: {type: Number},
-    isTopicFirstSegment: {type: Boolean}
+    isTopicFirstSegment: {type: Boolean},
   },
   async setup(props, {emit}){
     const { topicList} = useTopicList()
-    const chipList = ref([]);
     const {topicIndex,isTopicFirstSegment} = toRefs(props)
 
+    const chipList = inject('chipList');
     const config = inject('plugin-config')
     const pluginItemsConfig = inject('plugin-items-config')
     onMounted(()=>{
       chipList.value = topicList.value[topicIndex.value]?.labels || [];
     })
-    function handleRemove(index){
-      remove(topicList.value[topicIndex.value]?.labels ,(el)=>chipList.value[index] == el)
-    }
 
     function selectComponent(pluginConfig) {
       const itemlist=pluginItemsConfig.value
@@ -40,13 +37,11 @@ export default defineComponent({
           break;
       }
     }
-    provide('chipList', chipList);
 
     return {
       config,
       selectComponent,
       chipList,
-      handleRemove,
       pluginItemsConfig
 
     }
