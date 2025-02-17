@@ -3,7 +3,7 @@
   <Dialog
       :visible="dialogVisible"
       modal
-      :style="{ width: '30%'}"
+      :style="{ width: '50%',height:'50%'}"
       class="bg-white"
       @after-hide="deleteDialog = false"
       @update:visible="emits('toggle-dialog')">
@@ -23,8 +23,8 @@
     </template>
     <div>
 
-      <div class="row">
-        <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"  />
+      <div>
+        <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :source="dialogVisible" />
       </div>
 
     </div>
@@ -49,7 +49,4 @@ const { dialogVisible, phrase, title, topicIndex, isTopicFirstSegment } = toRefs
 const emits = defineEmits(['toggle-dialog'])
 const deleteDialog = ref(false)
 const { $application } = useService()
-
-console.log(topicIndex)
-console.log(isTopicFirstSegment)
 </script>

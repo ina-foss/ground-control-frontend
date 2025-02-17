@@ -11,10 +11,11 @@ export default defineComponent({
   props: {
     topicIndex: {type: Number},
     isTopicFirstSegment: {type: Boolean},
+    source:{type: Boolean}
   },
   async setup(props, {emit}){
     const { topicList} = useTopicList()
-    const {topicIndex,isTopicFirstSegment} = toRefs(props)
+    const {topicIndex,isTopicFirstSegment,source} = toRefs(props)
 
     const chipList = inject('chipList');
     const config = inject('plugin-config')
@@ -33,7 +34,7 @@ export default defineComponent({
         })
       switch (pluginConfig.type) {
         case 'autocomplete':
-          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:itemlist, chipList: chipList } }
+          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:itemlist,source:source, chipList: chipList  } }
         case 'label':
           return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:pluginItemsConfig } }
         default:
