@@ -20,7 +20,10 @@ export default defineComponent({
     const config = inject('plugin-config')
     const pluginItemsConfig = inject('plugin-items-config')
     onMounted(()=>{
-      chipList.value = topicList.value[topicIndex.value]?.labels || [];
+      chipList.value = topicList.value[topicIndex.value]?.labels ;
+      watch(()=>topicIndex.value,(newTopic,oldTopic)=>{
+        chipList.value = topicList.value[newTopic]?.labels;
+      })
     })
 
     function selectComponent(pluginConfig) {
@@ -30,7 +33,7 @@ export default defineComponent({
         })
       switch (pluginConfig.type) {
         case 'autocomplete':
-          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:itemlist } }
+          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:itemlist, chipList: chipList } }
         case 'label':
           return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:pluginItemsConfig } }
         default:
