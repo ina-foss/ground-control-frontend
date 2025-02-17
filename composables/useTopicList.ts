@@ -52,6 +52,7 @@ export function useTopicList() {
   function copyTopicData(from: number, to:number){
     if( topicList.value[to] != undefined && topicList.value[from]!=undefined ) {
         topicList.value[to].title = topicList.value[from].title
+        topicList.value[to].labels = topicList.value[from].labels.map(label => ({ ...label }))
     }
   }
 

@@ -22,15 +22,17 @@ export default defineComponent({
   setup({ colors, topics, locals , result}, { emit, expose }) {
 
     const { $application } = useService()
-    const { topicList, deleteTopic, createTopic, fusionTopicData } = useTopicList()
+    const { topicList, deleteTopic, createTopic, fusionTopicData, copyTopicData } = useTopicList()
     const { computeColor } = $application
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
 
     const handleSegmentation = (event) => {
-      window.onbeforeunload = function () {
-        return confirm("You didn't saved your progression")
+      if(window.onbeforeunload == null) {
+        window.onbeforeunload = function () {
+          return confirm("You didn't saved your progression")
+        }
       }
 
       if (topics[event.index] == topics[event.index + 1]) {
@@ -85,6 +87,7 @@ export default defineComponent({
       const topic = newTopic()
       const topTopic = topics[currentIndex]
       createTopic({ id: topic, labels: [] })
+      copyTopicData(topTopic,topic)
       do {
         topics[currentIndex] = topic
         currentIndex--
