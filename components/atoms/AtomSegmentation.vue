@@ -2,14 +2,15 @@
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
     :class="`bg-gray-300 transition-colors group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
-    <div v-if="isTopicFirstSegment" ref="firstSegmentPadding" :class="`flex  justify-center items-center h-[40px] sticky top-0  w-fit`">
+    <div v-if="isTopicFirstSegment" ref="firstSegmentPadding" :class="`flex transition-all  justify-center items-center h-[40px] sticky top-0  w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
       class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
-      <div ref="topicHeader" :class="`w-full sticky top-0 min-h-[54px] h-fit left-0 bg-neutral rounded-t-lg pointer-events-auto z-50 `">
-        <div class="w-full flex h-full justify-between p-sm  rounded-t-lg "
+      <div ref="topicHeader" :class="`w-full sticky top-0 min-h-[54px] h-fit left-0 bg-neutral rounded-t-lg pointer-events-auto z-50 transition-all `">
+        <div class="w-full flex h-full  p-sm  rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
-          <div class="flex flew-row items-center w-full">
+          <div class="flex flex-col w-full gap-2">
+          <div class="flex flew-row items-center justify-between w-full">
             <Tag v-if="options.timecode_bloc" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
@@ -36,10 +37,10 @@
                 </div>
                 <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
               </div>
-              <div v-if=" chipList.length > 0 " class="px-2 py-1 border-dashed border border-black">
-                <Chip v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" removable
-                  v-on:remove="handleRemove(index)" />
-              </div>
+              <!-- <div v-if=" chipList.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  "> -->
+              <!--   <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" removable -->
+              <!--     v-on:remove="handleRemove(index)" /> -->
+              <!-- </div> -->
             </div>
             <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
               <div
@@ -47,9 +48,14 @@
                 <b>Ignoré</b>
               </div>
             </div>
-          </div>
           <Button v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
           <Button v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
+          </div>
+              <div v-if=" chipList.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
+                <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" removable
+                  v-on:remove="handleRemove(index)" />
+              </div>
+          </div>
         </div>
       </div>
     </div>
@@ -142,7 +148,7 @@ const title = computed(()=>{
   else return null
 })
 
-const chipList = ref([]);
+const chipList = ref(topicList[topicIndex.value]?.labels || []);
 const topicHeader = ref<HTMLDivElement>()
 const firstSegmentPadding = ref<HTMLDivElement>()
 
@@ -153,10 +159,8 @@ const firstSegmentPadding = ref<HTMLDivElement>()
 onMounted(()=>{
 watch(()=>chipList.value.length,async (value)=>{
     await nextTick()
-    console.log(value)
-    console.log(topicHeader.value?.getBoundingClientRect().height)
   if(isTopicFirstSegment.value && firstSegmentPadding.value){
-      firstSegmentPadding.value.style.height = topicHeader.value?.getBoundingClientRect().height-20  +'px'
+      firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
   }
 })
 })
