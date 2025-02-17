@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row">
     <component v-for="(plugin, index) in config" :is="selectComponent(plugin)?.component"
-      v-bind="selectComponent(plugin)?.props" :plugin="plugin" :index="index" />
+      v-bind="selectComponent(plugin)?.props" :plugin="plugin" :index="index" :source="source"/>
 
   </div>
 </template>
