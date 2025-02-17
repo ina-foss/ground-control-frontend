@@ -33,6 +33,8 @@ export default defineComponent({
 
 
 
+
+
     const handleSegmentation = (event) => {
       if(!isAnnotationEditable) return
       window.onbeforeunload = function () {
