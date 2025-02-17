@@ -140,7 +140,7 @@
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction"/>
-            <Column >
+            <Column v-if="isAdmin" >
               <template #body="{data: nestedData}">
                 <div class="flex justify-end px-4">
                   <Button label="Supprimer" severity="danger" outlined @click="deleteTask(nestedData.id)"/>
@@ -175,6 +175,7 @@ import {useRefreshStore} from '../stores/refresh';
 const route = useRoute()
 const refreshStore = useRefreshStore()
 const toast = useToast()
+const { $application } = useService()
 
 const {getProject} = storeToRefs(refreshStore)
 const {fetchTasks} = refreshStore
@@ -189,6 +190,7 @@ const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
 
+const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 const expandedRows = ref()
 
