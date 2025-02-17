@@ -140,10 +140,10 @@
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction"/>
-            <Column >
+            <Column v-if="isAdmin" >
               <template #body="{data: nestedData}">
                 <div class="flex justify-end px-4">
-                  <Button label="Supprimer" severity="danger" outlined @click="deleteTask(nestedData.id)"/>
+                  <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
                 </div>
               </template>
             </Column>
@@ -153,6 +153,14 @@
       </template>
 
     </DataTable>
+
+    <Dialog v-model:visible="deleteModal.visible" :header="`Voulez vous supprimer la tâche ${ deleteModal.data.name?.slice(0,17) != deleteModal.data.name ? deleteModal.data.name?.slice(0,17) +'...' : deleteModal.data.name }  ? `"  modal @hide="hideDeleteTaskModal()">
+      <div class="h-fit w-full flex flex-row justify-end gap-2  ">
+          <Button label="Annuler" severity="secondary" text @click="hideDeleteTaskModal()"/>
+          <Button type="button" label="Supprimer" severity="danger" :loading="deleteModal.loading" icon="pi pi-times" @click="deleteTask(deleteModal.data.id)" />
+      </div>
+    </Dialog>
+
     <Dialog v-model:visible="visible" modal @hide="visible = false">
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>
@@ -175,11 +183,13 @@ import {useRefreshStore} from '../stores/refresh';
 const route = useRoute()
 const refreshStore = useRefreshStore()
 const toast = useToast()
+const { $application } = useService()
 
 const {getProject} = storeToRefs(refreshStore)
 const {fetchTasks} = refreshStore
 
 const dialogVisible = ref(false)
+const deleteModal = reactive({visible: false, data: {},loading:false})
 const visible = ref(false)
 const dialogContent = ref('')
 const clickedRowData = ref(null)
@@ -189,6 +199,7 @@ const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
 
+const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 const expandedRows = ref()
 
@@ -224,8 +235,20 @@ const translations = {
   ended: 'Terminé'
 }
 
+const showDeleteTaskModal = (rowData)=>{
+  deleteModal.loading = false
+  deleteModal.visible = true
+  deleteModal.data= rowData
+}
+
+const hideDeleteTaskModal = () => {
+  deleteModal.visible = false
+  deleteModal.data= {}
+}
+
 const deleteTask = (task_id) => {
-  TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> fetchTasks(route.params.id))
+  deleteModal.loading = true
+  TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> fetchTasks(route.params.id)).then(()=> hideDeleteTaskModal())
 }
 
 const translatedAnnotationStatus =(annotation_status)=> {
