@@ -27,7 +27,6 @@ export default defineComponent({
     const multiSelectRef = ref(null);
     // rouvrir le dropdown dès qu'il se ferme
     const keepDropdownOpen = () => {
-      debugger
       nextTick(() => {
         if (multiSelectRef.value) {
           multiSelectRef.value.overlayVisible = true;
@@ -113,7 +112,9 @@ export default defineComponent({
       if(source.value){
         nextTick(() => {
           if (multiSelectRef.value) {
-            multiSelectRef.value.overlayVisible = true;
+            setTimeout(()=>{
+              multiSelectRef.value.overlayVisible = true;
+            },200)
           }
         });
       }
