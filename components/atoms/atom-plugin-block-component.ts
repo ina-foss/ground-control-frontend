@@ -10,21 +10,22 @@ export default defineComponent({
   components:{AtomPluginAutocomplete,AtomPluginLabel},
   props: {
     topicIndex: {type: Number},
-    isTopicFirstSegment: {type: Boolean}
+    isTopicFirstSegment: {type: Boolean},
+    source:{type: Boolean}
   },
   async setup(props, {emit}){
     const { topicList} = useTopicList()
-    const chipList = ref([]);
-    const {topicIndex,isTopicFirstSegment} = toRefs(props)
+    const {topicIndex,isTopicFirstSegment,source} = toRefs(props)
 
+    const chipList = inject('chipList');
     const config = inject('plugin-config')
     const pluginItemsConfig = inject('plugin-items-config')
     onMounted(()=>{
-      chipList.value = topicList.value[topicIndex.value]?.labels || [];
+      chipList.value = topicList.value[topicIndex.value]?.labels ;
+      watch(()=>topicIndex.value,(newTopic,oldTopic)=>{
+        chipList.value = topicList.value[newTopic]?.labels;
+      })
     })
-    function handleRemove(index){
-      remove(topicList.value[topicIndex.value]?.labels ,(el)=>chipList.value[index] == el)
-    }
 
     function selectComponent(pluginConfig) {
       const itemlist=pluginItemsConfig.value
@@ -33,7 +34,7 @@ export default defineComponent({
         })
       switch (pluginConfig.type) {
         case 'autocomplete':
-          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:itemlist } }
+          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:itemlist,source:source, chipList: chipList  } }
         case 'label':
           return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:pluginItemsConfig } }
         default:
@@ -41,12 +42,10 @@ export default defineComponent({
       }
     }
 
-
     return {
       config,
       selectComponent,
       chipList,
-      handleRemove,
       pluginItemsConfig
 
     }
