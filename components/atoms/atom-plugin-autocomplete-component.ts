@@ -113,7 +113,9 @@ export default defineComponent({
       if(source.value){
         nextTick(() => {
           if (multiSelectRef.value) {
-            multiSelectRef.value.overlayVisible = true;
+            setTimeout(()=>{
+              multiSelectRef.value.overlayVisible = true;
+            },200)
           }
         });
       }

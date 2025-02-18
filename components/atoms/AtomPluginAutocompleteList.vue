@@ -3,7 +3,7 @@
   <Dialog
       :visible="dialogVisible"
       modal
-      :style="{ width: '50%',height:'50%'}"
+      :style="{ width: '50%',height:'fit'}"
       class="bg-white"
       @after-hide="deleteDialog = false"
       @update:visible="emits('toggle-dialog')">
