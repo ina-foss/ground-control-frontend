@@ -9,9 +9,8 @@
     </template>
       </MultiSelect>
   </div>
-  <div v-if="source" class="flex w-full pr-3">
-    {{indexPlugin}}
-    <div @click.self="$emit('closeModal')"> <!-- Permet la fermeture du modal -->
+  <div v-if="source" class="  h-[300px] ">
+    <div class="w-full flex justify-center" @click.self="$emit('closeModal')"> <!-- Permet la fermeture du modal -->
       <!-- MultiSelect dans une div qui bloque les clics sur le dropdown -->
       <div class="relative" @click="preventDropdownClick">
         <MultiSelect
