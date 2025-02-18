@@ -27,9 +27,11 @@ export default defineComponent({
     const multiSelectRef = ref(null);
     // rouvrir le dropdown dès qu'il se ferme
     const keepDropdownOpen = () => {
+      nextTick(() => {
         if (multiSelectRef.value) {
           multiSelectRef.value.overlayVisible = true;
         }
+      });
     };
 
     // Empêche le clic sur l'élément qui ouvre/ferme la liste
@@ -113,7 +115,9 @@ export default defineComponent({
       if(source.value){
         nextTick(() => {
           if (multiSelectRef.value) {
-            multiSelectRef.value.overlayVisible = true;
+            setTimeout(()=>{
+              multiSelectRef.value.overlayVisible = true;
+            },200)
           }
         });
       }
