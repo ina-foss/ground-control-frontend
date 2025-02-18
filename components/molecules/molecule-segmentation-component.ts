@@ -29,7 +29,8 @@ export default defineComponent({
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
-    const isAnnotationEditable = state != AnnotationStatus.ENDED && !useRoute().query.email
+    const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+    const isAnnotationEditable = state != AnnotationStatus.ENDED && (isAdmin.value && !useRoute().query.email || !isAdmin.value)
 
 
 
