@@ -1,5 +1,5 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class="flex sticky pr-3">
+  <div v-if="indexPlugin<2 && !source" class="flex sticky pr-3">
       <MultiSelect v-model="selectedItems" :options="options" optionLabel="label" filter :placeholder="pluginName"
                    :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-[120px] " :panelClass="'w-auto max-w-[200px]'"> >
     <template #option="slotProps">
@@ -10,7 +10,6 @@
       </MultiSelect>
   </div>
   <div v-if="source" class="flex w-full pr-3">
-    {{indexPlugin}}
     <div @click.self="$emit('closeModal')"> <!-- Permet la fermeture du modal -->
       <!-- MultiSelect dans une div qui bloque les clics sur le dropdown -->
       <div class="relative" @click="preventDropdownClick">
