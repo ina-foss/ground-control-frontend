@@ -27,12 +27,9 @@ export default defineComponent({
     const multiSelectRef = ref(null);
     // rouvrir le dropdown dès qu'il se ferme
     const keepDropdownOpen = () => {
-      debugger
-      nextTick(() => {
         if (multiSelectRef.value) {
           multiSelectRef.value.overlayVisible = true;
         }
-      });
     };
 
     // Empêche le clic sur l'élément qui ouvre/ferme la liste
@@ -85,6 +82,9 @@ export default defineComponent({
             }
 
           })
+        }
+        else{
+          selectedItems.value = chipList.value.filter(item => item.plugin_id === plugin.value.id);
         }
       },
       {

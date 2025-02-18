@@ -32,15 +32,7 @@
                 </div>
                 <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"
                   :chipList="chipList" />
-                <div>
-                  <Button icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" />
                 </div>
-                <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
-              </div>
-              <!-- <div v-if=" chipList.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  "> -->
-              <!--   <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" removable -->
-              <!--     v-on:remove="handleRemove(index)" /> -->
-              <!-- </div> -->
             </div>
             <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
               <div
@@ -48,8 +40,12 @@
                 <b>Ignoré</b>
               </div>
             </div>
-          <Button v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
-          <Button v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
+            <div>
+              <Button icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" />
+            </div>
+            <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
+            <Button v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+            <Button v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
           </div>
               <div v-if=" chipList.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
                 <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" removable
