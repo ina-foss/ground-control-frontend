@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-3 ">
+  <div :class="{'grid grid-cols-3': source ,'flex  justify-start':!source }">
     <component v-for="(plugin, index) in config" :is="selectComponent(plugin)?.component"
       v-bind="selectComponent(plugin)?.props" :plugin="plugin" :index="index" :source="source"/>
 

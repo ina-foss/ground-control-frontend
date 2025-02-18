@@ -10,38 +10,38 @@
         <div class="w-full flex h-full  p-sm  rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flex-col w-full gap-2">
-          <div class="flex flew-row items-center justify-between w-full">
+          <div class="flex flew-row items-center justify-between w-full max-w-full" >
             <Tag v-if="options.timecode_bloc" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
                 <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
               </div>
             </Tag>
-            <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex flex-col w-full">
+            <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex flex-col grow  justify-between truncate ">
               <div class="flex items-center  justify-start h-full " >
                 <div v-if="editTitle">
                   <InputText v-model="editedTitle" @focusout="editTitle = false" />
                 </div>
-                <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8  flex-shrink-1  ">
-                  <div :class="`h-8 pt-3 pb-3 pl-3  w-fit flex items-center mb-3 truncate max-w-[150px]  `"
-                    style="word-break: break-word; white-space: pre-line;"
+                <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex gap-2 h-8 shrink truncate  ">
+                  <div :class="`h-full pl-3 truncate  flex items-center    `"
                     v-tooltip.bottom="{ value: title, showDelay: 400, class: 'single-line-tooltip' }">
-                    <b class="truncate">{{title }}</b>
+
+                      <p class="truncate"> {{title }} </p>
+
                   </div>
-                  <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
+                  <Button class="min-w-[33px] " icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
                 </div>
                 <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"
                   :chipList="chipList" />
+                <Button class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" />
                 </div>
+                <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
             </div>
             <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
               <div
                 :class="`h-8 p-3  w-fit flex items-center mb-3 text-${textColorPicker(computeColor(topicIndex).hex)} `">
                 <b>Ignoré</b>
               </div>
-            </div>
-            <div>
-              <Button icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" />
             </div>
             <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
 
