@@ -7,6 +7,7 @@ import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
 import AtomTopicList from "~/components/atoms/AtomTopicList.vue";
+import { AnnotationStatus } from '~/api/generate';
 
 
 export default defineComponent({
@@ -17,9 +18,10 @@ export default defineComponent({
     result: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
-    locals: {type: Array, default: ()=> []}
+    locals: {type: Array, default: ()=> []},
+    state: {type: AnnotationStatus},
   },
-  setup({ colors, topics, locals , result}, { emit, expose }) {
+  setup({ colors, topics, locals , result, state}, { emit, expose }) {
 
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData } = useTopicList()
@@ -27,10 +29,30 @@ export default defineComponent({
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
+    const isAnnotationEditable = state != AnnotationStatus.ENDED && !useRoute().query.email
+
+
+
+
 
     const handleSegmentation = (event) => {
+      if(!isAnnotationEditable) return
       window.onbeforeunload = function () {
         return confirm("You didn't saved your progression")
+      }
+
+      const referenceDiv = segmentationRefs.value[event.index] // Get the HTML element of the div where your create/break the topic
+      const initialYPosition = referenceDiv.getBoundingClientRect().top // Get the vertical position of this div
+      const scrollerHtml = segmentationRefs.value[event.index].parentElement
+      let animationFrameId // Identify each animation frame
+
+      const adjustScroll = () =>{
+        const newRect = referenceDiv.getBoundingClientRect();
+        const newY = newRect.top;
+        const scrollOffset = newY - initialYPosition;
+        scrollerHtml.scrollBy(0, scrollOffset);
+        // Continue the loop
+        animationFrameId = requestAnimationFrame(adjustScroll);
       }
 
       if (topics[event.index] == topics[event.index + 1]) {
@@ -39,7 +61,19 @@ export default defineComponent({
       else {
         removeBreak(event.index)
       }
-      nextTick().then(()=>segmentationRefs.value[event.index].scrollIntoView({block:'center' }))
+
+      // Start callback loop on each frame
+      animationFrameId = requestAnimationFrame(adjustScroll)
+
+      referenceDiv.addEventListener('transitionend', function onTransitionEnd(event) {
+          // Filter the animation related to rupture
+          if (event.propertyName === 'margin-top' || event.propertyName === 'background-color' ) {
+              // Stop the animation loop
+              cancelAnimationFrame(animationFrameId);
+              // Remove the event listener after it has been triggered
+              referenceDiv.removeEventListener('transitionend', onTransitionEnd);
+          }
+      });
 
     }
 
@@ -60,7 +94,7 @@ export default defineComponent({
             start --
             }
           }
-        }
+      }
         dragging.start = null
         dragging.end = null
       }
@@ -71,6 +105,7 @@ export default defineComponent({
     })
 
     const deactivateTopic = ({ index }:{index: number}) => {
+      if(!isAnnotationEditable) return
       let currentIndex = index
       const topic = 0
       const previousTopic = topics[currentIndex]
@@ -189,6 +224,7 @@ export default defineComponent({
       dragging,
       filteredLocals,
       segmentationRefs,
+      isAnnotationEditable,
       handleSegmentation,
       handleSegmentClick,
       deactivateTopic,

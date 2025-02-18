@@ -12,10 +12,12 @@
         show-clear
       />
     </div>
-    <div ref="dashboardRef" class="p-3 grid gap-6 lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 grow   ">
+    <div class="grow">
+    <div ref="dashboardRef" class="p-3 grid gap-6  max-h-full  lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
       <MoleculeProjectCard
         v-for="(project,index) in filteredProjects " :key="index" :project=project
         @refresh-data="handleRefresh"/>
+    </div>
     </div>
     <div class="w-full h-fit">
       <Paginator

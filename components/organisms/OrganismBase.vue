@@ -1,6 +1,6 @@
 <template>
   <div
-v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationStatus"
+v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationStatus && !useRoute().query.email && allFetched"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
     <Button  class="mr-4" outlined label="Soumettre"  @click="handleSubmit()"/>
     <Button class="button-overwrite"
@@ -8,37 +8,47 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
       @click="handleFinish()"
     />
   </div>
-  <div v-if=" !allFetched ">
-    <div class="grid grid-cols-9  ">
-      <div class="col-span-3 h-screen  bg-surface-700 gap-3 px-5 py-5">
+    <div v-if=" !allFetched " class="grid grid-cols-10 h-0 min-h-full " >
+      <div class="col-span-3 h-full pl-5 gap-3 ">
         <Skeleton
 :pt="{
           root: {
              style: 'height: auto'
           }
-        }"  class="aspect-video"/>
+        }"  class="aspect-video !rounded-t-lg !rounded-b-none"/>
         <Skeleton class="m-3" height="3rem" width="70%" />
         <Skeleton height="500px" />
       </div>
-      <div class=" p-4 flex flex-row w-full gap-5 justify-center col-span-5">
+      <div class=" p-4 flex flex-row w-full gap-5 justify-center col-span-5  ">
         <Skeleton  height="100%" width="28px" />
-      <div class="flex flex-col w-full gap-5 col-span-5">
-          <Skeleton height="150px" />
-          <Skeleton height="100px"/>
-          <Skeleton height="70px" />
-          <Skeleton height="150px"/>
-          <Skeleton height="75px"/>
+      <div class=" flex flex-col w-fit gap-5 !justify-center overflow-auto h-0 min-h-full">
+          <Skeleton height="90px" width="700px" />
+          <Skeleton height="100px" width="700px"/>
+          <Skeleton height="70px"  width="700px"/>
+          <Skeleton height="150px" width="700px"/>
+          <Skeleton height="75px" width="700px"/>
+          <Skeleton height="90px" width="700px" />
+          <Skeleton height="100px" width="700px"/>
+          <Skeleton height="70px"  width="700px"/>
+          <Skeleton height="75px" width="700px"/>
         </div>
       </div>
+    <div class="col-span-2 h-full w-full ">
+      <div class="w-[300px] flex flex-col gap-3">
+        <Skeleton height="50px" />
+        <Skeleton height="50px" />
+        <Skeleton height="50px" />
+        <Skeleton height="110px" />
+      </div>
     </div>
-  </div>
-  <div v-else class="h-full" >
+    </div>
+  <div v-else class="h-full">
     <Toast />
     <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs :data="data"/>
       </MoleculeAnnotationLeftPanel>
-      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" />
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" :state="annotationsOut[annotationInfo?.index]?.annotation_status" />
     </div>
   </div>
 </template>
@@ -58,6 +68,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
+  const {addTimecodeHistory} = useTimecodeHistory()
   const { unixToTimestamp, timestampToUnix } = $application
   const{setTcOffset}= useTcOffset()
 
@@ -95,12 +106,11 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const annotationStatus = AnnotationStatus.ENDED
   const config = ref(null)
   const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
-  const timecodeHistory = ref([])
   let bestIndex = 0
   const annotationInfo = computed< {index: number, id: number} | null>(() => {
     if (!allFetched) return null;
     return annotationsOut.reduce<{index: number, id: number} | null>((info, annotation, index) => {
-      if (annotation.user_email === userEmail.value) {
+      if (annotation.user_email == userEmail.value || annotation.user_email == useRoute().query.email) {
         return { index, id: annotation.id };
       }
       return info;
@@ -175,11 +185,6 @@ const algos = computed(() => { // List the name of the algorithm
   }
   return res
 })
-
-  function addTimecodeHistory (tc?: any){
-    if(timecodeHistory.value.length == 0 || timecodeHistory.value[timecodeHistory.value.length-1] != tc) timecodeHistory.value.push(tc)
-
-  }
 
 
   const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
@@ -345,7 +350,6 @@ const annotationComponent = computed(() => {
 
   provide('plugin-items-config', configItemPlugin)
 
-  provide('timecode-history', timecodeHistory)
 
   provide('data',data)
 
