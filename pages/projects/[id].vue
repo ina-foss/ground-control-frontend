@@ -141,7 +141,7 @@
             </Column>
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction">
               <template #body="{ data: nestedData }">
-                <AtomMarkdown :content="nestedData.instruction" />
+                <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
               </template>
             </Column>            <Column v-if="isAdmin" >
               <template #body="{data: nestedData}">
@@ -204,8 +204,11 @@ const buttonMenu = ref()
 const selectedRow = ref()
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
-
-const expandedRows = ref()
+const getFirstLine = (markdownText) => {
+  if (!markdownText) return "";
+  return markdownText.split("\n")[0] ;
+};
+  const expandedRows = ref()
 
 const editMode = ref(false)
 const data = ref(getProject)

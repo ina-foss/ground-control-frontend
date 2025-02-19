@@ -1,6 +1,5 @@
 <template>
-  <div v-safe-html="parsedMarkdown" class="markdown-content"></div>
-
+  <div v-safe-html="parsedMarkdown" class="prose dark:prose-invert prose-sm prose-h1:text-sm prose-p:text-sm prose-a:text-sm prose-lg w-full m-0"></div>
 </template>
 
 <script>
@@ -20,22 +19,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.markdown-content h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-.markdown-content p {
-  line-height: 1.6;
-  color: #555;
-}
-.markdown-content a {
-  color: #007bff;
-  text-decoration: none;
-}
-.markdown-content a:hover {
-  text-decoration: underline;
-}
-</style>
