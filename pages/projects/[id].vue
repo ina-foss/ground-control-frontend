@@ -139,8 +139,11 @@
                 </div>
               </template>
             </Column>
-            <Column class="txt" body-class="text-sm" field="instruction" header="Instruction"/>
-            <Column v-if="isAdmin" >
+            <Column class="txt" body-class="text-sm" field="instruction" header="Instruction">
+              <template #body="{ data: nestedData }">
+                <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
+              </template>
+            </Column>            <Column v-if="isAdmin" >
               <template #body="{data: nestedData}">
                 <div class="flex justify-end px-4">
                   <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
@@ -179,6 +182,7 @@ import {ref} from 'vue';
 import {AnnotationService, AnnotationStatus, StepStatus, TaskService} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
+import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
@@ -200,8 +204,11 @@ const buttonMenu = ref()
 const selectedRow = ref()
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
-
-const expandedRows = ref()
+const getFirstLine = (markdownText) => {
+  if (!markdownText) return "";
+  return markdownText.split("\n")[0] ;
+};
+  const expandedRows = ref()
 
 const editMode = ref(false)
 const data = ref(getProject)

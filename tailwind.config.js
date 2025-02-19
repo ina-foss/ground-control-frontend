@@ -1,5 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 import { extendConfig } from './node_modules/@ina/kit-ui/src/tailwindExtend.ts'
+import typography from "@tailwindcss/typography";
+
+
 
 export default {
   content: [],
@@ -40,6 +43,6 @@ export default {
       '2xl': '1536px',
     }
   },
-  plugins: [],
+  plugins: [typography],
 }
 
