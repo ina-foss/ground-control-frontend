@@ -1,12 +1,12 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
-    :class="`bg-gray-300 transition-colors group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    :class="`bg-gray-300 transition-all ${index == 0 ? '!mt-0': ''}  group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
     <div v-if="isTopicFirstSegment" ref="firstSegmentPadding" :class="`flex transition-all  justify-center items-center h-[40px] sticky top-0  w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
       class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
-      <div ref="topicHeader" :class="`w-full sticky top-0 min-h-[54px] h-fit left-0 bg-neutral rounded-t-lg pointer-events-auto z-50 transition-all `">
+      <div ref="topicHeader" :class="`w-full sticky top-[-1px] min-h-[54px] h-fit left-0 bg-secondary rounded-t-lg pointer-events-auto z-50 transition-all `">
         <div class="w-full flex h-full  p-sm  rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flex-col w-full gap-2">
@@ -17,16 +17,16 @@
                 <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
               </div>
             </Tag>
-            <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex flex-col grow  justify-between truncate ">
+            <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex flex-col grow  justify-between text-ellipsis  line-clamp-2  ">
               <div class="flex items-center  justify-start h-full " >
                 <div v-if="editTitle">
                   <InputText v-model="editedTitle" @focusout="editTitle = false" />
                 </div>
-                <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex gap-2 h-8 shrink truncate  ">
-                  <div :class="`h-full pl-3 truncate  flex items-center    `"
+                <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex gap-2 h-full items-center shrink text-ellipsis  line-clamp-2   ">
+                  <div :class="`h-full pl-3 text-ellipsis  line-clamp-2 flex `"
                     v-tooltip.bottom="{ value: title, showDelay: 400, class: 'single-line-tooltip' }">
 
-                      <p class="truncate"> {{title }} </p>
+                      <p  class="text-ellipsis font-bold line-clamp-2"> {{title }} </p>
 
                   </div>
                   <Button class="min-w-[33px] " icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
