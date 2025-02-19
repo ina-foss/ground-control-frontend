@@ -153,22 +153,17 @@ const firstSegmentPadding = ref<HTMLDivElement>()
     }
 
 onMounted(()=>{
+  watch(()=>topics,()=>{
+    computeTopicHeight()
+  },{deep:true})
 watch(()=>chipList.value.length,async (value)=>{
     await nextTick()
-  if(isTopicFirstSegment.value && firstSegmentPadding.value){
-      firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
-  }
+    if(isTopicFirstSegment.value && firstSegmentPadding.value){
+        firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
+        setTimeout(()=>computeTopicHeight(),300)
+    }
 })
 })
-function truncateText(text) {
-    if (!text) return "";
-
-    if (text.length <= 20) return text;
-    let firstPart = text.slice(0, 20);
-    let secondPart = text.slice(20, 40);
-
-    return text.length > 40 ? `${firstPart}\n${secondPart}...` : `${firstPart}\n${secondPart}`;
-}
 function startDrag(event: DragEvent) {
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
