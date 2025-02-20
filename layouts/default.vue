@@ -1,5 +1,6 @@
 <template>
   <div class="h-screen max-h-screen flex flex-col">
+    <Toast class="!top-[60px]"/>
     <MoleculeHeader />
     <div class="flex flex-col flex-grow">
       <div class="h-fit"> <!-- Assuming the breadcrumbs have a height of 70px (16rem) -->
