@@ -29,7 +29,7 @@
                       <p  class="text-ellipsis font-bold line-clamp-2"> {{title }} </p>
 
                   </div>
-                  <Button class="min-w-[33px] " icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
+                  <Button class="min-w-[33px] " :disabled="!isAnnotationEditable" icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
                 </div>
                 <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"
                   :chipList="chipList" />
@@ -43,28 +43,30 @@
             </div>
             <Button v-if="topicIndex !== 0" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" />
             <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
-            <Button v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
-            <Button v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
+            <Button :disabled="!isAnnotationEditable" v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+            <Button :disabled="!isAnnotationEditable" v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
           </div>
               <div v-if=" chipList.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
-                <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" removable
+                <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" :removable="isAnnotationEditable"
                   v-on:remove="handleRemove(index)" />
               </div>
           </div>
         </div>
       </div>
     </div>
+    <div ref="commentWrapper"  :class="`absolute  ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'}  right-[4px]`" >
     <OverlayBadge v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
-                  :class="`overflow-visible !absolute    z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'} right-[4px]`">
+                  :class="`overflow-visible  z-[60] !transition !duration-500 $  `">
       <Button class="!bg-primary !border-primary"  @click="toggleComment">
         <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
       </Button>
     </OverlayBadge>
-    <Button v-else
-      :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
+    <Button v-else-if="isAnnotationEditable"
+      :class="`  opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500  `"
       @click="toggleComment" >
       <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
     </Button>
+    </div>
     <div
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
@@ -78,7 +80,7 @@
       <div
         :class="`absolute z-50 w-full ${ !isTopicsLastSegment ? 'top-[-10px]' : '' }  left-[-10px] h-6 over pointer-events-auto cursor-pointer`"
         @click="handleSegmentation">
-        <div ref="ruptureTemplate"
+        <div ref="ruptureTemplate" v-if="isAnnotationEditable"
           :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`">
           <i v-if="!isTopicsLastSegment || topicIndex == undefined"
             class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 " />
@@ -142,9 +144,12 @@ const title = computed(()=>{
   }
   else return null
 })
+const isAnnotationEditable = inject('isAnnotationEditable')
+console.log(isAnnotationEditable)
 
 const chipList = ref(topicList[topicIndex.value]?.labels || []);
 const topicHeader = ref<HTMLDivElement>()
+const commentWrapper = ref<HTMLDivElement>()
 const firstSegmentPadding = ref<HTMLDivElement>()
 
     function handleRemove(index){
@@ -159,6 +164,7 @@ watch(()=>chipList.value.length,async (value)=>{
     await nextTick()
     if(isTopicFirstSegment.value && firstSegmentPadding.value){
         firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
+        commentWrapper.value.style.top = topicHeader.value?.getBoundingClientRect().height + 'px'
         setTimeout(()=>computeTopicHeight(),300)
     }
 })
