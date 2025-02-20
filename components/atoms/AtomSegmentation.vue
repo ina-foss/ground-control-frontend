@@ -145,7 +145,6 @@ const title = computed(()=>{
   else return null
 })
 const isAnnotationEditable = inject('isAnnotationEditable')
-console.log(isAnnotationEditable)
 
 const chipList = ref(topicList[topicIndex.value]?.labels || []);
 const topicHeader = ref<HTMLDivElement>()
