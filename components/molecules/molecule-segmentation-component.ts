@@ -31,6 +31,7 @@ export default defineComponent({
     const { options } = storeToRefs(useOptions())
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = state != AnnotationStatus.ENDED && (isAdmin.value && !useRoute().query.email || !isAdmin.value)
+    provide('isAnnotationEditable',isAnnotationEditable)
 
 
 
