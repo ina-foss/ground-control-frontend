@@ -10,7 +10,7 @@
             <AccordionContent class="!border-transparent ">
               <div class="flex-col">
 
-                <div v-if="comments?.length != 0" class="overflow-y-clip overflow-x-hidden mb-3 min-h-fit h-[125px] w-full">
+            <div v-if="comments?.length != 0" :class="{'overflow-y-clip overflow-x-hidden mb-3 w-full h-fit':true, '!h-[125px]': comments?.length >3}">
                   <ScrollPanel class="h-full" :dt="{
       bar : {
         background: 'var(--primary-color)',
@@ -58,7 +58,8 @@
                 <!--List Messages-->
                 <!--List Messages-->
                 <!-- input Message-->
-                <div class="font-semibold text-xs mb-3">
+                <div v-if="isAnnotationEditable">
+                <div  class="font-semibold text-xs mb-3" >
                   Nouveau commentaire
                 </div>
                 <div class="flex flex-col gap-[10px]">
@@ -73,6 +74,7 @@
                   </div>
                 </div>
                 <!-- input Message-->
+                </div>
               </div>
             </AccordionContent>
           </AccordionPanel>
@@ -91,6 +93,7 @@ const refresh = useRefreshStore()
 const {userEmail} = useAuth()
 const comments = ref<TaskCommentDto[] | null>(null)
 const {getData} = refresh
+const isAnnotationEditable = inject('isAnnotationEditable')
 
 onMounted(async () => {
   comments.value = getData.task_comments
