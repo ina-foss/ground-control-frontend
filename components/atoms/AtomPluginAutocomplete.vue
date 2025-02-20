@@ -1,6 +1,6 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit  ">
-      <MultiSelect v-model="selectedItems" :options="options" optionLabel="label" filter :placeholder="pluginName"
+  <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
+      <MultiSelect :disabled="!isAnnotationEditable" v-model="selectedItems" :options="options" optionLabel="label" filter :placeholder="pluginName"
                    :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-fit " :panelClass="'w-auto max-w-[200px]'"> >
     <template #option="slotProps">
       <div class="flex items-center">

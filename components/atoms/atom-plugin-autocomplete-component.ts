@@ -20,6 +20,7 @@ export default defineComponent({
     const indexPlugin = index.value;
     const selectedItems = ref();
     const options = ref();
+    const isAnnotationEditable = inject('isAnnotationEditable')
     const pluginName = computed(() => {
       return plugin.value.name || "";
     });
@@ -37,7 +38,7 @@ export default defineComponent({
 
     watch(selectedItems, (newValue) => {
       updateValueFromSelectedItems();
-      if (chipList.value) {
+      if (chipList.value ) {
         const searchedSelectedItems = chipList.value.filter(item => item.plugin_id === plugin.value.id);
         if (searchedSelectedItems.length < selectedItems.value.length) {
           if (value.value.length > 0) {
@@ -115,6 +116,7 @@ export default defineComponent({
       pluginName,
       indexPlugin,
       source,
+      isAnnotationEditable,
       keepDropdownOpen,
       multiSelectRef,
     }
