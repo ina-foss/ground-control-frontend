@@ -1,5 +1,5 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
+  <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit  ">
       <MultiSelect v-model="selectedItems" :options="options" optionLabel="label" filter :placeholder="pluginName"
                    :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-fit " :panelClass="'w-auto max-w-[200px]'"> >
     <template #option="slotProps">
@@ -10,9 +10,8 @@
       </MultiSelect>
   </div>
   <div v-if="source" class="  h-[300px] ">
-    <div class="w-full flex justify-center" @click.self="$emit('closeModal')"> <!-- Permet la fermeture du modal -->
-      <!-- MultiSelect dans une div qui bloque les clics sur le dropdown -->
-      <div class="relative" @click="preventDropdownClick">
+    <div class="w-full flex justify-center" @click.self="$emit('closeModal')">
+      <div class="relative custom-multiselect">
         <MultiSelect
           ref="multiSelectRef"
           v-model="selectedItems"
@@ -23,9 +22,10 @@
           :placeholder="pluginName"
           :maxSelectedLabels="0"
           :selectedItemsLabel="pluginName"
-          class="w-[280px] pointer-events-none"
-        :panelClass="'w-[280px] min-w-[280px]'"
-        @before-hide="keepDropdownOpen"
+          class="w-[280px] pointer-events-none always-open"
+          :panelClass="' w-[280px] min-w-[280px] '"
+          aria-labelledby="custom-multiselect-label"
+          @hide=" keepDropdownOpen();"
         >
         <template #option="slotProps">
           <div class="flex items-center">
@@ -42,3 +42,12 @@
 <script lang="ts" src="./atom-plugin-autocomplete-component">
 
 </script>
+<style>
+/* Forcer l'affichage de la liste */
+.custom-multiselect .p-multiselect-panel {
+  display: block !important;
+  position: static !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+</style>
