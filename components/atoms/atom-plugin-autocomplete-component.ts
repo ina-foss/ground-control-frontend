@@ -10,13 +10,13 @@ export default defineComponent({
     plugin: {},
     pluginItemsConfig: {},
     index: {},
-    source:{}
+    source: {}
   },
   emits: ['add-to-chiplist'],
   async setup(props, {emit}) {
     const value = ref([]);
     const {topicList} = useTopicList()
-    const {topicIndex, plugin, pluginItemsConfig, index,source} = toRefs(props)
+    const {topicIndex, plugin, pluginItemsConfig, index, source} = toRefs(props)
     const indexPlugin = index.value;
     const selectedItems = ref();
     const options = ref();
@@ -25,20 +25,9 @@ export default defineComponent({
     });
     const chipList = inject('chipList');
     const multiSelectRef = ref(null);
-    // rouvrir le dropdown dès qu'il se ferme
     const keepDropdownOpen = () => {
-      nextTick(() => {
-        if (multiSelectRef.value) {
-          multiSelectRef.value.overlayVisible = true;
-        }
-      });
-    };
-
-    // Empêche le clic sur l'élément qui ouvre/ferme la liste
-    const preventDropdownClick = (event) => {
-      event.stopPropagation();
-      event.preventDefault();
-    };
+      multiSelectRef.value.overlayVisible = true;
+    }
 
     function updateValueFromSelectedItems() {
       if (selectedItems.value && selectedItems.value.length > 0) {
@@ -84,8 +73,7 @@ export default defineComponent({
             }
 
           })
-        }
-        else{
+        } else {
           selectedItems.value = chipList.value.filter(item => item.plugin_id === plugin.value.id);
         }
       },
@@ -112,14 +100,12 @@ export default defineComponent({
       if (chipList.value && plugin.value?.id) {
         selectedItems.value = chipList.value.filter(item => item.plugin_id === plugin.value.id);
       }
-      if(source.value){
-        nextTick(() => {
-          if (multiSelectRef.value) {
-            setTimeout(()=>{
-              multiSelectRef.value.overlayVisible = true;
-            },200)
-          }
-        });
+      if (source.value) {
+        if (multiSelectRef.value) {
+          setTimeout(() => {
+            multiSelectRef.value.overlayVisible = true;
+          }, 200)
+        }
       }
     });
     return {
@@ -131,7 +117,6 @@ export default defineComponent({
       source,
       keepDropdownOpen,
       multiSelectRef,
-      preventDropdownClick
     }
   }
 })
