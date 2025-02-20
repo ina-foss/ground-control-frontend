@@ -1,5 +1,4 @@
 <template>
-  <Toast/>
   <Dialog
     :visible="dialogVisible"
     modal

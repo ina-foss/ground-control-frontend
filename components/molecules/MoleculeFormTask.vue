@@ -134,7 +134,6 @@
       </StepPanel>
       </StepPanels>
     </Stepper>
-    <Toast/>
   </Dialog>
 </template>
 
