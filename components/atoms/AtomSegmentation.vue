@@ -33,7 +33,6 @@
                 </div>
                 <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"
                   :chipList="chipList" />
-                <Button class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" :disabled="!isAnnotationEditable" />
                 </div>
                 <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
             </div>
@@ -43,6 +42,7 @@
                 <b>Ignoré</b>
               </div>
             </div>
+            <Button v-if="topicIndex !== 0" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" :disabled="!isAnnotationEditable" />
             <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
             <Button :disabled="!isAnnotationEditable" v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
             <Button :disabled="!isAnnotationEditable" v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
