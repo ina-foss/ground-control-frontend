@@ -48,23 +48,25 @@
     </div>
   </div>
     <div class=" max-h-full flex flex-col col-span-2">
-      <div class="flex-grow h-0 overflow-y-clip pb-1" >
-          <ScrollPanel class="h-full pr-3" :dt="{
-      bar : {
-        background: 'var(--primary-color)',
-        size:'3px'
-      },
-      barY:{
-        style : 'right: 10px;'
-        }
-    }">
-        <div class="max-h-full  max-w-full w-[300px] flex flex-col items-center gap-3">
-              <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
-              <atom-video-option />
-              <AtomTaskComment />
-              <AtomTopicList class="mb-2" :colors="colors" :topics="topics" @topic-click="jumpToTopic"/>
+      <div class="flex-grow h-0" >
+        <div class="h-full  max-w-full  flex flex-col items-center gap-3 ">
+            <Tabs value="topics" class="max-w-full  grow !h-0 !max-h-full">
+              <TabList  >
+                <Tab value="topics"  >Topics</Tab>
+                <Tab value="parameters">Paramètres</Tab>
+              </TabList>
+              <TabPanels class="!bg-secondary !px-0 grow !h-fit !max-h-[calc(100%-47px)]   !pb-2">
+                <TabPanel class="max-w-full w-[320px] h-full max-h-full  flex  flex-col items-center gap-3" value="topics">
+                  <AtomTopicList class="mb-3" :colors="colors" :topics="topics" @topic-click="jumpToTopic"/>
+                </TabPanel>
+                <TabPanel value="parameters" class="max-w-full w-[320px] flex flex-col items-center gap-3">
+                  <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
+                  <atom-video-option />
+                  <AtomTaskComment />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
             </div>
-          </ScrollPanel>
       </div>
     </div>
 </template>
