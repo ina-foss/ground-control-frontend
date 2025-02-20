@@ -1,7 +1,7 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit  ">
+  <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
       <MultiSelect v-model="selectedItems" :options="options" optionLabel="label" filter :placeholder="pluginName"
-                   :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-[120px] " :panelClass="'w-auto max-w-[200px]'"> >
+                   :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-fit " :panelClass="'w-auto max-w-[200px]'"> >
     <template #option="slotProps">
       <div class="flex items-center">
         <div>{{ slotProps.option.label }}</div>
@@ -18,13 +18,14 @@
           v-model="selectedItems"
           :options="options"
           optionLabel="label"
+          display="chip"
           filter
           :placeholder="pluginName"
           :maxSelectedLabels="0"
           :selectedItemsLabel="pluginName"
           class="w-[280px] pointer-events-none"
         :panelClass="'w-[280px] min-w-[280px]'"
-        @hide="keepDropdownOpen"
+        @before-hide="keepDropdownOpen"
         >
         <template #option="slotProps">
           <div class="flex items-center">
