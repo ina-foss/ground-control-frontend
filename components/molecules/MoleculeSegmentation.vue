@@ -47,10 +47,10 @@
     </div>
     </div>
   </div>
-    <div class=" max-h-full flex flex-col col-span-2">
+  <div class=" max-h-full flex flex-col col-span-2">
       <div class="flex-grow h-0" >
         <div class="h-full  max-w-full  flex flex-col items-center gap-3 ">
-            <Tabs value="topics" class="max-w-full  grow !h-0 !max-h-full">
+          <Tabs value="topics" class="max-w-full  grow !h-0 !max-h-full">
               <TabList  >
                 <Tab value="topics"  >Topics</Tab>
                 <Tab value="parameters">Paramètres</Tab>

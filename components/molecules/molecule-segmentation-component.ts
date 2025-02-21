@@ -33,10 +33,6 @@ export default defineComponent({
     const isAnnotationEditable = state != AnnotationStatus.ENDED && (isAdmin.value && !useRoute().query.email || !isAdmin.value)
     provide('isAnnotationEditable',isAnnotationEditable)
 
-
-
-
-
     const handleSegmentation = (event) => {
       if(!isAnnotationEditable) return
       if(window.onbeforeunload == null) {
@@ -234,7 +230,7 @@ export default defineComponent({
       handleSegmentClick,
       deactivateTopic,
       activateTopic,
-      jumpToTopic,
+      jumpToTopic
     }
 
 

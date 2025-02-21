@@ -43,6 +43,8 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
     </div>
     </div>
   <div v-else class="h-full">
+    <Toast />
+    <AtomSearch class=" right-10 absolute flex items-center top-[75px] z-[5]" @click="getSegments()" :list="listRefsTest" @find-span="handleFocusSpan" @unselect="handleSelection" />
     <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs :data="data"/>
@@ -64,6 +66,9 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   import { useService } from "#imports";
   import MoleculeTabs from "../molecules/MoleculeTabs.vue";
   import {useTcOffset} from "~/composables/useTcOffset";
+  import AtomSearch from "../atoms/AtomSearch.vue";
+  import AtomSpan from "~/components/atoms/AtomSpan.vue";
+  import {createApp} from "vue/dist/vue";
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
@@ -71,6 +76,8 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const { unixToTimestamp, timestampToUnix } = $application
   const{setTcOffset}= useTcOffset()
 
+  type AtomSpanType = InstanceType<typeof AtomSpan>
+  const spanRefArray = ref<[]>([])
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
     data: {
       type: Object,
@@ -91,7 +98,23 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
 
   })
 
+  const handleFocusSpan = ({ index }) => {
 
+
+  }
+  const handleSelection = (spanArg: any) => {
+
+  }
+  const listRefsTest = ref([]);
+  const getSegments = () : HTMLDivElement => {
+    let listRefsTest = moleculeAnnotationRef.value?.listRefs
+    return listRefsTest
+  }
+  watch(() => allFetched, (newValue) => {
+    if (newValue && moleculeAnnotationRef.value?.listRefs) {
+      console.log("listRefs mis à jour :", moleculeAnnotationRef.value.listRefs);
+    }
+  });
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
