@@ -6,9 +6,10 @@ export default defineComponent({
   emits: ['find-span','unselect'],
   props: {
     spans: { type: Array, default: () => [] },
-    labels: { type: Array, default: () => []}
+    labels: { type: Array, default: () => []},
+    list: { type: Array, default: () => []}// props
   },
-  setup({spans}, { emit }){
+  setup({spans,labels,list}, { emit }){
 
     const searchInterface : Ref<boolean> = ref(false)
     const selectedSearch = ref()
@@ -33,6 +34,7 @@ export default defineComponent({
     }
 
     function invertInterface  ()  {
+      //afficher la zone de text a chercher
       searchInterface.value = !searchInterface.value
     }
 
@@ -52,17 +54,24 @@ export default defineComponent({
     })
 
     watch(()=>selectedSearch.value,(value)=> {
-      if( value &&  value != ''){
-        selectedSpan.value = []
-        spans.forEach(span  => {
-          const spanDom : HTMLElement | null = document.querySelector(`[tcin="${span.tcin}"]`)
-          if(spanDom?.innerText.includes(selectedSearch.value)){
-            selectedSpan.value.push(spanDom)
-          }
-        });
-        searchIndex.value = 0
+      debugger
+      console.log(labels.value)
+      console.log(list)
+      if(labels) {
+        if (value && value != '') {
+          selectedSpan.value = []
+          spans.forEach(span => {
+            const spanDom: HTMLElement | null = document.querySelector(`[tcin="${span.tcin}"]`)
+            if (spanDom?.innerText.includes(selectedSearch.value)) {
+              selectedSpan.value.push(spanDom)
+            }
+          });
+          searchIndex.value = 0
+        } else selectedSpan.value = []
       }
-      else selectedSpan.value = []
+      else {
+
+      }
     })
     return{
       selectedSpan,
@@ -71,7 +80,8 @@ export default defineComponent({
       searchInterface,
       invertInterface,
       downIndex,
-      upIndex
+      upIndex,
+      list,
     }
   }
 })

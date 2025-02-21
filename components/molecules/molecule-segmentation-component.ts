@@ -34,10 +34,6 @@ export default defineComponent({
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = inject('isAnnotationEditable')
 
-
-
-
-
     const handleSegmentation = (event) => {
       if(!isAnnotationEditable) return
       if(window.onbeforeunload == null) {
@@ -232,7 +228,7 @@ export default defineComponent({
       handleSegmentClick,
       deactivateTopic,
       activateTopic,
-      jumpToTopic,
+      jumpToTopic
     }
 
 
