@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[300px] border-gray-100 rounded-lg border shadow-lg p-4 bg-white  flex flex-col">
+  <div class="w-full border-gray-100 rounded-lg border shadow-lg p-4 bg-white  flex flex-col">
     <div class="w-full">
       <b>Result</b>
       <Divider

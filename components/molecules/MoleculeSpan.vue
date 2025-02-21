@@ -1,6 +1,6 @@
 <template>
-  <div :class="` col-span-4 flex flex-col overflow-y-auto     `">
-    <div class=" h-[40px]  mt-1 flex justify-between px-xl z-50 bg-neutral sticky top-0">
+  <div :class="` col-span-5 flex flex-col h-full `">
+    <div class=" h-[40px]   flex justify-between px-xl z-50    ">
       <div class=" flex items-center gap-5 overflow-hidden relative">
         <SelectButton v-model="labelSelected" multiple  :options="labels" aria-labelledby="basic" >
         <template #option="slotProps"  >
@@ -21,6 +21,14 @@
       </div>
     <AtomSearch :spans="spanRefArray" :labels="labels" @find-span="handleFocusSpan" @unselect="handleSelection" />
     </div>
+    <div class="grow h-0 flex justify-center ">
+    <ScrollPanel class="h-full pr-2 overflow-x-visible "
+      :dt="{
+      bar : {
+        background: 'var(--primary-color)',
+        size:'4px',
+      },
+    }">
     <div v-if="options.bloc" ref="blockArray">
       <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="handleSelection"  />
     </div>
@@ -32,14 +40,28 @@
           {{ word.data.text[0] }}
       </div>
     </div>
+    </ScrollPanel>
+</div>
   </div>
   <div class="  overflow-y-auto flex flex-col items-center  gap-10 col-span-2">
-    <AtomSpanOption v-model:span="options.span" v-model:timecode-bloc="options.timecode_bloc" v-model:bloc="options.bloc" />
-    <atom-video-option />
-    <AtomSpanDetail
-:relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
-      @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
-      @focus-span="handleFocusSpan" />
+            <Tabs value="span" class="max-w-full  grow !h-0 !max-h-full">
+              <TabList  >
+                <Tab value="span"  >Topics</Tab>
+                <Tab value="parameters">Paramètres</Tab>
+              </TabList>
+              <TabPanels class="!bg-secondary !px-0  !h-fit !max-h-[calc(100%-47px)]   !pb-2">
+                <TabPanel value="span" class="max-w-full w-[320px] h-full max-h-full  flex  flex-col items-center gap-3"  >
+                  <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
+                    @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
+                    @focus-span="handleFocusSpan" />
+                </TabPanel>
+                <TabPanel value="parameters" class="max-w-full w-[320px] flex flex-col items-center gap-3">
+                  <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
+                  <atom-video-option />
+                  <AtomTaskComment />
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
   </div>
 </template>
 
