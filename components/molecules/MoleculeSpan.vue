@@ -1,6 +1,6 @@
 <template>
-  <div :class="` col-span-5 flex flex-col h-full `">
-    <div class=" h-[40px]   flex justify-between px-xl z-50    ">
+  <div :class="` col-span-5 flex flex-col h-full relative `">
+    <div class=" h-[40px]  flex justify-between px-xl z-50 absolute top-[-40px]  w-full  ">
       <div class=" flex items-center gap-5 overflow-hidden relative">
         <SelectButton v-model="labelSelected" multiple  :options="labels" aria-labelledby="basic" >
         <template #option="slotProps"  >
