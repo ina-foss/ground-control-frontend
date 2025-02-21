@@ -43,7 +43,6 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
     </div>
     </div>
   <div v-else class="h-full">
-    <Toast />
     <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs :data="data"/>
