@@ -8,11 +8,12 @@ import AtomSpanDetail from "~/components/atoms/AtomSpanDetail.vue";
 import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
 import AtomSearch from "~/components/atoms/AtomSearch.vue";
 import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";
+import AtomTaskComment from "../atoms/AtomTaskComment.vue";
 import atomVideoOption from '../atoms/atom-video-option.vue';
 
 export default defineComponent({
   name: "MoleculeSpan",
-  components: {AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption},
+  components: {AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption,AtomTaskComment},
   emits: ['on-segment-click'],
   setup(props, { emit, expose }) {
 
@@ -25,6 +26,7 @@ export default defineComponent({
     const blockArray = ref<HTMLDivElement|null>(null)
     const listSegment = computed(() => blockArray.value?.children)
     const {locals} = inject('span')
+    const isAnnotationEditable = inject('isAnnotationEditable')
 
     const aggregatedLocals = computed(() => {
       const result : any = []
@@ -380,6 +382,7 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
       handleFocusSpan,
       handleSelection,
       blockArray,
+      isAnnotationEditable,
       AtomTranscriptionSpan,
       AtomSearch,
       filteredLocal,
