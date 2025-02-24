@@ -19,7 +19,7 @@
           </div>
         </div>
       </div>
-    <AtomSearch :spans="spanRefArray" :labels="labels" @find-span="handleFocusSpan" @unselect="handleSelection" />
+    <AtomSearch :spans="spanRefArray" :labels="labels" @find-element="handleFocusSpan" @unselect="handleSelection" />
     </div>
     <div v-if="options.bloc" ref="blockArray">
       <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="handleSelection"  />

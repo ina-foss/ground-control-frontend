@@ -3,17 +3,18 @@ import _ from "lodash"
 
 export default defineComponent({
   name:"AtomSearch",
-  emits: ['find-span','unselect'],
+  emits: ['find-element','unselect'],
   props: {
     spans: { type: Array, default: () => [] },
     labels: { type: Array, default: () => []},
     list: { type: Array, default: () => []}// props
   },
-  setup({spans,labels,list}, { emit }){
+  setup(props, { emit }){
 
     const searchInterface : Ref<boolean> = ref(false)
     const selectedSearch = ref()
-    const selectedSpan : Ref<Array<HTMLElement>> = ref([])
+    const selectedSpan : Ref<Array<any>> = ref([])
+    const {spans,labels,list} = toRefs(props)
     const searchIndex: Ref<number> = ref(0)
 
     const upIndex = () =>{
@@ -29,7 +30,7 @@ export default defineComponent({
 
     const correspondingSpan = (searchIndex: number): any  =>{
       const tcin = selectedSpan.value[searchIndex].getAttribute('tcin')
-      const spanRef = _.find(spans, (span: any)=> span.tcin == tcin)
+      const spanRef = _.find(spans.value, (span: any)=> span.tcin == tcin)
       return spanRef
     }
 
@@ -38,29 +39,36 @@ export default defineComponent({
       searchInterface.value = !searchInterface.value
     }
 
-    watch(()=>selectedSpan.value,(array)=>{
-      if( array.length > 0 ){
-        setTimeout(()=>array[searchIndex.value]?.scrollIntoView({behavior: 'smooth'}),100)
-        emit('find-span',{index: correspondingSpan(searchIndex.value).id})
+    watch(() => selectedSpan.value, (array) => {
+      if (array.length > 0) {
+        const spanId = correspondingSpan(searchIndex.value)?.id
+        if (spanId) {
+          setTimeout(() => array[searchIndex.value]?.scrollIntoView({ behavior: 'smooth' }), 100)
+          emit('find-element', { index: spanId })
+        } else {
+          emit('find-element', { div: array[searchIndex.value] })
+        }
       }
       else emit('unselect')
     })
 
-    watch(()=>searchIndex.value,(index)=>{
-      if( selectedSpan.value.length > 0 ){
-        setTimeout(()=> selectedSpan.value[index]?.scrollIntoView({behavior: 'smooth'}),100)
-        emit('find-span',{index: correspondingSpan(index).id})
+    watch(() => searchIndex.value, (index) => {
+      if (selectedSpan.value.length > 0) {
+        const spanId = correspondingSpan(searchIndex.value)?.id
+        if (spanId) {
+          setTimeout(() => selectedSpan.value[index]?.scrollIntoView({ behavior: 'smooth' }), 100)
+          emit('find-element', { div: spanId })
+        } else {
+          emit('find-element', { div: selectedSpan.value[index] })
+        }
       }
     })
 
     watch(()=>selectedSearch.value,(value)=> {
-      debugger
-      console.log(labels.value)
-      console.log(list)
-      if(labels) {
+      if(labels.value.length != 0) {
         if (value && value != '') {
           selectedSpan.value = []
-          spans.forEach(span => {
+          spans.value.forEach(span => {
             const spanDom: HTMLElement | null = document.querySelector(`[tcin="${span.tcin}"]`)
             if (spanDom?.innerText.includes(selectedSearch.value)) {
               selectedSpan.value.push(spanDom)
@@ -70,7 +78,10 @@ export default defineComponent({
         } else selectedSpan.value = []
       }
       else {
-
+        if (value && value != '') {
+          selectedSpan.value = []
+          selectedSpan.value =  list.value.filter((el: HTMLDivElement)=> { return el.innerText.includes(selectedSearch.value)})
+        }
       }
     })
     return{
