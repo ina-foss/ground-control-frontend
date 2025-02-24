@@ -1,7 +1,7 @@
 <template>
   <div class=" flex-col flex col-span-3 pl-5 max-h-full ">
 
-    <AtomVideoAmalia ref="videoPlayer" class="rounded-lg h-full" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoAmalia ref="videoPlayer" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
     <slot/>
   </div>
