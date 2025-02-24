@@ -117,6 +117,8 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
     }, null);
   });
 
+  const isAnnotationEditable = annotationsOut[annotationInfo.value?.index]?.annotation_status != AnnotationStatus.ENDED && (isAdmin.value && !useRoute().query.email || !isAdmin.value)
+  provide('isAnnotationEditable',isAnnotationEditable)
 
   PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
    config.value = response;
