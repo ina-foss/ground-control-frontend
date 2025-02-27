@@ -214,7 +214,8 @@ const createTask = async () => {
 
   MediaService.createMediaMediaPost({
     url: fileData.value[0].asset.url,
-    type: fileData.value[0].asset.media_type
+    type: fileData.value[0].asset.media_type,
+    player_parameters: fileData.value[0].asset.player_parameters
   }).then((res) => {
     TaskService.createTaskTaskPost({
       name: name.value,
