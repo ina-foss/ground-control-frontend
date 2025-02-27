@@ -400,10 +400,6 @@ provide('chipList', chipList);
 }
 
 
-img { /* svg on an img tag */
-  -webkit-filter: invert(.75); /* safari 6.0 - 9.0 */
-          filter: invert(1);
-}
 
 
 .over:hover .rupture {
