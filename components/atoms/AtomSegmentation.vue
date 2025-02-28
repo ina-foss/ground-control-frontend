@@ -383,6 +383,11 @@ provide('chipList', chipList);
   @apply border-surface-500 border-2 ;
 }
 
+img{
+   -webkit-filter: invert(.75); /* safari 6.0 - 9.0 */
+          filter: invert(1);
+}
+
 </style>
 
 <style lang="postcss">
@@ -392,18 +397,10 @@ provide('chipList', chipList);
   @apply flex
 }
 
-.customHover{
-}
-
 .customHover + div {
   @extend .customHover
 }
 
-
-img { /* svg on an img tag */
-  -webkit-filter: invert(.75); /* safari 6.0 - 9.0 */
-          filter: invert(1);
-}
 
 
 .over:hover .rupture {
