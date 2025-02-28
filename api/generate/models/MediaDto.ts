@@ -11,9 +11,9 @@ import type { TaskBaseDto } from './TaskBaseDto';
 export type MediaDto = {
     url: string;
     type: MediaType;
-    id: number;
-    tasks: (Array<TaskBaseDto> | null);
     player_parameters?: (Record<string, any> | PlayerParameters | null);
     details?: (Record<string, any> | null);
+    id: number;
+    tasks: (Array<TaskBaseDto> | null);
 };
 
