@@ -103,7 +103,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
       scrollToSegment({bestIndex: index})
   }
   const handleSelection = (spanArg: any) => {
-
+    getSelectedSegment()?.classList?.remove('selected-segment')
   }
   const listRefs = computed(()=>{
       return _.uniq(moleculeAnnotationRef.value?.listRefs)
