@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-y-auto h-0 min-h-full flex flex-col   ">
     <div
-      :class="['  w-fit h-[70px] grow ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', isAdmin ? 'right-[145px]' : 'right-[5px]']">
+      :class="['  w-fit h-[70px] grow ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', roleCreateProject ? 'right-[145px]' : 'right-[5px]']">
       <label class="text-primary font-semibold p-2">Projets</label>
       <Select
         v-model="selectedStatus"
@@ -71,7 +71,7 @@ const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
 const { $application } = useService();
 
-const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+const roleCreateProject = computed(() => $application.hasRole('ground-control:project:create'));
 
 
 const translations = {

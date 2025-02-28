@@ -16,7 +16,7 @@
               icon="pi pi-ellipsis-h" severity="secondary" text rounded
               @click.stop.prevent="visible=true"/>
             <Button
-              v-if="isAdmin" style="height: 22px; padding:0 0 0 0;margin:0;color:#0C7DA2;"
+              v-if="roleDeleteProject" style="height: 22px; padding:0 0 0 0;margin:0;color:#0C7DA2;"
               severity="error-state" text rounded
               @click.stop.prevent="deleteDialog=true">
               <img
@@ -88,7 +88,7 @@ const {project} = defineProps({project: {type: Object, default: () => []}})
 
 const {$application} = useService();
 
-const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+const roleDeleteProject = computed(() => $application.hasRole('ground-control:project:delete'));
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',

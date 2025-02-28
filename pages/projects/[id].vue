@@ -143,7 +143,7 @@
               <template #body="{ data: nestedData }">
                 <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
               </template>
-            </Column>            <Column v-if="isAdmin" >
+            </Column>            <Column v-if="roleDeleteTask" >
               <template #body="{data: nestedData}">
                 <div class="flex justify-end px-4">
                   <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
@@ -204,6 +204,7 @@ const buttonMenu = ref()
 const selectedRow = ref()
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+const roleDeleteTask = computed(() => $application.hasRole('ground-control:task:delete'));
 const getFirstLine = (markdownText) => {
   if (!markdownText) return "";
   return markdownText.split("\n")[0] ;
