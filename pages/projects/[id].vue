@@ -366,7 +366,7 @@ const stepCreate = (stepId) => {
 let email_clicked
 const handleRowClick = (event) => {
 
-  if(typeof event == 'string') email_clicked = event
+  if(typeof event == 'string' && isAdmin.value) email_clicked = event
   clickedRowData.value = event.data;
 
   if (editMode.value === false) navigateToTask(clickedRowData.value.id,email_clicked)
