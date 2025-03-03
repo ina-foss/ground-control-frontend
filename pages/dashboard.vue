@@ -58,6 +58,7 @@ import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
 import {ProjectStatus} from "../api/generate";
 import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
+import { Permission } from '../api/generate';
 
 const refreshStore = useRefreshStore()
 const {fetchProject} = refreshStore
@@ -71,7 +72,7 @@ const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
 const { $application } = useService();
 
-const roleCreateProject = computed(() => $application.hasRole('ground-control:project:create'));
+const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_CREATE));
 
 
 const translations = {
