@@ -5,7 +5,7 @@
         <span class="h-8 w-8 p-2 rounded-full bg-neutral flex  justify-center items-center  group-hover:bg-primary group-hover:text-white transition-all  "> {{index+1}} </span>
 
         <Skeleton v-show="!isLastImageLoaded && index == getHistory.length-1" width="88px" height="100%"  />
-        <img :src="`${newThumbnailUrl}?width=320&start=${timecode}`" class="h-full rounded-md"   @load="showImage()"  >
+        <img :src="`${newThumbnailUrl}?width=320&start=${timecode}`" class="h-full rounded-md" @load="showImage()" alt="thumbnail image of the corresponding timecode" >
 
         <span> {{ timestampToUnix(timecode) }}</span>
     </div>
