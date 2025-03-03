@@ -48,8 +48,8 @@
   const { topicList} = useTopicList()
 
 function preventDefaultTitle(topic){
-    if( !topic.title ) return "Topic "+ topic.id
-    return topic.title
+    if( !topic ) return ''
+    return topic?.title ? topic.title : "Topic "+ topic.id
   }
 
 
