@@ -48,7 +48,6 @@ export default defineComponent({
     }
 
     const downIndex = () => {
-      debugger
       if (totalrecord.value === 0) {
         if (searchIndex.value - 1 < 0) {
           searchIndex.value = selectedSpan.value.length - 1
