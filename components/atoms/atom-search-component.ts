@@ -29,7 +29,7 @@ export default defineComponent({
           searchIndex.value++
         }
       } else {
-        if (searchIndex.value + 1 == totalrecord.value - 1) {
+        if (searchIndex.value + 1 == totalrecord.value ) {
           searchIndex.value = 0
           listIndex.value = 0
           if (searchResults && searchResults.length > 0) {
@@ -126,12 +126,12 @@ export default defineComponent({
 
       selectedSpan.value.forEach((span: HTMLDivElement) => {
         if (span) {
-          const text = span.textContent;
+          const text = span.firstElementChild?.querySelector('.customText').textContent;
           const regex = new RegExp(`(${selectedSearch.value})`, "gi");
 
           if (text.match(regex)) {
             const newHTML = text.split(regex).map((part, i) =>
-              i % 2 === 1 ? `<mark class="highlight" style="background-color: #0b7698; color: white; font-weight: bold;" >${part}</mark>` : part
+              i % 2 === 1 ? `<mark class="highlight" style="background-color: #0b7698; color: white; " >${part}</mark>` : part
             ).join('');
             totalrecord.value = totalrecord.value + countOccurrences(selectedSearch.value, text)
             listIndex.value = 0;
@@ -139,8 +139,7 @@ export default defineComponent({
             searchResultsCopy = searchResults.map(item => ({...item}));
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = newHTML;
-
-            span.firstElementChild?.children[1].replaceChildren(...tempDiv.childNodes);
+            span.firstElementChild?.querySelector('.customText').replaceChildren(...tempDiv.childNodes);
 
           }
         }
