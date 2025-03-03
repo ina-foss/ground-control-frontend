@@ -13,13 +13,13 @@ import { AnnotationStatus } from '~/api/generate';
 export default defineComponent({
   name: 'MoleculeSegmentation',
   components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList},
-  emit: ['on-segment-click'],
+  emits: ['on-segment-click'],
   props: {
     result: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []},
-    state: {type: AnnotationStatus},
+    state: {type: String as PropType<AnnotationStatus>, default: ()=> AnnotationStatus.DRAFT},
   },
   setup({ colors, topics, locals , result, state}, { emit, expose }) {
 
