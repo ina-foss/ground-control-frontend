@@ -41,6 +41,7 @@ export enum Permission {
     GROUND_CONTROL_TASK_CREATE = 'ground-control:task:create',
     GROUND_CONTROL_TASK_TASK_INJECT = 'ground-control:task:task_inject',
     GROUND_CONTROL_TASK_UPDATE = 'ground-control:task:update',
+    GROUND_CONTROL_TASK_DELETE = 'ground-control:task:delete',
     GROUND_CONTROL_USER_READ_ALL = 'ground-control:user:read_all',
     GROUND_CONTROL_USER_CREATE = 'ground-control:user:create',
     GROUND_CONTROL_USER_GET_USER_BY_EMAIL = 'ground-control:user:get_user_by_email',
