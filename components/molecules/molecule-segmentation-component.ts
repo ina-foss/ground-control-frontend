@@ -13,15 +13,15 @@ import { AnnotationStatus } from '~/api/generate';
 export default defineComponent({
   name: 'MoleculeSegmentation',
   components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList},
-  emit: ['on-segment-click'],
+  emits: ['on-segment-click'],
   props: {
     result: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []},
-    state: {type: AnnotationStatus},
+    state: {type: String as PropType<AnnotationStatus>, default: ()=> AnnotationStatus.DRAFT},
   },
-  setup({ colors, topics, locals , result, state}, { emit, expose }) {
+  setup(props, { emit, expose }) {
 
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData, copyTopicData } = useTopicList()
@@ -29,6 +29,8 @@ export default defineComponent({
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
+    const { colors, topics, locals , state} = props
+    const {result} = toRefs(props)
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = inject('isAnnotationEditable')
 
@@ -183,8 +185,8 @@ export default defineComponent({
           topics[index] = phrase.data.topic
         }
       })
-      if(result.topic_metadata ){
-        result.topic_metadata.forEach((topic ) => {
+      if(result.value.topic_metadata ){
+        result.value.topic_metadata.forEach((topic ) => {
           topicList.value[topic?.id] = topic
         })
       }
@@ -205,10 +207,7 @@ export default defineComponent({
           phrase.data.topic = topics[index]
         }
       })
-      result.topic_metadata = []
-      topicList.value.forEach((topic)=>{
-        result.topic_metadata.push(topic)
-      })
+      result.value.topic_metadata = topicList.value
       return localSubmit
     }
 

@@ -74,7 +74,7 @@ const annotationInfo = computed(() => {
 
 const submitExistantAnnotation =(locals,action)=>{
 
-    const result = annotations_out.value[annotationInfo.value.index].result
+    const result = annotations_out.value[0].result
     result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur a déjà une annotation associée à cette tâche
     let promise;

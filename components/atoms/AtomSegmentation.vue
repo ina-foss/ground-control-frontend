@@ -46,7 +46,7 @@
             <Button :disabled="!isAnnotationEditable" v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
             <Button :disabled="!isAnnotationEditable" v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
           </div>
-              <div v-if=" chipList.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
+              <div v-if=" chipList?.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
                 <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" :removable="isAnnotationEditable"
                   v-on:remove="handleRemove(index)" />
               </div>
@@ -159,7 +159,7 @@ onMounted(()=>{
   watch(()=>topics,()=>{
     computeTopicHeight()
   },{deep:true})
-watch(()=>chipList.value.length,async (value)=>{
+watch(()=>chipList.value?.length,async (value)=>{
     await nextTick()
     if(isTopicFirstSegment.value && firstSegmentPadding.value){
         firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
