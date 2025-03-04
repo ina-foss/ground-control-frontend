@@ -179,7 +179,7 @@
 
 import _ from 'lodash';
 import {ref} from 'vue';
-import {AnnotationService, AnnotationStatus, StepStatus, TaskService} from '../../api/generate';
+import {AnnotationService, AnnotationStatus, StepStatus, TaskService, Permission} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
@@ -204,7 +204,7 @@ const buttonMenu = ref()
 const selectedRow = ref()
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
-const roleDeleteTask = computed(() => $application.hasRole('ground-control:task:delete'));
+const roleDeleteTask = computed(() => $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE));
 const getFirstLine = (markdownText) => {
   if (!markdownText) return "";
   return markdownText.split("\n")[0] ;

@@ -81,6 +81,7 @@ import {defineEmits} from 'vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
 import { useRefreshStore, useService} from '#imports';
 import {ProjectService} from "../api/generate";
+import { Permission } from '~/api/generate';
 
 const visible = ref(false)
 const deleteDialog = ref(false)
@@ -88,7 +89,7 @@ const {project} = defineProps({project: {type: Object, default: () => []}})
 
 const {$application} = useService();
 
-const roleDeleteProject = computed(() => $application.hasRole('ground-control:project:delete'));
+const roleDeleteProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_DELETE));
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
