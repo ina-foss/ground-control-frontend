@@ -20,8 +20,14 @@ export default defineComponent({
     const totalrecord: Ref<number> = ref(0)
     let searchResults: Ref<Array<{ index: number; count: number }>> = ref([]);
     let searchResultsCopy: Ref<Array<{ index: number; count: number }>> = ref([]);
-
+    let up: Ref<boolean> = ref(false)
     const upIndex = () => {
+      if (!up) {
+        up = true;
+        if (searchResults && searchResults.length > 0) {
+          searchResultsCopy = searchResults.map(item => ({...item}));
+        }
+      }
       if (totalrecord.value === 0) {
         if (searchIndex.value + 1 == selectedSpan.value.length) {
           searchIndex.value = 0
@@ -29,7 +35,7 @@ export default defineComponent({
           searchIndex.value++
         }
       } else {
-        if (listIndex.value + 1 == totalrecord.value ) {
+        if (listIndex.value + 1 == totalrecord.value) {
           searchIndex.value = 0
           listIndex.value = 0
           if (searchResults && searchResults.length > 0) {
