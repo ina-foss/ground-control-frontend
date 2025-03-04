@@ -16,7 +16,7 @@
               icon="pi pi-ellipsis-h" severity="secondary" text rounded
               @click.stop.prevent="visible=true"/>
             <Button
-              v-if="isAdmin" style="height: 22px; padding:0 0 0 0;margin:0;color:#0C7DA2;"
+              v-if="roleDeleteProject" style="height: 22px; padding:0 0 0 0;margin:0;color:#0C7DA2;"
               severity="error-state" text rounded
               @click.stop.prevent="deleteDialog=true">
               <img
@@ -81,6 +81,7 @@ import {defineEmits} from 'vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
 import { useRefreshStore, useService} from '#imports';
 import {ProjectService} from "../api/generate";
+import { Permission } from '~/api/generate';
 
 const visible = ref(false)
 const deleteDialog = ref(false)
@@ -88,7 +89,7 @@ const {project} = defineProps({project: {type: Object, default: () => []}})
 
 const {$application} = useService();
 
-const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+const roleDeleteProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_DELETE));
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',

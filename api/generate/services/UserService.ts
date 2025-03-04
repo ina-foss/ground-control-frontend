@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Permission } from '../models/Permission';
 import type { UserBaseDto } from '../models/UserBaseDto';
 import type { UserDto } from '../models/UserDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -57,6 +58,17 @@ export class UserService {
             errors: {
                 422: `Validation Error`,
             },
+        });
+    }
+    /**
+     * Get All Roles
+     * @returns Permission Successful Response
+     * @throws ApiError
+     */
+    public static getAllRolesUserRolesGet(): CancelablePromise<Permission> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/user/roles',
         });
     }
     /**

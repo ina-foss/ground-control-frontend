@@ -22,6 +22,7 @@ export { InOutEnum } from './models/InOutEnum';
 export type { MediaCreate } from './models/MediaCreate';
 export type { MediaDto } from './models/MediaDto';
 export { MediaType } from './models/MediaType';
+export { Permission } from './models/Permission';
 export type { PlayerParameters } from './models/PlayerParameters';
 export type { PluginAutocompleteValueDTO } from './models/PluginAutocompleteValueDTO';
 export type { PluginCreate } from './models/PluginCreate';

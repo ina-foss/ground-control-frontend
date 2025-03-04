@@ -143,7 +143,7 @@
               <template #body="{ data: nestedData }">
                 <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
               </template>
-            </Column>            <Column v-if="isAdmin" >
+            </Column>            <Column v-if="roleDeleteTask" >
               <template #body="{data: nestedData}">
                 <div class="flex justify-end px-4">
                   <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
@@ -179,7 +179,7 @@
 
 import _ from 'lodash';
 import {ref} from 'vue';
-import {AnnotationService, AnnotationStatus, StepStatus, TaskService} from '../../api/generate';
+import {AnnotationService, AnnotationStatus, StepStatus, TaskService, Permission} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
@@ -204,6 +204,7 @@ const buttonMenu = ref()
 const selectedRow = ref()
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+const roleDeleteTask = computed(() => $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE));
 const getFirstLine = (markdownText) => {
   if (!markdownText) return "";
   return markdownText.split("\n")[0] ;
@@ -365,7 +366,7 @@ const stepCreate = (stepId) => {
 let email_clicked
 const handleRowClick = (event) => {
 
-  if(typeof event == 'string') email_clicked = event
+  if(typeof event == 'string' && isAdmin.value) email_clicked = event
   clickedRowData.value = event.data;
 
   if (editMode.value === false) navigateToTask(clickedRowData.value.id,email_clicked)
