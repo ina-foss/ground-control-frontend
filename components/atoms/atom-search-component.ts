@@ -29,7 +29,7 @@ export default defineComponent({
           searchIndex.value++
         }
       } else {
-        if (searchIndex.value + 1 == totalrecord.value ) {
+        if (listIndex.value + 1 == totalrecord.value ) {
           searchIndex.value = 0
           listIndex.value = 0
           if (searchResults && searchResults.length > 0) {
