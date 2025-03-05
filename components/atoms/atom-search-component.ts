@@ -85,7 +85,7 @@ export default defineComponent({
       iterableSegment.value = []
       selectedSpan.value.forEach((span: HTMLDivElement) => {
         if (span) {
-          const text = span.querySelector('.customText')?.textContent ?? span.textContent;
+          const text = span.querySelector('.customText')?.textContent
           const regex = new RegExp(`(${selectedSearch.value})`, "gi");
 
           if (text.match(regex)) {
@@ -98,8 +98,7 @@ export default defineComponent({
             })
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = newHTML;
-            span.querySelector('.customText')?.replaceChildren(...tempDiv.childNodes) ?? span.replaceChildren(...tempDiv.childNodes);
-
+            span.querySelector('.customText')?.replaceChildren(...tempDiv.childNodes)
           }
         }
       });
