@@ -22,7 +22,7 @@
       {{ searchIndex + 1 }}/{{ selectedSpan.length }}
     </Tag>
     <Tag  v-if="!labels.length > 0 &&selectedSpan.length > 0 && selectedSearch" severity="contrast">
-      {{ listIndex + 1 }}/{{ totalrecord }}
+      {{ searchIndex + 1 }}/{{ iterableSegment.length }}
     </Tag>
     <div class="grow flex flex-nowrap">
       <Button icon="pi pi-arrow-left" size="small" severity="contrast" @click="downIndex()" />
