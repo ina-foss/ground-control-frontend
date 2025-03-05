@@ -153,7 +153,7 @@ const updateProject = async () => {
       });
 
       // Assuming response is a promise
-      selectedType.forEach((type, index) => {
+      selectedType.value.forEach((type, index) => {
         if (!project?.steps?.find(element => element.annotation_type === type)) {
           StepService.createStepStepPost({
             title: `Step #${index + 1}`,

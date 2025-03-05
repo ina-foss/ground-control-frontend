@@ -43,7 +43,7 @@ function showImage( ){
 }
 
 
-const media_id = thumbnailUrl.value.split(':')[2].split('?')[0]
+const media_id = thumbnailUrl.value?.split(':')[2].split('?')[0]
 const {data: newThumbnailUrl} = await useFetch(thumbnailUrl.value,{key:`thumbnailUrl-${media_id}`})
 
 

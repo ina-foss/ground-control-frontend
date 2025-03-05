@@ -43,11 +43,13 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
     </div>
     </div>
   <div v-else class="h-full">
+    <Toast />
+    <AtomSearch class=" right-10 absolute flex items-center top-[75px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
     <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs :data="data"/>
       </MoleculeAnnotationLeftPanel>
-      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  v-on="annotationComponent.events" :state="annotationsOut[annotationInfo?.index]?.annotation_status" />
+      <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  :state="annotationsOut[annotationInfo?.index]?.annotation_status" v-on="annotationComponent.events" />
     </div>
   </div>
 </template>
@@ -59,11 +61,14 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   import MoleculeSpan from "../molecules/MoleculeSpan.vue";
   import MoleculeSegmentation from "../molecules/MoleculeSegmentation.vue";
   import MoleculeTranscription from "../molecules/MoleculeTranscription.vue";
-  import _ from 'lodash'
+  import _ from 'lodash';
   import {AnnotationStatus, PluginService} from '../../api/generate';
   import { useService } from "#imports";
   import MoleculeTabs from "../molecules/MoleculeTabs.vue";
   import {useTcOffset} from "~/composables/useTcOffset";
+  import AtomSearch from "../atoms/AtomSearch.vue";
+  import type AtomSpan from "~/components/atoms/AtomSpan.vue";
+  import {createApp} from "vue/dist/vue";
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
@@ -71,6 +76,8 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const { unixToTimestamp, timestampToUnix } = $application
   const{setTcOffset}= useTcOffset()
 
+  type AtomSpanType = InstanceType<typeof AtomSpan>
+  const spanRefArray = ref<[]>([])
   const { data, annotationsIn, annotationsOut, allFetched } = defineProps({
     data: {
       type: Object,
@@ -91,7 +98,16 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
 
   })
 
-
+  const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
+      let index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
+      scrollToSegment({bestIndex: index})
+  }
+  const handleSelection = (spanArg: any) => {
+    getSelectedSegment()?.classList?.remove('selected-segment')
+  }
+  const listRefs = computed(()=>{
+      return _.uniq(moleculeAnnotationRef.value?.listRefs)
+  });
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 

@@ -19,7 +19,7 @@
           </div>
         </div>
       </div>
-    <AtomSearch :spans="spanRefArray" :labels="labels" @find-span="handleFocusSpan" @unselect="handleSelection" />
+    <AtomSearch :spans="spanRefArray" :labels="labels" @find-element="handleFocusSpan" @unselect="handleSelection" />
     </div>
     <div class="grow h-0 flex justify-center ">
     <ScrollPanel class="h-full pr-2 overflow-x-visible "

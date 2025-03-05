@@ -63,8 +63,8 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
     </div>
 
     <!-- In READING mode  -->
-    <span v-else :class="`rounded-lg  scroll-mt-5 bg-white p-2 ${textColor} `">
-      <p v-if="editedTranscription.text == ''" >
+    <span v-else :class="`rounded-lg  scroll-mt-5 bg-white p-2 ${textColor} customText`">
+      <p v-if="editedTranscription.text == ''" class="" >
         {{ transcriptions[0].data.text[0] }}
       </p>
       <p v-else>{{ editedTranscription.text }}</p>
