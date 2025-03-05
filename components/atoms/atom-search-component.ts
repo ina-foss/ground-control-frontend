@@ -16,88 +16,28 @@ export default defineComponent({
     const selectedSpan: Ref<Array<any>> = ref([])
     const {spans, labels, list} = toRefs(props)
     const searchIndex: Ref<number> = ref(0)
-    const listIndex: Ref<number> = ref(0)
-    const totalrecord: Ref<number> = ref(0)
-    let searchResults: Ref<Array<{ index: number; count: number }>> = ref([]);
-    let searchResultsCopy: Ref<Array<{ index: number; count: number }>> = ref([]);
-    let up: Ref<boolean> = ref(false)
+    const iterableSegment: Ref<Array<HTMLDivElement>> = ref([])
     const upIndex = () => {
-      if (!up) {
-        up = true;
-        if (searchResults && searchResults.length > 0) {
-          searchResultsCopy = searchResults.map(item => ({...item}));
-        }
+      if ( searchIndex.value +1 > iterableSegment.value.length-1){
+        searchIndex.value = 0
       }
-      if (totalrecord.value === 0) {
-        if (searchIndex.value + 1 == selectedSpan.value.length) {
-          searchIndex.value = 0
-        } else {
-          searchIndex.value++
-        }
-      } else {
-        if (listIndex.value + 1 == totalrecord.value) {
-          searchIndex.value = 0
-          listIndex.value = 0
-          if (searchResults && searchResults.length > 0) {
-            searchResultsCopy = searchResults.map(item => ({...item}));
-
-          }
-
-        } else if (searchResultsCopy[searchIndex.value].count === 1) {
-          searchIndex.value++
-          listIndex.value++
-        } else {
-          listIndex.value++
-          searchResultsCopy[searchIndex.value].count--
-        }
+      else {
+        searchIndex.value ++
       }
     }
 
     const downIndex = () => {
-      if (up) {
-        up = false;
-        if (searchResults && searchResults.length > 0) {
-          searchResultsCopy = searchResults.map(item => ({...item}));
-        }
-      }
-      if (totalrecord.value === 0) {
-        if (searchIndex.value - 1 < 0) {
-          searchIndex.value = selectedSpan.value.length - 1
-        } else {
-          searchIndex.value--
-        }
+      if ( searchIndex.value-1 < 0 ){
+        searchIndex.value = iterableSegment.value.length-1
       }
       else {
-        if (searchIndex.value - 1 < 0) {
-          searchIndex.value = selectedSpan.value.length - 1;
-          listIndex.value = totalrecord.value - 1;
-          if (searchResults && searchResults.length > 0) {
-            searchResultsCopy = searchResults.map(item => ({...item}));
-
-          }
-        } else {
-          if (searchIndex.value == 1 && listIndex.value == 1) {
-            searchIndex.value--
-            listIndex.value--
-            if (searchResults && searchResults.length > 0) {
-              searchResultsCopy = searchResults.map(item => ({...item}));
-
-            }
-          } else if (searchResultsCopy[searchIndex.value].count === 1) {
-            searchIndex.value--
-            listIndex.value--
-          } else {
-            listIndex.value--
-            searchResultsCopy[searchIndex.value].count--
-          }
-
-        }
+        searchIndex.value --
       }
     }
 
 
     const correspondingSpan = (searchIndex: number): any => {
-      const tcin = selectedSpan.value[searchIndex].getAttribute('tcin')
+      const tcin = selectedSpan.value[searchIndex]?.getAttribute('tcin')
       const spanRef = _.find(spans.value, (span: any) => span.tcin == tcin)
       return spanRef
     }
@@ -114,7 +54,7 @@ export default defineComponent({
           setTimeout(() => array[searchIndex.value]?.scrollIntoView({behavior: 'smooth'}), 100)
           emit('find-element', {index: spanId})
         } else {
-          emit('find-element', {div: array[searchIndex.value]})
+          emit('find-element', {div: iterableSegment.value[searchIndex.value]})
         }
       } else emit('unselect')
     })
@@ -127,7 +67,7 @@ export default defineComponent({
           emit('find-element', {div: spanId})
         } else {
 
-          emit('find-element', {div: selectedSpan.value[index]})
+          emit('find-element', {div: iterableSegment.value[index]})
         }
       }
     })
@@ -142,22 +82,23 @@ export default defineComponent({
 
       if (!selectedSearch.value || selectedSearch.value.trim() === '') return;
 
+      iterableSegment.value = []
       selectedSpan.value.forEach((span: HTMLDivElement) => {
         if (span) {
-          const text = span.firstElementChild?.querySelector('.customText').textContent;
+          const text = span.querySelector('.customText')?.textContent ?? span.textContent;
           const regex = new RegExp(`(${selectedSearch.value})`, "gi");
 
           if (text.match(regex)) {
-            const newHTML = text.split(regex).map((part, i) =>
+            const splittedText = text.split(regex)
+            const newHTML = splittedText.map((part, i) =>
               i % 2 === 1 ? `<mark class="highlight" style="background-color: #0b7698; color: white; " >${part}</mark>` : part
             ).join('');
-            totalrecord.value = totalrecord.value + countOccurrences(selectedSearch.value, text)
-            listIndex.value = 0;
-            searchResults.push({index: searchIndex.value, count: countOccurrences(selectedSearch.value, text)});
-            searchResultsCopy = searchResults.map(item => ({...item}));
+            splittedText.forEach((el,i)=>{
+              if (i % 2 === 1 ) { iterableSegment.value.push(span) }
+            })
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = newHTML;
-            span.firstElementChild?.querySelector('.customText').replaceChildren(...tempDiv.childNodes);
+            span.querySelector('.customText')?.replaceChildren(...tempDiv.childNodes) ?? span.replaceChildren(...tempDiv.childNodes);
 
           }
         }
@@ -184,8 +125,6 @@ export default defineComponent({
           clear();
         } else {
           selectedSpan.value = [];
-          searchResults = [];
-          totalrecord.value = 0;
           selectedSpan.value = list.value.filter((el: HTMLDivElement) =>
             el.innerText.toLowerCase().includes(value.toLowerCase())
           );
@@ -209,6 +148,7 @@ export default defineComponent({
     return {
       selectedSpan,
       searchIndex,
+      iterableSegment,
       selectedSearch,
       searchInterface,
       invertInterface,
@@ -216,8 +156,6 @@ export default defineComponent({
       upIndex,
       list,
       clear,
-      totalrecord,
-      listIndex
     }
   }
 })
