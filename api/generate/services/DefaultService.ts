@@ -36,4 +36,15 @@ export class DefaultService {
             url: '/management/health',
         });
     }
+    /**
+     * Check Admin
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static checkAdminAdminGet(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/admin',
+        });
+    }
 }

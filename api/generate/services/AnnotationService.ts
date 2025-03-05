@@ -84,6 +84,8 @@ export class AnnotationService {
     /**
      * Get Annotation By Task Id
      * Get a list of annotations that match the task_id attributes
+     * - Admins can retrieve annotations for **any user**.
+     * - Regular users can only retrieve **their own** annotations.
      * @param taskId
      * @param userEmail user_email
      * @param direction Direction of the annotation ('in' or 'out')

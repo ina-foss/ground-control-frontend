@@ -1,32 +1,39 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
-    :class="`bg-gray-300 ${index == 0 ? '!mt-0': ''}  transition-all group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
-    <div v-if="isTopicFirstSegment" :class="`flex  justify-center items-center sticky top-0 h-[32px] w-fit`">
+    :class="`bg-gray-300 transition-all ${index == 0 ? '!mt-0': ''}  group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    <div v-if="isTopicFirstSegment" ref="firstSegmentPadding" :class="`flex transition-all  justify-center items-center h-[40px] sticky top-0  w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"
       class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
-      <div :class="`w-full sticky top-[-1px] h-[54px] left-0 bg-secondary rounded-lg pointer-events-auto z-50 `">
-        <div class="w-full flex h-full justify-between p-sm  rounded-lg "
+      <div ref="topicHeader" :class="`w-full sticky top-[-1px] min-h-[54px] h-fit left-0 bg-secondary rounded-t-lg pointer-events-auto z-50 transition-all `">
+        <div class="w-full flex h-full  p-sm  rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
-          <div class="flex flew-row items-center">
+          <div class="flex flex-col w-full gap-2">
+          <div class="flex flew-row items-center justify-between w-full max-w-full" >
             <Tag v-if="options.timecode_bloc" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
                 <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
               </div>
             </Tag>
-            <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex items-center justify-center h-full  ">
-            <div v-if="editTitle"  >
-                <InputText v-model="editedTitle" @focusout="editTitle = false"  />
-              </div>
-              <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex  sticky top-0 h-8    "  >
-                <div :class="`h-8 p-3  w-fit flex items-center mb-3  `">
-                  <b>{{ title }}</b>
+            <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex flex-col grow  justify-between text-ellipsis  line-clamp-2  ">
+              <div class="flex items-center  justify-start h-full " >
+                <div v-if="editTitle">
+                  <InputText v-model="editedTitle" @focusout="editTitle = false" />
                 </div>
-                <Button icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
-              </div>
-              <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" />
+                <div v-else-if="topicIndex > 0 && isTopicFirstSegment" class="flex gap-2 h-full items-center shrink text-ellipsis  line-clamp-2   ">
+                  <div :class="`h-full pl-3 text-ellipsis  line-clamp-2 flex `"
+                    v-tooltip.bottom="{ value: title, showDelay: 400, class: 'single-line-tooltip' }">
+
+                      <p  class="text-ellipsis font-bold line-clamp-2"> {{title }} </p>
+
+                  </div>
+                  <Button class="min-w-[33px] " :disabled="!isAnnotationEditable" icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
+                </div>
+                <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"
+                  :chipList="chipList" />
+                </div>
             </div>
             <div v-else="topicIndex == 0 && isTopicFirstSegment" class="h-8">
               <div
@@ -34,37 +41,47 @@
                 <b>Ignoré</b>
               </div>
             </div>
+            <Button v-if="topicIndex !== 0" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" :disabled="!isAnnotationEditable" />
+            <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
+            <Button :disabled="!isAnnotationEditable" v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+            <Button :disabled="!isAnnotationEditable" v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
           </div>
-          <Button v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
-          <Button v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
+              <div v-if=" chipList?.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
+                <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" :removable="isAnnotationEditable"
+                  v-on:remove="handleRemove(index)" />
+              </div>
+          </div>
         </div>
       </div>
     </div>
+    <div ref="commentWrapper"  :class="`absolute  ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'}  right-[4px]`" >
     <OverlayBadge v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
-                  :class="`overflow-visible !absolute    z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'} right-[4px]`">
+                  :class="`overflow-visible  z-[60] !transition !duration-500 $  `">
       <Button class="!bg-primary !border-primary"  @click="toggleComment">
         <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
       </Button>
     </OverlayBadge>
-    <Button v-else
-      :class="` !absolute opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500 ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]' } right-[4px]`"
+    <Button v-else-if="isAnnotationEditable"
+      :class="`  opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500  `"
       @click="toggleComment" >
       <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" />
     </Button>
+    </div>
     <div
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
       @click="$emit('onSegmentClick', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
-      <div v-if="options.timecode_segment" class="absolute flex items-center h-full top-[0] left-[-90px] z-50 text-xs overflow-visible    ">
+      <div v-if="options.timecode_segment"
+        class="absolute flex items-center h-full top-[0] left-[-90px] z-50 text-xs overflow-visible    ">
         <p class="border-dashed border border-title py-1 px-2 rounded-sm ">{{ timestampToUnix(phrase.tcin)}}</p>
       </div>
     </div>
     <div class="relative gap-0  w-[calc(100%+20px)] z-40 ">
-      <div :class="`absolute z-50 w-full ${ !isTopicsLastSegment ? 'top-[-10px]' : '' }  left-[-10px] h-6 over pointer-events-auto cursor-pointer`"
+      <div
+        :class="`absolute z-50 w-full ${ !isTopicsLastSegment ? 'top-[-10px]' : '' }  left-[-10px] h-6 over pointer-events-auto cursor-pointer`"
         @click="handleSegmentation">
-        <div ref="ruptureTemplate"
-          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`"
-          >
+        <div ref="ruptureTemplate" v-if="isAnnotationEditable"
+          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`">
           <i v-if="!isTopicsLastSegment || topicIndex == undefined"
             class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 " />
           <div v-else class="flex justify-around w-[80px]">
@@ -75,11 +92,9 @@
                 src="../../public/icons/icons-svg/icons-svg/move-icon.svg"
                 alt="move icon" />
             </div>
-            <div style="height:24px;width:24px; "v-tooltip.right="{ value: 'Supprimer une rupture', showDelay: 400 }"
+            <div style="height:24px;width:24px; " v-tooltip.right="{ value: 'Supprimer une rupture', showDelay: 400 }"
               class=" bg-red-500  cursor-pointer rounded hover:bg-red-600 flex items-center justify-center">
-              <img
-                style="height:16px;width:16px;"
-                src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
+              <img style="height:16px;width:16px;" src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
                 alt="delete icon" />
             </div>
           </div>
@@ -101,6 +116,8 @@ import { defineExpose } from 'vue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
 import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
+import { remove } from 'lodash'
+import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
 
 const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
 const emit = defineEmits(['segmentation', 'onSegmentClick','activateTopic', 'deactivateTopic','dragging-start','dragging-end'])
@@ -120,13 +137,37 @@ topicText.value = topicIndex.value === 0 ? null : "#" + topicIndex.value
 const editedTitle = ref(null)
 const ruptureTemplate = ref()
 const comment = ref(null)
+const dialogVisible = ref(false);
 const title = computed(()=>{
   if(isTopicFirstSegment.value){
     return editedTitle.value ? editedTitle.value : 'Topic '+ topicIndex.value
   }
   else return null
 })
+const isAnnotationEditable = inject('isAnnotationEditable')
 
+const chipList = ref(topicList[topicIndex.value]?.labels || []);
+const topicHeader = ref<HTMLDivElement>()
+const commentWrapper = ref<HTMLDivElement>()
+const firstSegmentPadding = ref<HTMLDivElement>()
+
+    function handleRemove(index){
+      remove(topicList[topicIndex.value]?.labels ,(el)=>chipList.value[index] == el)
+    }
+
+onMounted(()=>{
+  watch(()=>topics,()=>{
+    computeTopicHeight()
+  },{deep:true})
+watch(()=>chipList.value?.length,async (value)=>{
+    await nextTick()
+    if(isTopicFirstSegment.value && firstSegmentPadding.value){
+        firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
+        commentWrapper.value.style.top = topicHeader.value?.getBoundingClientRect().height + 'px'
+        setTimeout(()=>computeTopicHeight(),300)
+    }
+})
+})
 function startDrag(event: DragEvent) {
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
@@ -333,12 +374,18 @@ const handleSegmentation = () => {
 
 defineExpose({  id: topicIndex, })
 
+provide('chipList', chipList);
 </script>
 
 <style scoped lang="postcss">
 
 .selected-segment > div {
   @apply border-surface-500 border-2 ;
+}
+
+img{
+   -webkit-filter: invert(.75); /* safari 6.0 - 9.0 */
+          filter: invert(1);
 }
 
 </style>
@@ -350,22 +397,19 @@ defineExpose({  id: topicIndex, })
   @apply flex
 }
 
-.customHover{
-}
-
 .customHover + div {
   @extend .customHover
 }
 
 
-img { /* svg on an img tag */
-  -webkit-filter: invert(.75); /* safari 6.0 - 9.0 */
-          filter: invert(1);
-}
-
 
 .over:hover .rupture {
   @apply flex
 }
-
+.single-line-tooltip {
+  white-space: nowrap !important;
+  max-width: none !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>

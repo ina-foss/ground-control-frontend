@@ -95,7 +95,7 @@ const DSINAPreset = definePreset(Lara, {
       colorScheme: {
         light: {
           rowHoverBackground: '{surface.50}',
-          headerCellBackground: 'var(--secondary-color)'
+          headerCellBackground: 'var(--neutral-color)'
         }
       }
     },

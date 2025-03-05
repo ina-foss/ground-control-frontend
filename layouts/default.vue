@@ -1,11 +1,12 @@
 <template>
   <div class="h-screen max-h-screen flex flex-col">
+    <Toast class="!top-[60px]"/>
     <MoleculeHeader />
     <div class="flex flex-col flex-grow">
       <div class="h-fit"> <!-- Assuming the breadcrumbs have a height of 70px (16rem) -->
         <AtomBreadcrumbs />
       </div>
-      <main class="flex-grow  w-full text-text bg-secondary-color">
+      <main class="flex-grow  w-full text-text bg-secondary">
         <slot />
       </main>
     </div>

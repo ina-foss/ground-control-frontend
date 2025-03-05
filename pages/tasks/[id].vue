@@ -22,12 +22,14 @@ const refresh = useRefreshStore()
 const route = useRoute()
 const toast = useToast()
 const authStore = useAuth()
+const {$application} = useService()
 
 const {getData} = storeToRefs(refresh)
 const {userEmail} = storeToRefs(authStore)
 const {fetchAnnotations} = refresh
 
 const data = ref(getData)
+const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
 
 onBeforeRouteLeave((to,from,next)=>{
@@ -42,7 +44,6 @@ onBeforeRouteLeave((to,from,next)=>{
 })
 
 await fetchAnnotations(route.params.id)
-console.log(route.query.email)
 
 
 const annotation_bool = reactive({
@@ -51,7 +52,7 @@ const annotation_bool = reactive({
 })
 const annotations_out = ref([])
 const annotations_in = ref([])
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,route.query.email ?? userEmail.value, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, isAdmin.value == true && route.query.email ?  route.query.email : userEmail.value, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
 AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
 
 
@@ -73,7 +74,7 @@ const annotationInfo = computed(() => {
 
 const submitExistantAnnotation =(locals,action)=>{
 
-    const result = annotations_out.value[annotationInfo.value.index].result
+    const result = annotations_out.value[0].result
     result.data.localisation[0].sublocalisations.localisation = locals
     // L'utilisateur a déjà une annotation associée à cette tâche
     let promise;

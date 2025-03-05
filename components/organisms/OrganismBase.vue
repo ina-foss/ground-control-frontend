@@ -1,6 +1,6 @@
 <template>
   <div
-v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationStatus && !useRoute().query.email && allFetched"
+v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationStatus && (isAdmin && !useRoute().query.email || !isAdmin ) && allFetched"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
     <Button  class="mr-4" outlined label="Soumettre"  @click="handleSubmit()"/>
     <Button class="button-overwrite"
@@ -43,7 +43,6 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
     </div>
     </div>
   <div v-else class="h-full">
-    <Toast />
     <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs :data="data"/>
@@ -96,6 +95,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
 
   const emits = defineEmits([ 'submit-annotation', 'finish-annotation' ]);
 
+  const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
   const colors = ref(['#BEBEBE'])
   const topics = ref([])
   const videoSrc = ref(annotationsIn[0]?.result.asset.url)
@@ -117,6 +117,8 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
     }, null);
   });
 
+  const isAnnotationEditable = annotationsOut[annotationInfo.value?.index]?.annotation_status != AnnotationStatus.ENDED && (isAdmin.value && !useRoute().query.email || !isAdmin.value)
+  provide('isAnnotationEditable',isAnnotationEditable)
 
   PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
    config.value = response;

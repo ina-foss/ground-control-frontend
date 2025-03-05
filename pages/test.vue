@@ -1,7 +1,6 @@
 <template>
   <div :class="'flex flex-row justify-around h-screen items-center w-full' + linkCursor" >
     <div class="flex flex-col p-6 max-w-[70%] gap-3 justify-center items-center h-screen">
-      <Toast />
       <SelectButton v-model="labelSelected" :unstyled="true" :options="labels" aria-labelledby="basic" />
       <div id="text" :class="linkCursor" @mouseup="handleSelection">{{text}}</div>
       <!-- <InputText v-model="state.range" class="border-black border-3"/> -->
