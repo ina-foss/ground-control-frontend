@@ -54,27 +54,39 @@ export default defineComponent({
     }
 
     const downIndex = () => {
+      if (up) {
+        up = false;
+        if (searchResults && searchResults.length > 0) {
+          searchResultsCopy = searchResults.map(item => ({...item}));
+        }
+      }
       if (totalrecord.value === 0) {
         if (searchIndex.value - 1 < 0) {
           searchIndex.value = selectedSpan.value.length - 1
         } else {
           searchIndex.value--
         }
-      } else {
+      }
+      else {
         if (searchIndex.value - 1 < 0) {
           searchIndex.value = selectedSpan.value.length - 1;
-          listIndex.value=totalrecord.value -1;
+          listIndex.value = totalrecord.value - 1;
           if (searchResults && searchResults.length > 0) {
             searchResultsCopy = searchResults.map(item => ({...item}));
 
           }
-        }
-        else{
-          if(searchResultsCopy[searchIndex.value].count === 1){
+        } else {
+          if (searchIndex.value == 1 && listIndex.value == 1) {
             searchIndex.value--
             listIndex.value--
-          }
-          else{
+            if (searchResults && searchResults.length > 0) {
+              searchResultsCopy = searchResults.map(item => ({...item}));
+
+            }
+          } else if (searchResultsCopy[searchIndex.value].count === 1) {
+            searchIndex.value--
+            listIndex.value--
+          } else {
             listIndex.value--
             searchResultsCopy[searchIndex.value].count--
           }
