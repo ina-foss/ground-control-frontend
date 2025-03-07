@@ -19,6 +19,11 @@ import {useTcOffset} from "~/composables/useTcOffset";
  */
 export default class ApplicationService {
 
+  constructor() {
+    this.unixToTimestamp = this.unixToTimestamp.bind(this)
+    this.timestampToUnix = this.timestampToUnix.bind(this)
+  }
+
   private authStore = useAuth();
 
   public getDefaultHeader() {
