@@ -1,4 +1,4 @@
-import { defineComponent, inject,createApp, createVNode, render } from "vue"
+import {defineComponent, inject, createApp, createVNode, render, PropType} from "vue"
 import { useOptions } from "~/stores/annotation-options";
 import BadgeDirective from 'primevue/badgedirective';
 import _  from 'lodash';
@@ -10,11 +10,15 @@ import AtomSearch from "~/components/atoms/AtomSearch.vue";
 import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";
 import AtomTaskComment from "../atoms/AtomTaskComment.vue";
 import atomVideoOption from '../atoms/atom-video-option.vue';
+import {AnnotationStatus} from "~/api/generate";
 
 export default defineComponent({
   name: "MoleculeSpan",
   components: {AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption,AtomTaskComment},
   emits: ['on-segment-click'],
+  props: {
+    state: {type: String as PropType<AnnotationStatus>},
+  },
   setup(props, { emit, expose }) {
 
     type AtomSpanType = InstanceType<typeof AtomSpan>

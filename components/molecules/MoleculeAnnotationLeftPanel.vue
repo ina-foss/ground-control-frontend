@@ -41,7 +41,9 @@ const { locals, videoSrc } = props;
   }
 
   const checkCurrentTime = () => {
-    currentTime.value = $amalia.callSeek();
+    if(currentTime.value){
+      currentTime.value = $amalia.callSeek();
+    }
   };
   onMounted(() => {
     const interval = setInterval(() => {
