@@ -22,7 +22,7 @@
             <AtomMarkdown :content="tab.text"/>
         </TabPanel>
         <TabPanel :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">
-          <AtomTimecodeList class="pb-4" :thumbnailUrl="data.media.player_parameters.thumbnail_base_url"/>
+          <AtomTimecodeList class="pb-4" :thumbnailUrl="data.media.player_parameters?.thumbnail_base_url"/>
         </TabPanel>
       </TabPanels>
       </ScrollPanel>

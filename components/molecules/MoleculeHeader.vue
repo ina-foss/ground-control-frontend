@@ -12,7 +12,7 @@
     <div class="flex justify-end items-center">
       <div class="mr-4">
         <Button
-        v-if="isAdmin && $route.name == 'dashboard'"
+        v-if="roleCreateProject && $route.name == 'dashboard'"
         label="Nouveau projet"
         size="small"
         class="hover:!bg-primary"
@@ -33,9 +33,10 @@ import AtomLogo from '../atoms/AtomLogo.vue';
 import AtomIcon from '../atoms/AtomIcon.vue';
 import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
+import { Permission } from '~/api/generate';
 const dialogVisible = ref(false);
 const { $application } = useService();
 
-const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_CREATE));
 
 </script>

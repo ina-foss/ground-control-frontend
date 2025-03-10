@@ -7,7 +7,7 @@ import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
 import AtomTopicList from "~/components/atoms/AtomTopicList.vue";
-import { AnnotationStatus } from '~/api/generate';
+import {AnnotationStatus} from '~/api/generate/models/AnnotationStatus';
 
 
 export default defineComponent({
@@ -19,7 +19,7 @@ export default defineComponent({
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []},
-    state: {type: String as PropType<AnnotationStatus>, default: ()=> AnnotationStatus.DRAFT},
+    state: {type: String as PropType<AnnotationStatus>},
   },
   setup(props, { emit, expose }) {
 
@@ -33,10 +33,6 @@ export default defineComponent({
     const {result} = toRefs(props)
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = inject('isAnnotationEditable')
-
-
-
-
 
     const handleSegmentation = (event) => {
       if(!isAnnotationEditable) return
@@ -232,7 +228,7 @@ export default defineComponent({
       handleSegmentClick,
       deactivateTopic,
       activateTopic,
-      jumpToTopic,
+      jumpToTopic
     }
 
 

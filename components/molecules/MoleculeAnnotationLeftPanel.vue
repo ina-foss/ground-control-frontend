@@ -1,7 +1,7 @@
 <template>
   <div class=" flex-col flex col-span-3 pl-5 max-h-full ">
 
-    <AtomVideoAmalia ref="videoPlayer"  :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoAmalia ref="videoPlayer" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
     <slot/>
   </div>
@@ -41,7 +41,9 @@ const { locals, videoSrc } = props;
   }
 
   const checkCurrentTime = () => {
-    currentTime.value = $amalia.callSeek();
+    if(currentTime.value){
+      currentTime.value = $amalia.callSeek();
+    }
   };
   onMounted(() => {
     const interval = setInterval(() => {
