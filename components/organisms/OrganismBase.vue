@@ -46,7 +46,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
     <Toast />
     <AtomSearch class=" right-10 absolute flex items-center top-[75px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
     <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])" @scroll-to-segment="handleVideoTimelineClick">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="_.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs :data="data"/>
       </MoleculeAnnotationLeftPanel>
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  :state="annotationsOut[annotationInfo?.index]?.annotation_status" v-on="annotationComponent.events" />
@@ -55,7 +55,6 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
 </template>
 
 <script setup lang="ts">
-  import { provide} from 'vue'
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSpan from "../molecules/MoleculeSpan.vue";
@@ -68,12 +67,12 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   import {useTcOffset} from "~/composables/useTcOffset";
   import AtomSearch from "../atoms/AtomSearch.vue";
   import type AtomSpan from "~/components/atoms/AtomSpan.vue";
-  import {createApp} from "vue/dist/vue";
+
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
   const {addTimecodeHistory} = useTimecodeHistory()
-  const { unixToTimestamp, timestampToUnix } = $application
+  const { unixToTimestamp  } = $application
   const{setTcOffset}= useTcOffset()
 
   type AtomSpanType = InstanceType<typeof AtomSpan>
@@ -166,8 +165,8 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   const locals = computed(() => {
     if(allFetched){
     return (annotationInfo.value == null)
-      ? _.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])
-      : _.sortBy(annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,['tcin'])
+      ? _.sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))
+      : _.sortBy(annotationsOut[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))
     }
     return []
   })
@@ -191,7 +190,7 @@ const transcriptions = computed(() => { // format array to have all transcriptio
       })
     })
   }
-  return _.sortBy(res,(array)=>array[0]?.tcin)
+  return _.sortBy(res,(array)=>unixToTimestamp(array[0]?.tcin))
 })
 
 const algos = computed(() => { // List the name of the algorithm
