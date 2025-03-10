@@ -211,47 +211,62 @@ const onReaderLoad = (event) => {
 }
 
 const createTask = async () => {
-
-  MediaService.createMediaMediaPost({
-    url: fileData.value[0].asset.url,
-    type: fileData.value[0].asset.media_type,
-    player_parameters: fileData.value[0].asset.player_parameters
-  }).then((res) => {
-    TaskService.createTaskTaskPost({
-      name: name.value,
-      instruction: instruction.value,
-      data_type: dataType.value,
-      status: status.value.value,
-      lead_time: null,
-      step_id: stepObject.id,
-      media_id: res.id
-    }).catch((err) => console.error(err)).then((res) => {
-      fileData.value.forEach(file => {
-        AnnotationService.createAnnotationAnnotationPost({
-          annotation: {
-            user_email: userEmail.value,
-            annotation_status: AnnotationStatus.DRAFT,
-            version: 0,
-            result: file,
-            task_id: res.id
-          },
-          association: {
-            annotation_id: 0,
-            task_id: res.id,
-            direction: 'in'
-          }
-        })
+  const { data: mediaData, refresh: refreshMedia, status: mediaStatus, error: mediaError } = await useAsyncData('createMedia', () =>
+    MediaService.createMediaMediaPost({
+      url: fileData.value[0].asset.url,
+      type: fileData.value[0].asset.media_type,
+      player_parameters: fileData.value[0].asset.player_parameters
+    })
+  );
+  if (mediaStatus === 'error') {
+    toast.add()
+    return;
+  }
+  if (mediaStatus === 'success') {
+    const { data: taskData, error, status } = await useAsyncData('createTask', () =>
+      TaskService.createTaskTaskPost({
+        name: name.value,
+        instruction: instruction.value,
+        data_type: dataType.value,
+        status: status.value.value,
+        lead_time: null,
+        step_id: stepObject.id,
+        media_id: mediaData.id,
       })
-    }).then(() => fetchTasks(stepObject.project_id))
-      .then(  // reset dialog values of create new task
-        name= '',
-        instruction= '',
-        dataType = TaskDataType.LDD,
-        status = translatedTaskStatus.value[0])
-  })
-
-
-  emits('toggle-dialog')
+    );
+    if (status === 'error') {
+      console.error('Error creating task:', taskError.value);
+      return;
+    }
+    await Promise.all(
+      fileData.value.map(file =>
+        useAsyncData('createAnnotation', () =>
+          AnnotationService.createAnnotationAnnotationPost({
+            annotation: {
+              user_email: userEmail.value,
+              annotation_status: AnnotationStatus.DRAFT,
+              version: 0,
+              result: file,
+              task_id: taskData.id,
+            },
+            association: {
+              annotation_id: 0,
+              task_id: taskData.id,
+              direction: 'in',
+            },
+          })
+        )
+      )
+    );
+    
+    await useAsyncData('fetchTasks', () => fetchTasks(stepObject.project_id));
+    // Reset form values after success
+    name.value = '';
+    instruction.value = '';
+    dataType.value = TaskDataType.LDD;
+    status.value = translatedTaskStatus.value[0];
+    emits('toggle-dialog')
+  }
 }
 
 
