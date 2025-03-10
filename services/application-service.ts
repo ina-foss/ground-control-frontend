@@ -19,6 +19,9 @@ import {useTcOffset} from "~/composables/useTcOffset";
  */
 export default class ApplicationService {
 
+  /**
+   * Constructor that bind the right context
+   */
   constructor() {
     this.unixToTimestamp = this.unixToTimestamp.bind(this)
     this.timestampToUnix = this.timestampToUnix.bind(this)
