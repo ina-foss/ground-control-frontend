@@ -13,7 +13,13 @@
       />
     </div>
     <div class="grow">
-    <div ref="dashboardRef" class="p-3 grid gap-6 max-h-full lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 " >
+    <div ref="dashboardRef" class="p-3 grid gap-6  max-h-full  lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
+      <div v-if="status === 'pending'" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-40 mx-auto max-w-8xl px-4 xl:px-28 py-6">
+        <Skeleton width="20rem" height="4rem" />
+      </div>
+      <Message v-if="status === 'error'" severity="error" icon="pi pi-exclamation-triangle">
+        {{ error.message }}
+      </Message>
       <MoleculeProjectCard
         v-for="(project,index) in filteredProjects " :key="index" :project=project
         @refresh-data="handleRefresh"/>
@@ -45,7 +51,7 @@
           },
 
       }"
-        class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="totalRecords"
+        class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="projectNumber"
         template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink" />
     </div>
     <MoleculeFooter />
@@ -68,7 +74,7 @@ const rows = ref(15)
 const totalRecords = ref(getProjectNumber);
 
 const dashboardRef = ref()
-const data = ref(getData)
+//const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
 const { $application } = useService();
 
@@ -88,21 +94,23 @@ const translatedProjectStatus = computed(() => {
 })
 const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
 const statusOptions = translatedProjectStatus;
-const getTotalRecords = () => {
-  refreshStore.totalRecords()
-}
+
+const {data,refresh, status, error} = await useAsyncData('projects', () => fetchProject(first.value, rows.value),{server:false, immediate: true})
+const {data: projectNumber, refresh: getTotalRecords, status: projectNumberStatus, error: projectNumberError } = await useAsyncData('total_project_number',
+    ()=> totalRecords(),{server:false, immediate: true})
 
 
-watch(() => first.value, () => {handleRefresh()})
 
 const handleRefresh = async () => {
   try {
-    await fetchProject(first.value, rows.value);
-    getTotalRecords();
+    await refresh();
+    await getTotalRecords();
   } catch (error) {
     console.error("Erreur lors de la récupération des projets :", error);
   }
 };
+
+watch(() => data.value, async () => await handleRefresh())
 
 const sortDataById = computed(() => {
     // Check if data is an array and not just an object
@@ -116,6 +124,7 @@ const filteredProjects = computed(() => {
   if (!selectedStatus.value) return sortDataById.value;
   return sortDataById.value.filter((project) => project.status === selectedStatus.value.value);
 });
+
 onMounted(() => {
   handleRefresh();
 })
