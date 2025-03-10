@@ -55,7 +55,6 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
 </template>
 
 <script setup lang="ts">
-  import { provide} from 'vue'
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSpan from "../molecules/MoleculeSpan.vue";
@@ -68,7 +67,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   import {useTcOffset} from "~/composables/useTcOffset";
   import AtomSearch from "../atoms/AtomSearch.vue";
   import type AtomSpan from "~/components/atoms/AtomSpan.vue";
-  import {createApp} from "vue/dist/vue";
+
   const authStore = useAuth()
   const optionStore = useOptions()
   const {$application} = useService()
