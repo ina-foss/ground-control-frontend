@@ -268,10 +268,41 @@ const hideDeleteTaskModal = () => {
   deleteModal.data= {}
 }
 
-const deleteTask = (task_id) => {
+const deleteTask = async (task_id) => {
   deleteModal.loading = true
   TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> fetchTasks(route.params.id)).then(()=> hideDeleteTaskModal())
-}
+  const { error, status } = await useAsyncData(
+    'delete_task',
+    () => TaskService.deleteTaskTaskTaskIdDelete(task_id),
+    { server: false }
+  )
+  if (status === 'error') {
+    // Handle error case (showing error toast)
+    toast.add({
+      severity: 'error',
+      summary: error.message,
+      life: 5000
+    });
+  }
+  if (status === 'success') {
+    const { error: fetchError, status: fetchStatus } = await useAsyncData(
+      'fetch_tasks',
+      () => fetchTasks(route.params.id),
+      { server: false }
+    )
+    if (fetchStatus==='error') {
+      // Handle error in fetching tasks after deletion
+      toast.add({
+        severity: 'error',
+        summary: fetchError.message,
+        life: 5000
+      });
+      return
+    }
+    if (fetchStatus === 'success') {
+      hideDeleteTaskModal()}
+}}
+
 
 const translatedAnnotationStatus =(annotation_status)=> {
   return translations[annotation_status]
@@ -316,18 +347,25 @@ const exportOut = async (step, group) => {
   loadingExport.value = true
   const annos = {}
   for (const task of tasks) {
-    try {
-      // Fetch annotation data
-      const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id,'','out');
-      if(annotations.length > 0){
-
+    const { data, error, status } = await useAsyncData(
+      'fetch_annotations',
+      () => AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id, '', 'out'),
+      { server: false } // If you don't want it to fetch from the server every time
+    )
+    if (status==='error') {
+      toast.add({
+        severity: 'error',
+        summary: error.message,
+        life: 5000
+      });
+      return;
+    }
+      if(status === 'success' && data.value.length > 0){
+        annotations = data.value
         if (group == 'task') triggerDownload(annotations, task.name)
         else if (group == 'all') annotations.forEach((annotation) => triggerDownload(annotation, task.name + ' by ' + annotation.user_email.split('@')[0]))
         else if (group == 'one') annos[task.name] = (annotations)
       }
-    } catch (error) {
-      console.error('Error downloading file for task', task.id, error);
-    }
   }
   if (group == 'one') triggerDownload(annos, step.title)
   loadingExport.value = false
