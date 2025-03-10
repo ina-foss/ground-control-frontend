@@ -55,7 +55,6 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
 </template>
 
 <script setup lang="ts">
-  import { provide} from 'vue'
   import { useAuth } from "../../stores/auth"
   import MoleculeAnnotationLeftPanel from "../molecules/MoleculeAnnotationLeftPanel.vue";
   import MoleculeSpan from "../molecules/MoleculeSpan.vue";
