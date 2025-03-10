@@ -46,7 +46,7 @@
   <div class="  overflow-y-auto flex flex-col items-center  gap-10 col-span-2">
             <Tabs value="span" class="max-w-full  grow !h-0 !max-h-full">
               <TabList  >
-                <Tab value="span"  >Topics</Tab>
+                <Tab value="span"  >Spans</Tab>
                 <Tab value="parameters">Paramètres</Tab>
               </TabList>
               <TabPanels class="!bg-secondary !px-0  !h-fit !max-h-[calc(100%-47px)]   !pb-2">
@@ -56,7 +56,7 @@
                     @focus-span="handleFocusSpan" />
                 </TabPanel>
                 <TabPanel value="parameters" class="max-w-full w-[320px] flex flex-col items-center gap-3">
-                  <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
+                  <AtomSpanOption v-model:span="options.span"  v-model:timecode-bloc="options.timecode_bloc"   v-model:bloc="options.bloc" />
                   <atom-video-option />
                   <AtomTaskComment />
                 </TabPanel>
@@ -68,3 +68,8 @@
 <script src="./molecule-span-component.ts" lang="ts">
 
 </script>
+<style scoped lang="postcss">
+.selected-segment {
+  @apply border-surface-500 border-2
+}
+</style>

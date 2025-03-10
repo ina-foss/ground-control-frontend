@@ -77,7 +77,8 @@ watchEffect(async ()=>{
         span.value.style.color = textColorPicker(computeColor(newId.value).hex)
     }
     else{
-      span.value.style.color = 'black'
+      span.value.style.color = 'black';
+        focus.value = false;
     }
   })
 })
