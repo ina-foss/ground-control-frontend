@@ -13,7 +13,7 @@
       />
     </div>
     <div class="grow">
-    <div ref="dashboardRef" class="p-3 grid gap-6  max-h-full  lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
+    <div ref="dashboardRef" class="p-3 grid gap-6  max-h-full  " style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr));">
       <MoleculeProjectCard
         v-for="(project,index) in filteredProjects " :key="index" :project=project
         @refresh-data="handleRefresh"/>
