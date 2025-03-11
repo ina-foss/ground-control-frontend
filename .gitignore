@@ -28,3 +28,5 @@ test-results/
 !.env.example
 *.swp
 
+# package-lock.json
+package-lock.json
