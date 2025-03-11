@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 import Lara from '@primeuix/themes/lara'
-import {definePreset} from '@primevue/themes'
+import {definePreset} from '@primeuix/themes'
 
 const DSINAPreset = definePreset(Lara, {
   semantic:{
