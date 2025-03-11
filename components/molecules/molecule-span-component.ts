@@ -1,4 +1,5 @@
-import {defineComponent, inject, createApp, createVNode, render, PropType} from "vue"
+import {defineComponent, inject, createApp, createVNode, render } from "vue";
+import type { PropType } from "vue";
 import { useOptions } from "~/stores/annotation-options";
 import BadgeDirective from 'primevue/badgedirective';
 import _  from 'lodash';

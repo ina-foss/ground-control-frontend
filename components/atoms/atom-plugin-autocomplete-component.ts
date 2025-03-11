@@ -1,6 +1,8 @@
 import {defineComponent} from 'vue'
 import {useTopicList} from '../../composables/useTopicList'
 import {inject} from 'vue';
+import type { MultiSelectFilterEvent } from 'primevue';
+import type { Store } from 'pinia';
 
 
 export default defineComponent({
@@ -20,6 +22,7 @@ export default defineComponent({
     const indexPlugin = index.value;
     const selectedItems = ref();
     const options = ref();
+    const filterString : Ref<String> = ref('');
     const isAnnotationEditable = inject('isAnnotationEditable')
     const pluginName = computed(() => {
       return plugin.value.name || "";
@@ -29,6 +32,11 @@ export default defineComponent({
     const keepDropdownOpen = () => {
       multiSelectRef.value.overlayVisible = true;
     }
+
+    // Sort the options array by the ascending position of the filter string in each option's labelc:w
+    const sortedOptionsByFilter = computed(()=>{
+      return options.value?.sort((a ,b)=> a.label.indexOf(filterString.value.toLowerCase()) - b.label.indexOf(filterString.value.toLowerCase()))
+    })
 
     function updateValueFromSelectedItems() {
       if (selectedItems.value && selectedItems.value.length > 0) {
@@ -118,6 +126,7 @@ export default defineComponent({
       source,
       isAnnotationEditable,
       keepDropdownOpen,
+      sortedOptionsByFilter,
       multiSelectRef,
     }
   }
