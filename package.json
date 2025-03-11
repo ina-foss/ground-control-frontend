@@ -60,8 +60,5 @@
     "playwright-core": "^1.44.1",
     "postcss-custom-properties": "^13.3.10",
     "vitest": "^1.6.0"
-  },
-  "overrides": {
-    "unhead": "2.0.0-rc.9"
   }
 }
