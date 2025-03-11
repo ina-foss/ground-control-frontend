@@ -74,7 +74,7 @@ const rows = ref(15)
 const totalRecords = ref(getProjectNumber);
 
 const dashboardRef = ref()
-//const data = ref(getData)
+const data = ref(getData)
 localStorage.setItem('breadcrumbItems', null);
 const { $application } = useService();
 
@@ -95,22 +95,9 @@ const translatedProjectStatus = computed(() => {
 const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
 const statusOptions = translatedProjectStatus;
 
-const {data,refresh, status, error} = await useAsyncData('projects', () => fetchProject(first.value, rows.value),{server:false, immediate: true})
-const {data: projectNumber, refresh: getTotalRecords, status: projectNumberStatus, error: projectNumberError } = await useAsyncData('total_project_number',
-    ()=> totalRecords(),{server:false, immediate: true})
-
-
-
-const handleRefresh = async () => {
-  try {
-    await refresh();
-    await getTotalRecords();
-  } catch (error) {
-    console.error("Erreur lors de la récupération des projets :", error);
-  }
-};
-
-watch(() => data.value, async () => await handleRefresh())
+const {refresh, status, error} = await useAsyncData('projects', () => fetchProject(first.value, rows.value),{server:false})
+const { data: projectNumber } = await useAsyncData('total_project_number',
+    ()=> totalRecords(),{server:false})
 
 const sortDataById = computed(() => {
     // Check if data is an array and not just an object
@@ -119,17 +106,10 @@ const sortDataById = computed(() => {
   }
 )
 
-// Filtrer les projets en fonction du statut sélectionné
 const filteredProjects = computed(() => {
   if (!selectedStatus.value) return sortDataById.value;
   return sortDataById.value.filter((project) => project.status === selectedStatus.value.value);
 });
-
-onMounted(() => {
-  handleRefresh();
-})
-
-
 </script>
 <style >
 

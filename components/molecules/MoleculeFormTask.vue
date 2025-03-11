@@ -9,7 +9,7 @@
       </StepList>
       <StepPanels>
 
-      <StepPanel value="1" v-slot="{ activateCallback }" >
+        <StepPanel value="1" v-slot="{ activateCallback }" >
           <div class=" grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
             <span class="text-slate-400 ">Entrez la configuration de la tâche</span>
             <div class="flex">
@@ -27,12 +27,12 @@
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1">Type de données</label>
                 <Select class="custom-dropdown" v-model="dataType" :options="Object.values(TaskDataType)"
-                          placeholder=""/>
+                        placeholder=""/>
               </div>
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
                 <Select class="custom-dropdown" v-model="status" :options="translatedTaskStatus" optionLabel="label"
-                          placeholder=""/>
+                        placeholder=""/>
               </div>
             </div>
           </div>
@@ -46,14 +46,14 @@
             />
           </div>
 
-      </StepPanel>
+        </StepPanel>
         <StepPanel value="2" v-slot="{ activateCallback }" >
           <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Télécharger des tâches </span>
             <FileUpload chooseLabel="Télécharger"
-              :multiple="true"
-              ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
-              invalid-file-type-message="Type invalide"  name="file[]" :pt="{
+                        :multiple="true"
+                        ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
+                        invalid-file-type-message="Type invalide"  name="file[]" :pt="{
                   buttonbar: {
                     style: `z-index:20; padding-top: 10px; padding-bottom: 10px;`
                   },
@@ -131,7 +131,7 @@
             />
           </div>
 
-      </StepPanel>
+        </StepPanel>
       </StepPanels>
     </Stepper>
   </Dialog>
@@ -211,62 +211,47 @@ const onReaderLoad = (event) => {
 }
 
 const createTask = async () => {
-  const { data: mediaData, refresh: refreshMedia, status: mediaStatus, error: mediaError } = await useAsyncData('createMedia', () =>
-    MediaService.createMediaMediaPost({
-      url: fileData.value[0].asset.url,
-      type: fileData.value[0].asset.media_type,
-      player_parameters: fileData.value[0].asset.player_parameters
-    })
-  );
-  if (mediaStatus === 'error') {
-    toast.add()
-    return;
-  }
-  if (mediaStatus === 'success') {
-    const { data: taskData, error, status } = await useAsyncData('createTask', () =>
-      TaskService.createTaskTaskPost({
-        name: name.value,
-        instruction: instruction.value,
-        data_type: dataType.value,
-        status: status.value.value,
-        lead_time: null,
-        step_id: stepObject.id,
-        media_id: mediaData.id,
+
+  MediaService.createMediaMediaPost({
+    url: fileData.value[0].asset.url,
+    type: fileData.value[0].asset.media_type,
+    player_parameters: fileData.value[0].asset.player_parameters
+  }).then((res) => {
+    TaskService.createTaskTaskPost({
+      name: name.value,
+      instruction: instruction.value,
+      data_type: dataType.value,
+      status: status.value.value,
+      lead_time: null,
+      step_id: stepObject.id,
+      media_id: res.id
+    }).catch((err) => console.error(err)).then((res) => {
+      fileData.value.forEach(file => {
+        AnnotationService.createAnnotationAnnotationPost({
+          annotation: {
+            user_email: userEmail.value,
+            annotation_status: AnnotationStatus.DRAFT,
+            version: 0,
+            result: file,
+            task_id: res.id
+          },
+          association: {
+            annotation_id: 0,
+            task_id: res.id,
+            direction: 'in'
+          }
+        })
       })
-    );
-    if (status === 'error') {
-      console.error('Error creating task:', taskError.value);
-      return;
-    }
-    await Promise.all(
-      fileData.value.map(file =>
-        useAsyncData('createAnnotation', () =>
-          AnnotationService.createAnnotationAnnotationPost({
-            annotation: {
-              user_email: userEmail.value,
-              annotation_status: AnnotationStatus.DRAFT,
-              version: 0,
-              result: file,
-              task_id: taskData.id,
-            },
-            association: {
-              annotation_id: 0,
-              task_id: taskData.id,
-              direction: 'in',
-            },
-          })
-        )
-      )
-    );
-    
-    await useAsyncData('fetchTasks', () => fetchTasks(stepObject.project_id));
-    // Reset form values after success
-    name.value = '';
-    instruction.value = '';
-    dataType.value = TaskDataType.LDD;
-    status.value = translatedTaskStatus.value[0];
-    emits('toggle-dialog')
-  }
+    }).then(() => fetchTasks(stepObject.project_id))
+      .then(  // reset dialog values of create new task
+        name= '',
+        instruction= '',
+        dataType = TaskDataType.LDD,
+        status = translatedTaskStatus.value[0])
+  })
+
+
+  emits('toggle-dialog')
 }
 
 
