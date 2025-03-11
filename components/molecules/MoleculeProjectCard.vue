@@ -128,25 +128,28 @@ const formatTitle=(title)=>{
 }
 defineEmits(['refreshData']);
 const refreshStore = useRefreshStore()
-const {error,status,execute:deleteProject} =    await useAsyncData(
+const toast = useToast()
+const {refresh: refreshProjects,error:errorProjects, status:statusProjects} = await useAsyncData('projects', () => refreshStore.fetchProject(),{server:false, immediate:false })
+const { refresh:refreshProjectNumber, error:errorProjectNumber, status:statusProjectNumber } = await useAsyncData('total_project_number', ()=> refreshStore.totalRecords(),{server:false, immediate:false})
+
+const {error,status,execute:deleteProject} = await useAsyncData(
   'deleteProject',
   async () => {
-    try {
-      console.log("here to delete ",project.id)
-
       await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
       navigateTo(`/dashboard`);
-
-      await refreshStore.fetchProject()
-      await refreshStore.totalRecords()
+      await refreshProjects()
+      await refreshProjectNumber()
       deleteDialog.value = false
-    } catch (err) {
-      console.error("Error deleting project:", err);
-    }
   },
   { immediate:false }
 )
-
+if(status==='error'|| statusProjects==='error'||statusProjectNumber==='error'){
+  toast.add({
+    severity: 'error',
+    summary: error.message||errorProjects.message||errorProjectNumber.message,
+    life: 5000
+  })
+}
 </script>
 <style>
 

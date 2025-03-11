@@ -22,7 +22,7 @@
       </Message>
       <MoleculeProjectCard
         v-for="(project,index) in filteredProjects " :key="index" :project=project
-        @refresh-data="handleRefresh"/>
+        />
     </div>
     </div>
     <div class="w-full h-fit">
