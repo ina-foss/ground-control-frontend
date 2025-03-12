@@ -34,9 +34,14 @@
                               v-tooltip.top="item.created_by" :label=item.created_by.charAt(0).toUpperCase()
                               shape="circle"
                               class="!bg-[#0057FF] !text-white font-medium h-4 w-4 rounded-full flex items-center justify-center"/>
-                            <Button v-if="item.created_by === userEmail" class="h-auto" outlined icon="pi pi-times" icon-pos="center"
-                                    @click="handleDeleteComment(item.id)"/>
-
+                            <Button v-if="item.created_by === userEmail" style="height: 22px; padding:0 0 0 0;margin:0;color:#0C7DA2;"
+                                    severity="error-state" text rounded
+                                    @click="handleDeleteComment(item.id)">
+                            <img
+                              style="height:18px;width:18px;filter: brightness(0) saturate(100%) invert(48%) sepia(72%) saturate(4640%) hue-rotate(337deg) brightness(98%) contrast(91%);"
+                              src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
+                              alt="Trash Icon">
+                            </Button>
                           </div>
                           <div class="flex-1 flex flex-col">
                             <div style="word-break: break-word;">
