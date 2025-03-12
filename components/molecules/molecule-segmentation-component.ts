@@ -6,7 +6,7 @@ import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
 import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
-import AtomTopicList from "~/components/atoms/AtomTopicList.vue";
+import AtomTopicList from "~/components/atoms/topicList/AtomTopicList.vue";
 import {AnnotationStatus} from '~/api/generate/models/AnnotationStatus';
 
 
