@@ -75,6 +75,10 @@
         class="absolute flex items-center h-full top-[0] left-[-90px] z-50 text-xs overflow-visible    ">
         <p class="border-dashed border border-title py-1 px-2 rounded-sm ">{{ timestampToUnix(phrase.tcin)}}</p>
       </div>
+      <div v-if="options.number_segment"
+           class="absolute flex items-center h-full top-[0] left-[-70px] z-50 text-xs overflow-visible    ">
+        <p class="border-dashed border border-title py-1 px-2 rounded-sm ">{{ index }}</p>
+      </div>
     </div>
     <div class="relative gap-0  w-[calc(100%+20px)] z-40 ">
       <div
