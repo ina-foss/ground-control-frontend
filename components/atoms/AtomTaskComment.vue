@@ -29,10 +29,15 @@
                       <div v-for="(item, index) in comments" :key="index" class="flex items-center border-b">
 
                         <div class="flex flex-wrap p-1 gap-2 w-full">
+                          <div class="flex justify-between w-full">
                           <Avatar
                               v-tooltip.top="item.created_by" :label=item.created_by.charAt(0).toUpperCase()
                               shape="circle"
                               class="!bg-[#0057FF] !text-white font-medium h-4 w-4 rounded-full flex items-center justify-center"/>
+                            <Button v-if="item.created_by === userEmail" class="h-auto" outlined icon="pi pi-times" icon-pos="center"
+                                    @click="handleDeleteComment(item.id)"/>
+
+                          </div>
                           <div class="flex-1 flex flex-col">
                             <div style="word-break: break-word;">
                               <span class="text-sm">
@@ -114,5 +119,41 @@ function handleCreateComment() {
   }
   comment.value = ""
 }
+
+
+const handleDeleteComment = async (id) => {
+  const { execute } = await useAsyncData(
+    `deleteComment-${id}`,
+    async () => {
+      await TaskCommentService.deleteTaskCommentTaskCommentTaskCommentIdDelete(id);
+      comments.value = await TaskCommentService.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id);
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Comment deleted successfully',
+        life: 3000
+      });
+    },
+    { immediate: false,
+      onSuccess: () => {
+        toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Comment deleted successfully',
+          life: 3000
+        });
+      },
+      onError: (error) => {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Failed to delete comment: ${error.message || 'Unknown error'}`,
+          life: 3000
+        });
+      }}
+  );
+  await execute()
+};
+
 
 </script>
