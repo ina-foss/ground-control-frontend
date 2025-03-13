@@ -44,7 +44,7 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.displaySizes = {
       large: 900,
       medium: 700,
-      small: 550,
+      small: 340,
       xsmall: 340
     };
     this.playerConfiguration.dataSources = [];
