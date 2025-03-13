@@ -81,9 +81,10 @@
       <template #expansion="slotProps">
         <div class="border-surface-200 shadow-lg table-border-left" style="box-shadow: 0 4px 6px rgba(237, 237, 237, 1);">
           <DataTable
+            :loading="loading"
             :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
             class="overflow-scroll"
-             :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
+             :value="filteredTasks(slotProps.index)" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
       row:{
         class:'p-3',
@@ -92,6 +93,18 @@
        style: {height:'88px',padding: '20px !important'}
     }"
             @row-click="handleRowClick($event)">
+            <template #header>
+              <div class="flex justify-content-end">
+                <IconField iconPosition="left">
+                  <InputIcon>
+                    <i class="pi pi-search" />
+                  </InputIcon>
+                  <InputText v-model="searchQuery"  placeholder="Rechercher une tâche ..." />
+                </IconField>
+              </div>
+            </template>
+            <template #empty>Aucune tâche trouvée.</template>
+            <template #loading>Chargement des tâches, veuillez patienter...</template>
             <Column  class="txt" body-class="text-sm" field="name" header="Titre" style="width : 8rem ; min-width: 70px;">
               <template #editor="{ index: nestedIndex }">
                 <InputText
@@ -202,6 +215,7 @@ const formStepClick = ref()
 const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
+const searchQuery = ref('')
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 const roleDeleteTask = computed(() => $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE));
@@ -388,6 +402,14 @@ const getStatusClass = (status) => {
 const onCellEditComplete = () => {
   editMode.value = false
 }
+
+const filteredTasks = computed(() => {
+  return (stepIndex) => {
+    return (data.value.steps[stepIndex]?.tasks || []).filter((task) =>
+      task.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+  };
+});
 
 </script>
 <style scoped>
