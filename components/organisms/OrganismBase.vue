@@ -239,7 +239,8 @@ const annotationComponent = computed(() => {
           result: result.value,
           locals: locals.value,
           colors: colors.value,
-          topics: topics.value
+          topics: topics.value,
+          tcOffset : data.media?.player_parameters?.tc_offset ?? 0,
         },
         events:{ 'on-segment-click': handleSegmentClick }}
     case 'transcription':
