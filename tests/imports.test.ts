@@ -1,6 +1,4 @@
 import { expect, describe, test, vi } from 'vitest';
-import global from '~/presets/lara/global';
-import path from 'path';
 
 // Mock global window properties
 global.window = {
