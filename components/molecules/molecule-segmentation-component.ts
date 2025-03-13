@@ -20,7 +20,7 @@ export default defineComponent({
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []},
     state: {type: String as PropType<AnnotationStatus>},
-    tcOffset: {type: Number, default: ()=> {}}
+    tcOffset: {type: Number, default: ()=> 0}
   },
   setup(props, { emit, expose }) {
 
