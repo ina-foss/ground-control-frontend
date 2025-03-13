@@ -23,6 +23,7 @@
     "@nuxtjs/color-mode": "^3.4.1",
     "@pinia/nuxt": "^0.5.1",
     "@primeuix/themes": "^1.0.0",
+    "@primevue/themes": "^4.3.2",
     "@types/markdown-it": "^14.1.2",
     "dompurify": "^3.2.3",
     "hls.js": "^1.5.8",
