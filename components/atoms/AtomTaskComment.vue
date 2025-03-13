@@ -132,27 +132,22 @@ const handleDeleteComment = async (id) => {
     async () => {
       await TaskCommentService.deleteTaskCommentTaskCommentTaskCommentIdDelete(id);
       comments.value = await TaskCommentService.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id);
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Comment deleted successfully',
-        life: 3000
-      });
+
     },
     { immediate: false,
       onSuccess: () => {
         toast.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Comment deleted successfully',
+          summary: 'Succès',
+          detail: 'Commentaire supprimé avec succès',
           life: 3000
         });
       },
       onError: (error) => {
         toast.add({
           severity: 'error',
-          summary: 'Error',
-          detail: `Failed to delete comment: ${error.message || 'Unknown error'}`,
+          summary: 'Erreur',
+          detail: `Échec de la suppression du commentaire : ${error.message || 'Erreur inconnue'}`,
           life: 3000
         });
       }}
