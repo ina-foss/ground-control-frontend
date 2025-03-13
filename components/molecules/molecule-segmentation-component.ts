@@ -20,6 +20,7 @@ export default defineComponent({
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []},
     state: {type: String as PropType<AnnotationStatus>},
+    tcOffset: {type: Number, default: ()=> 0}
   },
   setup(props, { emit, expose }) {
 
@@ -29,7 +30,7 @@ export default defineComponent({
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
-    const { colors, topics, locals , state} = props
+    const { colors, topics, locals , state,tcOffset} = props
     const {result} = toRefs(props)
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = inject('isAnnotationEditable')
@@ -228,7 +229,8 @@ export default defineComponent({
       handleSegmentClick,
       deactivateTopic,
       activateTopic,
-      jumpToTopic
+      jumpToTopic,
+      tcOffset
     }
 
 

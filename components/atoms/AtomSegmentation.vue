@@ -72,8 +72,11 @@
       @click="$emit('on-segment-click', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
       {{ $props.phrase.data?.text[0] }}
       <div v-if="options.timecode_segment"
-        class="absolute flex items-center h-full top-[0] left-[-90px] z-50 text-xs overflow-visible    ">
-        <p class="border-dashed border border-title py-1 px-2 rounded-sm ">{{ timestampToUnix(phrase.tcin)}}</p>
+           class="absolute flex items-center h-full top-0 z-50 text-xs overflow-visible"
+           :class="{'left-[-90px]': tcOffset === 0, 'left-[-102px]': tcOffset !== 0}">
+        <p class="border-dashed border border-title py-1 px-2 rounded-sm">
+          {{ timestampToUnix(phrase.tcin) }}
+        </p>
       </div>
       <div v-if="options.number_segment"
            class="absolute flex items-center h-full top-[0] left-[-70px] z-50 text-xs overflow-visible    ">
@@ -123,7 +126,7 @@ import AtomComment from './AtomComment.vue';
 import { remove } from 'lodash'
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
 
-const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
+const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset'])
 const emit = defineEmits(['segmentation', 'on-segment-click','activateTopic', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()

@@ -25,7 +25,7 @@
         v-for="(phrase, index) in filteredLocals"
         :key="index"
         :ref="el => segmentationRefs.push(el)"
-        :class="{'rounded-lg transition-all overflow-x-visible relative': true, 'mx-[78px] ': (options.timecode_segment || options.number_segment) }"
+        :class="{'rounded-lg transition-all overflow-x-visible relative': true, 'mx-[90px] ': (options.timecode_segment || options.number_segment) }"
       >
         <AtomSegmentation
           ref="segmentation"
@@ -35,6 +35,7 @@
           :topics="topics"
           :topicList="topicList"
           :segmentationRefs="segmentationRefs"
+          :tcOffset="tcOffset"
           @dragging-start="(event) => { if(isAnnotationEditable) dragging.start = event.index}"
           @dragging-end="(event) => { if(isAnnotationEditable) dragging.end = event.index}"
           @segmentation="handleSegmentation"
