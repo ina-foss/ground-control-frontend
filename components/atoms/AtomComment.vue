@@ -3,7 +3,9 @@
       <!-- Header  -->
       <div class="w-full flex justify-between items-center">
       <b>{{ isEdited ? 'Edition' : 'Commentaire'}} </b>
-        <i class="pi pi-times rounded-2xl p-1 hover:bg-secondary-color cursor-pointer"  text @click="overlay.hide()" />
+        <div class="p-1">
+        <i class="pi pi-times rounded-2xl hover:bg-secondary-color cursor-pointer"  text @click="overlay.hide()" />
+        </div>
       </div>
       <!-- Text aera -->
       <div v-if="!phrase.data.comments || phrase.data.comments.length == 0" class="flex w-full gap-2 justify-between">
@@ -14,9 +16,21 @@
         <div class="flex flex-col gap-[12px]" v-for="comment in phrase.data.comments">
           <InputText v-if="isAnnotationEditable" v-model=comment.text variant="filled"  @focus=" startEdit" />
         <span v-else class="border p-sm rounded-md"> {{comment.text}}</span>
-          <div v-if="!isEdited" class="flex justify-between ">
+          <div v-if="!isEdited" class="flex flex-col">
+            <div class="flex justify-between ">
             <p> {{ comment.createdAt }}</p>
             <p class="truncate max-w-[150px]"> {{ comment.createdBy }}</p>
+            </div>
+            <Button
+                     v-if="comment.createdBy === userEmail" style="height: 22px; padding:2px 0 0 0;;color:#0C7DA2;"
+                     class="self-end"
+                     severity="error-state" text rounded
+                     @click="deleteComment(comment)">
+              <img
+                style="height:18px;width:18px;filter: brightness(0) saturate(100%) invert(48%) sepia(72%) saturate(4640%) hue-rotate(337deg) brightness(98%) contrast(91%);"
+                src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
+                alt="Trash Icon">
+            </Button>
           </div>
           <div v-else class="flex gap-2 justify-end">
             <Button icon="pi pi-times" severity="secondary" @click="cancelEdit"  />
@@ -53,7 +67,6 @@ function editComment () {
   const formattedDate = date.toLocaleString('FR', { day: 'numeric', month:'short', year:'numeric' });
   isEdited.value = false
   phrase.data.comments[0].createdAt =  formattedDate
-
 }
 
 function cancelEdit () {
@@ -73,4 +86,12 @@ function createComment() {
     if(!phrase.data.comments) phrase.data.comments= []
     phrase.data.comments.push(a)
 }
+
+function deleteComment(commentToDelete) {
+  phrase.data.comments = phrase.data.comments.filter(comment =>
+    !(comment.createdAt === commentToDelete.createdAt && comment.createdBy === commentToDelete.createdBy)
+  );
+  commentText.value = ""
+}
+
 </script>
