@@ -57,7 +57,7 @@
               </TabList>
               <TabPanels class="!bg-secondary !px-0  !h-fit !max-h-[calc(100%-47px)]   !pb-2">
                 <TabPanel class="max-w-full w-[320px] h-full max-h-full  flex  flex-col items-center gap-3" value="topics">
-                  <AtomTopicList class="mb-3" :colors="colors" :topics="topics" @topic-click="jumpToTopic"/>
+                  <AtomTopicList class="mb-3" :topics="topics" @topic-click="jumpToTopic"/>
                 </TabPanel>
                 <TabPanel value="parameters" class="max-w-full w-[320px] flex flex-col items-center gap-3">
                   <AtomSpanOption  v-model:timecode-bloc="options.timecode_bloc"  v-model:timecode-segment="options.timecode_segment" />
