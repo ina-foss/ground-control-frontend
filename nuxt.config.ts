@@ -151,8 +151,7 @@ export default defineNuxtConfig({
       },
       components: {
           include: '*',
-          exclude: ['Form','FormField']
-
+          exclude: ['Chart', 'Editor', 'Form', 'FormField']
       }
     },
     postcss: {
