@@ -1,22 +1,25 @@
 import _ from 'lodash';
 import { useTopicList } from '~/composables/useTopicList';
+import { useService } from '#imports';
+
+
 
 export default defineComponent({
   name: "AtomTopicList",
   emits: ["topicClick"],
   props: {
-    colors: {
-      type: Array,
-      default: () => []
-    },
     topics: {
       type: Array,
       default: () => []
     },
   },
-  setup({ colors, topics }, { emit }) {
+  setup(props, { emit }) {
 
     const { topicList } = useTopicList()
+    const { $application } = useService()
+    const { computeColor } = $application
+
+    const { topics } = toRefs(props)
 
     function preventDefaultTitle(topic) {
       if (!topic) return ''
@@ -26,12 +29,14 @@ export default defineComponent({
     const cleanedColors = computed(() => { // delete the first element
       const cleanedSort = {}
 
-      topics.forEach((topic: number, index: number) => {
+      topics.value.forEach((topic: number, index: number) => {
         // Add to cleanedSort object each topic in the order
         // they appear in the transcription
-        if (!_.findKey(cleanedSort, (el) => el === colors[topic])) {
-          cleanedSort[colors[topic]] = topic
+        if (!_.findKey(cleanedSort, (el,index) => el === topic) && topic) {
+          cleanedSort[" " + topic.toString()] = computeColor(topic).hex
         }
+
+
       })
 
       return cleanedSort

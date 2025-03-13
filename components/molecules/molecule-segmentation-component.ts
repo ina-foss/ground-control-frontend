@@ -120,7 +120,7 @@ export default defineComponent({
 
     const activateTopic = ({ index }:{index: number})=>{
         let currentIndex = index
-        const topic = newTopic()
+        const topic = generateTopicNumber()
         createTopic({ id: topic, labels: [] })
         do {
           topics[currentIndex] = topic
@@ -132,7 +132,7 @@ export default defineComponent({
 
     const createBreak = (index: number) => {
       let currentIndex = index
-      const topic = newTopic()
+      const topic = generateTopicNumber()
       const topTopic = topics[currentIndex]
       createTopic({ id: topic, labels: [] })
       copyTopicData(topTopic,topic)
@@ -155,21 +155,14 @@ export default defineComponent({
     }
 
 
-    const newTopic = (): number => {
-      let result
-      colors.forEach((color, index) => {
-        if (parseInt(index) != 0 && _.findIndex(topics, (el) => el == parseInt(index)) == -1) {
-          result = parseInt(index)
-        }
-      })
-      if (!result) {
-        result = _.max(topics) + 1 || 1
-        const randomColor = computeColor(result).hex
-        colors.push(randomColor)
-      }
+    const generateTopicNumber = (): number => {
+      let result = _.max(topics) + 1 || 1
+      const randomColor = computeColor(result).hex
+      colors.push(randomColor)
       return result
 
     }
+
 
     const loadTopics = () => {
       const max = _.maxBy(locals, (local) => local?.data?.topic) // Search for maximum topic number

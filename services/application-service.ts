@@ -38,6 +38,7 @@ export default class ApplicationService {
    * Return the css variable and the associated hex value from a integer
    */
   public computeColor= (seed: number)=>{
+    if(seed == null) return {full: 'bg-gray-500', hex:'#BEBEBE' }
     const full = 'bg-extra'+ (seed%9+1)
     const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(seed%9+1))
     return {  hex: hex, full : full , fullHexTransparent: 'bg-['+hex+'4f]'}
