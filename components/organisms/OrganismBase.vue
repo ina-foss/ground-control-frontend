@@ -315,8 +315,8 @@ const annotationComponent = computed(() => {
             options.value.player = !options.value.player;
             break;
           case "R":
-          options.value.number_segment = !options.value.number_segment;
-          break;
+            options.value.number_segment = !options.value.number_segment;
+            break;
           case (" "): // Gérer l'espace
             if (event.ctrlKey) { //creation rupture apres
               navigateWithkeyboard(0,false);
