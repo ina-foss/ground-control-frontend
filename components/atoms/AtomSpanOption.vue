@@ -22,7 +22,7 @@
               <ToggleSwitch v-model="timecode_segment" />
             </div>
             <div class="flex justify-between items-center self-stretch py-1" v-if="number_segment != undefined">
-              <span >Numero segment</span>
+              <span >Numéro segment</span>
               <ToggleSwitch v-model="number_segment" />
             </div>
           </div>
