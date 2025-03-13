@@ -356,9 +356,7 @@ const annotationComponent = computed(() => {
       else if(moleculeAnnotationRef.value &&  action === false){
         moleculeAnnotationRef.value.handleSegmentation({index: bestIndex-1})
       }
-      elementWithTestClass = getSelectedSegment();
-      const dataTcValue = elementWithTestClass?.querySelector('[tcin]')?.getAttribute('tcin') // return the first tcin value inside the selectedElement
-      handleSegmentClick({tcin: dataTcValue, tcout: '0', index: bestIndex})
+      handleSegmentClick({tcin: locals.value[bestIndex].tcin, tcout: '0', index: bestIndex})
     }
 
   }
