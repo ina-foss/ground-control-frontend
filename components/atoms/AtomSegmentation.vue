@@ -68,9 +68,9 @@
     </Button>
     </div>
     <div
-      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
+      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
       @click="$emit('on-segment-click', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
-      {{ $props.phrase.data?.text[0] }}
+      <p class="customText">{{ $props.phrase.data?.text[0] }}</p>
       <div v-if="options.timecode_segment"
            class="absolute flex items-center h-full top-0 z-50 text-xs overflow-visible"
            :class="{'left-[-90px]': tcOffset === 0, 'left-[-102px]': tcOffset !== 0}">
