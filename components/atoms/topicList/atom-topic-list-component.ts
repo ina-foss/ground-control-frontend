@@ -17,13 +17,18 @@ export default defineComponent({
 
     const { topicList } = useTopicList()
     const { $application } = useService()
-    const { computeColor } = $application
+    const { computeColor, extractRGB} = $application
 
     const { topics } = toRefs(props)
 
     function preventDefaultTitle(topic) {
       if (!topic) return ''
       return topic?.title ? topic.title : "Topic " + topic.id
+    }
+
+    function styleTopicCircle(hex: string): string {
+      const [r, g, b] = extractRGB(hex);
+      return `background-color: rgba(${r},${g},${b}, 0.25); border: solid 3px rgba(${r},${g},${b}, 0.50);`;
     }
 
     const cleanedColors = computed(() => { // delete the first element
@@ -46,7 +51,9 @@ export default defineComponent({
       cleanedColors,
       topicList,
       emit,
-      preventDefaultTitle
+      preventDefaultTitle,
+      styleTopicCircle,
+      computeColor
     }
   }
 
