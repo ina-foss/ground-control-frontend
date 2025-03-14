@@ -81,7 +81,9 @@
       <template #expansion="slotProps">
         <div class="border-surface-200 shadow-lg table-border-left" style="box-shadow: 0 4px 6px rgba(237, 237, 237, 1);">
           <DataTable
-            :loading="loading"
+            v-model:filters = "filters"
+            filterDisplay="row"
+            :globalFilterFields = "['name']"
             :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
             class="overflow-scroll"
              :value="filteredTasks(slotProps.index)" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
@@ -113,6 +115,9 @@
               </template>
               <template #body="{ data: nestedData }">
                 <p class="cursor-text	"> {{ nestedData.name }}</p>
+              </template>
+              <template #filter="{ filterModel, filterCallback }">
+                  <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Search by name" />
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="annotations.length" sortable style="width: 3rem;">
@@ -196,6 +201,8 @@ import {AnnotationService, AnnotationStatus, StepStatus, TaskService, Permission
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
+import { FilterMatchMode } from '@primevue/core/api';
+import type { DataTableFilterMeta } from 'primevue';
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
@@ -216,6 +223,10 @@ const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
 const searchQuery = ref('')
+const filters = ref<DataTableFilterMeta>({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  name: {value:null, matchMode: FilterMatchMode.CONTAINS}
+})
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 const roleDeleteTask = computed(() => $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE));
