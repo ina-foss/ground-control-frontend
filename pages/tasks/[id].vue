@@ -1,6 +1,6 @@
 <template>
   <div class="h-full" >
-    <OrganismBase
+    <OrganismAnnotation
  :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
                :annotations-out="annotations_out"
                @submit-annotation="handleSubmit($event,'submit')"
@@ -12,11 +12,11 @@
 <script setup>
 
 import {ref} from 'vue';
-import { AnnotationService, AnnotationStatus} from '../../api/generate';
-import {useAuth} from '../../stores/auth';
+import { AnnotationService, AnnotationStatus} from '~/api/generate';
+import {useAuth} from '~/stores/auth';
 import {storeToRefs} from 'pinia';
 import {useRefreshStore} from '#imports';
-import OrganismBase from '~/components/organisms/OrganismBase.vue';
+import OrganismAnnotation from '~/components/organisms/annotation/OrganismAnnotation.vue';
 
 const refresh = useRefreshStore()
 const route = useRoute()

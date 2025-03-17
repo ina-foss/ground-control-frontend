@@ -10,7 +10,7 @@
         <div class="w-full flex h-full  p-sm  rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flex-col w-full gap-2">
-          <div class="flex flew-row items-center justify-between w-full max-w-full" >
+          <div class="flex flew-row items-center justify-between w-full max-w-full min-h-11" >
             <Tag v-if="options.timecode_bloc" severity="contrast">
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
@@ -18,7 +18,7 @@
               </div>
             </Tag>
             <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex flex-col grow  justify-between text-ellipsis  line-clamp-2  ">
-              <div class="flex items-center  justify-start h-full " >
+              <div class="flex items-center gap-2 justify-start h-full " >
                 <div v-if="editTitle">
                   <InputText v-model="editedTitle" @focusout="editTitle = false" />
                 </div>
@@ -29,7 +29,7 @@
                       <p  class="text-ellipsis font-bold line-clamp-2"> {{title }} </p>
 
                   </div>
-                  <Button class="min-w-[33px] " :disabled="!isAnnotationEditable" icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
+                  <Button v-if="isAnnotationEditable" class="min-w-[33px] "  icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
                 </div>
                 <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"
                   :chipList="chipList" />
@@ -41,10 +41,10 @@
                 <b>Ignoré</b>
               </div>
             </div>
-            <Button v-if="topicIndex !== 0" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" :disabled="!isAnnotationEditable" />
+            <Button v-if="topicIndex != 0 && isAnnotationEditable" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" :disabled="!isAnnotationEditable" />
             <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
-            <Button :disabled="!isAnnotationEditable" v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
-            <Button :disabled="!isAnnotationEditable" v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
+            <Button  v-if="topicIndex != 0 && isAnnotationEditable" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+            <Button  v-else-if="isAnnotationEditable" severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
           </div>
               <div v-if=" chipList?.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
                 <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" :removable="isAnnotationEditable"
