@@ -10,7 +10,6 @@
             src="public/icons/icons-svg/icons-svg/account-icon.svg"
             alt="Account Icon">
         </Avatar>
-        <AtomHelp :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false" />
         <Menu id="overlay_menu" ref="menu" :model="items" :popup="true" />
 </template>
 
@@ -22,7 +21,6 @@ const authStore = useAuth()
 const authService = useService()
 const { userEmail } = storeToRefs(authStore);
 const colorMode = useColorMode()
-const dialogVisible = ref(false);
 const menu = ref();
 const items = computed(() => {
     const nextColorMode = colorMode.preference === "light" ? 'dark' : 'light'
@@ -46,13 +44,6 @@ const items = computed(() => {
                     }
                 },
                 {
-                  label: 'Aide',
-                  icon: 'pi pi-cog',
-                  command: () => {
-                    handleHelp()
-                  }
-                },
-                {
                     label: 'Déconnexion',
                     icon: 'pi pi-sign-out',
                     command: () => {
@@ -73,10 +64,6 @@ const toggle = (event) => {
 const toggleDarkMode = () => {
     if (colorMode.preference == 'dark') colorMode.preference = 'light'
     else colorMode.preference = 'dark'
-}
-
-const handleHelp = () => {
-  dialogVisible.value = true
 }
 
 const handleLogout = () => authService.$auth.logout()

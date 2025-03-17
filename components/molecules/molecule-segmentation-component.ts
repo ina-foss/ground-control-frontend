@@ -8,11 +8,12 @@ import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
 import AtomTopicList from "~/components/atoms/topicList/AtomTopicList.vue";
 import {AnnotationStatus} from '~/api/generate/models/AnnotationStatus';
+import AtomHelp from "../atoms/AtomHelp.vue";
 
 
 export default defineComponent({
   name: 'MoleculeSegmentation',
-  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList},
+  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList,AtomHelp},
   emits: ['on-segment-click'],
   props: {
     result: {type: Object, default: ()=> {} },
