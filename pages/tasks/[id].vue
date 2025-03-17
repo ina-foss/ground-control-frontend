@@ -27,6 +27,7 @@ const {$application} = useService()
 const {getData} = storeToRefs(refresh)
 const {userEmail} = storeToRefs(authStore)
 const {fetchAnnotations} = refresh
+let timeAnnotationStart
 
 const data = ref(getData)
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
@@ -72,10 +73,11 @@ const annotationInfo = computed(() => {
   }
 });
 
-const submitExistantAnnotation =(locals,action)=>{
+const submitExistantAnnotation =(locals,action,timeSpent)=>{
 
     const result = annotations_out.value[0].result
     result.data.localisation[0].sublocalisations.localisation = locals
+    result.data.timeSpent = result.data.timeSpent ? result.data.timeSpent + timeSpent : timeSpent
     // L'utilisateur a déjà une annotation associée à cette tâche
     let promise;
     if (action === 'submit') {
@@ -109,9 +111,10 @@ const submitExistantAnnotation =(locals,action)=>{
       })
 }
 
-const submitNewAnnotation =(locals,action)=>{
+const submitNewAnnotation =(locals,action,timeSpent)=>{
   const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
   result.data.localisation[0].sublocalisations.localisation = locals
+  result.data.timeSpent = timeSpent
   // L'utilisateur n'a jamais annoté cette tâche
   AnnotationService.createAnnotationAnnotationPost({
     annotation: {
@@ -147,14 +150,26 @@ const submitNewAnnotation =(locals,action)=>{
         }, 1000);
       }
     })}
+
+onMounted(()=>{
+   timeAnnotationStart = new Date().getTime()
+})
+
 const handleSubmit = (event, action) => {
   const locals = JSON.parse(JSON.stringify(event.locals))
 
+  const timeAnnotationEnd = new Date().getTime()
+
+  const timeSpentOnScreen = (timeAnnotationEnd-timeAnnotationStart)/1000
+
+  timeAnnotationStart = timeAnnotationEnd
+
+
   if (annotationInfo.value != null) {
-    submitExistantAnnotation(locals,action);
+    submitExistantAnnotation(locals,action,timeSpentOnScreen);
 
   } else {
-    submitNewAnnotation(locals,action);
+    submitNewAnnotation(locals,action,timeSpentOnScreen);
   }
 
 }
