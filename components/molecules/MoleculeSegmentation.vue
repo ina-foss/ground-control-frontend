@@ -1,4 +1,6 @@
 <template>
+  <AtomHelp class="fixed z-[1000]" />
+
   <div :class="`col-span-5 w-full flex justify-center relative transition-all`"  >
     <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center font-bold gap-1 justify-center top-[-30px]" v-html="useRoute().query.email ? `<p>Tâche annotée par<p><span class='px-2 py-1 bg-primary text-white font-bold rounded-md'>${useRoute().query.email}</span>` : 'Tâche Terminée ✅' " ></span>
     <div :class="`${options.timecode_segment || options.number_segment ? 'w-full' : 'w-fit'} relative  justify-center flex flex-row  h-0 min-h-full transition-all`">
@@ -73,6 +75,10 @@
 </template>
 
 <script src="./molecule-segmentation-component" lang="ts" >
+import {defineComponent} from "vue";
+export default defineComponent({
+  components: {AtomHelp}
+})
 </script>
 
 <style >
