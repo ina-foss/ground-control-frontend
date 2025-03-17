@@ -1,4 +1,5 @@
 <template>
+  <AtomHelp class="fixed z-[1000]" />
   <div
 v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationStatus && (isAdmin && !useRoute().query.email || !isAdmin ) && allFetched"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
@@ -52,6 +53,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  :state="annotationsOut[annotationInfo?.index]?.annotation_status" v-on="annotationComponent.events" />
     </div>
   </div>
+
 </template>
 
 <script setup lang="ts">
@@ -67,6 +69,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
   import {useTcOffset} from "~/composables/useTcOffset";
   import AtomSearch from "../atoms/AtomSearch.vue";
   import type AtomSpan from "~/components/atoms/AtomSpan.vue";
+  import AtomHelp from "~/components/atoms/AtomHelp.vue";
 
   const authStore = useAuth()
   const optionStore = useOptions()
@@ -383,5 +386,11 @@ const annotationComponent = computed(() => {
 .button-overwrite:hover {
   background-color: #0C7DA2 !important;
   border-color: #0C7DA2 !important;
+}
+.atom-help {
+  z-index: 1000 !important;
+  position: fixed; /* Assure qu'il ne soit pas affecté par ses parents */
+  top: 10px; /* Ajuste selon ton besoin */
+  right: 10px;
 }
 </style>
