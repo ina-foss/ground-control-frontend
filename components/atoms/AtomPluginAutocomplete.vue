@@ -1,10 +1,10 @@
 <template>
   <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
-    <MultiSelect :disabled="!isAnnotationEditable" overlay-style="max-width: 350px  "  v-model="selectedItems" :options="sortedOptionsByFilter" optionLabel="label" filter @filter="handleFilter" :placeholder="pluginName"
-                   :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-fit " :panelClass="'w-auto max-w-[200px]'"> >
+    <MultiSelect :disabled="!isAnnotationEditable"  v-model="selectedItems" :options="sortedOptionsByFilter" optionLabel="label" filter @filter="handleFilter" :placeholder="pluginName"
+                   :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-fit " > >
     <template #option="slotProps">
       <div class="flex items-center ">
-          <div v-tooltip.top="{showDelay: 1000 ,value:slotProps.option.label}">{{ slotProps.option.label }}</div>
+          <div >{{ slotProps.option.label }}</div>
       </div>
     </template>
       </MultiSelect>
