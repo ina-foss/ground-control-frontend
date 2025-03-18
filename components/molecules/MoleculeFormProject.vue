@@ -129,6 +129,7 @@ const availableType = ref(Object.values(AnnotationType))
 let selectedType = ref([])
 const refreshStore = useRefreshStore()
 const toast = useToast()
+const { $handleApiError } = useNuxtApp()
 const headerTitle = !project ? 'Nouveau projet' : 'Modifier ' + project?.title
 if (project?.steps !== null && project?.steps !== undefined) {
   project?.steps.forEach(type => {
@@ -137,7 +138,7 @@ if (project?.steps !== null && project?.steps !== undefined) {
 }
 const updateProject = async () => {
   if (title.value === "") {
-    toast.add({severity: "error", detail: 'Project could not be created', summary: 'Something went wrong'});
+    toast.add({severity: "error", detail: 'Le titre est requis', summary: 'Erreur détectée'});
   } else {
     try {
       const response = await ProjectService.updateProjectProjectProjectIdPut(project?.id, {
@@ -161,11 +162,11 @@ const updateProject = async () => {
             annotation_type: type,
             pinned_at: null,
             status: StepStatus.DRAFT,
-            project_id: response.id
+            project_id: 111
           }).catch((err) => {
             console.log("we are here")
               console.error(err)
-              throw new Error(err.body.raw_message)
+              $handleApiError(err)
             });
         }
       });
@@ -173,13 +174,14 @@ const updateProject = async () => {
       await refreshStore.fetchProject();
       await refreshStore.totalRecords();
     } catch (error) {
-      toast.add({severity: 'error', detail: 'Project could not be updated', summary: 'Something went wrong'});
+      //toast.add({severity: 'error', detail: 'Project could not be updated', summary: 'Something went wrong'});
+      $handleApiError(error)
     }
   }
 };
 const createProject = async () => {
   if (title.value === '') {
-    toast.add({severity: "error", detail: "Project could not be created", summary: "Something went wrong"})
+    toast.add({severity: "error", detail: "Le titre est requis", summary: "Erreur détectée"})
   } else {
     const {userEmail} = useAuth()
     const response = ProjectService.createProjectProjectPost({
@@ -191,15 +193,13 @@ const createProject = async () => {
       allow_skip: allowSkip.value,
       control_weights: 10,
       pinned_at: null,
-      created_by: userEmail,
+      //created_by: userEmail,
     })
 
     response
-      .catch(() => (toast.add({
-        severity: 'error',
-        detail: 'Project could not be created',
-        summary: 'Something went wrong'
-      })))
+      .catch((error) => {
+        $handleApiError(error)
+      })
       .then((res) => {
         selectedType.value.forEach((type, index) => {
           StepService.createStepStepPost({

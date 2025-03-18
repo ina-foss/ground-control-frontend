@@ -95,6 +95,7 @@ const translations = {
   pending: 'En attente',
   ended: 'Terminé'
 }
+const { $handleApiError } = useNuxtApp()
 
 const translatedProjectStatus = (project_status) => {
   return translations[project_status]
@@ -138,7 +139,7 @@ const deleteProject = async () => {
     deleteDialog.value = false
   } catch (err) {
     console.error("Error deleting project:", err.body);
-    throw new Error(err.body.raw_message)
+    $handleApiError(err)
   }
 }
 

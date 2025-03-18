@@ -150,7 +150,7 @@ const emits = defineEmits(['toggle-dialog', 'refreshData'])
 const {dialogVisible, stepObject} = defineProps(['dialogVisible', 'stepObject'])
 const {fetchTasks} = refreshStore
 const {userEmail} = storeToRefs(authStore)
-
+const { $handleApiError } = useNuxtApp()
 const toast = useToast()
 
 const templateRef = ref()
@@ -217,6 +217,7 @@ const createTask = async () => {
     type: fileData.value[0].asset.media_type,
     player_parameters: fileData.value[0].asset.player_parameters
   }).then((res) => {
+    $handleApiError("test")
     TaskService.createTaskTaskPost({
       name: name.value,
       instruction: instruction.value,
@@ -225,9 +226,11 @@ const createTask = async () => {
       lead_time: null,
       step_id: stepObject.id,
       media_id: res.id
-    }).catch((err) => {
+    }
+    ).catch((err) => {
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
       console.error(err)
-      throw new Error(err.body.raw_message)
+      $handleApiError(err)
     }).then((res) => {
       fileData.value.forEach(file => {
         AnnotationService.createAnnotationAnnotationPost({
