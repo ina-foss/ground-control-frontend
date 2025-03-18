@@ -228,7 +228,6 @@ const createTask = async () => {
       media_id: res.id
     }
     ).catch((err) => {
-      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
       console.error(err)
       $handleApiError(err)
     }).then((res) => {

@@ -162,9 +162,8 @@ const updateProject = async () => {
             annotation_type: type,
             pinned_at: null,
             status: StepStatus.DRAFT,
-            project_id: 111
+            project_id: response.id
           }).catch((err) => {
-            console.log("we are here")
               console.error(err)
               $handleApiError(err)
             });
@@ -174,7 +173,6 @@ const updateProject = async () => {
       await refreshStore.fetchProject();
       await refreshStore.totalRecords();
     } catch (error) {
-      //toast.add({severity: 'error', detail: 'Project could not be updated', summary: 'Something went wrong'});
       $handleApiError(error)
     }
   }
@@ -193,7 +191,7 @@ const createProject = async () => {
       allow_skip: allowSkip.value,
       control_weights: 10,
       pinned_at: null,
-      //created_by: userEmail,
+      created_by: userEmail,
     })
 
     response
