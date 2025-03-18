@@ -128,13 +128,10 @@ const formatTitle=(title)=>{
 }
 defineEmits(['refreshData']);
 const refreshStore = useRefreshStore()
-const toast = useToast()
-const {refresh: refreshProjects,error:errorProjects, status:statusProjects} = await useAsyncData('projects', () => refreshStore.fetchProject(),{server:false, immediate:false })
-const { refresh:refreshProjectNumber, error:errorProjectNumber, status:statusProjectNumber } = await useAsyncData('total_project_number', ()=> refreshStore.totalRecords(),{server:false, immediate:false})
 
 const deleteProject = async () => {
   try {
-    await ProjectService.deleteProjectProjectProjectIdDelete(11111);
+    await ProjectService.deleteProjectProjectProjectIdDelete(999);
     navigateTo(`/dashboard`);
     await refreshStore.fetchProject()
     await refreshStore.totalRecords()

@@ -18,6 +18,7 @@ const authenticateOidc = async () => {
     router.push("/");
   } catch (error) {
     console.error(error);
+    throw new Error(error.body.raw_message)
   }
 };
 

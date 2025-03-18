@@ -1,6 +1,5 @@
 import ToastService from 'primevue/toastservice';
 import Toast from 'primevue/toast';
-import { request } from '../api/generate/core/request'
 export default defineNuxtPlugin((nuxtApp) => {
   const toast = useToast();
   // vue:error hook is based on onErrorCaptured lifecycle hook.
