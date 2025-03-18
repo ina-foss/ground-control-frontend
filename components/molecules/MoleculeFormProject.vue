@@ -162,7 +162,11 @@ const updateProject = async () => {
             pinned_at: null,
             status: StepStatus.DRAFT,
             project_id: response.id
-          }).catch((err) => console.error(err));
+          }).catch((err) => {
+            console.log("we are here")
+              console.error(err)
+              throw new Error(err.body.raw_message)
+            });
         }
       });
       emits('toggle-dialog');
@@ -205,7 +209,10 @@ const createProject = async () => {
             pinned_at: null,
             status: StepStatus.DRAFT,
             project_id: res.id
-          }).catch((err) => console.error(err))
+          }).catch((err) => {
+            console.error(err)
+            throw new Error(err.body.raw_message)
+          })
         })
         // reset dialog values of create new project
         title.value = '',

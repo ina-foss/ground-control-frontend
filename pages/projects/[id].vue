@@ -58,10 +58,10 @@
               label="Créer un task"  outlined  @click="stepCreate(slotProps.data.id)"/>
             <div
               class="flex items-center cursor-pointer txt    " :loading="loadingExport"
-                  @click="clickButtonMenu($event,slotProps.data) ">
-            <SplitButton
-              label="Exporter"  outlined  />
-          </div>
+              @click="clickButtonMenu($event,slotProps.data) ">
+              <SplitButton
+                label="Exporter"  outlined  />
+            </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
               <template #item="{ item, props }" >
@@ -86,7 +86,7 @@
             :globalFilterFields = "['name']"
             :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
             class="overflow-scroll"
-             :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
+            :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
       row:{
         class:'p-3',
@@ -106,7 +106,7 @@
                 <p class="cursor-text	"> {{ nestedData.name }}</p>
               </template>
               <template #filter="{ filterModel, filterCallback }">
-                  <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Rechercher par titre ..." />
+                <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Rechercher par titre ..." />
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="annotations.length" sortable style="width: 3rem;">
@@ -151,12 +151,12 @@
                 <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
               </template>
             </Column>            <Column v-if="roleDeleteTask" >
-              <template #body="{data: nestedData}">
-                <div class="flex justify-end px-4">
-                  <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
-                </div>
-              </template>
-            </Column>
+            <template #body="{data: nestedData}">
+              <div class="flex justify-end px-4">
+                <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
+              </div>
+            </template>
+          </Column>
 
           </DataTable>
         </div>
@@ -166,8 +166,8 @@
 
     <Dialog v-model:visible="deleteModal.visible" :header="`Voulez vous supprimer la tâche ${ deleteModal.data.name?.slice(0,17) != deleteModal.data.name ? deleteModal.data.name?.slice(0,17) +'...' : deleteModal.data.name }  ? `"  modal @hide="hideDeleteTaskModal()">
       <div class="h-fit w-full flex flex-row justify-end gap-2  ">
-          <Button label="Annuler" severity="secondary" text @click="hideDeleteTaskModal()"/>
-          <Button type="button" label="Supprimer" severity="danger" :loading="deleteModal.loading" icon="pi pi-times" @click="deleteTask(deleteModal.data.id)" />
+        <Button label="Annuler" severity="secondary" text @click="hideDeleteTaskModal()"/>
+        <Button type="button" label="Supprimer" severity="danger" :loading="deleteModal.loading" icon="pi pi-times" @click="deleteTask(deleteModal.data.id)" />
       </div>
     </Dialog>
 
@@ -175,8 +175,8 @@
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>
     <MoleculeFormTask
-:dialog-visible="dialogVisible" :step-object="formStepClick"
-                      @toggle-dialog="dialogVisible=false"/>
+      :dialog-visible="dialogVisible" :step-object="formStepClick"
+      @toggle-dialog="dialogVisible=false"/>
   </div>
 
 </template>
@@ -223,7 +223,7 @@ const getFirstLine = (markdownText) => {
   if (!markdownText) return "";
   return markdownText.split("\n")[0] ;
 };
-  const expandedRows = ref()
+const expandedRows = ref()
 
 const editMode = ref(false)
 const data = ref(getProject)
@@ -268,41 +268,10 @@ const hideDeleteTaskModal = () => {
   deleteModal.data= {}
 }
 
-const deleteTask = async (task_id) => {
+const deleteTask = (task_id) => {
   deleteModal.loading = true
   TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> fetchTasks(route.params.id)).then(()=> hideDeleteTaskModal())
-  const { error, status } = await useAsyncData(
-    'delete_task',
-    () => TaskService.deleteTaskTaskTaskIdDelete(task_id),
-    { server: false }
-  )
-  if (status === 'error') {
-    // Handle error case (showing error toast)
-    toast.add({
-      severity: 'error',
-      summary: error.message,
-      life: 5000
-    });
-  }
-  if (status === 'success') {
-    const { error: fetchError, status: fetchStatus } = await useAsyncData(
-      'fetch_tasks',
-      () => fetchTasks(route.params.id),
-      { server: false }
-    )
-    if (fetchStatus==='error') {
-      // Handle error in fetching tasks after deletion
-      toast.add({
-        severity: 'error',
-        summary: fetchError.message,
-        life: 5000
-      });
-      return
-    }
-    if (fetchStatus === 'success') {
-      hideDeleteTaskModal()}
-}}
-
+}
 
 const translatedAnnotationStatus =(annotation_status)=> {
   return translations[annotation_status]
@@ -347,25 +316,19 @@ const exportOut = async (step, group) => {
   loadingExport.value = true
   const annos = {}
   for (const task of tasks) {
-    const { data, error, status } = await useAsyncData(
-      'fetch_annotations',
-      () => AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id, '', 'out'),
-      { server: false } // If you don't want it to fetch from the server every time
-    )
-    if (status==='error') {
-      toast.add({
-        severity: 'error',
-        summary: error.message,
-        life: 5000
-      });
-      return;
-    }
-      if(status === 'success' && data.value.length > 0){
-        annotations = data.value
+    try {
+      // Fetch annotation data
+      const annotations = await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(task.id,'','out');
+      if(annotations.length > 0){
+
         if (group == 'task') triggerDownload(annotations, task.name)
         else if (group == 'all') annotations.forEach((annotation) => triggerDownload(annotation, task.name + ' by ' + annotation.user_email.split('@')[0]))
         else if (group == 'one') annos[task.name] = (annotations)
       }
+    } catch (error) {
+      console.error('Error downloading file for task', task.id, error);
+      throw new Error(error.body.raw_message)
+    }
   }
   if (group == 'one') triggerDownload(annos, step.title)
   loadingExport.value = false

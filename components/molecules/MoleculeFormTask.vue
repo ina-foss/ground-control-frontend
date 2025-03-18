@@ -225,7 +225,10 @@ const createTask = async () => {
       lead_time: null,
       step_id: stepObject.id,
       media_id: res.id
-    }).catch((err) => console.error(err)).then((res) => {
+    }).catch((err) => {
+      console.error(err)
+      throw new Error(err.body.raw_message)
+    }).then((res) => {
       fileData.value.forEach(file => {
         AnnotationService.createAnnotationAnnotationPost({
           annotation: {
