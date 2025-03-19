@@ -22,7 +22,7 @@ export default defineComponent({
     const indexPlugin = index.value;
     const selectedItems = ref();
     const options = ref();
-    const filterString : Ref<String> = ref('');
+    const filterString : Ref<string> = ref('');
     const isAnnotationEditable = inject('isAnnotationEditable')
     const pluginName = computed(() => {
       return plugin.value.name || "";
@@ -31,6 +31,10 @@ export default defineComponent({
     const multiSelectRef = ref(null);
     const keepDropdownOpen = () => {
       multiSelectRef.value.overlayVisible = true;
+    }
+
+    function handleFilter(event) {
+      filterString.value = event.value
     }
 
     // Sort the options array by the ascending position of the filter string in each option's labelc:w
@@ -123,6 +127,7 @@ export default defineComponent({
       selectedItems,
       pluginName,
       indexPlugin,
+      handleFilter,
       source,
       isAnnotationEditable,
       keepDropdownOpen,
