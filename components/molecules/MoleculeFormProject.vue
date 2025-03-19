@@ -209,7 +209,7 @@ const createProject = async () => {
             project_id: res.id
           }).catch((err) => {
             console.error(err)
-            throw new Error(err.body.raw_message)
+            $handleApiError(err)
           })
         })
         // reset dialog values of create new project
