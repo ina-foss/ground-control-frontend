@@ -11,6 +11,7 @@ import { useRouter } from "vue-router";
 
 const services = useService();
 const router = useRouter();
+const { $handleApiError } = useNuxtApp()
 
 const authenticateOidc = async () => {
   try {
@@ -18,7 +19,7 @@ const authenticateOidc = async () => {
     router.push("/");
   } catch (error) {
     console.error(error);
-    throw new Error(error.body.raw_message)
+    $handleApiError(error)
   }
 };
 
