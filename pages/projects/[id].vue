@@ -58,10 +58,10 @@
               label="Créer un task"  outlined  @click="stepCreate(slotProps.data.id)"/>
             <div
               class="flex items-center cursor-pointer txt    " :loading="loadingExport"
-                  @click="clickButtonMenu($event,slotProps.data) ">
-            <SplitButton
-              label="Exporter"  outlined  />
-          </div>
+              @click="clickButtonMenu($event,slotProps.data) ">
+              <SplitButton
+                label="Exporter"  outlined  />
+            </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
               <template #item="{ item, props }" >
@@ -86,7 +86,7 @@
             :globalFilterFields = "['name']"
             :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
             class="overflow-scroll"
-             :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
+            :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
       row:{
         class:'p-3',
@@ -106,7 +106,7 @@
                 <p class="cursor-text	"> {{ nestedData.name }}</p>
               </template>
               <template #filter="{ filterModel, filterCallback }">
-                  <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Rechercher par titre ..." />
+                <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Rechercher par titre ..." />
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="annotations.length" sortable style="width: 3rem;">
@@ -151,12 +151,12 @@
                 <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
               </template>
             </Column>            <Column v-if="roleDeleteTask" >
-              <template #body="{data: nestedData}">
-                <div class="flex justify-end px-4">
-                  <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
-                </div>
-              </template>
-            </Column>
+            <template #body="{data: nestedData}">
+              <div class="flex justify-end px-4">
+                <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
+              </div>
+            </template>
+          </Column>
 
           </DataTable>
         </div>
@@ -166,8 +166,8 @@
 
     <Dialog v-model:visible="deleteModal.visible" :header="`Voulez vous supprimer la tâche ${ deleteModal.data.name?.slice(0,17) != deleteModal.data.name ? deleteModal.data.name?.slice(0,17) +'...' : deleteModal.data.name }  ? `"  modal @hide="hideDeleteTaskModal()">
       <div class="h-fit w-full flex flex-row justify-end gap-2  ">
-          <Button label="Annuler" severity="secondary" text @click="hideDeleteTaskModal()"/>
-          <Button type="button" label="Supprimer" severity="danger" :loading="deleteModal.loading" icon="pi pi-times" @click="deleteTask(deleteModal.data.id)" />
+        <Button label="Annuler" severity="secondary" text @click="hideDeleteTaskModal()"/>
+        <Button type="button" label="Supprimer" severity="danger" :loading="deleteModal.loading" icon="pi pi-times" @click="deleteTask(deleteModal.data.id)" />
       </div>
     </Dialog>
 
@@ -175,8 +175,8 @@
       <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
     </Dialog>
     <MoleculeFormTask
-:dialog-visible="dialogVisible" :step-object="formStepClick"
-                      @toggle-dialog="dialogVisible=false"/>
+      :dialog-visible="dialogVisible" :step-object="formStepClick"
+      @toggle-dialog="dialogVisible=false"/>
   </div>
 
 </template>
@@ -223,7 +223,7 @@ const getFirstLine = (markdownText) => {
   if (!markdownText) return "";
   return markdownText.split("\n")[0] ;
 };
-  const expandedRows = ref()
+const expandedRows = ref()
 
 const editMode = ref(false)
 const data = ref(getProject)
@@ -327,6 +327,7 @@ const exportOut = async (step, group) => {
       }
     } catch (error) {
       console.error('Error downloading file for task', task.id, error);
+      throw new Error(error.body.raw_message)
     }
   }
   if (group == 'one') triggerDownload(annos, step.title)

@@ -95,6 +95,7 @@ const translations = {
   pending: 'En attente',
   ended: 'Terminé'
 }
+const { $handleApiError } = useNuxtApp()
 
 const translatedProjectStatus = (project_status) => {
   return translations[project_status]
@@ -129,19 +130,22 @@ const formatTitle=(title)=>{
 defineEmits(['refreshData']);
 const refreshStore = useRefreshStore()
 
-const deleteProject = async () => {
-  try {
-    await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
-    navigateTo(`/dashboard`);
-
-    await refreshStore.fetchProject()
-    await refreshStore.totalRecords()
-    deleteDialog.value = false
-  } catch (err) {
-    console.error("Error deleting project:", err);
-  }
-}
-
+const {error,status,execute:deleteProject} =    await useAsyncData(
+  'deleteProject',
+  async () => {
+    try {
+      await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
+      navigateTo(`/dashboard`);
+      await refreshStore.fetchProject()
+      await refreshStore.totalRecords()
+      deleteDialog.value = false
+    } catch (err) {
+      console.error("Error deleting project:", err);
+      $handleApiError(err)
+    }
+  },
+  { immediate:false }
+)
 </script>
 <style>
 

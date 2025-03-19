@@ -9,7 +9,7 @@
       </StepList>
       <StepPanels>
 
-      <StepPanel value="1" v-slot="{ activateCallback }" >
+        <StepPanel value="1" v-slot="{ activateCallback }" >
           <div class=" grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
             <span class="text-slate-400 ">Entrez la configuration de la tâche</span>
             <div class="flex">
@@ -27,12 +27,12 @@
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1">Type de données</label>
                 <Select class="custom-dropdown" v-model="dataType" :options="Object.values(TaskDataType)"
-                          placeholder=""/>
+                        placeholder=""/>
               </div>
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
                 <Select class="custom-dropdown" v-model="status" :options="translatedTaskStatus" optionLabel="label"
-                          placeholder=""/>
+                        placeholder=""/>
               </div>
             </div>
           </div>
@@ -46,14 +46,14 @@
             />
           </div>
 
-      </StepPanel>
+        </StepPanel>
         <StepPanel value="2" v-slot="{ activateCallback }" >
           <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Télécharger des tâches </span>
             <FileUpload chooseLabel="Télécharger"
-              :multiple="true"
-              ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
-              invalid-file-type-message="Type invalide"  name="file[]" :pt="{
+                        :multiple="true"
+                        ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
+                        invalid-file-type-message="Type invalide"  name="file[]" :pt="{
                   buttonbar: {
                     style: `z-index:20; padding-top: 10px; padding-bottom: 10px;`
                   },
@@ -131,7 +131,7 @@
             />
           </div>
 
-      </StepPanel>
+        </StepPanel>
       </StepPanels>
     </Stepper>
   </Dialog>
@@ -150,7 +150,7 @@ const emits = defineEmits(['toggle-dialog', 'refreshData'])
 const {dialogVisible, stepObject} = defineProps(['dialogVisible', 'stepObject'])
 const {fetchTasks} = refreshStore
 const {userEmail} = storeToRefs(authStore)
-
+const { $handleApiError } = useNuxtApp()
 const toast = useToast()
 
 const templateRef = ref()
@@ -217,6 +217,7 @@ const createTask = async () => {
     type: fileData.value[0].asset.media_type,
     player_parameters: fileData.value[0].asset.player_parameters
   }).then((res) => {
+    $handleApiError("test")
     TaskService.createTaskTaskPost({
       name: name.value,
       instruction: instruction.value,
@@ -225,7 +226,11 @@ const createTask = async () => {
       lead_time: null,
       step_id: stepObject.id,
       media_id: res.id
-    }).catch((err) => console.error(err)).then((res) => {
+    }
+    ).catch((err) => {
+      console.error(err)
+      $handleApiError(err)
+    }).then((res) => {
       fileData.value.forEach(file => {
         AnnotationService.createAnnotationAnnotationPost({
           annotation: {
