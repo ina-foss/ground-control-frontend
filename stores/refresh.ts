@@ -33,12 +33,12 @@ export const useRefreshStore = defineStore('refresh', {
       const default_limit = 15
       const { access_token } = storeToRefs(useAuth())
       const res = await $fetch(`${getApplicationConfiguration()['apiBasePath']}/projects`,{
-          query: {skip:  skip == undefined ? this.last_index : skip , limit: limit || default_limit  },
+          query: {skip:  skip  ?? this.last_index , limit: limit ?? default_limit  },
           headers: {Authorization: 'Bearer ' + access_token.value },
           raw: true,
           method: 'get',
           async onResponse({response}){
-            response.headers.get('x-total-count') ?? useRefreshStore().setProjectNumber(parseInt(response.headers.get('x-total-count')))
+            if(response.headers.get('x-total-count') != null) useRefreshStore().setProjectNumber(parseInt(response.headers.get('x-total-count')))
           }
         })
 

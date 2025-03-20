@@ -171,7 +171,6 @@ const updateProject = async () => {
       });
       emits('toggle-dialog');
       await refreshStore.fetchProject();
-      await refreshStore.totalRecords();
     } catch (error) {
       $handleApiError(error)
     }
@@ -198,9 +197,9 @@ const createProject = async () => {
       .catch((error) => {
         $handleApiError(error)
       })
-      .then((res) => {
-        selectedType.value.forEach((type, index) => {
-          StepService.createStepStepPost({
+      .then(async(res) => {
+        selectedType.value.forEach(async(type, index) => {
+          await StepService.createStepStepPost({
             title: `Step #${index + 1}`,
             description: 'Step description',
             annotation_type: type,
@@ -212,6 +211,7 @@ const createProject = async () => {
             $handleApiError(err)
           })
         })
+      }).finally(()=>{
         // reset dialog values of create new project
         title.value = '',
         description.value = '',
@@ -224,8 +224,7 @@ const createProject = async () => {
         emits('toggle-dialog')
 
         refreshStore.fetchProject() // Pas de parametre = on refetch avec le precedent skip value
-        refreshStore.totalRecords();
-    })
+      })
   }
 }
 
