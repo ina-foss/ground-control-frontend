@@ -51,7 +51,7 @@
           },
 
       }"
-        class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="projectNumber"
+        class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="getProjectNumber"
         template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink" />
     </div>
     <MoleculeFooter />
@@ -66,12 +66,12 @@ import {ProjectStatus} from "../api/generate";
 import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
 import { Permission } from '../api/generate';
 
+
 const refreshStore = useRefreshStore()
 const {fetchProject} = refreshStore
 const {getData, getProjectNumber} = storeToRefs(refreshStore)
 const first = ref(0)
 const rows = ref(15)
-const totalRecords = ref(getProjectNumber);
 
 const dashboardRef = ref()
 const data = ref(getData)
@@ -96,8 +96,6 @@ const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
 const statusOptions = translatedProjectStatus;
 
 const {refresh, status, error} = await useAsyncData('projects', () => fetchProject(first.value, rows.value),{server:false})
-const { data: projectNumber } = await useAsyncData('total_project_number',
-    ()=> totalRecords(),{server:false})
 
 const sortDataById = computed(() => {
     // Check if data is an array and not just an object
