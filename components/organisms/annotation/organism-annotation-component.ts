@@ -351,6 +351,7 @@ export default defineComponent({
     annotationsIn,
     sortBy,
     unixToTimestamp,
+    moleculeAnnotationLeftPanelRef,
 
 
 
