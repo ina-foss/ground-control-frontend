@@ -338,7 +338,7 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
         relationArray.value.push({ from: currentFocus.value, to: index })
         linkMode.value = false
       }
-      else {
+      else if(index != undefined){
         spanClicked.value = false
         currentFocus.value = index
         labelSelected.value = spanRefArray.value[currentFocus.value].label
