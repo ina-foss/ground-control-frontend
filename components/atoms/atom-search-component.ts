@@ -76,7 +76,6 @@ export default defineComponent({
     })
 
     const highlightResults = () => {
-      debugger
       document.querySelectorAll(".highlight").forEach(mark => {
         const parent = mark.parentNode;
         if (parent) {
