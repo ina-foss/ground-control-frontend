@@ -7,7 +7,7 @@
             <span >
             {{ slotProps.option}}
             </span>
-            <i @click.stop="_.pullAt(labels,slotProps.index)" class="pi pi-times absolute right-[-15px] top-[-8px] z-50 rounded-2xl p-[2px] text-[8px] overflow-visible hover:cursor-pointer hover:bg-disabled "  />
+            <i @click.stop="pullAt(labels,slotProps.index)" class="pi pi-times absolute right-[-15px] top-[-8px] z-50 rounded-2xl p-[2px] text-[8px] overflow-visible hover:cursor-pointer hover:bg-disabled "  />
         </template>
           </SelectButton>
         <div class="flex overflow-visible w-[120px] gap-1 items-center">
@@ -35,7 +35,7 @@
     <div v-else>
       <div
         v-for="word in aggregatedLocals" :key="word.tcin"  :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)"
-        :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${_.find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
+        :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
         @mouseup="handleSelection">
           {{ word.data.text[0] }}
       </div>
@@ -66,7 +66,6 @@
 </template>
 
 <script src="./molecule-span-component.ts" lang="ts">
-
 </script>
 <style scoped lang="postcss">
 .selected-segment {

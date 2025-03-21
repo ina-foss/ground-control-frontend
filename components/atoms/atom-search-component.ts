@@ -17,21 +17,20 @@ export default defineComponent({
     const {spans, labels, list} = toRefs(props)
     const searchIndex: Ref<number> = ref(0)
     const iterableSegment: Ref<Array<HTMLDivElement>> = ref([])
+    const iterableSegmentSpan: Ref<Array<HTMLDivElement>> = ref([])
     const upIndex = () => {
-      if ( searchIndex.value +1 > iterableSegment.value.length-1){
+      if ((searchIndex.value + 1 == selectedSpan.value.length && labels.value.length !== 0) || (searchIndex.value + 1 > iterableSegment.value.length - 1 && labels.value.length === 0)) {
         searchIndex.value = 0
-      }
-      else {
-        searchIndex.value ++
+      } else {
+        searchIndex.value++
       }
     }
 
     const downIndex = () => {
-      if ( searchIndex.value-1 < 0 ){
-        searchIndex.value = iterableSegment.value.length-1
-      }
-      else {
-        searchIndex.value --
+      if (searchIndex.value - 1 < 0) {
+        searchIndex.value = labels.value.length !== 0 ? selectedSpan.value.length - 1 : iterableSegment.value.length - 1
+      } else {
+        searchIndex.value--
       }
     }
 
@@ -53,7 +52,10 @@ export default defineComponent({
         if (spanId) {
           setTimeout(() => array[searchIndex.value]?.scrollIntoView({behavior: 'smooth'}), 100)
           emit('find-element', {index: spanId})
+        } else if (iterableSegmentSpan.value.length !== 0) {
+          emit('find-element', {div: iterableSegmentSpan.value[searchIndex.value]})
         } else {
+
           emit('find-element', {div: iterableSegment.value[searchIndex.value]})
         }
       } else emit('unselect')
@@ -64,13 +66,15 @@ export default defineComponent({
         const spanId = correspondingSpan(searchIndex.value)?.id
         if (spanId) {
           setTimeout(() => selectedSpan.value[index]?.scrollIntoView({behavior: 'smooth'}), 100)
-          emit('find-element', {div: spanId})
+          emit('find-element', {index: spanId})
+        } else if (iterableSegmentSpan.value.length !== 0) {
+          emit('find-element', {div: iterableSegmentSpan.value[searchIndex.value]})
         } else {
-
           emit('find-element', {div: iterableSegment.value[index]})
         }
       }
     })
+
     const highlightResults = () => {
       document.querySelectorAll(".highlight").forEach(mark => {
         const parent = mark.parentNode;
@@ -83,23 +87,42 @@ export default defineComponent({
       if (!selectedSearch.value || selectedSearch.value.trim() === '') return;
 
       iterableSegment.value = []
-      selectedSpan.value.forEach((span: HTMLDivElement) => {
-        if (span) {
-          const text = span.querySelector('.customText')?.textContent
-          const regex = new RegExp(`(${selectedSearch.value})`, "gi");
+      iterableSegmentSpan.value = []
 
-          if (text.match(regex)) {
-            const splittedText = text.split(regex)
-            const newHTML = splittedText.map((part, i) =>
-              i % 2 === 1 ? `<mark class="highlight" style="background-color: #0b7698; color: white; " >${part}</mark>` : part
-            ).join('');
-            splittedText.forEach((el,i)=>{
-              if (i % 2 === 1 ) { iterableSegment.value.push(span) }
-            })
-            const tempDiv = document.createElement("div");
-            tempDiv.innerHTML = newHTML;
-            span.querySelector('.customText')?.replaceChildren(...tempDiv.childNodes)
+      selectedSpan.value.forEach((span: HTMLDivElement) => {
+
+        if (span) {
+          const regex = new RegExp(`(${selectedSearch.value})`, "gi");
+          const text = span.querySelector('.customText')?.textContent
+          if (text) {
+            const text = span.querySelector('.customText')?.textContent
+            if (text.match(regex)) {
+              const splittedText = text.split(regex)
+              const newHTML = splittedText.map((part, i) =>
+                i % 2 === 1 ? `<mark class="highlight" style="background-color: #0b7698; color: white; " >${part}</mark>` : part
+              ).join('');
+              splittedText.forEach((el, i) => {
+                if (i % 2 === 1) {
+                  iterableSegment.value.push(span)
+                }
+              })
+              const tempDiv = document.createElement("div");
+              tempDiv.innerHTML = newHTML;
+              span.querySelector('.customText')?.replaceChildren(...tempDiv.childNodes)
+            }
+          } else {
+            const words = span?.querySelectorAll('.inline-block');
+            words.forEach((wordDiv) => {
+              const text = wordDiv.textContent;
+              if (text.match(regex)) {
+                const newHTML = text.replace(regex, '<mark class="highlight" style="background-color: #0b7698; color: white;">$1</mark>');
+                wordDiv.innerHTML = newHTML;
+                iterableSegment.value.push(words); // Ajouter le mot surligné à la liste
+                iterableSegmentSpan.value.push(span); // Ajouter le bloc contenant le mot surligné à la liste
+              }
+            });
           }
+
         }
       });
     };
@@ -132,13 +155,6 @@ export default defineComponent({
         }
       }
     })
-
-    function countOccurrences(word, text) {
-      const regex = new RegExp(word, "gi");
-      const matches = text.match(regex);
-      return matches ? matches.length : 0;
-    }
-
 
     const clear = () => {
       selectedSearch.value = '';
