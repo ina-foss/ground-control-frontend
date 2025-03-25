@@ -164,16 +164,26 @@ const firstSegmentPadding = ref<HTMLDivElement>()
 
 onMounted(()=>{
   watch(()=>topics,()=>{
-    computeTopicHeight()
+    setTimeout(()=>computeTopicHeight(),200)
   },{deep:true})
-watch(()=>chipList.value?.length,async (value)=>{
-    await nextTick()
-    if(isTopicFirstSegment.value && firstSegmentPadding.value){
-        firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
-        commentWrapper.value.style.top = topicHeader.value?.getBoundingClientRect().height + 'px'
-        setTimeout(()=>computeTopicHeight(),300)
-    }
-})
+
+
+  watch(()=>chipList.value?.length,async (value)=>{
+      await nextTick()
+      if(isTopicFirstSegment.value && firstSegmentPadding.value){
+          firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
+          commentWrapper.value.style.top = topicHeader.value?.getBoundingClientRect().height + 'px'
+          setTimeout(()=>computeTopicHeight(),200)
+      }
+  })
+
+  watch(()=>options.number_segment,()=>{
+          setTimeout(()=>computeTopicHeight(),200)
+  })
+
+  watch(()=>options.timecode_segment,()=>{
+          setTimeout(()=>computeTopicHeight(),200)
+  })
 })
 function startDrag(event: DragEvent) {
   event.stopPropagation()
@@ -288,7 +298,7 @@ onMounted( ()=>{
     }
   })
   watch(()=>isTopicFirstSegment.value,()=>{
-      computeTopicHeight()
+      setTimeout(()=>computeTopicHeight(),200)
   })
   watch(()=>topicList[topicIndex.value]?.title,(newTitle)=>{
     if(isTopicFirstSegment.value ){
