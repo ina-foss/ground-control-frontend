@@ -1,6 +1,9 @@
 import {defineStore} from 'pinia'
 
 import {ProjectService, TaskService} from '../api/generate'
+import { getApplicationConfiguration } from '~/services/dynamic-configuration-service'
+
+
 
 export const useRefreshStore = defineStore('refresh', {
   state: () => {
@@ -16,6 +19,9 @@ export const useRefreshStore = defineStore('refresh', {
       //store works
       this.data = newData
     },
+    setProjectNumber(newNumber:number){
+      this.project_number = newNumber
+    },
     async totalRecords(){
       const res = await ProjectService.readProjectsProjectsGet()
       const data =  res
@@ -25,7 +31,17 @@ export const useRefreshStore = defineStore('refresh', {
     },
     async fetchProject(skip: number, limit: number) {
       const default_limit = 15
-      const res = await ProjectService.readProjectsProjectsGet((skip == undefined ? this.last_index : skip), limit || default_limit)
+      const { access_token } = storeToRefs(useAuth())
+      const res = await $fetch(`${getApplicationConfiguration()['apiBasePath']}/projects`,{
+          query: {skip:  skip  ?? this.last_index , limit: limit ?? default_limit  },
+          headers: {Authorization: 'Bearer ' + access_token.value },
+          raw: true,
+          method: 'get',
+          async onResponse({response}){
+            if(response.headers.get('x-total-count') != null) useRefreshStore().setProjectNumber(parseInt(response.headers.get('x-total-count')))
+          }
+        })
+
       if(skip != undefined) this.last_index = skip
       const data =  res
       this.data = data;

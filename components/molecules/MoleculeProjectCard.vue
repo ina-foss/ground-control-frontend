@@ -137,7 +137,6 @@ const {error,status,execute:deleteProject} =    await useAsyncData(
       await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
       navigateTo(`/dashboard`);
       await refreshStore.fetchProject()
-      await refreshStore.totalRecords()
       deleteDialog.value = false
     } catch (err) {
       console.error("Error deleting project:", err);
