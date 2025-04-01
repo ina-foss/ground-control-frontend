@@ -17,6 +17,7 @@ let lastIndex = 0
 
 let dynamicSrc = ref()
 let dynamicTumbnails = ref()
+let downloadUrl = ref()
 const { locals, videoSrc,media_params } = defineProps(['locals', 'video-src','media_params'])
 const emits = defineEmits(['timecode-update']);
 const {timestampToUnix, unixToTimestamp} = $application
@@ -51,15 +52,24 @@ async function fetchThumbnail(url) {
   });
   return response;
 }
+async function fetchDownloadUrl(url) {
+  const response = await fetch(url).then((resp)=>{
+    return resp.text()
+  });
+  return response;
+}
 const thumbnailPlayer = async () => {
   if(media_params?.thumbnail_base_url) {
     dynamicTumbnails.value = await fetchThumbnail(media_params?.thumbnail_base_url)
   }
+  if(media_params?.video_base_url) {
+    downloadUrl.value = await fetchDownloadUrl(media_params?.video_base_url)
+  }
 }
 
-watchEffect(() => {
+  watchEffect(() => {
   if (dynamicSrc.value) {
-      myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params,dynamicTumbnails?.value || "")) // add amalia player once src is ready
+      myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params,dynamicTumbnails?.value || "",downloadUrl?.value || "")) // add amalia player once src is ready
   }
 })
 

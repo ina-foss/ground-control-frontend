@@ -12,13 +12,13 @@
     "coverage": "vitest run --coverage",
     "generate": "nuxt build",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "nuxt prepare && cp -r node_modules/@ina/amalia public/",
     "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@ina/amalia": "^2.0.25",
+    "@ina/amalia": "^2.1.10-develop",
     "@ina/kit-ui": "^0.0.3",
     "@nuxtjs/color-mode": "^3.4.1",
     "@pinia/nuxt": "^0.5.1",

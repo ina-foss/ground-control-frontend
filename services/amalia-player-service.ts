@@ -42,8 +42,8 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.debug = false;
     this.playerConfiguration.logLevel = 'info';
     this.playerConfiguration.displaySizes = {
-      large: 900,
-      medium: 700,
+      large: 500,
+      medium: 400,
       small: 340,
       xsmall: 340
     };
@@ -92,10 +92,10 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.splice(elementIndex, 1);
   }
 
-  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string): HTMLElement {
+  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string): HTMLElement {
     this.loadSource();
     if (!this.playerConfiguration) {
-      this.configurePlayer(src,undefined,dynamicTumbnails,undefined,undefined,undefined,
+      this.configurePlayer(src,undefined,dynamicTumbnails,undefined,downloadUrl,undefined,
           undefined,media_params?.tc_offset)
     }
     // Create web component
