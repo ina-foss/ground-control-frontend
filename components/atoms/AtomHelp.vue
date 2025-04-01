@@ -42,7 +42,7 @@ const shortcutList = [
   { key: "A", value: "Activer/Désactiver les TC blocs" },
   { key: "Z", value: "Activer/Désactiver les TC segments" },
   { key: "E", value: "Activer/Désactiver la synchro player" },
-  { key: "R", value: "Activer/Désactiver les numéros segments" },
+  { key: "R", value: "Activer/Désactiver les n° segments" },
   { key: "Espace", value: "Création d'une rupture avant" },
   { key: "Ctrl + Espace", value: "Création d'une rupture après" },
 ];

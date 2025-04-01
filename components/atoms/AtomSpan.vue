@@ -1,9 +1,9 @@
 <template>
-  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="`inline scroll-mt-16 items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.value.span==true ? ` highlighted-text cursor-pointer ${computeColor(newId).full} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="`inline scroll-mt-16 items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${currentColor} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
     <div ref="spanText" class="inline ">
       <slot/>
     </div>
-    <span v-if="options.value.span == true" class="pl-[0.5rem]">
+    <span v-if="options.span == true" class="pl-[0.5rem]">
       <span v-for="lbl in newLabel.map(String).join(' ')" class=" align-super text-[0.70rem]  ">{{lbl}} </span>
     </span>
   </div>
@@ -12,7 +12,7 @@
 
 <script setup>
 
-const {label, tcIn, tcOut, id , linkCss, options} = defineProps({
+const {label, tcIn, tcOut, id , linkCss, labels} = defineProps({
   label: {
     type: Array,
     default: ()=>[]
@@ -31,11 +31,12 @@ const {label, tcIn, tcOut, id , linkCss, options} = defineProps({
     type: String,
     default: ()=>''
   },
-  options: {
-    type: Object
+  labels: {
+    type: Object,
   }
 })
 
+const { options } = useOptions()
 const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
 const spanText = ref()
@@ -46,8 +47,9 @@ const newTcin = ref(tcIn)
 const newTcout = ref(tcOut)
 const focus = ref(false)
 const { $application } = useService()
-const { textColorPicker, computeColor } = $application
+const { computeColorByLabel,textColorPicker, computeColor } = $application
 
+const currentColor = computed(()=> computeColorByLabel(labels.value,newLabel.value).full)
 
 const handleClick = () => {
   emit('focusSpan', {index: newId.value })
@@ -73,8 +75,8 @@ watchEffect(async ()=>{
     }
   })
   watchEffect(()=>{
-    if( options.value.span == true ) {
-        span.value.style.color = textColorPicker(computeColor(newId.value).hex)
+    if( options.span) {
+      span.value.style.color = textColorPicker(computeColorByLabel(labels.value,newLabel.value).hex)
     }
     else{
       span.value.style.color = 'black';

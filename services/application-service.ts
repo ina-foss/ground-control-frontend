@@ -46,6 +46,16 @@ export default class ApplicationService {
 
   }
 
+  public computeColorByLabel(labels,label): { full: string; hex: string } {
+    let labelIndex=  (labels.map(label => String(label).trim())).indexOf(label.toString())
+    if(label.length != 1){
+      labelIndex = label.reduce((sum, l) => sum + l.length, 0);
+    }
+    if(labelIndex == null) return {full: 'bg-gray-500', hex:'#BEBEBE' }
+    const full = 'bg-extra'+ (labelIndex%9+1)
+    const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(labelIndex%9+1))
+    return {  hex: hex, full : full , fullHexTransparent: 'bg-['+hex+'4f]'}
+  }
   public hexToRgba(hex, opacity) {
     let r = 0, g = 0, b = 0;
     // Handle 3 digit hex

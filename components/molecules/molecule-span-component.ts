@@ -25,7 +25,7 @@ export default defineComponent({
     type AtomSpanType = InstanceType<typeof AtomSpan>
 
     const { $application } = useService()
-    const { timestampToUnix, unixToTimestamp } = $application
+    const { timestampToUnix, unixToTimestamp ,computeColorByLabel} = $application
     const { options } = storeToRefs(useOptions())
 
     const blockArray = ref<HTMLDivElement|null>(null)
@@ -231,7 +231,7 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
                 tcOut: spanTcout,
                 id: id,
                 linkCss: linkCss.value,
-                options: options,
+                labels: labels,
                 ref: el => spanRefArray.value[id] = el,
                 onSpanReady: ({ element, index }) => {
                   elementArray.value[index] = element

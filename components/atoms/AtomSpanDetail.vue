@@ -11,7 +11,7 @@
         <div v-if="typeof focusSpan == 'undefined'">Aucune sélection</div>
         <div v-else class="border-gray-200  p-2 flex flex-col start-0  gap-2">
           <div class=" inline-flex items-start justify-start gap-2" >
-          <div :class="` ${computeColor(focusSpan).full} text-${textColorPicker(computeColor(focusSpan).hex)}  rounded-xl min-w-6 h-6 flex justify-center items-center transition-all duration-500`" >
+          <div :class="` ${computeColorByLabel(labels,spanRefArray[focusSpan].label).full} text-${textColorPicker(computeColorByLabel(labels,spanRefArray[focusSpan].label).hex)}  rounded-xl min-w-6 h-6 flex justify-center items-center transition-all duration-500`" >
             {{ focusSpan+1}}
           </div>
             {{spanRefArray[focusSpan].text + " "}}
@@ -38,7 +38,7 @@
         <div v-if="spanRefArray.length == 0">Aucune annotation créée</div>
         <div v-else class="border-gray-200 border-[1px] p-2 text-nowrap flex flex-col start-0 overflow-y-auto max-h-[300px] ">
         <div  v-for="(span,index) in spanRefArray" :key="index" class="flex flex-row hover:bg-surface-200 w-full py-2 justify-start gap-2 cursor-pointer" @click="emit('focusSpan',{index: index})" >
-          <div  :class="` ${computeColor(index).full} text-${textColorPicker(computeColor(index).hex)}  rounded-xl min-w-6 h-6  flex justify-center items-center `" ><div  >{{ index +1 }}</div></div>
+          <div  :class="` ${computeColorByLabel(labels,span.label).full} text-${textColorPicker(computeColorByLabel(labels,span.label).hex)}  rounded-xl min-w-6 h-6  flex justify-center items-center `" ><div  >{{ index +1 }}</div></div>
                {{span.text}}
             </div>
         </div>
@@ -68,10 +68,9 @@ import { useService } from '#imports';
 const { $application } = useService()
 const customdividerstyle = ref({content: 'bg-surface-100 z-10 px-1'})
 const emit = defineEmits(['deleteSpan','unselect','link','focusSpan'])
-const { computeColor,textColorPicker } = $application
+const { computeColor,textColorPicker,computeColorByLabel } = $application
 
-
-const { focusSpan, spanRefArray, relationArray } = defineProps({
+const { focusSpan, spanRefArray, relationArray,labels } = defineProps({
   focusSpan: {
     type: Number,
     default: () => undefined
@@ -84,9 +83,10 @@ const { focusSpan, spanRefArray, relationArray } = defineProps({
     type: Array,
     default: () => []
   },
+  labels: {
+  type: Object,
+}
 })
-
-
 
 </script>
 

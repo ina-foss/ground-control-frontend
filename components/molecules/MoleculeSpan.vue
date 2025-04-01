@@ -51,7 +51,7 @@
               </TabList>
               <TabPanels class="!bg-secondary !px-0  !h-fit !max-h-[calc(100%-47px)]   !pb-2">
                 <TabPanel value="span" class="max-w-full w-[320px] h-full max-h-full  flex  flex-col items-center gap-3"  >
-                  <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray"
+                  <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray" :labels="labels"
                     @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()"
                     @focus-span="handleFocusSpan" />
                 </TabPanel>
