@@ -1,9 +1,9 @@
 <template>
-  <div v-if="!data.title">
+  <div v-if="!data.title" class="h-0 h-min-full">
     <LoadingSpinner/>
   </div>
 
-  <div v-else class="grid h-[80vh] p-3">
+  <div v-else class="grid h-full p-3">
     <div class="p-3 w-fit h-[70px] ml-auto fixed z-40 right-[-5px] mr-12 flex items-center top-[0px]">
       <label class="text-primary font-semibold p-2">Etapes</label>
       <Select
