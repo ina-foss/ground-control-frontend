@@ -49,13 +49,14 @@ export default defineComponent({
       const scrollerHtml = segmentationRefs.value[event.index].parentElement
       let animationFrameId // Identify each animation frame
 
-      const adjustScroll = () =>{
+      const adjustScroll = (repeat?: boolean) =>{
         const newRect = referenceDiv.getBoundingClientRect();
         const newY = newRect.top;
         const scrollOffset = newY - initialYPosition;
         scrollerHtml.scrollBy(0, scrollOffset);
         // Continue the loop
-        animationFrameId = requestAnimationFrame(adjustScroll);
+        if(repeat ?? true){ animationFrameId = requestAnimationFrame(adjustScroll) }
+
       }
 
       if (topics[event.index] == topics[event.index + 1]) {
@@ -75,6 +76,7 @@ export default defineComponent({
               cancelAnimationFrame(animationFrameId);
               // Remove the event listener after it has been triggered
               referenceDiv.removeEventListener('transitionend', onTransitionEnd);
+              adjustScroll(false)
           }
       });
 
