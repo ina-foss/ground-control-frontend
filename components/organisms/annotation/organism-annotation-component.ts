@@ -109,7 +109,7 @@ export default defineComponent({
     const userAnnotations = computed(() => { // return array of users annotations
       let response = []
       if (allFetched && annotationInfo.value != null) {
-        const annotation = annotationsOut[annotationInfo.value.index];
+        const annotation = annotationsOut.value[annotationInfo.value.index];
 
         if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
           response = [...annotation.result.data.localisation[0].sublocalisations.localisation];
@@ -140,7 +140,7 @@ export default defineComponent({
     if (allFetched.value) {
       annotationsIn.value[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index) => {
         res.push([])
-        annotationsIn.forEach((transcription) => {
+        annotationsIn.value.forEach((transcription) => {
           res[index].push(transcription.result.data.localisation[0].sublocalisations.localisation[index])
         })
       })
