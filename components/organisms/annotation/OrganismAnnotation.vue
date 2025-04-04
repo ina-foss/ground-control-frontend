@@ -43,7 +43,7 @@ v-if="annotationsOut[annotationInfo?.index]?.annotation_status !== annotationSta
     </div>
     </div>
   <div v-else class="h-full">
-    <AtomSearch class=" right-10 absolute flex items-center top-[75px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
+    <AtomSearch class=" right-10 absolute flex items-center top-[72px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
     <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs :data="data"/>
