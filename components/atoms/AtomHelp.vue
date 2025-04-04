@@ -1,37 +1,34 @@
 <template>
   <div>
-    <button
-      class="fixed bottom-5 right-5 bg-[#0086b1] text-white p-4 rounded-full pi pi-cog"
-      @click="toggleChat"
-    >
-    </button>
-
-    <div
-      v-if="isOpen"
-      class="fixed bottom-16 right-5 w-100 bg-white shadow-xl rounded-lg p-4 border border-gray-300"
-    >
-      <div class="flex justify-between items-center">
-        <h2 class="header-title">Raccourcis clavier</h2>
-        <button @click="toggleChat" class="header-title">✖</button>
-      </div>
-
-      <ul class="mt-2">
-        <li v-for="(shortcut,index) in shortcutList" key="index" class="flex justify-between items-center p-2 border-b last:border-b-0">
-          <div class="col-6">
-            <span class="block mb-2">{{shortcut.value}}</span>
-          </div>
-          <div class="col-6 flex flex-col items-end">
-            <Button class="rounded mb-2 " >{{shortcut.key}}</button>
-          </div>
-        </li>
-      </ul>
+    <div class="fixed bottom-5 right-5 !bg-primary !border-primary text-white rounded-full">
+      <Button @click="visibleRight = true" >
+        <img style="height:14px;width:14px;filter: invert(1);" :src="helpIcon" alt="help icon" />
+      </Button>
     </div>
+    <Sidebar v-model:visible="visibleRight" header="Raccourcis clavier" position="right"
+             class="shadow-xl rounded-lg border border-gray-300 "  :style="{ height: '75vh', width:'fit-content', marginRight: '30px' }">
+
+        <ul class="-m-4 my-2">
+          <li v-for="(shortcut,index) in shortcutList" key="index" class="flex justify-between items-center p-2 border-b last:border-b-0">
+            <div class="col-6">
+              <span class="block mb-2">{{shortcut.value}}</span>
+            </div>
+            <div class="col-6 flex flex-col items-end">
+              <Button outlined class="ml-3 font-bold" >{{shortcut.key}}</button>
+            </div>
+          </li>
+        </ul>
+    </Sidebar>
+
   </div>
 
 </template>
 
 <script setup>
 
+import helpIcon from '../../public/icons/icons-svg/icons-svg/help-icon.svg';
+import { ref } from 'vue';
+const visibleRight = ref(false);
 const shortcutList = [
   { key: "V", value: "Avance de 1 segments" },
   { key: "B", value: "Avance de 5 segments" },
@@ -46,12 +43,4 @@ const shortcutList = [
   { key: "Espace", value: "Création d'une rupture avant" },
   { key: "Ctrl + Espace", value: "Création d'une rupture après" },
 ];
-
-import { ref } from 'vue';
-
-const isOpen = ref(false);
-
-const toggleChat = () => {
-  isOpen.value = !isOpen.value;
-};
 </script>
