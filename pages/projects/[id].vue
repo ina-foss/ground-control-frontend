@@ -54,8 +54,8 @@
         <template #body="slotProps">
           <div class="flex min-w-[240px] txt">
             <Button
-              style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;margin-right:12px"
-              label="Créer un task"  outlined  @click="stepCreate(slotProps.data.id)"/>
+              style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 8px;border-radius: 4px;margin-right:12px"
+              label="Créer une tâche"  outlined  @click="stepCreate(slotProps.data.id)"/>
             <div
               class="flex items-center cursor-pointer txt    " :loading="loadingExport"
               @click="clickButtonMenu($event,slotProps.data) ">
