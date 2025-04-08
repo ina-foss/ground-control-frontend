@@ -13,6 +13,7 @@ import { useService } from '#imports';
 const {$amalia, $application }= useService()
 
 const myplayer = ref()
+const mediaType = ref("video")
 let lastIndex = 0
 
 let dynamicSrc = ref()
@@ -69,7 +70,7 @@ const thumbnailPlayer = async () => {
 
   watchEffect(() => {
   if (dynamicSrc.value) {
-      myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params,dynamicTumbnails?.value || "",downloadUrl?.value || "")) // add amalia player once src is ready
+      myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value,media_params,dynamicTumbnails?.value || "",downloadUrl?.value || "",mediaType?.value || "")) // add amalia player once src is ready
   }
 })
 

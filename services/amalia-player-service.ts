@@ -1,4 +1,5 @@
-import {PlayerConfig} from './player-config';
+import {VideoPlayerConfig} from './video-player-config';
+import {AudioPlayerConfig} from "~/services/audio-player-config";
 
 export default class AmaliaPlayerService {
   public static TAG_PLAYER_TAG = 'amalia-player';
@@ -31,8 +32,7 @@ export default class AmaliaPlayerService {
       language: string,
       isDefault: boolean
     }>, tcOffset = 0, startTc = 0) {
-    this.playerConfiguration = new PlayerConfig()//mediaType == 'video' ? new VideoPlayerConfig() : new AudioPlayerConfig();
-
+    this.playerConfiguration = mediaType == 'video' ? new VideoPlayerConfig() : new AudioPlayerConfig();
     this.playerConfiguration.player.src = mediaSrc;
     this.playerConfiguration.player.hls.config.startPosition = Math.max(0, startTc);
     if (urlStreamPlayBack) {
@@ -92,10 +92,10 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.splice(elementIndex, 1);
   }
 
-  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string): HTMLElement {
+  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string): HTMLElement {
     this.loadSource();
     if (!this.playerConfiguration) {
-      this.configurePlayer(src,undefined,dynamicTumbnails,undefined,downloadUrl,undefined,
+      this.configurePlayer(src,undefined,dynamicTumbnails,mediaType,downloadUrl,undefined,
           undefined,media_params?.tc_offset)
     }
     // Create web component

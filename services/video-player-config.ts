@@ -1,4 +1,4 @@
-export class PlayerConfig {
+export class VideoPlayerConfig {
   tcOffset = 0;
   player = {
     backwardsSrc: '',
