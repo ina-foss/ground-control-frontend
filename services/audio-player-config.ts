@@ -237,6 +237,9 @@ export class AudioPlayerConfig {
         }
 
       ]
+    },
+    'HISTOGRAM-PLAYER': {
+      metadataIds: ['waveform-1024-0', 'waveform-1024-1', 'waveform-4096-0', 'waveform-4096-1'],
     }
   };
 }

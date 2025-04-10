@@ -4,8 +4,8 @@ import {AudioPlayerConfig} from "~/services/audio-player-config";
 export default class AmaliaPlayerService {
   public static TAG_PLAYER_TAG = 'amalia-player';
   public static TAG_CONTROL_BAR = 'amalia-control-bar';
+  public static TAG_HISTOGRAM = 'amalia-histogram';
   public player!: HTMLElement;
-
   /**
    * True when source loaded
    */
@@ -31,7 +31,7 @@ export default class AmaliaPlayerService {
       track: number,
       language: string,
       isDefault: boolean
-    }>, tcOffset = 0, startTc = 0) {
+    }>, tcOffset = 0, startTc = 0,waveformUrl?:string) {
     this.playerConfiguration = mediaType == 'video' ? new VideoPlayerConfig() : new AudioPlayerConfig();
     this.playerConfiguration.player.src = mediaSrc;
     this.playerConfiguration.player.hls.config.startPosition = Math.max(0, startTc);
@@ -72,6 +72,9 @@ export default class AmaliaPlayerService {
         this.playerConfiguration.pluginsConfiguration['CONTROL_BAR-PLAYER'].data.find((x: any) => x.icon === 'screenshot').data.href = thumbnailBaseUrl;
       }
     }
+    if (mediaType === 'audio' && waveformUrl != '') {
+      this.configPlayerAudio(waveformUrl);
+    }
     if (audioTracks && audioTracks.length > 0) {
       const configAudioTrack = []
       for (let i = 0; i < audioTracks.length; i++) {
@@ -80,6 +83,12 @@ export default class AmaliaPlayerService {
       this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.find((x: any) => x.control == 'volume').data.tracks = configAudioTrack;
     }
 
+  }
+  private configPlayerAudio(waveformUrl: string): void {
+    this.playerConfiguration.dataSources.push({ 'url': waveformUrl + '?canal=0&format=1024&mid=waveform-1024-0' });
+    this.playerConfiguration.dataSources.push({ 'url': waveformUrl + '?canal=1&format=1024&mid=waveform-1024-1' });
+    this.playerConfiguration.dataSources.push({ 'url': waveformUrl + '?canal=0&format=4096&mid=waveform-4096-0' });
+    this.playerConfiguration.dataSources.push({ 'url': waveformUrl + '?canal=1&format=4096&mid=waveform-4096-1' });
   }
 
   private updateControlbarConfig(controlName: string) {
@@ -92,11 +101,11 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.splice(elementIndex, 1);
   }
 
-  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string): HTMLElement {
+  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string,waveformUrl:string): HTMLElement {
     this.loadSource();
     if (!this.playerConfiguration) {
       this.configurePlayer(src,undefined,dynamicTumbnails,mediaType,downloadUrl,undefined,
-          undefined,media_params?.tc_offset)
+          undefined,media_params?.tc_offset,undefined,waveformUrl)
     }
     // Create web component
     this.player = document.createElement(AmaliaPlayerService.TAG_PLAYER_TAG);
@@ -104,13 +113,21 @@ export default class AmaliaPlayerService {
     this.player.setAttribute('id', `ajs-${playerId}`);
     this.player.setAttribute('config', JSON.stringify(this.playerConfiguration));
     this.player.setAttribute('class', `${'timebar'}`);
-
-
     // Create control bar
     const controlBar = document.createElement(AmaliaPlayerService.TAG_CONTROL_BAR);
     controlBar.setAttribute('player-id', playerId);
     this.player.appendChild(controlBar);
+    //Create histogram
+    if (mediaType ==="audio") {
+      this.createHistogram(this.player,playerId);
+    }
     return this.player;
+  }
+
+  public createHistogram(player: HTMLElement,playerId: string): void {
+    const histogram = document.createElement(AmaliaPlayerService.TAG_HISTOGRAM);
+    histogram.setAttribute('player-id', playerId);
+    this.player.appendChild(histogram);
   }
 
   public getPlayers(){
