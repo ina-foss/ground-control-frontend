@@ -1,5 +1,5 @@
 <template>
-  <div class="col-span-4 flex relative flex-row w-full h-0 min-h-full justify-center overflow-y-auto">
+  <div v-if="getCurrentInstance().parent.type.name=='OrganismAnnotation'" class="col-span-5 flex relative flex-row w-full h-0 min-h-full justify-center overflow-y-auto">
     <ol class=" overflow-y-auto  h-full ">
       <ScrollTop
         :pt="{ root: { style: 'position: fixed !important; right: 42%; top: 88.5%; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
@@ -9,16 +9,30 @@
       <div class=" rounded flex flex-col gap-2 p-3 ">
         <div v-for="(transcription, index) in transcriptions" :key="index" :ref="el => transcriptionsRef.push(el)">
           <AtomTrancription
-:user-annotation="userAnnotations[index]" :algos="algos"
-            :transcriptions="transcription" :status="status" @on-segment-click="handleSegmentClick({...$event, index: index})"
+  :user-annotation="userAnnotations[index]" :algos="algos"
+            :transcriptions="transcription" :status="status"
                             @confirm="handleConfirm($event, index)"/>
         </div>
       </div>
     </ol>
   </div>
-  <div class=" col-span-2 overflow-y-auto flex flex-col items-center gap-3  ">
+  <div v-if="getCurrentInstance().parent.type.name=='OrganismAnnotation'" class=" col-span-2 overflow-y-auto flex flex-col items-center gap-3  ">
       <atom-video-option />
-    </div>
+  </div>
+  <Carousel
+    v-else  :show-indicators="false" vertical-view-port-height="550px" :value="transcriptions"
+    :prev-button-props="{class: ' z-index-50  !self-end order-first', severity:'secondary', text:true }"
+    :next-button-props="{class: ' z-index-50  !absolute mr-10 !self-end order-first  ', severity:'secondary', text:true }"
+    :num-visible="1" :num-scroll="1" orientation="vertical" container-class="flex items-center"  >
+    <template #item="slotProps" >
+      <div class="h-[450px] overflow-auto " >
+          <AtomTrancription
+            :user-annotation="userAnnotations[slotProps.index]" :algos="algos"
+            :transcriptions="slotProps.data" :status="status"
+            @confirm="handleConfirm($event, slotProps.index)"/>
+      </div>
+    </template>
+  </Carousel>
 </template>
 
 
@@ -36,11 +50,11 @@ const {transcriptions, algos, userAnnotations, status} = defineProps({
   },
   algos: {
     type: Array,
-    required: true
+    default: () => Array.from({length: 10}).map((_,index)=>`version ${index+1}`)
   },
   userAnnotations: {
     type: Array,
-    default: null
+    default: ()=>[]
   },
   status: {
     type: String,
@@ -64,15 +78,12 @@ watchEffect(() => {
   })
 })
 
-const handleSegmentClick = (event) => {
-   emits('on-segment-click', { tcin: event.tcin, tcout: event.tcout, index:event.index })
-}
 
 const handleConfirm = (event, index) => {
   window.onbeforeunload = function () {
     return confirm("You didn't saved your progression")
   }
-  event.algo = algos[event.index]
+  event.algo = algos[event.index] ?? null
   localChanges.value[index] = event
   isChanged = true
 }

@@ -14,5 +14,21 @@ export type StepCreate = {
     pinned_at: (string | null);
     status: StepStatus;
     project_id: number;
+    /**
+     * Number of annotations per task
+     */
+    redundancy?: number;
+    /**
+     * Must be between 0 and 100
+     */
+    completeness_rate?: number;
+    /**
+     * Allow empty annotations
+     */
+    allow_empty_annotation?: boolean;
+    /**
+     * Must be at least 1
+     */
+    max_tasks_per_person?: number;
 };
 

@@ -50,6 +50,7 @@ export default defineComponent({
     const {addTimecodeHistory} = useTimecodeHistory()
     const { unixToTimestamp  } = $application
     const{setTcOffset}= useTcOffset()
+    const tabsRef = ref()
 
     type AtomSpanType = InstanceType<typeof AtomSpan>
     const spanRefArray = ref<[]>([])
@@ -87,8 +88,8 @@ export default defineComponent({
       }, null);
     });
 
-    const isAnnotationEditable = computed(()=> annotationsOut.value[0]?.annotation_status != AnnotationStatus.ENDED && (isAdmin.value && !useRoute().query.email || !isAdmin.value) )
-    provide('isAnnotationEditable',isAnnotationEditable)
+    const isAnnotationEditable = computed(()=> annotationsOut.value[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
+    const annotation_type = data.value.step.annotation_type
 
     PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.value.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
     config.value = response;
@@ -119,7 +120,7 @@ export default defineComponent({
 
     const locals = computed(() => {
       if(allFetched.value){
-      return (annotationInfo.value == null)
+      return (annotationInfo.value == null || data.value.step.annotation_type == 'auto-summary')
         ? _.sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))
         : _.sortBy(annotationsOut.value[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))
       }
@@ -138,12 +139,34 @@ export default defineComponent({
   const transcriptions = computed(() => { // format array to have all transcription version in the same array element
     const res = []
     if (allFetched.value) {
-      annotationsIn.value[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index) => {
-        res.push([])
-        annotationsIn.value.forEach((transcription) => {
-          res[index].push(transcription.result.data.localisation[0].sublocalisations.localisation[index])
+      if(annotation_type == 'transcription'){
+        annotationsIn.value[0].result.data.localisation[0].sublocalisations.localisation.forEach((useless, index) => {
+          res.push([])
+          annotationsIn.value.forEach((transcription) => {
+            res[index].push(transcription.result.data.localisation[0].sublocalisations.localisation[index])
+          })
         })
-      })
+      } else if(annotation_type == 'auto-summary'){
+          annotationsIn.value[0].result.data.topic_metadata.forEach((topic)=>{
+            if(topic){
+              const firstTransciprtionInTopic = _.find(
+                annotationsIn.value[0].result.data.localisation[0].sublocalisations.localisation,
+                e=>e.data.topic == topic.id
+              )
+              res.push([
+                {
+                  tcin: firstTransciprtionInTopic.tcin,
+                  tcout: firstTransciprtionInTopic.tcout,
+                  data: {
+                    topic: topic.id,
+                    text : [ topic.summary ]
+                  },
+                }
+              ])
+
+            }
+          })
+        }
     }
     return _.sortBy(res,(array)=>unixToTimestamp(array[0]?.tcin))
   })
@@ -155,11 +178,24 @@ export default defineComponent({
         res.push(annotation.result.data.algorithm)
       })
     }
+    if (res.length == 0) return null
     return res
   })
 
+  const tabsProps = computed(()=>{
+      return {data: data.value,
+              transcriptions: data.value.step.annotation_type == 'auto-summary' ? transcriptions.value  : undefined,
+              userAnnotations: userAnnotations.value,
+              algos: algos.value,
+              status: annotationsOut.value[annotationInfo.value?.index]?.annotation_status
+      }
+    })
+
 
     const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
+      if(!event.index){
+        event.index = _.findIndex(locals.value,tr=>tr.tcin == event.tcin)
+      }
       bestIndex = event.index
       highlightSegment(event.index)
       scrollToSegment({bestIndex: event.index})
@@ -187,9 +223,15 @@ export default defineComponent({
         moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({block: 'center', behavior: 'smooth'});
     }
 
+    const jumpToTopic = (event: {topic: number }) => {
+      const firstIndex = topics.value.findIndex((topic) => topic == event.topic)
+      if (firstIndex > 0) moleculeAnnotationRef.value.listRefs[firstIndex].scrollIntoView({ behavior: "smooth" })
+    }
+
   const annotationComponent = computed(() => {
-    switch (data.value.step?.annotation_type) {
+    switch (annotation_type) {
       case 'segmentation':
+      case 'auto-summary':
           return {component: MoleculeSegmentation, props: {
             result: result.value,
             locals: locals.value,
@@ -217,14 +259,28 @@ export default defineComponent({
 })
 
   const handleSubmit = () => {
-    const localSubmit = locals
-    if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
-    emit('submit-annotation',{ locals: moleculeAnnotationRef.value.annotationFunction(localSubmit.value) })
+    let savingLocals
+    if(annotation_type == 'auto-summary'){
+      savingLocals = tabsRef.value.moleculeAnnotationRef.annotationFunction(tabsRef.value.moleculeAnnotationRef.locals)
+    }
+    else {
+      const localSubmit = locals
+      if (moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
+      savingLocals = moleculeAnnotationRef.value.annotationFunction(localSubmit.value)
+    }
+    emit('submit-annotation', { locals: savingLocals })
   }
   const handleFinish = () => {
-    const localSubmit = locals
-    if(moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
-    emit('finish-annotation', {locals: moleculeAnnotationRef.value.annotationFunction(localSubmit.value) })
+    let savingLocals
+    if(annotation_type == 'auto-summary'){
+      savingLocals = tabsRef.value.moleculeAnnotationRef.annotationFunction(tabsRef.value.moleculeAnnotationRef.locals)
+    }
+    else {
+      const localSubmit = locals
+      if (moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
+      savingLocals = moleculeAnnotationRef.value.annotationFunction(localSubmit.value)
+    }
+    emit('finish-annotation', { locals: savingLocals })
   }
 
   onMounted(()=>{
@@ -324,6 +380,13 @@ export default defineComponent({
 
   provide('plugin-items-config', configItemPlugin)
 
+  provide('handleSegmentClick', handleSegmentClick)
+
+  provide('isAnnotationEditable',isAnnotationEditable)
+
+  provide('annotation_type',annotation_type)
+
+  provide('jumpToTopic',jumpToTopic)
 
   provide('data',data)
 
@@ -348,10 +411,15 @@ export default defineComponent({
     handleVideoTimelineClick,
     annotationComponent,
     annotationsOut,
+    transcriptions,
     annotationsIn,
     sortBy,
     unixToTimestamp,
     moleculeAnnotationLeftPanelRef,
+    tabsProps,
+    tabsRef,
+    isAnnotationEditable
+
 
 
 

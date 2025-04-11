@@ -98,7 +98,6 @@ defineExpose({seek, consumeTimecode: handleRewindTimecode});
 onMounted(async () => {
   await Promise.all([hlsPlayer(), playerParam()]).then(()=>{
     if (dynamicSrc.value) {
-      debugger
       myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params, dynamicTumbnails?.value || "", downloadUrl?.value || "", mediaType?.value || "",waveformUrl?.value ||"")) // add amalia player once src is ready
     }
   });

@@ -17,6 +17,8 @@ export type { AnnotationWithIdDto } from './models/AnnotationWithIdDto';
 export type { Body_task_inject_step__step_id__post } from './models/Body_task_inject_step__step_id__post';
 export type { ConfigData } from './models/ConfigData';
 export { DisplayZone } from './models/DisplayZone';
+export type { ExceptionResponse } from './models/ExceptionResponse';
+export type { HealthCheck } from './models/HealthCheck';
 export type { HTTPValidationError } from './models/HTTPValidationError';
 export { InOutEnum } from './models/InOutEnum';
 export type { MediaCreate } from './models/MediaCreate';
@@ -52,7 +54,7 @@ export type { UserDto } from './models/UserDto';
 export type { ValidationError } from './models/ValidationError';
 
 export { AnnotationService } from './services/AnnotationService';
-export { DefaultService } from './services/DefaultService';
+export { ManagementService } from './services/ManagementService';
 export { MediaService } from './services/MediaService';
 export { PluginService } from './services/PluginService';
 export { ProjectService } from './services/ProjectService';

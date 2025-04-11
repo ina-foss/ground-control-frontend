@@ -8,10 +8,14 @@
  * Attributes:
  * DRAFT (str): The step is in draft status.
  * PENDING (str): The step is pending and awaiting further actions.
- * ENDED (str): The step has ended.
+ * IN_PROGRESS (str): Currently being worked on.
+ * SKIPPED (str): This step has been ignored.
+ * DONE (str): Successfully completed.
  */
 export enum StepStatus {
     DRAFT = 'draft',
     PENDING = 'pending',
-    ENDED = 'ended',
+    IN_PROGRESS = 'in-progress',
+    SKIPPED = 'skipped',
+    DONE = 'done',
 }

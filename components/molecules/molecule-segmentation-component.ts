@@ -189,10 +189,7 @@ export default defineComponent({
       emit('on-segment-click', { tcin: event.tcin, tcout: event.tcout, index:event.index })
     }
 
-    const jumpToTopic = (event: {topic: number }) => {
-      const firstIndex = topics.findIndex((topic) => topic == event.topic)
-      segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth" })
-    }
+    const jumpToTopic = inject('jumpToTopic')
 
     const segmentationFunction = (localSubmit: any[]) => {
       localSubmit.forEach((phrase, index) => {

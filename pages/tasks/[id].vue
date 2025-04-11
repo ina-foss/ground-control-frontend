@@ -81,12 +81,12 @@ const submitExistantAnnotation =(locals,action,timeSpent)=>{
   // L'utilisateur a déjà une annotation associée à cette tâche
   let promise;
   if (action === 'submit') {
-    promise = AnnotationService.updateAnnotationResultAnnotationIdPatch(
+    promise = AnnotationService.updateAnnotationResultAnnotationAnnotationIdPatch(
       annotationInfo.value.id,
       annotations_out.value[annotationInfo.value.index].result
     )
   } else {
-    promise = AnnotationService.finishAnnotationAnnotationFinishIdPatch(
+    promise = AnnotationService.finishAnnotationAnnotationFinishAnnotationIdPatch(
       annotationInfo.value.id,
       annotations_out.value[annotationInfo.value.index].result
     )
@@ -115,6 +115,7 @@ const submitNewAnnotation =(locals,action,timeSpent)=>{
   const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
   result.data.localisation[0].sublocalisations.localisation = locals
   result.data.timeSpent = timeSpent
+
   // L'utilisateur n'a jamais annoté cette tâche
   AnnotationService.createAnnotationAnnotationPost({
     annotation: {

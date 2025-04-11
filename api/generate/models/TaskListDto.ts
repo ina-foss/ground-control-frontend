@@ -20,6 +20,9 @@ export type TaskListDto = {
     step_id: number;
     media_id: number;
     documentation?: (string | null);
+    expiration_date?: (string | null);
+    redundancy?: number;
+    priority?: number;
     id: number;
     created_at: (string | null);
     updated_at: (string | null);

@@ -36,6 +36,8 @@ export class UserService {
                 'limit': limit,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -56,6 +58,8 @@ export class UserService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -69,6 +73,10 @@ export class UserService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/user/roles',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+            },
         });
     }
     /**
@@ -87,6 +95,8 @@ export class UserService {
                 'email': email,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });

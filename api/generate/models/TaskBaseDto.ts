@@ -16,5 +16,8 @@ export type TaskBaseDto = {
     step_id: number;
     media_id: number;
     documentation?: (string | null);
+    expiration_date?: (string | null);
+    redundancy?: number;
+    priority?: number;
 };
 

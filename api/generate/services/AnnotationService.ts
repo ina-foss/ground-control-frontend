@@ -31,6 +31,8 @@ export class AnnotationService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -42,16 +44,18 @@ export class AnnotationService {
      * @returns AnnotationDto Successful Response
      * @throws ApiError
      */
-    public static getAnnotationsByIdAnnotationIdGet(
+    public static getAnnotationsByIdAnnotationAnnotationIdGet(
         annotationId: number,
     ): CancelablePromise<AnnotationDto> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/annotation/{id}',
-            query: {
+            url: '/annotation/{annotation_id}',
+            path: {
                 'annotation_id': annotationId,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -64,19 +68,21 @@ export class AnnotationService {
      * @returns AnnotationDto Successful Response
      * @throws ApiError
      */
-    public static updateAnnotationResultAnnotationIdPatch(
+    public static updateAnnotationResultAnnotationAnnotationIdPatch(
         annotationId: number,
         requestBody: Record<string, any>,
     ): CancelablePromise<AnnotationDto> {
         return __request(OpenAPI, {
             method: 'PATCH',
-            url: '/annotation/{id}',
-            query: {
+            url: '/annotation/{annotation_id}',
+            path: {
                 'annotation_id': annotationId,
             },
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -108,6 +114,31 @@ export class AnnotationService {
                 'direction': direction,
             },
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Skip Annotation
+     * skip an annotation
+     * @param annotationId
+     * @returns AnnotationDto Successful Response
+     * @throws ApiError
+     */
+    public static skipAnnotationAnnotationSkipAnnotationIdPatch(
+        annotationId: number,
+    ): CancelablePromise<AnnotationDto> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/annotation/skip/{annotation_id}',
+            path: {
+                'annotation_id': annotationId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
@@ -120,19 +151,21 @@ export class AnnotationService {
      * @returns AnnotationDto Successful Response
      * @throws ApiError
      */
-    public static finishAnnotationAnnotationFinishIdPatch(
+    public static finishAnnotationAnnotationFinishAnnotationIdPatch(
         annotationId: number,
         requestBody: Record<string, any>,
     ): CancelablePromise<AnnotationDto> {
         return __request(OpenAPI, {
             method: 'PATCH',
-            url: '/annotation/finish/{id}',
-            query: {
+            url: '/annotation/finish/{annotation_id}',
+            path: {
                 'annotation_id': annotationId,
             },
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
                 422: `Validation Error`,
             },
         });
