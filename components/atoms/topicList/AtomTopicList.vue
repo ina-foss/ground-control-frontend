@@ -13,11 +13,12 @@
         }">
           <div v-for="(color, index ) in cleanedColors" :key="index">
             <div class="flex pb-2 items-start gap-2 w-full overflow-visible">
-              <div class="flex h-8 items-center hover:bg-neutral   hover:cursor-pointer overflow-visible w-full "
+              <div class="flex h-8 items-center hover:bg-neutral gap-2  hover:cursor-pointer overflow-visible w-full "
                 @click="emit('topicClick', { topic: parseInt(index) })">
                 <div :style="styleTopicCircle(computeColor(parseInt(index)).hex)"
                   class="min-w-4 h-4 place-content-center relative rounded-full flex  font-bold overflow-visible justify-center z-10 items-center text-white text-[10px] " />
-                <h2 class="px-2 shrink  font-semibold h-fit overflow-hidden text-ellipsis line-clamp-2 "
+                <span v-if="topicList[parseInt(index)].labels.length " class="pi pi-check-square " />
+                <h2 class=" shrink  font-semibold h-fit overflow-hidden text-ellipsis line-clamp-2 "
                   style="line-height: 16px;">{{ preventDefaultTitle(topicList[parseInt(index)]) }}</h2>
               </div>
             </div>
