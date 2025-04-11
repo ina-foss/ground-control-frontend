@@ -19,7 +19,7 @@
 
 
 import type {Ref} from "vue";
-import type AtomVideoAmalia from "~/components/atoms/AtomVideoAmalia.vue";
+import type AtomVideoAmalia from "~/components/atoms/videoAmalia/AtomVideoAmalia.vue";
 const {$application} = useService()
 const {timestampToUnix, unixToTimestamp} = $application
 const {getHistory} = useTimecodeHistory()

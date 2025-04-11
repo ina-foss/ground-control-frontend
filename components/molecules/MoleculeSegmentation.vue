@@ -75,10 +75,6 @@
 </template>
 
 <script src="./molecule-segmentation-component" lang="ts" >
-import {defineComponent} from "vue";
-export default defineComponent({
-  components: {AtomHelp}
-})
 </script>
 
 <style >

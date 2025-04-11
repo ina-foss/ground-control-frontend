@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="js">
-  import AtomVideoAmalia from '../atoms/AtomVideoAmalia.vue';
+  import AtomVideoAmalia from '../atoms/videoAmalia/AtomVideoAmalia.vue';
   import { useService } from '#imports';
 
 
