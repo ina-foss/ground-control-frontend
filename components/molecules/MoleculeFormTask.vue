@@ -157,7 +157,9 @@ const templateRef = ref()
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
-  ended: 'Terminé'
+  'in-progress': 'En cours',
+  done: 'Terminé',
+  skipped: 'Passé'
 }
 const translatedTaskStatus = computed(() => {
   return Object.values(TaskStatus).map(status => ({

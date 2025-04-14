@@ -74,7 +74,7 @@ export default defineComponent({
     const moleculeAnnotationLeftPanelRef= ref()
     const { userEmail } = storeToRefs(authStore)
     const { options } = storeToRefs(optionStore)
-    const annotationStatus = AnnotationStatus.ENDED
+    const annotationStatus = AnnotationStatus.DONE
     const config = ref(null)
     const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
     let bestIndex = 0
@@ -90,6 +90,7 @@ export default defineComponent({
 
     const isAnnotationEditable = computed(()=> annotationsOut.value[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
     const annotation_type = data.value.step.annotation_type
+    provide('isAnnotationEditable',isAnnotationEditable)
 
     PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.value.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
     config.value = response;
@@ -258,7 +259,7 @@ export default defineComponent({
   }
 })
 
-  const handleSubmit = () => {
+  const handleSubmit = ( {showToast = true} : {showToast? : boolean} )  => {
     let savingLocals
     if(annotation_type == 'auto-summary'){
       savingLocals = tabsRef.value.moleculeAnnotationRef.annotationFunction(tabsRef.value.moleculeAnnotationRef.locals)
@@ -268,8 +269,9 @@ export default defineComponent({
       if (moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
       savingLocals = moleculeAnnotationRef.value.annotationFunction(localSubmit.value)
     }
-    emit('submit-annotation', { locals: savingLocals })
+    emit('submit-annotation', { locals: savingLocals, options: { showToast}  })
   }
+
   const handleFinish = () => {
     let savingLocals
     if(annotation_type == 'auto-summary'){
@@ -280,19 +282,25 @@ export default defineComponent({
       if (moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
       savingLocals = moleculeAnnotationRef.value.annotationFunction(localSubmit.value)
     }
-    emit('finish-annotation', { locals: savingLocals })
+    emit('finish-annotation', { locals: savingLocals, options: {showToast: true} })
   }
 
   onMounted(()=>{
     window.addEventListener("keydown", globalKeydown);
 
-  watch(()=> allFetched.value,() => {
-      if(allFetched.value == true){
-        videoSrc.value = annotationsIn.value[0]?.result.asset.url
-        const tcOffset = data.value.media?.player_parameters?.tc_offset ?? 0;
-        setTcOffset(tcOffset);
-      }
-  })
+    watch(()=> allFetched.value,() => {
+        if(allFetched.value == true){
+          videoSrc.value = annotationsIn.value[0]?.result.asset.url
+          const tcOffset = data.value.media?.player_parameters?.tc_offset ?? 0;
+          setTcOffset(tcOffset);
+        }
+    })
+
+    watch(()=>moleculeAnnotationRef.value,(value)=>{
+        if (value && annotationsOut.value.length < 1){
+          handleSubmit({showToast: false})
+        }
+      })
   })
 
   const globalKeydown=(event) =>{

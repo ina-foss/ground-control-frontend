@@ -129,7 +129,7 @@
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
-            <Column header="Statut" class="txt" style="width: 20px"   >
+            <Column header="Statut" class="txt" style="width: 100px "   >
               <template #body="{ data: nestedData }">
                 <Tag  :severity="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
               </template>
@@ -138,7 +138,7 @@
               <template #body="{data: nestedData}">
                 <div class="flex justify-start gap-2 ">
                   <Avatar
-                    v-for="(annotation, index) in nestedData.annotations" :key="index"
+                    v-for="(annotation, index) in nestedData.annotations.filter((annotation)=>annotation.annotation_status != AnnotationStatus.SKIPPED)" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
                     shape="circle" style="background-color:#0057FF;color: white;font-weight: 500;height:24px;width:24px"
                     @click="handleRowClick(annotation.user_email)"
@@ -254,7 +254,9 @@ const buttonItems = [
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
-  ended: 'Terminé'
+  'in-progress': 'En cours',
+  done: 'Terminé',
+  skipped: 'Passé'
 }
 
 const showDeleteTaskModal = (rowData)=>{
@@ -300,7 +302,7 @@ const filteredProjects = computed(() => {
 fetchTasks(route.params.id)
 
 function getColorForAnnotation(annotation_status) {
-  if (annotation_status === AnnotationStatus.ENDED) {
+  if (annotation_status === AnnotationStatus.DONE) {
     return '#ACE1AF';
   }
   else return '#0057FF';
@@ -391,11 +393,14 @@ const handleRowClick = (event) => {
 const getStatusClass = (status) => {
   switch (status) {
     case 'pending':
-      return 'warning';
+      return 'warn';
     case 'draft':
+    case 'in-progress':
       return 'info';
-    case 'ended':
+    case 'done':
       return 'success';
+    case 'skipped':
+      return ''
     default:
       return '';
   }

@@ -73,7 +73,7 @@ const annotationInfo = computed(() => {
   }
 });
 
-const submitExistantAnnotation =(locals,action,timeSpent)=>{
+const submitExistantAnnotation =(locals,action,timeSpent,options)=>{
 
   const result = annotations_out.value[0].result
   result.data.localisation[0].sublocalisations.localisation = locals
@@ -92,11 +92,13 @@ const submitExistantAnnotation =(locals,action,timeSpent)=>{
     )
   }
   promise.then(() => {
-    toast.add({
-      severity: 'info',
-      summary: action === "submit" ? 'Cette annotation a été mise à jour' : 'Cette annotation est terminée',
-      life: 4000
-    })
+    if(options.showToast != false ){
+      toast.add({
+        severity: 'info',
+        summary: action === "submit" ? 'Cette annotation a été mise à jour' : 'Cette annotation est terminée',
+        life: 4000
+      })
+    }
     if (action === "end") {
       setTimeout(() => {
         window.location.reload();
@@ -111,7 +113,7 @@ const submitExistantAnnotation =(locals,action,timeSpent)=>{
     })
 }
 
-const submitNewAnnotation =(locals,action,timeSpent)=>{
+const submitNewAnnotation =(locals,action,timeSpent,options)=>{
   const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
   result.data.localisation[0].sublocalisations.localisation = locals
   result.data.timeSpent = timeSpent
@@ -122,7 +124,7 @@ const submitNewAnnotation =(locals,action,timeSpent)=>{
       user_email: userEmail.value,
       task_id: data.value.id,
       result: result,
-      annotation_status: action === "submit" ? AnnotationStatus.DRAFT : AnnotationStatus.ENDED,
+      annotation_status: action === "submit" ? AnnotationStatus.IN_PROGRESS : AnnotationStatus.DONE,
       version: 1
     },
     association: {
@@ -138,12 +140,14 @@ const submitNewAnnotation =(locals,action,timeSpent)=>{
       window.onbeforeunload = null
     })
     .then(() => {
-      toast.add(
-        {
-          severity: 'info',
-          summary: action === "submit" ? 'Annotation créée' : 'Annotation créée et terminée',
-          life: 5000
-        })
+      if(options.showToast != false ){
+        toast.add(
+          {
+            severity: 'info',
+            summary: action === "submit" ? 'Annotation créée' : 'Annotation créée et terminée',
+            life: 5000
+          })
+      }
       if (action === "end") {
 
         setTimeout(() => {
@@ -166,12 +170,12 @@ const handleSubmit = (event, action) => {
   timeAnnotationStart = timeAnnotationEnd
 
 
-  if (annotationInfo.value != null) {
-    submitExistantAnnotation(locals,action,timeSpentOnScreen);
+   if (annotationInfo.value != null) {
+     submitExistantAnnotation(locals,action,timeSpentOnScreen,event.options);
 
-  } else {
-    submitNewAnnotation(locals,action,timeSpentOnScreen);
-  }
+   } else {
+     submitNewAnnotation(locals,action,timeSpentOnScreen,event.options);
+   }
 
 }
 
