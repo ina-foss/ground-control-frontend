@@ -9,7 +9,8 @@
           <img :src="`${newThumbnailUrl}?width=320&start=${timecode}`" class=" max-h-full   rounded-md" @load="showImage()" alt="thumbnail image of the corresponding timecode" >
         </div>
 
-        <span class=""> {{ timestampToUnix(timecode) }}</span>
+        <span class=""> {{ timestampToUnix(unixToTimestamp(timecode)) }}</span>
+
     </div>
   </div>
 </template>
