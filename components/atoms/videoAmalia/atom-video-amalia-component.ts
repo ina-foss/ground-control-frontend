@@ -100,17 +100,12 @@ export default defineComponent({
           const mid = Math.floor(((endIndex + startIndex) / 2))
           $application.unixToTimestamp(locals.value[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
         }
-        const startGap = computeGap(currentTime, $application.unixToTimestamp(locals.value[startIndex]?.tcin)) // Gap between currentTime and the in timecode of the startIndex
-        const endGap = computeGap(currentTime, $application.unixToTimestamp(locals.value[endIndex]?.tcin))// Gap between currentTime and the in timecode of the endIndex
-        let bestIndex = startGap < endGap ? startIndex : endIndex
+
+        let bestIndex = currentTime < locals.value[endIndex].tcin ? startIndex : endIndex
 
         emit('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: fromHistory}) // emit both times to scroll and adapt css
         lastIndex = bestIndex
       }
-    }
-
-    function computeGap(a: number, b: number) {
-      return Math.abs(a - b)
     }
 
     expose({seek, consumeTimecode: handleRewindTimecode});

@@ -198,7 +198,6 @@ export default defineComponent({
         event.index = _.findIndex(locals.value,tr=>tr.tcin == event.tcin)
       }
       bestIndex = event.index
-      highlightSegment(event.index)
       scrollToSegment({bestIndex: event.index})
       if ( options.value.transcription === true ) {
         moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
@@ -212,7 +211,7 @@ export default defineComponent({
     }
 
     const handleVideoTimelineClick = (event) => {
-      if ( options.value.player === true) {
+      if ( options.value.player === true && (event.bestIndex != event.lastIndex) ) {
         scrollToSegment(event)
       }
     }
@@ -393,6 +392,8 @@ export default defineComponent({
   provide('isAnnotationEditable',isAnnotationEditable)
 
   provide('annotation_type',annotation_type)
+
+  provide('scrollToSegment',scrollToSegment)
 
   provide('jumpToTopic',jumpToTopic)
 

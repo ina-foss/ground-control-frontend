@@ -31,6 +31,8 @@
   });
 const { locals, videoSrc } = props;
 
+  const videoPlayer = ref(AtomVideoAmalia|null)
+  const scrollToSegment = inject('scrollToSegment')
   const emits = defineEmits(['scroll-to-segment'])
 
   const pauseTime = ref(0); // variable réactive
@@ -41,14 +43,12 @@ const { locals, videoSrc } = props;
   }
 
   const checkCurrentTime = () => {
-    if(currentTime.value){
       currentTime.value = $amalia.callSeek();
-    }
   };
   onMounted(() => {
     const interval = setInterval(() => {
       checkCurrentTime();
-    }, 500);
+    }, 200);
 
     onUnmounted(() => {
       clearInterval(interval);
@@ -62,7 +62,13 @@ const { locals, videoSrc } = props;
     }
   });
 
-  const videoPlayer = ref(AtomVideoAmalia|null)
+  watch(()=>currentTime.value, time => {
+    if(options.player && time != undefined ) {
+        videoPlayer.value.seek(true)
+    }
+  })
+
+
   provide("videoPlayer", videoPlayer);
   defineExpose({ updateVideoTimecode, videoPlayer });
 </script>
