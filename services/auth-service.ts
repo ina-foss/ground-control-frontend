@@ -29,9 +29,9 @@ export default class AuthService {
         }
     }
 
-    public signInRedirect() {
+    public signInRedirect(location: string) {
       if (window.location.search.search('state=') === -1) {
-        return this.userManager.signinRedirect();
+        return this.userManager.signinRedirect({url_state: location});
       }
     }
 

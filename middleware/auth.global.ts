@@ -5,7 +5,7 @@ import { useService } from "../composables/useService";
 
 const authFlowRoutes = ["/auth", "/silent-refresh", "/logout"];
 
-export default defineNuxtRouteMiddleware(async (to:any) => {
+export default defineNuxtRouteMiddleware(async (from: any, to:any) => {
   if (process.env.NODE_ENV === 'test') {
     return; // Bypass the entire authentication logic in test mode
   }
@@ -14,8 +14,8 @@ export default defineNuxtRouteMiddleware(async (to:any) => {
   const user = (await services.$auth.getUser()) as User;
   if (!user && !authFlowRoutes.includes(to.path)) {
     // use this to automatically force a sign in and redirect
-
-    services.$auth.signInRedirect();
+    // pass the initial url as parameter to redirect to it after authentication
+    services.$auth.signInRedirect(to.fullPath);
   }
   else {
     authStore.setUpUserCredentials(user);
