@@ -1,8 +1,11 @@
 import type { User} from "oidc-client-ts";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import { getApplicationConfiguration } from "./dynamic-configuration-service";
+import { useAuth } from "../stores/auth";
+import { useService } from "../composables/useService"
 
 export default class AuthService {
+    authStore = useAuth();
     private userManager!: UserManager;
 
     constructor() {
@@ -23,7 +26,44 @@ export default class AuthService {
                 loadUserInfo: true,
             };
             this.userManager = new UserManager(settings);
-            this.userManager.events.addAccessTokenExpired(()=>  this.userManager.signinRedirect())
+            const authStore = useAuth();
+          this.userManager.events.addAccessTokenExpiring(() => {
+            /* eslint-disable no-console */
+            console.log("⏳ Token va expirer, tentative de renouvellement...");
+            this.renewToken(); // essaie silent renew automatiquement
+          });
+
+          // Détecte que le token a expiré (fail du silent renew)
+          this.userManager.events.addAccessTokenExpired(() => {
+             
+            console.warn("⛔ Token expiré et non renouvelé !");
+          });
+
+          // Quand un nouveau token est chargé (ex: après renew)
+          this.userManager.events.addUserLoaded((user) => {
+            /* eslint-disable no-console */
+            console.info(
+              "✅ Token renouvelé / utilisateur chargé :",
+              user?.profile?.name || "(anonyme)",
+            );
+            authStore.setUpUserCredentials(user);
+            if (import.meta.client) {
+              const { $application } = useService();
+              $application.setupHeader();
+            }
+          });
+
+          this.userManager.events.addUserUnloaded(() => {
+            /* eslint-disable no-console */
+            console.info("🚪 Utilisateur déconnecté");
+            authStore.clearUserSession();
+          });
+
+          this.userManager.events.addSilentRenewError((err) => {
+             
+            console.error("❌ Erreur pendant silent renew :", err);
+          });
+
         } catch (error) {
             console.error(error);
         }
