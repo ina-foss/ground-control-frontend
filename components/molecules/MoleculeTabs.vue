@@ -7,7 +7,7 @@
             {{ tab.title }}
           </Tab>
           <Tab class="!bg-white" :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">Derniers Timecodes</Tab>
-          <Tab v-if="transcriptions" class="!bg-white" :value="4">Auto-Summary</Tab>
+          <Tab v-if="transcriptions" class="!bg-white" :value="4">Résumé</Tab>
         </TabList>
         <ScrollPanel class="h-full" :dt="{
       bar : {

@@ -50,6 +50,7 @@ export default defineComponent({
     const {addTimecodeHistory} = useTimecodeHistory()
     const { unixToTimestamp  } = $application
     const{setTcOffset}= useTcOffset()
+
     const tabsRef = ref()
 
     type AtomSpanType = InstanceType<typeof AtomSpan>
@@ -75,6 +76,7 @@ export default defineComponent({
     const { userEmail } = storeToRefs(authStore)
     const { options } = storeToRefs(optionStore)
     const annotationStatus = AnnotationStatus.DONE
+    const { topicList } = useTopicList()
     const config = ref(null)
     const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
     let bestIndex = 0
@@ -220,12 +222,26 @@ export default defineComponent({
         bestIndex = event.bestIndex
         highlightSegment(event.bestIndex)
         if(!event.fromHistory) addTimecodeHistory(event.tcin ?? locals.value[event.bestIndex]?.tcin  )
-        moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({block: 'center', behavior: 'smooth'});
+        let segmentPosition =   moleculeAnnotationRef.value?.listRefs[event.bestIndex].getBoundingClientRect().top
+        // Auto-scroll if the next segment is near the center of the screen
+        // if the action comes from user, scroll every time
+        if ((Math.abs(window.innerHeight/2 - segmentPosition)   < 200) || !event.fromHistory) {
+          moleculeAnnotationRef.value?.listRefs[event.bestIndex].scrollIntoView({block: 'center', behavior: 'smooth'});
+      }
     }
 
     const jumpToTopic = (event: {topic: number }) => {
-      const firstIndex = topics.value.findIndex((topic) => topic == event.topic)
-      if (firstIndex > 0) moleculeAnnotationRef.value.listRefs[firstIndex].scrollIntoView({ behavior: "smooth" })
+      const firstTranscriptionIndex = topics.value.findIndex((topic) => topic == event.topic)
+      const firstTopicListIndex = topics.value.reduce((acc,topic,index)=>{
+        if(_.indexOf(topics.value,topic) == index){
+          acc.push(topic)
+        }
+        return acc
+      },[] ).findIndex(topic => topic == event.topic)
+      tabsRef.value.moleculeAnnotationRef.carouselNavTo(firstTopicListIndex)
+      moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode({tcin:locals.value[firstTranscriptionIndex].tcin,tcout:locals.value[firstTranscriptionIndex].tcout,})
+      moleculeAnnotationLeftPanelRef.value.videoPlayer.seek()
+      if (firstTranscriptionIndex >= 0) moleculeAnnotationRef.value.listRefs[firstTranscriptionIndex].scrollIntoView({ behavior: "smooth"})
     }
 
   const annotationComponent = computed(() => {
@@ -238,6 +254,7 @@ export default defineComponent({
             colors: colors.value,
             topics: topics.value,
             tcOffset : data.value.media?.player_parameters?.tc_offset ?? 0,
+            transcriptions: tabsRef.value?.moleculeAnnotationRef?.locals
           },
           events:{ 'on-segment-click': handleSegmentClick }}
       case 'transcription':
@@ -392,6 +409,8 @@ export default defineComponent({
   provide('isAnnotationEditable',isAnnotationEditable)
 
   provide('annotation_type',annotation_type)
+
+  provide('transcriptions', transcriptions)
 
   provide('scrollToSegment',scrollToSegment)
 

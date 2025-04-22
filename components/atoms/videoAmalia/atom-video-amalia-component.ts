@@ -52,7 +52,7 @@ export default defineComponent({
     function handleRewindTimecode(index?:any) {
       const tc = consumeTimecode(index)
       $amalia.updateCurrentTc(unixToTimestamp(tc))
-      seek(true)
+      seek()
     }
 
     const hlsPlayer = async () => {

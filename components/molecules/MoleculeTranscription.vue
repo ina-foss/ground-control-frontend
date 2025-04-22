@@ -20,10 +20,14 @@
       <atom-video-option />
   </div>
   <Carousel
-    v-else  :show-indicators="false" vertical-view-port-height="550px" :value="transcriptions"
+    v-else
+    ref="carouselRef"
+    :show-indicators="false" vertical-view-port-height="550px" :value="transcriptions"
     :prev-button-props="{class: ' z-index-50  !self-end order-first', severity:'secondary', text:true }"
     :next-button-props="{class: ' z-index-50  !absolute mr-10 !self-end order-first  ', severity:'secondary', text:true }"
-    :num-visible="1" :num-scroll="1" orientation="vertical" container-class="flex items-center"  >
+    :num-visible="1" :num-scroll="1" orientation="vertical" container-class="flex items-center"
+    @update:page=" onUpdatePage"
+  >
     <template #item="slotProps" >
       <div class="h-[450px] overflow-auto " >
           <AtomTrancription
@@ -42,6 +46,8 @@ import AtomVideoOption from '../atoms/atom-video-option.vue'
 import {AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
 let isChanged = false
+const carouselRef = ref()
+const currentPage = computed(()=>carouselRef.value.d_page)
 const transcriptionsRef = ref([])
 const {transcriptions, algos, userAnnotations, status} = defineProps({
   transcriptions: { // all transcriptions by all algorithm group by sentence
@@ -62,6 +68,32 @@ const {transcriptions, algos, userAnnotations, status} = defineProps({
   }
 })
 const localChanges = ref([]) // store all the annotations confirmed by user before submitting
+
+const jumpToTopic = inject('jumpToTopic')
+
+let skipNextUpdate = false
+const onUpdatePage = (value) => {
+  if (skipNextUpdate == true ) {
+    skipNextUpdate = false
+    return
+  }
+  else if( value == -1 ){
+    skipNextUpdate = true
+    return
+  }
+  jumpToTopic({topic:transcriptions[value][0].data.topic})
+}
+
+const carouselNavTo = (index) =>  {
+    // emit to don't trigger scroll after update:page
+    carouselRef.value.$emit('update:page',-1)
+    if( currentPage.value < index){
+      carouselRef.value.navForward(new Event("click"),index)
+    }
+    else{
+      carouselRef.value.navBackward(new Event("click"),index)
+    }
+}
 
 watchEffect(() => {
   userAnnotations.forEach((change, index) => { // load annotation from DB into localChanges for them to be display
@@ -102,7 +134,7 @@ const transcriptionFunction = (localSubmit) => {
   return locals
 }
 
-defineExpose({locals: localChanges, listRefs: transcriptionsRef, annotationFunction: transcriptionFunction })
+defineExpose({locals: localChanges, listRefs: transcriptionsRef, annotationFunction: transcriptionFunction, carouselNavTo: carouselNavTo  })
 
 </script>
 <style scoped lang="postcss">

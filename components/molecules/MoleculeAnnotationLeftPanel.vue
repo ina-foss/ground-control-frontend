@@ -37,6 +37,7 @@ const { locals, videoSrc } = props;
 
   const pauseTime = ref(0); // variable réactive
   const currentTime = ref(0);
+
   const updateVideoTimecode = (event) => {
     $amalia.updateCurrentTc($application.unixToTimestamp(event.tcin) )
     pauseTime.value=$application.unixToTimestamp(event.tcout)
@@ -62,8 +63,8 @@ const { locals, videoSrc } = props;
     }
   });
 
-  watch(()=>currentTime.value, time => {
-    if(options.player && time != undefined ) {
+  watch(()=>currentTime.value, (time, oldTime) => {
+    if(options.player && time != undefined && Math.abs(time-oldTime)< 1 ) {
         videoPlayer.value.seek(true)
     }
   })

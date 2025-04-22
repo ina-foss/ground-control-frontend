@@ -11,7 +11,10 @@
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flex-col w-full gap-2">
           <div class="flex flew-row items-center justify-between w-full max-w-full min-h-11" >
-            <Tag v-if="options.timecode_bloc" severity="contrast">
+              <Tag v-if="options.timecode_bloc" :severity=" transcriptions[_.findIndex(autoSummaries,t=>t[0].data.topic == topicIndex )] ? 'success' : 'contrast'"
+                @click="jumpToTopic ? jumpToTopic({topic:topicIndex }): ()=>false"
+                :class="{ 'cursor-pointer' : jumpToTopic}"
+              >
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
                 <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
@@ -118,6 +121,7 @@
 <script setup lang="ts">
 import commentIcon from '../../public/icons/icons-svg/icons-svg/comment-icon.svg';
 
+import _ from 'lodash'
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
@@ -126,12 +130,13 @@ import AtomComment from './AtomComment.vue';
 import { remove } from 'lodash'
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
 
-const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset'])
+const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset, transcriptions} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset','transcriptions'])
 const emit = defineEmits(['segmentation', 'on-segment-click','activateTopic', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()
 const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
+const jumpToTopic = inject('jumpToTopic',null)
 const segment = ref(null)
 const toast = useToast()
 const topicIndex = computed(() => topics[index])
@@ -153,6 +158,7 @@ const title = computed(()=>{
 })
 
 const annotation_type = inject('annotation_type')
+const autoSummaries = inject('transcriptions')
 const isAnnotationEditable = inject('isAnnotationEditable') && annotation_type == 'segmentation'
 
 const chipList = ref(topicList[topicIndex.value]?.labels || []);
