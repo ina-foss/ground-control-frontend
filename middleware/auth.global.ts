@@ -25,5 +25,6 @@ export default defineNuxtRouteMiddleware(async (from: any, to:any) => {
     console.log("✅ Utilisateur authentifié, mise à jour du store");
     authStore.setUpUserCredentials(user);
     services.$application.setupHeader();
+    services.$application.checkUser();
   }
 });
