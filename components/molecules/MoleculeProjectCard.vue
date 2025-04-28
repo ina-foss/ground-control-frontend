@@ -44,7 +44,7 @@
                   <Button v-else class="button" size="small" label="Oui" @click="deleteProject"/>
               </div>
             </Dialog>
-            <MoleculeFormProject :dialog-visible="visible" :project="project" @toggle-dialog="visible=false"/>
+            <MoleculeFormProject v-if="visible" :dialog-visible="visible" :project="$props.project" @toggle-dialog="visible=false"/>
           </p>
         </div>
         <div class="flex justify-between justify-items-stretch pl-2 pt-1 items-center text-sm">
