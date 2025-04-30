@@ -109,6 +109,11 @@
                 <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Rechercher par titre ..." />
               </template>
             </Column>
+            <Column field="name" header="ID" class="txt" style="width: 4rem; min-width: fit-content;" body-class="p-3">
+            <template #body="slotProps">
+                <p > {{ slotProps.data.id }}</p>
+              </template>
+            </Column>
             <Column class="txt" body-class="text-sm" field="annotations.length" sortable style="width: 3rem;">
               <template #header><i v-tooltip="'Nombre total annotations'" class="pi pi-star cursor-help"/></template>
               <template #body="{ data: nestedData }">
@@ -144,6 +149,24 @@
                     @click="handleRowClick(annotation.user_email)"
                     :style="{ backgroundColor: getColorForAnnotation(annotation.annotation_status) }"/>
                 </div>
+              </template>
+            </Column>
+            <Column field="name" header="Date de démarrage" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
+              <template #body="slotProps">
+                <p>
+                  {{
+                    slotProps.data.annotations[0]?.created_at
+                      ? new Date(
+                        slotProps.data.annotations[0]?.created_at
+                      ).toLocaleDateString()
+                      : '__'
+                  }}
+                </p>
+              </template>
+            </Column>
+            <Column field="name" header="Date d'expiration" class="txt" style="width : 8rem ; min-width: 70px;"   body-class="p-3 ">
+              <template #body="slotProps">
+                <p > {{ slotProps.data.expiration_date ?? '__' }}</p>
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction">
