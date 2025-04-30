@@ -42,7 +42,7 @@
           @dragging-start="(event) => { if(isAnnotationEditable) dragging.start = event.index}"
           @dragging-end="(event) => { if(isAnnotationEditable) dragging.end = event.index}"
           @segmentation="handleSegmentation"
-          @on-segment-click="handleSegmentClick($event)"
+          @on-segment-click="handleSegmentClick"
           @deactivate-topic="deactivateTopic"
           @activate-topic="activateTopic"
         />

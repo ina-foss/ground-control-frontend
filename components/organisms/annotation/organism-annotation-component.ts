@@ -116,7 +116,18 @@ export default defineComponent({
         const annotation = annotationsOut.value[annotationInfo.value.index];
 
         if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
-          response = [...annotation.result.data.localisation[0].sublocalisations.localisation];
+          response = [...annotation.result.data.localisation[0].sublocalisations.localisation].filter(el=>el.data);
+        }  }
+      return response
+    })
+
+    const spans = computed(()=>{
+      let response = []
+      if (allFetched && annotationInfo.value != null) {
+        const annotation = annotationsOut.value[annotationInfo.value.index];
+
+        if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
+          response = [...annotation.result.data.localisation[0].sublocalisations.localisation].filter(el=>!el.data);
         }  }
       return response
     })
@@ -156,17 +167,18 @@ export default defineComponent({
                 annotationsIn.value[0].result.data.localisation[0].sublocalisations.localisation,
                 e=>e.data.topic == topic.id
               )
-              res.push([
-                {
-                  tcin: firstTransciprtionInTopic.tcin,
-                  tcout: firstTransciprtionInTopic.tcout,
-                  data: {
-                    topic: topic.id,
-                    text : [ topic.summary ]
-                  },
-                }
-              ])
-
+              if(firstTransciprtionInTopic){ // if the topic is used in the transcription
+                res.push([
+                  {
+                    tcin: firstTransciprtionInTopic.tcin,
+                    tcout: firstTransciprtionInTopic.tcout,
+                    data: {
+                      topic: topic.id,
+                      text : [ topic.summary ]
+                    },
+                  }
+                ])
+              }
             }
           })
         }
@@ -239,6 +251,7 @@ export default defineComponent({
         return acc
       },[] ).findIndex(topic => topic == event.topic)
       tabsRef.value.moleculeAnnotationRef.carouselNavTo(firstTopicListIndex)
+      tabsRef.value.sentenceCarouselFunction(firstTopicListIndex)
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode({tcin:locals.value[firstTranscriptionIndex].tcin,tcout:locals.value[firstTranscriptionIndex].tcout,})
       moleculeAnnotationLeftPanelRef.value.videoPlayer.seek()
       if (firstTranscriptionIndex >= 0) moleculeAnnotationRef.value.listRefs[firstTranscriptionIndex].scrollIntoView({ behavior: "smooth"})
@@ -279,6 +292,7 @@ export default defineComponent({
     let savingLocals
     if(annotation_type == 'auto-summary'){
       savingLocals = tabsRef.value.moleculeAnnotationRef.annotationFunction(tabsRef.value.moleculeAnnotationRef.locals)
+      savingLocals = spanService.saveSpan(savingLocals)
     }
     else {
       const localSubmit = locals
@@ -292,6 +306,7 @@ export default defineComponent({
     let savingLocals
     if(annotation_type == 'auto-summary'){
       savingLocals = tabsRef.value.moleculeAnnotationRef.annotationFunction(tabsRef.value.moleculeAnnotationRef.locals)
+      savingLocals = spanService.saveSpan(savingLocals)
     }
     else {
       const localSubmit = locals
@@ -400,6 +415,9 @@ export default defineComponent({
 
   }
 
+  const spanService = useSpanService()
+  provide('spanService',spanService)
+
   provide('plugin-config', config)
 
   provide('plugin-items-config', configItemPlugin)
@@ -409,6 +427,8 @@ export default defineComponent({
   provide('isAnnotationEditable',isAnnotationEditable)
 
   provide('annotation_type',annotation_type)
+
+  provide('spans',spans)
 
   provide('transcriptions', transcriptions)
 

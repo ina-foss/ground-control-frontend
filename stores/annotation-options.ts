@@ -39,6 +39,11 @@ export type Options =  {
    * @defaultValue `false`
    */
   number_segment: boolean
+
+  /** if you can create a span without any label
+  * @defaultValue true
+  */
+  unlabelled_span: boolean
 }
 
 export const useOptions = defineStore("annotation-options",() => {
@@ -52,6 +57,7 @@ export const useOptions = defineStore("annotation-options",() => {
       transcription: true,
       loop_bloc: false,
       number_segment:false,
+      unlabelled_span: true,
     })
 
 

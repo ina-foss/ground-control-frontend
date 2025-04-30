@@ -1,5 +1,5 @@
 <template>
-  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="`inline scroll-mt-16 items-center h-auto border-blue-400 ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${currentColor} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
+  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="`inline scroll-mt-16 items-center h-auto border-blue-400 ${currentColor == 'bg-secondary' ? 'border-2 rounded-sm px-1 ' : '' } ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${currentColor} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
     <div ref="spanText" class="inline ">
       <slot/>
     </div>
@@ -109,8 +109,11 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
 .highlighted-text {
   display: inline;
   position: relative;
+  line-height: 20px;
 }
 
+/* ONLY WORK ON CHROMIM BROWSER */
+/* FIX: Find firefox fix */
 .highlighted-text::after {
   content: '';
   position: absolute;

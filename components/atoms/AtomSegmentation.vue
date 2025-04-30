@@ -72,8 +72,9 @@
     </div>
     <div
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
-      @click="$emit('on-segment-click', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
-      <p class="customText">{{ $props.phrase.data?.text[0] }}</p>
+      @mouseup="$emit('on-segment-click', { tcin: phrase.tcin, tcout: phrase.tcout, index: index})">
+      <AtomTranscriptionSpan v-if="annotation_type=='auto-summary'" :key="index" :local="phrase"  @mouseup="handleSelection({event: $event})"  />
+        <p v-else class="customText">{{ $props.phrase.data?.text[0] }}</p>
       <div v-if="options.timecode_segment"
            class="absolute flex items-center h-full top-0 z-50 text-xs overflow-visible"
            :class="{'left-[-90px]': tcOffset === 0, 'left-[-102px]': tcOffset !== 0}">
@@ -129,7 +130,9 @@ import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
 import { remove } from 'lodash'
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
+import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";
 
+const { handleSelection } = inject('spanService')
 const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset, transcriptions} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset','transcriptions'])
 const emit = defineEmits(['segmentation', 'on-segment-click','activateTopic', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()

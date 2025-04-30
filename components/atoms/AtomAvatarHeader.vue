@@ -15,7 +15,6 @@
 
 <script setup>
 
-import AtomHelp from "~/components/atoms/AtomHelp.vue";
 const router = useRouter()
 const authStore = useAuth()
 const authService = useService()

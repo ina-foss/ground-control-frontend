@@ -26,6 +26,7 @@ export default defineComponent({
   },
   setup(props, { emit, expose }) {
 
+    const { loadSpan } = inject('spanService')
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData, copyTopicData } = useTopicList()
     const { computeColor } = $application
@@ -188,7 +189,7 @@ export default defineComponent({
     }
 
     const handleSegmentClick = (event: {tcin: string|number, tcout: string|number, index:number}) => {
-      emit('on-segment-click', { tcin: event.tcin, tcout: event.tcout, index:event.index })
+      emit('on-segment-click', event )
     }
 
     const jumpToTopic = inject('jumpToTopic')
@@ -203,8 +204,10 @@ export default defineComponent({
       return localSubmit
     }
 
+    const spans = inject('spans')
     onMounted(() => {
       loadTopics()
+      loadSpan(spans)
     })
 
 
