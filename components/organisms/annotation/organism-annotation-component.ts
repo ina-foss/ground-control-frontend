@@ -242,18 +242,24 @@ export default defineComponent({
       }
     }
 
-    const jumpToTopic = (event: {topic: number }) => {
-      const firstTranscriptionIndex = topics.value.findIndex((topic) => topic == event.topic)
+    const jumpToTopic = (event: {topic: number, event: Event }) => {
+      let firstTranscriptionIndex
+      if(event.event.ctrlKey){
+        firstTranscriptionIndex = topics.value.length
+      }
+      else{
+        firstTranscriptionIndex = topics.value.findIndex((topic) => topic == event.topic)
+      }
       const firstTopicListIndex = topics.value.reduce((acc,topic,index)=>{
         if(_.indexOf(topics.value,topic) == index){
           acc.push(topic)
         }
         return acc
       },[] ).findIndex(topic => topic == event.topic)
-      tabsRef.value.moleculeAnnotationRef.carouselNavTo(firstTopicListIndex)
       tabsRef.value.sentenceCarouselFunction(firstTopicListIndex)
+      tabsRef.value.moleculeAnnotationRef?.carouselNavTo(firstTopicListIndex)
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode({tcin:locals.value[firstTranscriptionIndex].tcin,tcout:locals.value[firstTranscriptionIndex].tcout,})
-      moleculeAnnotationLeftPanelRef.value.videoPlayer.seek()
+      moleculeAnnotationLeftPanelRef.value?.videoPlayer.seek()
       if (firstTranscriptionIndex >= 0) moleculeAnnotationRef.value.listRefs[firstTranscriptionIndex].scrollIntoView({ behavior: "smooth"})
     }
 
