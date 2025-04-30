@@ -101,7 +101,7 @@ export default defineComponent({
           $application.unixToTimestamp(locals.value[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
         }
 
-        let bestIndex = currentTime < locals.value[endIndex].tcin ? startIndex : endIndex
+        let bestIndex = currentTime < $application.unixToTimestamp(locals.value[endIndex].tcin) ? startIndex : endIndex
 
         emit('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: fromHistory}) // emit both times to scroll and adapt css
         lastIndex = bestIndex
@@ -109,7 +109,6 @@ export default defineComponent({
     }
 
     expose({seek, consumeTimecode: handleRewindTimecode});
-
 
     return {
       showRollback,

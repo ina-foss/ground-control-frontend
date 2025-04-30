@@ -64,9 +64,8 @@
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue';
 import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
-import {ProjectStatus} from "../api/generate";
+import {ProjectStatus,Permission} from "../api/generate";
 import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
-import { Permission } from '../api/generate';
 
 
 const refreshStore = useRefreshStore()

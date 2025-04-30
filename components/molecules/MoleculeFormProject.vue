@@ -98,7 +98,6 @@
 <script setup>
 
 
-import InputSwitch from 'primevue/inputswitch';
 import {AnnotationType, ProjectService, ProjectStatus, StepService, StepStatus, TaskStatus} from '~/api/generate';
 import {useRefreshStore} from '#imports';
 import {useAuth} from '../../stores/auth';
