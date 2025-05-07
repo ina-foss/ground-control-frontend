@@ -151,6 +151,19 @@
                 </div>
               </template>
             </Column>
+            <Column field="name" header="Date de création" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
+              <template #body="slotProps">
+                <p>
+                  {{
+                    slotProps.data.created_at
+                      ? new Date(
+                        slotProps.data.created_at
+                      ).toLocaleDateString()
+                      : '__'
+                  }}
+                </p>
+              </template>
+            </Column>
             <Column field="name" header="Date de démarrage" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
               <template #body="slotProps">
                 <p>
