@@ -93,7 +93,8 @@ const roleDeleteProject = computed(() => $application.hasRole(Permission.GROUND_
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
-  ended: 'Terminé'
+  "in-progress": "En cours",
+  done: 'Terminé'
 }
 const { $handleApiError } = useNuxtApp()
 
@@ -105,17 +106,17 @@ const translatedProjectStatus = (project_status) => {
 const statusSeverity = computed(() => {
   switch (project.status) {
     case 'pending':
-      return 'warn'
-
+      return 'warn';
     case 'draft':
-      return 'info'
-
-    case 'ended':
-      return 'success'
-
-    default:
+      return 'info';
+    case 'in-progress':
+      return 'info';
+    case 'done':
+      return 'success';
+    case 'skipped':
       return ''
-
+    default:
+      return '';
   }
 })
 
