@@ -245,7 +245,7 @@ export default defineComponent({
     const jumpToTopic = (event: {topic: number, event: Event }) => {
       let firstTranscriptionIndex
       if(event.event.ctrlKey){
-        firstTranscriptionIndex = topics.value.length
+        firstTranscriptionIndex = topics.value.findIndex((topic,index) => topics.value[index-1] == event.topic && topic != event.topic)
       }
       else{
         firstTranscriptionIndex = topics.value.findIndex((topic) => topic == event.topic)
