@@ -171,6 +171,7 @@ export default defineComponent({
       upIndex,
       list,
       clear,
+      highlightResults
     }
   }
 })

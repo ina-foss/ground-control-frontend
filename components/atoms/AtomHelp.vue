@@ -9,7 +9,7 @@
              class="shadow-xl rounded-lg border border-gray-300 "  :style="{ height: '75vh', width:'fit-content', marginRight: '30px' }">
 
         <ul class="-m-4 my-2">
-          <li v-for="(shortcut,index) in shortcutList" key="index" class="flex justify-between items-center p-2 border-b last:border-b-0">
+          <li v-for="(shortcut,index) in shortcutList" :key="index" class="flex justify-between items-center p-2 border-b last:border-b-0">
             <div class="col-6">
               <span class="block mb-2">{{shortcut.value}}</span>
             </div>

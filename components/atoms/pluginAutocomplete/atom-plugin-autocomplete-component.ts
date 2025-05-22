@@ -1,5 +1,5 @@
 import {defineComponent} from 'vue'
-import {useTopicList} from '../../composables/useTopicList'
+import {useTopicList} from '../../../composables/useTopicList'
 import {inject} from 'vue';
 import type { MultiSelectFilterEvent } from 'primevue';
 import type { Store } from 'pinia';
@@ -15,7 +15,7 @@ export default defineComponent({
     source: {}
   },
   emits: ['add-to-chiplist'],
-  async setup(props, {emit}) {
+  setup(props, {emit}) {
     const value = ref([]);
     const {topicList} = useTopicList()
     const {topicIndex, plugin, pluginItemsConfig, index, source} = toRefs(props)

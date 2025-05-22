@@ -35,13 +35,10 @@
         class: 'p-3',
       }
     }"
-              @after-hide="deleteDialog = false">
+            >
               <div class="flex justify-end pb-0">
                   <Button label="Non" class="!bg-[#ffffff] !text-primary button button-prev mr-3" size="small" @click="deleteDialog = false"/>
-                  <Button
-                    v-if="deleteDialog === false" class="button" size="small" label="Supprimer"
-                    @click="deleteDialog = true"/>
-                  <Button v-else class="button" size="small" label="Oui" @click="deleteProject"/>
+                  <Button class="button" size="small" label="Oui" @click="deleteProject"/>
               </div>
             </Dialog>
             <MoleculeFormProject v-if="visible" :dialog-visible="visible" :project="$props.project" @toggle-dialog="visible=false"/>
@@ -57,15 +54,15 @@
         <div
           class="text-sm px-2 py-3 text-slate-500"
           style="color:#757575;font-size:12px;">
-          {{ $props.project.description.charAt(0).toUpperCase() + $props.project.description.slice(1) }}
+          {{ project.description.charAt(0).toUpperCase() + project.description.slice(1) }}
         </div>
       </div>
       <hr>
 
 
     <div class=" bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400" style="font-size: 12px">
-      <p v-if="$props.project.created_at != null" class="self-center font-medium" style="color:#212529">
-        {{ $application.formatDate($props.project.created_at) }}
+      <p v-if="project.created_at != null" class="self-center font-medium" style="color:#212529">
+        {{ $application.formatDate(project.created_at) }}
       </p>
       <Avatar
         v-tooltip.left="project.created_by" :label=project.created_by.charAt(0).toUpperCase()
@@ -85,7 +82,10 @@ import { Permission } from '~/api/generate';
 
 const visible = ref(false)
 const deleteDialog = ref(false)
-const {project} = defineProps({project: {type: Object, default: () => []}})
+const {project} = defineProps({project: {type: Object, default: () => {}
+}})
+
+const refresh = inject('refreshProject')
 
 const {$application} = useService();
 
@@ -136,8 +136,7 @@ const {error,status,execute:deleteProject} =    await useAsyncData(
   async () => {
     try {
       await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
-      navigateTo(`/dashboard`);
-      await refreshStore.fetchProject()
+      await refresh()
       deleteDialog.value = false
     } catch (err) {
       console.error("Error deleting project:", err);

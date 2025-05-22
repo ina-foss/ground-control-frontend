@@ -18,10 +18,6 @@ export default defineComponent({
     const { transcriptions } = toRefs(props)
     const { topicList } = useTopicList()
 
-    const borderColor = computed(()=>{
-      return `border-extra-${transcriptions[0].data.topic%9+1}`
-    })
-
     function getTopicFromSpan(span){
       if(span){
         return locals.value.reduce((topic,local)=>{
@@ -40,7 +36,7 @@ export default defineComponent({
     })
 
     return {
-       transcriptions,topicList,computeColor,textColorPicker,computeColorByLabel,timestampToUnix,unixToTimestamp,borderColor,spanArrayByTopic,onDeleteSpan,jumpToTopic
+       transcriptions,topicList,computeColor,textColorPicker,computeColorByLabel,timestampToUnix,unixToTimestamp,spanArrayByTopic,onDeleteSpan,jumpToTopic,getTopicFromSpan
     }
   }
 })

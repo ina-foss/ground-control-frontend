@@ -1,5 +1,5 @@
 <template>
-        <Avatar
+        <Avatar ref="avatar"
           v-tooltip.left="userEmail"
           style="background-color: transparent;"
  class="cursor-pointer" shape="circle"
@@ -21,6 +21,7 @@ const authService = useService()
 const { userEmail } = storeToRefs(authStore);
 const colorMode = useColorMode()
 const menu = ref();
+defineExpose({ menu })
 const items = computed(() => {
     const nextColorMode = colorMode.preference === "light" ? 'dark' : 'light'
 

@@ -8,7 +8,7 @@ import {AnnotationStatus, PluginService} from '~/api/generate';
 import { useService } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
-import AtomSearch from "~/components/atoms/AtomSearch.vue";
+import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
 import type AtomSpan from "~/components/atoms/AtomSpan.vue";
 
 export default defineComponent({
@@ -70,7 +70,7 @@ export default defineComponent({
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const colors = ref(['#BEBEBE'])
     const topics = ref([])
-    const videoSrc = ref(annotationsIn.value[0]?.result.asset.url)
+    const videoSrc = ref(annotationsIn.value?.[0]?.result.asset.url)
     const moleculeAnnotationRef = ref()
     const moleculeAnnotationLeftPanelRef= ref()
     const { userEmail } = storeToRefs(authStore)
@@ -90,7 +90,7 @@ export default defineComponent({
       }, null);
     });
 
-    const isAnnotationEditable = computed(()=> annotationsOut.value[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
+    const isAnnotationEditable = computed(()=> annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
     const annotation_type = data.value.step.annotation_type
     provide('isAnnotationEditable',isAnnotationEditable)
 
@@ -242,9 +242,9 @@ export default defineComponent({
       }
     }
 
-    const jumpToTopic = (event: {topic: number, event: Event }) => {
+    const jumpToTopic = (event: {topic: number, event?: Event }) => {
       let firstTranscriptionIndex
-      if(event.event.ctrlKey){
+      if(event.event?.ctrlKey){
         firstTranscriptionIndex = topics.value.findIndex((topic,index) => topics.value[index-1] == event.topic && topic != event.topic)
       }
       else{

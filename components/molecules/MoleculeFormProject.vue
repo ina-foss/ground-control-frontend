@@ -4,8 +4,6 @@
     modal
     :style="{ width: 'fit-content'}"
     class="bg-white"
-    @hide="$emit('refreshData')"
-    @after-hide="deleteDialog = false"
     @update:visible="emits('toggle-dialog')">
 
     <template #header>
@@ -33,7 +31,7 @@
               </div>
               <div class="flex">
                 <label class="self-center basis-1/5 pr-4">Statut</label>
-                <Dropdown class="custom-dropdown" v-model="status" :options="translatedProjectStatus"  optionLabel="label"/>
+                <Select class="custom-dropdown" v-model="status" :options="translatedProjectStatus"  optionLabel="label"/>
               </div>
               <div class="flex justify-between items-center">
                 <label style="color: black" class="self-center text-sm ">Publié ?</label>
@@ -83,7 +81,7 @@
               <Button
                 class="button"
                 icon="pi pi-check" icon-pos="left"
-                v-else label="sauvegarder"
+                v-else label="Sauvegarder"
                 size="small"
                 @click="updateProject"
               />
@@ -105,7 +103,7 @@ import {useAuth} from '../../stores/auth';
 const errorVisible = ref(true);
 const {userEmail} = useAuth()
 const {dialogVisible, project} = defineProps(['dialogVisible', 'project'])
-const emits = defineEmits(['toggle-dialog', 'refreshData'])
+const emits = defineEmits(['toggle-dialog'])
 const deleteDialog = ref(false)
 const translations = {
   draft: 'Brouillon',
@@ -125,16 +123,11 @@ let isPublished = ref(project?.is_published || false)
 let allowSkip = ref(project?.allow_skip || false)
 let emptyAnnotations = ref(project?.empty_annotations || false)
 const availableType = ref(Object.values(AnnotationType))
-let selectedType = ref([])
+const selectedType = ref(project?.steps ? project?.steps.map(type =>type.annotation_type) : [])
 const refreshStore = useRefreshStore()
 const toast = useToast()
 const { $handleApiError } = useNuxtApp()
 const headerTitle = !project ? 'Nouveau projet' : 'Modifier ' + project?.title
-if (project?.steps !== null && project?.steps !== undefined) {
-  project?.steps.forEach(type => {
-    selectedType.value.push(type.annotation_type)
-  })
-}
 const updateProject = async () => {
   if (title.value === "") {
     toast.add({severity: "error", detail: 'Le titre est requis', summary: 'Erreur détectée'});
@@ -169,7 +162,7 @@ const updateProject = async () => {
         }
       });
       emits('toggle-dialog');
-      await refreshStore.fetchProject();
+      const projects =  useAsyncData('projects',async ()=> await refreshStore.fetchProject(),{server:false})
     } catch (error) {
       $handleApiError(error)
     }
@@ -193,9 +186,6 @@ const createProject = async () => {
     })
 
     response
-      .catch((error) => {
-        $handleApiError(error)
-      })
       .then(async(res) => {
         selectedType.value.forEach(async(type, index) => {
           await StepService.createStepStepPost({
@@ -210,7 +200,9 @@ const createProject = async () => {
             $handleApiError(err)
           })
         })
-      }).finally(()=>{
+      }).catch((error) => {
+        $handleApiError(error)
+      }) .finally(()=>{
         // reset dialog values of create new project
         title.value = '',
         description.value = '',
@@ -222,8 +214,10 @@ const createProject = async () => {
 
         emits('toggle-dialog')
 
-        refreshStore.fetchProject() // Pas de parametre = on refetch avec le precedent skip value
-      })
+        // refreshStore.fetchProject() // Pas de parametre = on refetch avec le precedent skip value
+
+        const projects =  useAsyncData('projects',async ()=> await refreshStore.fetchProject(),{server:false})
+    })
   }
 }
 

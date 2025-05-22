@@ -1,6 +1,6 @@
 <template>
-  <div v-if="!data.title" class="h-0 h-min-full">
-    <LoadingSpinner/>
+  <div v-if="status == 'pending' && !data" class=" items-center h-full">
+    <LoadingSpinner style="height: 100%"/>
   </div>
 
   <div v-else class="grid h-full p-3">
@@ -200,17 +200,16 @@
 
     </DataTable>
 
-    <Dialog v-model:visible="deleteModal.visible" :header="`Voulez vous supprimer la tâche ${ deleteModal.data.name?.slice(0,17) != deleteModal.data.name ? deleteModal.data.name?.slice(0,17) +'...' : deleteModal.data.name }  ? `"  modal @hide="hideDeleteTaskModal()">
+    <Dialog  v-model:visible="deleteModal.visible" :header="`Voulez vous supprimer la tâche ${ deleteModal.data.name?.slice(0,17) != deleteModal.data.name ? deleteModal.data.name?.slice(0,17) +'...' : deleteModal.data.name }  ? `"  modal @hide="hideDeleteTaskModal()">
       <div class="h-fit w-full flex flex-row justify-end gap-2  ">
         <Button label="Annuler" severity="secondary" text @click="hideDeleteTaskModal()"/>
         <Button type="button" label="Supprimer" severity="danger" :loading="deleteModal.loading" icon="pi pi-times" @click="deleteTask(deleteModal.data.id)" />
       </div>
     </Dialog>
 
-    <Dialog v-model:visible="visible" modal @hide="visible = false">
-      <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
-    </Dialog>
     <MoleculeFormTask
+      v-if="dialogVisible"
+      @refresh-data="refresh()"
       :dialog-visible="dialogVisible" :step-object="formStepClick"
       @toggle-dialog="dialogVisible=false"/>
   </div>
@@ -225,8 +224,8 @@ import {ref} from 'vue';
 import {AnnotationService, AnnotationStatus, StepStatus, TaskService, Permission} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
-import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
 import { FilterMatchMode } from '@primevue/core/api';
+import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
 import type { DataTableFilterMeta } from 'primevue';
 
 const route = useRoute()
@@ -239,7 +238,6 @@ const {fetchTasks} = refreshStore
 
 const dialogVisible = ref(false)
 const deleteModal = reactive({visible: false, data: {},loading:false})
-const visible = ref(false)
 const dialogContent = ref('')
 const clickedRowData = ref(null)
 const spinnerVisible = ref(true)
@@ -262,7 +260,8 @@ const getFirstLine = (markdownText) => {
 const expandedRows = ref()
 
 const editMode = ref(false)
-const data = ref(getProject)
+// const data = ref(getProject)
+const {data, refresh, status} = useAsyncData(`task_${route.params.id}` ,async () => await fetchTasks(route.params.id))
 
 const buttonItems = [
   {
@@ -308,7 +307,7 @@ const hideDeleteTaskModal = () => {
 
 const deleteTask = (task_id) => {
   deleteModal.loading = true
-  TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> fetchTasks(route.params.id)).then(()=> hideDeleteTaskModal())
+  TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> refresh()).then(()=> hideDeleteTaskModal())
 }
 
 const translatedAnnotationStatus =(annotation_status)=> {
@@ -335,7 +334,6 @@ const filteredProjects = computed(() => {
 
 
 // On affiche meme si c'es pas fini
-fetchTasks(route.params.id)
 
 function getColorForAnnotation(annotation_status) {
   if (annotation_status === AnnotationStatus.DONE) {

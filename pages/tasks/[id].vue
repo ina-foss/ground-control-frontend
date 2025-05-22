@@ -32,6 +32,12 @@ let timeAnnotationStart
 const data = ref(getData)
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 
+watchEffect(()=>{
+  useHead({
+    title: `${getData.value.name} - Ground Control | INA`
+  })
+})
+
 
 onBeforeRouteLeave((to,from,next)=>{
   if(window.onbeforeunload != null) {
@@ -44,21 +50,31 @@ onBeforeRouteLeave((to,from,next)=>{
   else  next()
 })
 
-await fetchAnnotations(route.params.id)
+const {data: project} = await useAsyncData(`project_${route.params.id}`,async()=>await fetchAnnotations(route.params.id))
 
 
 const annotation_bool = reactive({
   in: false,
   out: false
 })
-const annotations_out = ref([])
-const annotations_in = ref([])
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, isAdmin.value == true && route.query.email ?  route.query.email : userEmail.value, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
-AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
+// const annotations_out = ref([])
+// const annotations_in = ref([])
+
+const {data : annotations_in, status: status_in  }=  useLazyAsyncData(`annotations_in_${project.value.id}`,async ()=>await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in'),{
+  server: false,
+})
+
+const { data: annotations_out, status: pending_out, refresh: refresh_out} =  useAsyncData(async ()=> await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, isAdmin.value == true && route.query.email ?  route.query.email : userEmail.value, 'out'),{
+  server: false
+})
+
+// AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, isAdmin.value == true && route.query.email ?  route.query.email : userEmail.value, 'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+// AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id,'','in').then((res) => annotations_in.value = res).then(() => annotation_bool.in = true)
 
 
 const allFetched = computed(() => {
-  return annotation_bool.in && annotation_bool.out
+    // return annotation_bool.in && annotation_bool.out
+    return status_in.value!='pending' && (pending_out.value!='pending' || annotations_out.value)
 })
 
 const annotationInfo = computed(() => {
@@ -111,6 +127,12 @@ const submitExistantAnnotation =(locals,action,timeSpent,options)=>{
     .then(() => {
       AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail.value,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
     })
+      .then(() => {
+        window.onbeforeunload = null
+      })
+      .then(() => {
+        refresh_out()
+      })
 }
 
 const submitNewAnnotation =(locals,action,timeSpent,options)=>{
@@ -134,7 +156,7 @@ const submitNewAnnotation =(locals,action,timeSpent,options)=>{
     }
   })
     .then(() => {
-      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(data.value.id, userEmail.value,'out').then((res) => annotations_out.value = res).then(() => annotation_bool.out = true)
+      refresh_out()
     })
     .then(() => {
       window.onbeforeunload = null

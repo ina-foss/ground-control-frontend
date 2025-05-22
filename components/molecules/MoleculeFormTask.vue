@@ -168,27 +168,27 @@ const translatedTaskStatus = computed(() => {
   }));
 })
 
-let name = ref()
-let instruction = ref()
+let name = ref('')
+let instruction = ref('')
 let dataType = ref(TaskDataType.LDD)
 let status = ref(translatedTaskStatus.value[0])
 const fileData = ref([])
 const deleteDialog = ref(false)
 
 const onSelect = async (event) => {
-  const reader = new FileReader();
-  reader.onloadend = onReaderLoad;
-  reader.readAsText(event.files[event.files.length-1])
-  if ( event.files.length == fileData.length){
-    fileData.pop()
-    toast.add({
-      life: 5000,
-      severity: 'error',
-      detail: "Impossible d'importer deux fois le même fichier",
-      summary: "Erreur d'import"
-    });
-  }
-}
+  const reader = new FileReader();
+  reader.onloadend = onReaderLoad;
+  reader.readAsText(event.files[event.files.length - 1]);
+  if (event.files.length === fileData.length) {
+    fileData.pop();
+    toast.add({
+      life: 5000,
+      severity: 'error',
+      detail: "Impossible d'importer deux fois le même fichier",
+      summary: "Erreur d'import"
+    });
+  }
+};
 
 watchEffect(() => {
   if (fileData.value.length > 1) {
@@ -208,12 +208,16 @@ watchEffect(() => {
 });
 
 const onReaderLoad = (event) => {
-  const obj = JSON.parse(event.target.result);
-  fileData.value.push(obj)
+  try{
+    const obj = JSON.parse(event.target.result);
+    fileData.value.push(obj)
+  } catch( error){
+    console.error("Error parson JSON:",error)
+  }
 }
 
 const createTask = async () => {
-
+  try {
   MediaService.createMediaMediaPost({
     url: fileData.value[0].asset.url,
     type: fileData.value[0].asset.media_type,
@@ -246,19 +250,16 @@ const createTask = async () => {
             task_id: res.id,
             direction: 'in'
           }
-        })
+        }).catch(error=>$handleApiError(error))
       })
-    }).then(() => fetchTasks(stepObject.project_id))
-      .then(  // reset dialog values of create new task
-        name= '',
-        instruction= '',
-        dataType = TaskDataType.LDD,
-        status = translatedTaskStatus.value[0])
+    }).then(() => emits('refresh-data')) // fetchTasks(stepObject.project_id))
+      .then(() => emits('toggle-dialog')) // fetchTasks(stepObject.project_id))
   })
+  }catch(error){
 
+      $handleApiError(error,)
+  }
 
-  emits('toggle-dialog')
 }
-
 
 </script>

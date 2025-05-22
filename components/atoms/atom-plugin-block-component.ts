@@ -1,7 +1,7 @@
 import { defineComponent } from 'vue'
 import { useTopicList } from '../../composables/useTopicList'
-import AtomPluginAutocomplete from './AtomPluginAutocomplete.vue'
-import AtomPluginLabel from './AtomPluginLabel.vue'
+import AtomPluginAutocomplete from './pluginAutocomplete/AtomPluginAutocomplete.vue'
+import AtomPluginLabel from './pluginLabel/AtomPluginLabel.vue'
 import {remove} from "lodash";
 import {PluginService} from "~/api/generate";
 

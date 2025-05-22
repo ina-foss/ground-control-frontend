@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue'
-import { useTopicList } from '../../composables/useTopicList'
+import { useTopicList } from '../../../composables/useTopicList'
 
 
 export default defineComponent({

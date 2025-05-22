@@ -7,7 +7,7 @@ import { Tag } from 'primevue';
 import AtomSpan from "../atoms/AtomSpan.vue";
 import AtomSpanDetail from "~/components/atoms/AtomSpanDetail.vue";
 import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
-import AtomSearch from "~/components/atoms/AtomSearch.vue";
+import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
 import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";
 import AtomTaskComment from "../atoms/AtomTaskComment.vue";
 import atomVideoOption from '../atoms/atom-video-option.vue';

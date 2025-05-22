@@ -114,7 +114,8 @@ export default defineComponent({
       showRollback,
       handleRewindTimecode,
       seek,
-      myplayer
+      myplayer,
+      dynamicSrc,
     }
   }
 

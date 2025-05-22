@@ -220,7 +220,7 @@ function handleDrop(event: DragEvent) {
   const result = getLiList(target,0)
   const listLiElement : HTMLCollection = result.list
   const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
-  if( index != -1) emit('dragging-end',{index: index})
+  if( index != -1) emit('dragging-end')
   const hoverList: NodeList = document.querySelectorAll('.customHover')
   hoverList.forEach((el)=>{
     el.classList?.remove('customHover')
@@ -240,7 +240,7 @@ function endDrag(event: DragEvent) {
   const result = getLiList(target,0)
   const listLiElement : HTMLCollection = result.list
   const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
-  emit('dragging-start',{index: index})
+  emit('dragging-start')
 }
 
 

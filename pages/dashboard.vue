@@ -13,12 +13,12 @@
       />
     </div>
     <div class="grow">
-    <div  class="p-3 grid gap-6  max-h-full  lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2  ">
-      <div v-if="status === 'pending' && getData.length == 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-40 mx-auto max-w-8xl px-4 xl:px-28 py-6">
+    <div ref="dashboardRef" class="p-3 grid gap-6   max-h-full " style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr))">
+      <div v-if="status === 'pending' && data?.length == 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-40 mx-auto max-w-8xl px-4 xl:px-28 py-6">
         <Skeleton width="20rem" height="4rem" />
       </div>
       <Message v-if="status === 'error'" severity="error" icon="pi pi-exclamation-triangle">
-        {{ error.message }}
+        {{ projectError.message }}
       </Message>
       <MoleculeProjectCard
         v-for="(project,index) in filteredProjects " :key="index" :project=project
@@ -51,7 +51,7 @@
           },
 
       }"
-        class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="rows" :total-records="getProjectNumber"
+        class="custom-paginator sticky bg-surface-color" :always-show="false" :rows="paginatorSize" :total-records="getProjectNumber"
         template="FirstPageLink PrevPageLink PageLinks NextPageLink  LastPageLink"
         @update:first="refresh"
       />
@@ -69,12 +69,16 @@ import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue
 
 
 const refreshStore = useRefreshStore()
-const {fetchProject} = refreshStore
-const {getData, getProjectNumber} = storeToRefs(refreshStore)
+const {fetchProject,totalRecords} = refreshStore
+const {getProjectNumber} = storeToRefs(refreshStore)
 const first = ref(0)
-const rows = ref(15)
+const paginatorSize = computed(()=> window.innerWidth > 1600 ? 20 : 16)
 
-const data = ref(getData)
+// On renomme error pour eviter un conflit avec @nuxt/test-utils/runtime
+const {data:data,refresh, status, error: projectError} = await useAsyncData('projects',async ()=> await fetchProject(first.value, paginatorSize.value),{server:false})
+// const {data: projectNumber, refresh: getTotalRecords } = await useAsyncData('total_project_number',async ()=> await totalRecords(),{server:false})
+
+const dashboardRef = ref()
 localStorage.setItem('breadcrumbItems', null);
 const { $application } = useService();
 
@@ -95,13 +99,8 @@ const translatedProjectStatus = computed(() => {
 const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
 const statusOptions = translatedProjectStatus;
 
-const {refresh, status, error} = await useAsyncData('projects', () => fetchProject(first.value, rows.value),{server:false})
-
-
 const sortDataById = computed(() => {
-    // Check if data is an array and not just an object
-    if (Array.isArray(data.value)) return [...data.value].sort((a, b) => a.id - b.id)
-    return []
+    return [...data.value].sort((a, b) => a.id - b.id)
   }
 )
 
@@ -109,6 +108,9 @@ const filteredProjects = computed(() => {
   if (!selectedStatus.value) return sortDataById.value;
   return sortDataById.value.filter((project) => project.status === selectedStatus.value.value);
 });
+
+provide('refreshProject', refresh)
+
 </script>
 <style >
 

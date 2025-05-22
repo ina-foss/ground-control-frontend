@@ -30,7 +30,7 @@ export const useRefreshStore = defineStore('refresh', {
       return data.length;
     },
     async fetchProject(skip: number, limit: number) {
-      const default_limit = 15
+      const default_limit = window.innerWidth > 1600 ? 20 : 16
       const { access_token } = storeToRefs(useAuth())
       const res = await $fetch(`${getApplicationConfiguration()['apiBasePath']}/projects`,{
           query: {skip:  skip  ?? this.last_index , limit: limit ?? default_limit  },
@@ -58,6 +58,7 @@ export const useRefreshStore = defineStore('refresh', {
     async fetchAnnotations(taskid: number){
       const res = await TaskService.readTaskTaskTaskIdGet(taskid)
       this.data = res
+      return res
     }
   },
   getters: {
