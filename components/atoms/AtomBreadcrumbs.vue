@@ -25,7 +25,7 @@ const newBreadCrumbs = computed(()=>{
   let bd = [home]
   if (getData.value?.step){
     bd.push({label:getData.value.step.project.title,route:`/projects/${getData.value.step.project.id}`})
-    bd.push({label:getData.value?.name,route:`/tasks/${getData.value?.id}`})
+    bd.push({label:("( "+getData.value?.step_id+" ) "+getData.value?.name ),route:`/tasks/${getData.value?.id}`})
   }
   else{
     bd.push({label:getData.value?.title,route:`/projects/${getData.value?.id}`})
