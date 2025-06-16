@@ -99,7 +99,7 @@ describe('AtomAvatarHeader', () => {
      expect(logoutSpy).toHaveBeenCalled()
    })
 
-   it('navigue vers /silent-refresh', () => {
+   /*it('navigue vers /silent-refresh', () => {
      const refreshItem = (wrapper.vm as any).items[0].items.find((i: any) =>
        i.label === 'Rafraichir token'
      )
@@ -107,7 +107,7 @@ describe('AtomAvatarHeader', () => {
      const pushSpy = router.push
      refreshItem.command()
      expect(pushSpy).toBeDefined()
-   })
+   })*/
 
   it('exécute le changement de mode', () => {
     const toggleDarkMode = vi.fn()

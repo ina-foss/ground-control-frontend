@@ -31,7 +31,7 @@ export default class AmaliaPlayerService {
       track: number,
       language: string,
       isDefault: boolean
-    }>, tcOffset = 0, startTc = 0,waveformUrl?:string) {
+    }>, tcOffset = 0, startTc = 0,waveformUrl?:string,customConfig?:Array<string>) {
     this.playerConfiguration = mediaType == 'video' ? new VideoPlayerConfig() : new AudioPlayerConfig();
     this.playerConfiguration.player.src = mediaSrc;
     this.playerConfiguration.player.hls.config.startPosition = Math.max(0, startTc);
@@ -61,6 +61,11 @@ export default class AmaliaPlayerService {
         this.updateControlbarConfig('screenshot');
         this.updateControlbarConfig('aspectRatio');
         this.updateControlbarConfig('subtitles');
+      }
+      if(customConfig){
+        customConfig.forEach(x=>{
+          this.updateControlbarConfig(x);
+        })
       }
     }
     if (downloadUrl != '') {
@@ -101,11 +106,12 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.splice(elementIndex, 1);
   }
 
-  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string,waveformUrl:string): HTMLElement {
+
+  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string,waveformUrl:string,customConfig?:Array<string>): HTMLElement {
     this.loadSource();
-    if (!this.playerConfiguration) {
+    if (!this.playerConfiguration || customConfig) {
       this.configurePlayer(src,undefined,dynamicTumbnails,mediaType,downloadUrl,undefined,
-          undefined,media_params?.tc_offset,undefined,waveformUrl)
+          undefined,media_params?.tc_offset,undefined,waveformUrl,customConfig)
     }
     // Create web component
     this.player = document.createElement(AmaliaPlayerService.TAG_PLAYER_TAG);

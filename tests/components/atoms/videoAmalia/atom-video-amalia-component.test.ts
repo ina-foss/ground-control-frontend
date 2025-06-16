@@ -3,16 +3,19 @@ import { mount } from '@vue/test-utils'
 import AtomVideoAmalia from '@/components/atoms/videoAmalia/AtomVideoAmalia.vue'
 import {ref} from "vue";
 
+const consumeTimecodeMock = vi.fn(() => 456)
+const unixToTimestampMock = vi.fn(() => 789)
+const updateCurrentTcMock = vi.fn()
 vi.mock('#imports', () => ({
   useService: () => ({
     $amalia: {
       createPlayer: vi.fn(() => document.createElement('div')),
-      updateCurrentTc: vi.fn(),
+      updateCurrentTc: updateCurrentTcMock,
       callSeek: vi.fn(() => 123.456)
     },
     $application: {
       timestampToUnix: vi.fn(),
-      unixToTimestamp: vi.fn((val: any) => val)
+      unixToTimestamp: unixToTimestampMock
     }
   })
 }))
@@ -27,7 +30,7 @@ vi.mock('@/components/atoms/videoAmalia/atom-video-amalia-component.ts', async (
 vi.mock('@/composables/useTimecodeHistory', () => ({
   default: () => ({
     getHistory: ref([{ tcin: 1000 }, { tcin: 2000 }]),
-    consumeTimecode: vi.fn(() => 1000)
+    consumeTimecode: consumeTimecodeMock
 
   }),
 }));
@@ -67,6 +70,33 @@ describe('AtomVideoAmalia', () => {
     expect(wrapper.find('#PLAYER').exists()).toBe(true)
   })
 
+  it('has visibleRight initially set to false', () => {
+    wrapper = mount(AtomVideoAmalia, {
+      props: {
+        media_params: {
+          thumbnail_base_url: '/thumbs',
+          download_base_url: '/download',
+          waveform_base_url: '/waveform'},
+        videoSrc: 'https://example.com/stream.m3u8?typemedia=audio'
+      },
+      global: {
+        stubs: ['Button']
+      }
+    })
+    expect(wrapper.vm.visibleRight).toBe(false)
+  })
+
+  it('exposes seek and handleRewindTimecode', () => {
+    expect(wrapper.vm.seek).toBeInstanceOf(Function)
+    expect(wrapper.vm.handleRewindTimecode).toBeTruthy()
+  })
+
+  it('emits timecode-update when seek is called', async () => {
+    wrapper.vm.seek()
+    await nextTick()
+    expect(wrapper.emitted('timecode-update')).toBeTruthy()
+  })
+
   it('calls handleRewindTimecode on button click', async () => {
 
     wrapper = mount(AtomVideoAmalia, {
@@ -81,8 +111,9 @@ describe('AtomVideoAmalia', () => {
         stubs: ['Button']
       }
     })
-    const button = wrapper.findComponent({ name: 'Button' })
-    await button.trigger('click')
+    const rewindButton = wrapper.get('[data-testid="rewind-btn"]')
+    await rewindButton.trigger('click')
+    console.log(rewindButton)
     expect(wrapper.vm.handleRewindTimecode).toBeDefined()
   })
 
@@ -129,8 +160,24 @@ describe('AtomVideoAmalia', () => {
     await new Promise(resolve => setTimeout(resolve, 50))
     const expectedSrc = `data:application/vnd.apple.mpegurl;base64,test`
 
-    // Vérifier la valeur de dynamicSrc
     expect(wrapper.vm.dynamicSrc).toBe(expectedSrc)
     expect(fetch).toHaveBeenCalledWith('https://example.com/stream.m3u8?typemedia=video')
+  })
+
+  it('recrée le player quand visibleRight devient false', async () => {
+
+    const vm: any = wrapper.vm
+    vm.categories = ref([
+      { name: 'Avance', key: 'forward' },
+      { name: 'Retour', key: 'backward' }
+    ])
+
+    vm.visibleRight = true
+    vm.visibleRight = false
+
+    await nextTick()
+
+    expect(vm.categories.length).toBe(2)
+
   })
 })

@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { useService } from '#imports';
+import { ref,watch } from 'vue';
+import settingIcon from '../../public/icons/icons-svg/icons-svg/setting-icon.svg';
 
 export default defineComponent({
   name: "AtomVideoAmalia",
   emits: ["timecode-update"],
-  components:{
-  },
   props: {
     media_params: {
       type: Object,
@@ -40,9 +40,48 @@ export default defineComponent({
       return timecodeHistory.value.length > 0
     })
 
+
+    const visibleRight = ref(false);
+    const categories = ref([]);
+    const audioCategories = [
+      { name: "Retour 1 seconde par 1 seconde", key: "backward-second" },
+      { name: "Avance 1 seconde par 1 seconde", key: "forward-second" }
+    ];
+
+    const videoCategories = [
+      { name: "Retour 5 secondes par 5 secondes", key: "backward-5seconds" },
+      { name: "Avance 5 secondes par 5 secondes", key: "forward-5seconds" },
+      { name: "Retour image par image", key: "backward-frame" },
+      { name: "Avance image par image", key: "forward-frame" },
+      { name: "Retour ralenti", key: "slow-backward" },
+      { name: "Avance ralentie", key: "slow-forward" }
+    ];
+    const selectedCategories = ref([]);
+    watch(visibleRight, async () => {
+      if (visibleRight.value === false) {
+        await Promise.all([hlsPlayer(), playerParams()]).then(()=>{
+
+          if (dynamicSrc.value) {
+            const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
+            myplayer.value.removeChild(myplayer.value.firstChild);
+            myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc),waveformUrl?.value ||"",unselectedCategories))
+          }
+        });
+      }
+    }, { deep: true });
+
+
     onMounted(async () => {
       await Promise.all([hlsPlayer(), playerParams()]).then(()=>{
         if (dynamicSrc.value) {
+          const mediaType = getMediaType(videoSrc);
+
+          if (mediaType === 'audio') {
+            categories.value = audioCategories;
+          } else {
+            categories.value = videoCategories;
+          }
+          selectedCategories.value = categories.value.map(cat => cat.key);
           myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc),waveformUrl?.value ||"")) // add amalia player once src is ready
         }
       });
@@ -116,6 +155,10 @@ export default defineComponent({
       seek,
       myplayer,
       dynamicSrc,
+      visibleRight,
+      categories,
+      settingIcon,
+      selectedCategories
     }
   }
 
