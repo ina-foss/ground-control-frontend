@@ -57,12 +57,13 @@ export default defineComponent({
       { name: "Avance ralentie", key: "slow-forward" }
     ];
     const selectedCategories = ref([]);
-    watch(visibleRight, async () => {
+
+    watch([selectedCategories, visibleRight], async ([newSelectedCategories, newVisibleRight]) => {
+      const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
       if (visibleRight.value === false) {
         await Promise.all([hlsPlayer(), playerParams()]).then(()=>{
 
           if (dynamicSrc.value) {
-            const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
             myplayer.value.removeChild(myplayer.value.firstChild);
             myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc),waveformUrl?.value ||"",unselectedCategories))
           }

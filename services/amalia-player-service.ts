@@ -147,7 +147,6 @@ export default class AmaliaPlayerService {
     const players: any = this.player.getElementsByTagName(AmaliaPlayerService.TAG_PLAYER_TAG);
 
     if (players.length === 0) {
-      console.error("Aucun élément avec le tag spécifié n'a été trouvé.");
       return null;
     }
     return players;
@@ -156,7 +155,7 @@ export default class AmaliaPlayerService {
   public callSeek() {
     const players = this.getPlayers()
     if(players){
-      return players[0].mediaPlayerElement.getMediaPlayer().getCurrentTime();
+      return players[0]?.mediaPlayerElement?.getMediaPlayer().getCurrentTime();
     }
   }
 
