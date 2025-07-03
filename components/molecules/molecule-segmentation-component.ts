@@ -6,13 +6,14 @@ import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
 import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
-import AtomTopicList from "~/components/atoms/AtomTopicList.vue";
+import AtomTopicList from "~/components/atoms/topicList/AtomTopicList.vue";
 import {AnnotationStatus} from '~/api/generate/models/AnnotationStatus';
+import AtomHelp from "../atoms/AtomHelp.vue";
 
 
 export default defineComponent({
   name: 'MoleculeSegmentation',
-  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList},
+  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList,AtomHelp},
   emits: ['on-segment-click'],
   props: {
     result: {type: Object, default: ()=> {} },
@@ -20,19 +21,23 @@ export default defineComponent({
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []},
     state: {type: String as PropType<AnnotationStatus>},
+    tcOffset: {type: Number, default: ()=> 0},
+    transcriptions: {type: Array, default: ()=>['test']}
   },
   setup(props, { emit, expose }) {
 
+    const { loadSpan } = inject('spanService')
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData, copyTopicData } = useTopicList()
     const { computeColor } = $application
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
-    const { colors, topics, locals , state} = props
-    const {result} = toRefs(props)
+    const { colors, topics, locals , state,tcOffset } = props
+    const {result,transcriptions} = toRefs(props)
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = inject('isAnnotationEditable')
+
 
     const handleSegmentation = (event) => {
       if(!isAnnotationEditable) return
@@ -47,13 +52,14 @@ export default defineComponent({
       const scrollerHtml = segmentationRefs.value[event.index].parentElement
       let animationFrameId // Identify each animation frame
 
-      const adjustScroll = () =>{
+      const adjustScroll = (repeat?: boolean) =>{
         const newRect = referenceDiv.getBoundingClientRect();
         const newY = newRect.top;
         const scrollOffset = newY - initialYPosition;
         scrollerHtml.scrollBy(0, scrollOffset);
         // Continue the loop
-        animationFrameId = requestAnimationFrame(adjustScroll);
+        if(repeat ?? true){ animationFrameId = requestAnimationFrame(adjustScroll) }
+
       }
 
       if (topics[event.index] == topics[event.index + 1]) {
@@ -73,6 +79,7 @@ export default defineComponent({
               cancelAnimationFrame(animationFrameId);
               // Remove the event listener after it has been triggered
               referenceDiv.removeEventListener('transitionend', onTransitionEnd);
+              adjustScroll(false)
           }
       });
 
@@ -119,7 +126,7 @@ export default defineComponent({
 
     const activateTopic = ({ index }:{index: number})=>{
         let currentIndex = index
-        const topic = newTopic()
+        const topic = generateTopicNumber()
         createTopic({ id: topic, labels: [] })
         do {
           topics[currentIndex] = topic
@@ -131,7 +138,7 @@ export default defineComponent({
 
     const createBreak = (index: number) => {
       let currentIndex = index
-      const topic = newTopic()
+      const topic = generateTopicNumber()
       const topTopic = topics[currentIndex]
       createTopic({ id: topic, labels: [] })
       copyTopicData(topTopic,topic)
@@ -154,21 +161,14 @@ export default defineComponent({
     }
 
 
-    const newTopic = (): number => {
-      let result
-      colors.forEach((color, index) => {
-        if (parseInt(index) != 0 && _.findIndex(topics, (el) => el == parseInt(index)) == -1) {
-          result = parseInt(index)
-        }
-      })
-      if (!result) {
-        result = _.max(topics) + 1 || 1
-        const randomColor = computeColor(result).hex
-        colors.push(randomColor)
-      }
+    const generateTopicNumber = (): number => {
+      let result = _.max(topics) + 1 || 1
+      const randomColor = computeColor(result).hex
+      colors.push(randomColor)
       return result
 
     }
+
 
     const loadTopics = () => {
       const max = _.maxBy(locals, (local) => local?.data?.topic) // Search for maximum topic number
@@ -189,13 +189,10 @@ export default defineComponent({
     }
 
     const handleSegmentClick = (event: {tcin: string|number, tcout: string|number, index:number}) => {
-      emit('on-segment-click', { tcin: event.tcin, tcout: event.tcout, index:event.index })
+      emit('on-segment-click', event )
     }
 
-    const jumpToTopic = (event: {topic: number }) => {
-      const firstIndex = topics.findIndex((topic) => topic == event.topic)
-      segmentationRefs.value[firstIndex].scrollIntoView({ behavior: "smooth" })
-    }
+    const jumpToTopic = inject('jumpToTopic')
 
     const segmentationFunction = (localSubmit: any[]) => {
       localSubmit.forEach((phrase, index) => {
@@ -207,8 +204,10 @@ export default defineComponent({
       return localSubmit
     }
 
+    const spans = inject('spans')
     onMounted(() => {
       loadTopics()
+      loadSpan(spans)
     })
 
 
@@ -228,7 +227,9 @@ export default defineComponent({
       handleSegmentClick,
       deactivateTopic,
       activateTopic,
-      jumpToTopic
+      jumpToTopic,
+      tcOffset,
+      transcriptions
     }
 
 

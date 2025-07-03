@@ -1,34 +1,34 @@
 <template>
-  <Dialog
-    :visible="dialogVisible"
-    modal
-    :style="{ width: '30%'}"
-    class="bg-white"
-    @after-hide="deleteDialog = false"
-    @update:visible="emits('toggle-dialog')">
-    <template #header>
-      <span class="header-title">Raccourcis clavier</span>
-    </template>
-    <div>
-      <div v-for="(shortcut,index) in shortcutList" key="index" class="flex justify-between items-center p-2">
-        <div class="col-6">
-          <span class="block mb-2">{{shortcut.value}}</span>
-        </div>
-        <div class="col-6 flex flex-col items-end">
-          <Button class="rounded mb-2 " >{{shortcut.key}}</button>
-        </div>
-      </div>
+  <div>
+    <div class="fixed bottom-5 right-5 !bg-primary !border-primary text-white rounded-full">
+      <Button @click="visibleRight = true" >
+        <img style="height:14px;width:14px;filter: invert(1);" :src="helpIcon" alt="help icon" />
+      </Button>
     </div>
+    <Sidebar v-model:visible="visibleRight" header="Raccourcis clavier" position="right"
+             class="shadow-xl rounded-lg border border-gray-300 "  :style="{ height: '75vh', width:'fit-content', marginRight: '30px' }">
 
-  </Dialog>
+        <ul class="-m-4 my-2">
+          <li v-for="(shortcut,index) in shortcutList" :key="index" class="flex justify-between items-center p-2 border-b last:border-b-0">
+            <div class="col-6">
+              <span class="block mb-2">{{shortcut.value}}</span>
+            </div>
+            <div class="col-6 flex flex-col items-end">
+              <Button outlined class="ml-3 font-bold" >{{shortcut.key}}</button>
+            </div>
+          </li>
+        </ul>
+    </Sidebar>
+
+  </div>
 
 </template>
 
 <script setup>
-const {dialogVisible} = defineProps(['dialogVisible'])
-const emits = defineEmits(['toggle-dialog'])
-const deleteDialog = ref(false)
 
+import helpIcon from '../../public/icons/icons-svg/icons-svg/help-icon.svg';
+import { ref } from 'vue';
+const visibleRight = ref(false);
 const shortcutList = [
   { key: "V", value: "Avance de 1 segments" },
   { key: "B", value: "Avance de 5 segments" },
@@ -39,6 +39,7 @@ const shortcutList = [
   { key: "A", value: "Activer/Désactiver les TC blocs" },
   { key: "Z", value: "Activer/Désactiver les TC segments" },
   { key: "E", value: "Activer/Désactiver la synchro player" },
+  { key: "R", value: "Activer/Désactiver les n° segments" },
   { key: "Espace", value: "Création d'une rupture avant" },
   { key: "Ctrl + Espace", value: "Création d'une rupture après" },
 ];

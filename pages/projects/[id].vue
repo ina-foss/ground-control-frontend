@@ -1,9 +1,9 @@
 <template>
-  <div v-if="!data.title">
-    <LoadingSpinner/>
+  <div v-if="status == 'pending' && !data" class=" items-center h-full">
+    <LoadingSpinner style="height: 100%"/>
   </div>
 
-  <div v-else class="grid h-[80vh] p-3">
+  <div v-else class="grid h-full p-3">
     <div class="p-3 w-fit h-[70px] ml-auto fixed z-40 right-[-5px] mr-12 flex items-center top-[0px]">
       <label class="text-primary font-semibold p-2">Etapes</label>
       <Select
@@ -54,14 +54,14 @@
         <template #body="slotProps">
           <div class="flex min-w-[240px] txt">
             <Button
-              style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 12px;border-radius: 4px;margin-right:12px"
-              label="Créer un task"  outlined  @click="stepCreate(slotProps.data.id)"/>
+              style="font-size: 14px;font-family: Lato,sans-serif;font-weight: bold;height: 33px;padding: 8px 8px;border-radius: 4px;margin-right:12px"
+              label="Créer une tâche"  outlined  @click="stepCreate(slotProps.data.id)"/>
             <div
               class="flex items-center cursor-pointer txt    " :loading="loadingExport"
-                  @click="clickButtonMenu($event,slotProps.data) ">
-            <SplitButton
-              label="Exporter"  outlined  />
-          </div>
+              @click="clickButtonMenu($event,slotProps.data) ">
+              <SplitButton
+                label="Exporter"  outlined  />
+            </div>
 
             <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
               <template #item="{ item, props }" >
@@ -81,9 +81,12 @@
       <template #expansion="slotProps">
         <div class="border-surface-200 shadow-lg table-border-left" style="box-shadow: 0 4px 6px rgba(237, 237, 237, 1);">
           <DataTable
+            v-model:filters = "filters"
+            filterDisplay="row"
+            :globalFilterFields = "['name']"
             :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
             class="overflow-scroll"
-             :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
+            :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
       row:{
         class:'p-3',
@@ -92,6 +95,7 @@
        style: {height:'88px',padding: '20px !important'}
     }"
             @row-click="handleRowClick($event)">
+            <template #empty>Aucune tâche trouvée.</template>
             <Column  class="txt" body-class="text-sm" field="name" header="Titre" style="width : 8rem ; min-width: 70px;">
               <template #editor="{ index: nestedIndex }">
                 <InputText
@@ -100,6 +104,14 @@
               </template>
               <template #body="{ data: nestedData }">
                 <p class="cursor-text	"> {{ nestedData.name }}</p>
+              </template>
+              <template #filter="{ filterModel, filterCallback }">
+                <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Rechercher par titre ..." />
+              </template>
+            </Column>
+            <Column field="name" header="ID" class="txt" style="width: 4rem; min-width: fit-content;" body-class="p-3">
+            <template #body="slotProps">
+                <p > {{ slotProps.data.id }}</p>
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="annotations.length" sortable style="width: 3rem;">
@@ -122,7 +134,7 @@
                 <div class="flex-1 text-center"> {{ }}</div>
               </template>
             </Column>
-            <Column header="Statut" class="txt" style="width: 20px"   >
+            <Column header="Statut" class="txt" style="width: 100px "   >
               <template #body="{ data: nestedData }">
                 <Tag  :severity="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
               </template>
@@ -131,7 +143,7 @@
               <template #body="{data: nestedData}">
                 <div class="flex justify-start gap-2 ">
                   <Avatar
-                    v-for="(annotation, index) in nestedData.annotations" :key="index"
+                    v-for="(annotation, index) in nestedData.annotations.filter((annotation)=>annotation.annotation_status != AnnotationStatus.SKIPPED)" :key="index"
                     v-tooltip.top="annotation.user_email" :label=annotation.user_email.charAt(0).toUpperCase()
                     shape="circle" style="background-color:#0057FF;color: white;font-weight: 500;height:24px;width:24px"
                     @click="handleRowClick(annotation.user_email)"
@@ -139,17 +151,48 @@
                 </div>
               </template>
             </Column>
+            <Column field="name" header="Date de création" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
+              <template #body="slotProps">
+                <p>
+                  {{
+                    slotProps.data.created_at
+                      ? new Date(
+                        slotProps.data.created_at
+                      ).toLocaleDateString()
+                      : '__'
+                  }}
+                </p>
+              </template>
+            </Column>
+            <Column field="name" header="Date de démarrage" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
+              <template #body="slotProps">
+                <p>
+                  {{
+                    slotProps.data.annotations[0]?.created_at
+                      ? new Date(
+                        slotProps.data.annotations[0]?.created_at
+                      ).toLocaleDateString()
+                      : '__'
+                  }}
+                </p>
+              </template>
+            </Column>
+            <Column field="name" header="Date d'expiration" class="txt" style="width : 8rem ; min-width: 70px;"   body-class="p-3 ">
+              <template #body="slotProps">
+                <p > {{ slotProps.data.expiration_date ?? '__' }}</p>
+              </template>
+            </Column>
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction">
               <template #body="{ data: nestedData }">
                 <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
               </template>
             </Column>            <Column v-if="roleDeleteTask" >
-              <template #body="{data: nestedData}">
-                <div class="flex justify-end px-4">
-                  <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
-                </div>
-              </template>
-            </Column>
+            <template #body="{data: nestedData}">
+              <div class="flex justify-end px-4">
+                <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
+              </div>
+            </template>
+          </Column>
 
           </DataTable>
         </div>
@@ -157,19 +200,18 @@
 
     </DataTable>
 
-    <Dialog v-model:visible="deleteModal.visible" :header="`Voulez vous supprimer la tâche ${ deleteModal.data.name?.slice(0,17) != deleteModal.data.name ? deleteModal.data.name?.slice(0,17) +'...' : deleteModal.data.name }  ? `"  modal @hide="hideDeleteTaskModal()">
+    <Dialog  v-model:visible="deleteModal.visible" :header="`Voulez vous supprimer la tâche ${ deleteModal.data.name?.slice(0,17) != deleteModal.data.name ? deleteModal.data.name?.slice(0,17) +'...' : deleteModal.data.name }  ? `"  modal @hide="hideDeleteTaskModal()">
       <div class="h-fit w-full flex flex-row justify-end gap-2  ">
-          <Button label="Annuler" severity="secondary" text @click="hideDeleteTaskModal()"/>
-          <Button type="button" label="Supprimer" severity="danger" :loading="deleteModal.loading" icon="pi pi-times" @click="deleteTask(deleteModal.data.id)" />
+        <Button label="Annuler" severity="secondary" text @click="hideDeleteTaskModal()"/>
+        <Button type="button" label="Supprimer" severity="danger" :loading="deleteModal.loading" icon="pi pi-times" @click="deleteTask(deleteModal.data.id)" />
       </div>
     </Dialog>
 
-    <Dialog v-model:visible="visible" modal @hide="visible = false">
-      <DataDialog :data="dialogContent" :visible="spinnerVisible"/>
-    </Dialog>
     <MoleculeFormTask
-:dialog-visible="dialogVisible" :step-object="formStepClick"
-                      @toggle-dialog="dialogVisible=false"/>
+      v-if="dialogVisible"
+      @refresh-data="refresh()"
+      :dialog-visible="dialogVisible" :step-object="formStepClick"
+      @toggle-dialog="dialogVisible=false"/>
   </div>
 
 </template>
@@ -182,7 +224,9 @@ import {ref} from 'vue';
 import {AnnotationService, AnnotationStatus, StepStatus, TaskService, Permission} from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
+import { FilterMatchMode } from '@primevue/core/api';
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
+import type { DataTableFilterMeta } from 'primevue';
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
@@ -194,7 +238,6 @@ const {fetchTasks} = refreshStore
 
 const dialogVisible = ref(false)
 const deleteModal = reactive({visible: false, data: {},loading:false})
-const visible = ref(false)
 const dialogContent = ref('')
 const clickedRowData = ref(null)
 const spinnerVisible = ref(true)
@@ -203,16 +246,22 @@ const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
 
+const filters = ref<DataTableFilterMeta>({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  name: {value:null, matchMode: FilterMatchMode.CONTAINS}
+})
+
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 const roleDeleteTask = computed(() => $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE));
 const getFirstLine = (markdownText) => {
   if (!markdownText) return "";
   return markdownText.split("\n")[0] ;
 };
-  const expandedRows = ref()
+const expandedRows = ref()
 
 const editMode = ref(false)
-const data = ref(getProject)
+// const data = ref(getProject)
+const {data, refresh, status} = useAsyncData(`task_${route.params.id}` ,async () => await fetchTasks(route.params.id))
 
 const buttonItems = [
   {
@@ -240,7 +289,9 @@ const buttonItems = [
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
-  ended: 'Terminé'
+  'in-progress': 'En cours',
+  done: 'Terminé',
+  skipped: 'Passé'
 }
 
 const showDeleteTaskModal = (rowData)=>{
@@ -256,7 +307,7 @@ const hideDeleteTaskModal = () => {
 
 const deleteTask = (task_id) => {
   deleteModal.loading = true
-  TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> fetchTasks(route.params.id)).then(()=> hideDeleteTaskModal())
+  TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> refresh()).then(()=> hideDeleteTaskModal())
 }
 
 const translatedAnnotationStatus =(annotation_status)=> {
@@ -283,10 +334,9 @@ const filteredProjects = computed(() => {
 
 
 // On affiche meme si c'es pas fini
-fetchTasks(route.params.id)
 
 function getColorForAnnotation(annotation_status) {
-  if (annotation_status === AnnotationStatus.ENDED) {
+  if (annotation_status === AnnotationStatus.DONE) {
     return '#ACE1AF';
   }
   else return '#0057FF';
@@ -313,6 +363,7 @@ const exportOut = async (step, group) => {
       }
     } catch (error) {
       console.error('Error downloading file for task', task.id, error);
+      throw new Error(error.body.raw_message)
     }
   }
   if (group == 'one') triggerDownload(annos, step.title)
@@ -376,11 +427,14 @@ const handleRowClick = (event) => {
 const getStatusClass = (status) => {
   switch (status) {
     case 'pending':
-      return 'warning';
+      return 'warn';
     case 'draft':
+    case 'in-progress':
       return 'info';
-    case 'ended':
+    case 'done':
       return 'success';
+    case 'skipped':
+      return ''
     default:
       return '';
   }

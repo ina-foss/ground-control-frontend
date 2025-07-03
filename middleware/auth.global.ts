@@ -5,23 +5,26 @@ import { useService } from "../composables/useService";
 
 const authFlowRoutes = ["/auth", "/silent-refresh", "/logout"];
 
-export default defineNuxtRouteMiddleware(async (to:any) => {
+export default defineNuxtRouteMiddleware(async (from: any, to:any) => {
   if (process.env.NODE_ENV === 'test') {
     return; // Bypass the entire authentication logic in test mode
   }
   const authStore = useAuth();
   const services = useService();
   const user = (await services.$auth.getUser()) as User;
-  if (!user && !authFlowRoutes.includes(to.path)) {
-    // use this to automatically force a sign in and redirect
+  const isAuthRoute = authFlowRoutes.includes(to.path);
 
-    services.$auth.signInRedirect();
+  if ((!user || user.expired) && !isAuthRoute) {
+    /* eslint-disable no-console */
+    console.log("🔒 Utilisateur manquant ou expiré → redirection vers login");
+    return services.$auth.signInRedirect(to.fullPath);
   }
-  else {
+
+  if (user && !user.expired) {
+    /* eslint-disable no-console */
+    console.log("✅ Utilisateur authentifié, mise à jour du store");
     authStore.setUpUserCredentials(user);
-    services.$application.setupHeader()
-    if (!authFlowRoutes.includes(to.path)) {
-      services.$application.checkUser()
-    }
+    services.$application.setupHeader();
+    services.$application.checkUser();
   }
 });

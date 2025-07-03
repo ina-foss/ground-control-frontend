@@ -21,6 +21,10 @@
               <span >TC segment</span>
               <ToggleSwitch v-model="timecode_segment" />
             </div>
+            <div class="flex justify-between items-center self-stretch py-1" v-if="number_segment != undefined">
+              <span >Numéro segment</span>
+              <ToggleSwitch v-model="number_segment" />
+            </div>
           </div>
         </AccordionContent>
       </AccordionPanel>
@@ -35,6 +39,7 @@ const span = defineModel<boolean | undefined>('span',{default: undefined})
 const timecode_bloc = defineModel<boolean | undefined>('timecodeBloc',{default: undefined})
 const bloc = defineModel<boolean | undefined>('bloc',{default: undefined})
 const timecode_segment = defineModel<boolean | undefined>('timecodeSegment',{default: undefined})
+const number_segment = defineModel<boolean | undefined>('number_segment',{default: undefined})
 
 
 const timecodeDisabled = ref(false)
@@ -53,8 +58,13 @@ watch(()=>bloc.value,(value)=>{
   }
 },{})
 
+watch(()=>number_segment.value,(value)=>{
+  timecode_segment.value == true? timecode_segment.value=!value:timecode_segment.value;
+})
 
-
+watch(()=>timecode_segment.value,(value)=>{
+  number_segment.value == true? number_segment.value=!value:number_segment.value;
+})
 
 </script>
 <style>

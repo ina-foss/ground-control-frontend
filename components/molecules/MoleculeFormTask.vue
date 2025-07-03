@@ -9,7 +9,7 @@
       </StepList>
       <StepPanels>
 
-      <StepPanel value="1" v-slot="{ activateCallback }" >
+        <StepPanel value="1" v-slot="{ activateCallback }" >
           <div class=" grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
             <span class="text-slate-400 ">Entrez la configuration de la tâche</span>
             <div class="flex">
@@ -27,12 +27,12 @@
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1">Type de données</label>
                 <Select class="custom-dropdown" v-model="dataType" :options="Object.values(TaskDataType)"
-                          placeholder=""/>
+                        placeholder=""/>
               </div>
               <div class="flex">
                 <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
                 <Select class="custom-dropdown" v-model="status" :options="translatedTaskStatus" optionLabel="label"
-                          placeholder=""/>
+                        placeholder=""/>
               </div>
             </div>
           </div>
@@ -46,14 +46,14 @@
             />
           </div>
 
-      </StepPanel>
+        </StepPanel>
         <StepPanel value="2" v-slot="{ activateCallback }" >
           <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Télécharger des tâches </span>
             <FileUpload chooseLabel="Télécharger"
-              :multiple="true"
-              ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
-              invalid-file-type-message="Type invalide"  name="file[]" :pt="{
+                        :multiple="true"
+                        ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
+                        invalid-file-type-message="Type invalide"  name="file[]" :pt="{
                   buttonbar: {
                     style: `z-index:20; padding-top: 10px; padding-bottom: 10px;`
                   },
@@ -131,7 +131,7 @@
             />
           </div>
 
-      </StepPanel>
+        </StepPanel>
       </StepPanels>
     </Stepper>
   </Dialog>
@@ -150,14 +150,16 @@ const emits = defineEmits(['toggle-dialog', 'refreshData'])
 const {dialogVisible, stepObject} = defineProps(['dialogVisible', 'stepObject'])
 const {fetchTasks} = refreshStore
 const {userEmail} = storeToRefs(authStore)
-
+const { $handleApiError } = useNuxtApp()
 const toast = useToast()
 
 const templateRef = ref()
 const translations = {
   draft: 'Brouillon',
   pending: 'En attente',
-  ended: 'Terminé'
+  'in-progress': 'En cours',
+  done: 'Terminé',
+  skipped: 'Passé'
 }
 const translatedTaskStatus = computed(() => {
   return Object.values(TaskStatus).map(status => ({
@@ -166,27 +168,27 @@ const translatedTaskStatus = computed(() => {
   }));
 })
 
-let name = ref()
-let instruction = ref()
+let name = ref('')
+let instruction = ref('')
 let dataType = ref(TaskDataType.LDD)
 let status = ref(translatedTaskStatus.value[0])
 const fileData = ref([])
 const deleteDialog = ref(false)
 
 const onSelect = async (event) => {
-  const reader = new FileReader();
-  reader.onloadend = onReaderLoad;
-  reader.readAsText(event.files[event.files.length-1])
-  if ( event.files.length == fileData.length){
-    fileData.pop()
-    toast.add({
-      life: 5000,
-      severity: 'error',
-      detail: "Impossible d'importer deux fois le même fichier",
-      summary: "Erreur d'import"
-    });
-  }
-}
+  const reader = new FileReader();
+  reader.onloadend = onReaderLoad;
+  reader.readAsText(event.files[event.files.length - 1]);
+  if (event.files.length === fileData.length) {
+    fileData.pop();
+    toast.add({
+      life: 5000,
+      severity: 'error',
+      detail: "Impossible d'importer deux fois le même fichier",
+      summary: "Erreur d'import"
+    });
+  }
+};
 
 watchEffect(() => {
   if (fileData.value.length > 1) {
@@ -206,12 +208,16 @@ watchEffect(() => {
 });
 
 const onReaderLoad = (event) => {
-  const obj = JSON.parse(event.target.result);
-  fileData.value.push(obj)
+  try{
+    const obj = JSON.parse(event.target.result);
+    fileData.value.push(obj)
+  } catch( error){
+    console.error("Error parson JSON:",error)
+  }
 }
 
 const createTask = async () => {
-
+  try {
   MediaService.createMediaMediaPost({
     url: fileData.value[0].asset.url,
     type: fileData.value[0].asset.media_type,
@@ -225,7 +231,11 @@ const createTask = async () => {
       lead_time: null,
       step_id: stepObject.id,
       media_id: res.id
-    }).catch((err) => console.error(err)).then((res) => {
+    }
+    ).catch((err) => {
+      console.error(err)
+      $handleApiError(err)
+    }).then((res) => {
       fileData.value.forEach(file => {
         AnnotationService.createAnnotationAnnotationPost({
           annotation: {
@@ -240,19 +250,16 @@ const createTask = async () => {
             task_id: res.id,
             direction: 'in'
           }
-        })
+        }).catch(error=>$handleApiError(error))
       })
-    }).then(() => fetchTasks(stepObject.project_id))
-      .then(  // reset dialog values of create new task
-        name= '',
-        instruction= '',
-        dataType = TaskDataType.LDD,
-        status = translatedTaskStatus.value[0])
+    }).then(() => emits('refresh-data')) // fetchTasks(stepObject.project_id))
+      .then(() => emits('toggle-dialog')) // fetchTasks(stepObject.project_id))
   })
+  }catch(error){
 
+      $handleApiError(error,)
+  }
 
-  emits('toggle-dialog')
 }
-
 
 </script>

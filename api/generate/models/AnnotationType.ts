@@ -13,4 +13,5 @@ export enum AnnotationType {
     SEGMENTATION = 'segmentation',
     TRANSCRIPTION = 'transcription',
     SPAN = 'span',
+    AUTO_SUMMARY = 'auto-summary',
 }

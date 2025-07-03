@@ -12,19 +12,21 @@
     "coverage": "vitest run --coverage",
     "generate": "nuxt build",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "nuxt prepare && cp -r node_modules/@ina/amalia public/",
     "update-api": "openapi --input http://backend:8000/openapi.json --output ./api/generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@ina/amalia": "^2.0.25",
-    "@ina/kit-ui": "^0.0.2",
+    "@ina/amalia": "^2.1.11-develop",
+    "@ina/kit-ui": "^0.0.3",
     "@nuxtjs/color-mode": "^3.4.1",
     "@pinia/nuxt": "^0.5.1",
-    "@primevue/themes": "^4.1.1",
+    "@primeuix/themes": "^1.0.0",
+    "@primevue/themes": "^4.3.1",
     "@types/markdown-it": "^14.1.2",
-    "dompurify": "^3.2.3",
+    "@vitest/coverage-istanbul": "^3.1.3",
+    "dompurify": "^3.2.4",
     "hls.js": "^1.5.8",
     "lodash": "^4.17.21",
     "markdown-it": "^14.1.0",
@@ -41,15 +43,15 @@
   "devDependencies": {
     "@hey-api/openapi-ts": "^0.42.1",
     "@nuxt/eslint": "^0.3.13",
-    "@nuxt/test-utils": "3.14",
+    "@nuxt/test-utils": "^3.18.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@primevue/nuxt-module": "^4.1.1",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/vue": "^8.1.0",
     "@types/lodash": "^4.17.5",
-    "@vitest/coverage-v8": "^1.6.0",
-    "@vitest/ui": "^1.6.0",
+    "@vitest/coverage-v8": "^3.1.3",
+    "@vitest/ui": "^3.1.3",
     "@vue/test-utils": "^2.4.6",
     "eslint": "^8.57.0",
     "happy-dom": "^14.11.2",
@@ -59,6 +61,6 @@
     "openapi-typescript-codegen": "^0.26.0",
     "playwright-core": "^1.44.1",
     "postcss-custom-properties": "^13.3.10",
-    "vitest": "^1.6.0"
+    "vitest": "^3.1.3"
   }
 }

@@ -1,5 +1,5 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <div :style="dynamicStyle(colors[topicIndex])" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
+  <div :style="`${dynamicStyle(computeColor(topicIndex).hex)} `" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
     :class="`bg-gray-300 transition-all ${index == 0 ? '!mt-0': ''}  group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
     <div v-if="isTopicFirstSegment" ref="firstSegmentPadding" :class="`flex transition-all  justify-center items-center h-[40px] sticky top-0  w-fit`">
@@ -10,15 +10,18 @@
         <div class="w-full flex h-full  p-sm  rounded-t-lg "
           :style="`${applyHeaderColor(computeColor(topicIndex).hex)} `">
           <div class="flex flex-col w-full gap-2">
-          <div class="flex flew-row items-center justify-between w-full max-w-full" >
-            <Tag v-if="options.timecode_bloc" severity="contrast">
+          <div class="flex flew-row items-center justify-between w-full max-w-full min-h-11" >
+              <Tag v-if="options.timecode_bloc" :severity=" transcriptions[_.findIndex(autoSummaries,t=>t[0].data.topic == topicIndex )] ? 'success' : 'contrast'"
+                @click="jumpToTopic ? jumpToTopic({topic:topicIndex }): ()=>false"
+                :class="{ 'cursor-pointer' : jumpToTopic}"
+              >
               <div class="flex justify-center  items-center gap-3">
                 <i class="pi pi-clock" />
                 <p class="text-sm">{{$application.timestampToUnix(phrase.tcin) }}</p>
               </div>
             </Tag>
             <div v-if="topicIndex > 0 && isTopicFirstSegment" class="flex flex-col grow  justify-between text-ellipsis  line-clamp-2  ">
-              <div class="flex items-center  justify-start h-full " >
+              <div class="flex items-center gap-2 justify-start h-full " >
                 <div v-if="editTitle">
                   <InputText v-model="editedTitle" @focusout="editTitle = false" />
                 </div>
@@ -29,7 +32,7 @@
                       <p  class="text-ellipsis font-bold line-clamp-2"> {{title }} </p>
 
                   </div>
-                  <Button class="min-w-[33px] " :disabled="!isAnnotationEditable" icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
+                  <Button v-if="isAnnotationEditable" class="min-w-[33px] "  icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
                 </div>
                 <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"
                   :chipList="chipList" />
@@ -41,10 +44,10 @@
                 <b>Ignoré</b>
               </div>
             </div>
-            <Button v-if="topicIndex !== 0" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" :disabled="!isAnnotationEditable" />
+            <Button v-if="topicIndex != 0 && isAnnotationEditable" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" :disabled="!isAnnotationEditable" />
             <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
-            <Button :disabled="!isAnnotationEditable" v-if="topicIndex != 0" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
-            <Button :disabled="!isAnnotationEditable" v-else severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
+            <Button  v-if="topicIndex != 0 && isAnnotationEditable" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+            <Button  v-else-if="isAnnotationEditable" severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
           </div>
               <div v-if=" chipList?.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
                 <Chip  v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" :removable="isAnnotationEditable"
@@ -68,12 +71,20 @@
     </Button>
     </div>
     <div
-      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto customText grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
-      @click="$emit('on-segment-click', { tcin: phrase.tcin, tcout: phrase.tcout, index: index })">
-      {{ $props.phrase.data?.text[0] }}
+      :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"
+      @mouseup="$emit('on-segment-click', { tcin: phrase.tcin, tcout: phrase.tcout, index: index})">
+      <AtomTranscriptionSpan v-if="annotation_type=='auto-summary'" :key="index" :local="phrase"  @mouseup="handleSelection({event: $event})"  />
+        <p v-else class="customText">{{ $props.phrase.data?.text[0] }}</p>
       <div v-if="options.timecode_segment"
-        class="absolute flex items-center h-full top-[0] left-[-90px] z-50 text-xs overflow-visible    ">
-        <p class="border-dashed border border-title py-1 px-2 rounded-sm ">{{ timestampToUnix(phrase.tcin)}}</p>
+           class="absolute flex items-center h-full top-0 z-50 text-xs overflow-visible"
+           :class="{'left-[-90px]': tcOffset === 0, 'left-[-102px]': tcOffset !== 0}">
+        <p class="border-dashed border border-title py-1 px-2 rounded-sm">
+          {{ timestampToUnix(phrase.tcin) }}
+        </p>
+      </div>
+      <div v-if="options.number_segment"
+           class="absolute flex items-center h-full top-[0] left-[-70px] z-50 text-xs overflow-visible    ">
+        <p class="border-dashed border border-title py-1 px-2 rounded-sm ">{{ index }}</p>
       </div>
     </div>
     <div class="relative gap-0  w-[calc(100%+20px)] z-40 ">
@@ -111,6 +122,7 @@
 <script setup lang="ts">
 import commentIcon from '../../public/icons/icons-svg/icons-svg/comment-icon.svg';
 
+import _ from 'lodash'
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
 import AtomPluginBlock from './AtomPluginBlock.vue';
@@ -118,13 +130,16 @@ import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
 import { remove } from 'lodash'
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
+import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";
 
-const { phrase, colors, topics, index, topicList, segmentationRefs} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs'])
+const { handleSelection } = inject('spanService')
+const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset, transcriptions} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset','transcriptions'])
 const emit = defineEmits(['segmentation', 'on-segment-click','activateTopic', 'deactivateTopic','dragging-start','dragging-end'])
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()
 const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
+const jumpToTopic = inject('jumpToTopic',null)
 const segment = ref(null)
 const toast = useToast()
 const topicIndex = computed(() => topics[index])
@@ -144,7 +159,10 @@ const title = computed(()=>{
   }
   else return null
 })
-const isAnnotationEditable = inject('isAnnotationEditable')
+
+const annotation_type = inject('annotation_type')
+const autoSummaries = inject('transcriptions')
+const isAnnotationEditable = inject('isAnnotationEditable') && annotation_type == 'segmentation'
 
 const chipList = ref(topicList[topicIndex.value]?.labels || []);
 const topicHeader = ref<HTMLDivElement>()
@@ -157,16 +175,26 @@ const firstSegmentPadding = ref<HTMLDivElement>()
 
 onMounted(()=>{
   watch(()=>topics,()=>{
-    computeTopicHeight()
+    setTimeout(()=>computeTopicHeight(),200)
   },{deep:true})
-watch(()=>chipList.value?.length,async (value)=>{
-    await nextTick()
-    if(isTopicFirstSegment.value && firstSegmentPadding.value){
-        firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
-        commentWrapper.value.style.top = topicHeader.value?.getBoundingClientRect().height + 'px'
-        setTimeout(()=>computeTopicHeight(),300)
-    }
-})
+
+
+  watch(()=>chipList.value?.length,async (value)=>{
+      await nextTick()
+      if(isTopicFirstSegment.value && firstSegmentPadding.value){
+          firstSegmentPadding.value.style.paddingBottom = topicHeader.value?.getBoundingClientRect().height-20  +'px'
+          commentWrapper.value.style.top = topicHeader.value?.getBoundingClientRect().height + 'px'
+          setTimeout(()=>computeTopicHeight(),200)
+      }
+  })
+
+  watch(()=>options.number_segment,()=>{
+          setTimeout(()=>computeTopicHeight(),200)
+  })
+
+  watch(()=>options.timecode_segment,()=>{
+          setTimeout(()=>computeTopicHeight(),200)
+  })
 })
 function startDrag(event: DragEvent) {
   event.stopPropagation()
@@ -192,7 +220,7 @@ function handleDrop(event: DragEvent) {
   const result = getLiList(target,0)
   const listLiElement : HTMLCollection = result.list
   const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
-  if( index != -1) emit('dragging-end',{index: index})
+  if( index != -1) emit('dragging-end')
   const hoverList: NodeList = document.querySelectorAll('.customHover')
   hoverList.forEach((el)=>{
     el.classList?.remove('customHover')
@@ -212,7 +240,7 @@ function endDrag(event: DragEvent) {
   const result = getLiList(target,0)
   const listLiElement : HTMLCollection = result.list
   const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
-  emit('dragging-start',{index: index})
+  emit('dragging-start')
 }
 
 
@@ -281,7 +309,7 @@ onMounted( ()=>{
     }
   })
   watch(()=>isTopicFirstSegment.value,()=>{
-      computeTopicHeight()
+      setTimeout(()=>computeTopicHeight(),200)
   })
   watch(()=>topicList[topicIndex.value]?.title,(newTitle)=>{
     if(isTopicFirstSegment.value ){

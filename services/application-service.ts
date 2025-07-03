@@ -25,6 +25,7 @@ export default class ApplicationService {
   constructor() {
     this.unixToTimestamp = this.unixToTimestamp.bind(this)
     this.timestampToUnix = this.timestampToUnix.bind(this)
+    this.extractRGB = this.extractRGB.bind(this)
   }
 
   private authStore = useAuth();
@@ -38,10 +39,50 @@ export default class ApplicationService {
    * Return the css variable and the associated hex value from a integer
    */
   public computeColor= (seed: number)=>{
+    if(seed == null) return {full: 'bg-gray-500', hex:'#BEBEBE' }
     const full = 'bg-extra'+ (seed%9+1)
     const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(seed%9+1))
     return {  hex: hex, full : full , fullHexTransparent: 'bg-['+hex+'4f]'}
 
+  }
+
+  public computeColorByLabel(labels,label): { full: string; hex: string } {
+    if(label.length == 0) return {hex: '#EEEEEEEE', full: 'bg-secondary'}
+    let labelIndex=  (labels.map(label => String(label).trim())).indexOf(label.toString())
+    if(label.length != 1){
+      labelIndex = label.reduce((sum, l) => sum + l.length, 0);
+    }
+    if(labelIndex == null) return {full: 'bg-gray-500', hex:'#BEBEBE' }
+    const full = 'bg-extra'+ (labelIndex%9+1)
+    const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(labelIndex%9+1))
+    return {  hex: hex, full : full , fullHexTransparent: 'bg-['+hex+'4f]'}
+  }
+  public hexToRgba(hex, opacity) {
+    let r = 0, g = 0, b = 0;
+    // Handle 3 digit hex
+    if (hex.length === 4) {
+      r = parseInt(hex[1] + hex[1], 16);
+      g = parseInt(hex[2] + hex[2], 16);
+      b = parseInt(hex[3] + hex[3], 16);
+    }
+    // Handle 6 digit hex
+    else if (hex.length === 7) {
+      r = parseInt(hex[1] + hex[2], 16);
+      g = parseInt(hex[3] + hex[4], 16);
+      b = parseInt(hex[5] + hex[6], 16);
+    }
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+
+  /**
+   * Convert an color code in Hexadecimal in to a RGB one
+   * @param hexColor hexColor
+   */
+  public extractRGB(hexColor) {
+    const rgbaColor = this.hexToRgba(hexColor, 0.5);
+    const rgba = rgbaColor?.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
+    return rgba.slice(0, 3);
   }
 
   /**

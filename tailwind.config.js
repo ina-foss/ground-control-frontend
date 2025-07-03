@@ -5,7 +5,14 @@ import typography from "@tailwindcss/typography";
 
 
 export default {
-  content: [],
+  content: {
+    relative: true,
+    files: [
+      './pages/**/*.{vue,html,js,ts}',
+      './components/**/*/.{vue,html,js,ts}',
+      './shared/**/*/.{vue,html,js,ts}'
+    ],
+  },
   safelist: [
   'bg-extra1',
   'bg-extra2',
@@ -16,6 +23,7 @@ export default {
   'bg-extra7',
   'bg-extra8',
   'bg-extra9',
+  'gap-6',
   ],
   theme: {
     extend: {

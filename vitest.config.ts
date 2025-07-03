@@ -31,9 +31,37 @@ export default defineVitestConfig({
             '/api/**',
             '**/shared/**',
             '**/tests/app.test.ts',
-            '**/tests/pages/**', // exclude specific directories
+            // '**/tests/pages/**', // exclude specific directories
             '**/*.config.ts',   // exclude files with specific patterns
-            '**/*.test.skip.ts'   // exclude files with specific patterns
+            '**/*.test.skip.ts',   // exclude files with specific patterns
+            '**/public/**',
+
         ],
+        coverage:{
+          provider: 'istanbul',
+          reporter: ['text','html'],
+          reportsDirectory: './coverage',
+          exclude:[
+            '**/node_modules/**',
+            '**/dist/**',
+            '**/api/**',
+            '**/shared/**',
+            '**/presets/**',
+            '**/*.config.ts',
+            '**/public/**',
+            '**/utils/**',
+            '**/test-results/**',
+            '**/plugins/**',
+            '**/middleware/**',
+            '**/directives/**',
+            '**/composables/**',
+            '**/.test_reports/**',
+            '**/.nuxt/**',
+            '**/.coverage/**',
+            '**/tailwind.config.js',
+            '**/**nuxt**',
+
+          ]
+        },
     }
 })
