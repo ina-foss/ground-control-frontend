@@ -125,7 +125,7 @@ import commentIcon from '../../public/icons/icons-svg/icons-svg/comment-icon.svg
 import _ from 'lodash'
 import { useService } from '#imports';
 import { defineExpose } from 'vue';
-import AtomPluginBlock from './AtomPluginBlock.vue';
+import AtomPluginBlock from './pluginBlock/AtomPluginBlock.vue';
 import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
 import { remove } from 'lodash'

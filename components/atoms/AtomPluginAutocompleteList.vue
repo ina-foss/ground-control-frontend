@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import {useService} from "~/composables/useService.js";
-import AtomPluginBlock from "../atoms/AtomPluginBlock.vue";
+import AtomPluginBlock from "./pluginBlock/AtomPluginBlock.vue";
 
 const props = defineProps<{
   dialogVisible: boolean;

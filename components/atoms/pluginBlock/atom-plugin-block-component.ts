@@ -1,9 +1,8 @@
 import { defineComponent } from 'vue'
-import { useTopicList } from '../../composables/useTopicList'
-import AtomPluginAutocomplete from './pluginAutocomplete/AtomPluginAutocomplete.vue'
-import AtomPluginLabel from './pluginLabel/AtomPluginLabel.vue'
-import {remove} from "lodash";
-import {PluginService} from "~/api/generate";
+import { useTopicList } from '../../../composables/useTopicList'
+import AtomPluginAutocomplete from '../pluginAutocomplete/AtomPluginAutocomplete.vue'
+import AtomPluginLabel from '../pluginLabel/AtomPluginLabel.vue'
+
 
 export default defineComponent({
   name: 'AtomPluginBlock',
@@ -13,7 +12,7 @@ export default defineComponent({
     isTopicFirstSegment: {type: Boolean},
     source:{type: Boolean}
   },
-  async setup(props, {emit}){
+   setup(props, {emit}){
     const { topicList} = useTopicList()
     const {topicIndex,isTopicFirstSegment,source} = toRefs(props)
 
@@ -27,13 +26,14 @@ export default defineComponent({
       })
     })
 
-    function selectComponent(pluginConfig) {
-      const itemlist=pluginItemsConfig.value
-        .then((list) => {
-          return list.find((item) => item.id === pluginConfig.id).data;
-        })
+     function selectComponent(pluginConfig) {
+      if (!pluginItemsConfig.value) return null;
       switch (pluginConfig.type) {
         case 'autocomplete':
+          const itemlist=pluginItemsConfig.value
+            .then((list) => {
+              return list.find((item) => item.id === pluginConfig.id).data;
+            })
           return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, pluginItemsConfig:itemlist,source:source  } }
         case 'label':
           return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:pluginItemsConfig } }
