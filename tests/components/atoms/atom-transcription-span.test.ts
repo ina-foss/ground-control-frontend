@@ -43,7 +43,14 @@ describe('YourComponent.vue', () => {
     }
 
     const wrapper = mount(YourComponent, {
-      props: { local }
+      props: { local },
+      global:{
+        provide : {
+          spanService: {
+            handleDrop : vi.fn()
+          }
+        }
+      }
     })
 
     const divs = wrapper.findAll('div[data-tc]')

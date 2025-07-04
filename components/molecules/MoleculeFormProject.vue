@@ -222,7 +222,7 @@ const createProject = async () => {
 }
 
 </script>
-<style>
+<style scoped>
 .header-title {
   font-size: 19px;
   font-weight: 700;

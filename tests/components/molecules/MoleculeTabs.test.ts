@@ -79,7 +79,6 @@ describe('Molecule Props', ()=>{
     expect(sentenceCarousel.exists()).toBeTruthy()
 
     await sentenceCarousel.vm.$emit('update:page',1)
-    console.log(sentenceCarousel.emitted())
 
     expect(mockJumpToTopic).toHaveBeenCalledOnce()
     expect(mockJumpToTopic).toHaveBeenCalledWith({topic:1})

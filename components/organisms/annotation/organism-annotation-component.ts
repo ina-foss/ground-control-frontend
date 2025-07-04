@@ -58,7 +58,7 @@ export default defineComponent({
 
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
         let index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
-        scrollToSegment({bestIndex: index})
+        index != -1 ? scrollToSegment({bestIndex: index}) : div.scrollIntoView({'behavior': 'smooth', 'block' : 'center'})
     }
     const handleSelection = (spanArg: any) => {
       getSelectedSegment()?.classList?.remove('selected-segment')
@@ -206,6 +206,14 @@ export default defineComponent({
       }
     })
 
+  const panelSize = computed(()=>{
+    switch(annotation_type) {
+      case 'span' :
+        return 'col-span-2';
+      default :
+        return 'col-span-3'
+    }
+  })
 
     const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
       if(!event.index){
@@ -472,7 +480,8 @@ export default defineComponent({
     moleculeAnnotationLeftPanelRef,
     tabsProps,
     tabsRef,
-    isAnnotationEditable
+    isAnnotationEditable,
+    panelSize,
 
 
 

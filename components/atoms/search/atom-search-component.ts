@@ -55,22 +55,23 @@ export default defineComponent({
         } else if (iterableSegmentSpan.value.length !== 0) {
           emit('find-element', {div: iterableSegmentSpan.value[searchIndex.value]})
         } else {
-
           emit('find-element', {div: iterableSegment.value[searchIndex.value]})
         }
       } else emit('unselect')
     })
 
-    watch(() => searchIndex.value, (index) => {
+    watch(() => searchIndex.value, (newIndex, oldIndex) => {
       if (selectedSpan.value.length > 0) {
         const spanId = correspondingSpan(searchIndex.value)?.id
         if (spanId) {
-          setTimeout(() => selectedSpan.value[index]?.scrollIntoView({behavior: 'smooth'}), 100)
+          setTimeout(() => selectedSpan.value[newIndex]?.scrollIntoView({behavior: 'smooth'}), 100)
           emit('find-element', {index: spanId})
         } else if (iterableSegmentSpan.value.length !== 0) {
           emit('find-element', {div: iterableSegmentSpan.value[searchIndex.value]})
         } else {
-          emit('find-element', {div: iterableSegment.value[index]})
+          // iterableSegment.value[newIndex].firstElementChild?.classList.toggle('fond-bold')
+          // iterableSegment.value[oldIndex].firstElementChild?.classList.toggle('font-bold')
+          emit('find-element', {div: iterableSegment.value[newIndex]})
         }
       }
     })
@@ -114,11 +115,26 @@ export default defineComponent({
             const words = span?.querySelectorAll('.inline-block');
             words.forEach((wordDiv) => {
               const text = wordDiv.textContent;
-              if (text.match(regex)) {
-                const newHTML = text.replace(regex, '<mark class="highlight" style="background-color: #0b7698; color: white;">$1</mark>');
-                wordDiv.innerHTML = newHTML;
-                iterableSegment.value.push(words); // Ajouter le mot surligné à la liste
-                iterableSegmentSpan.value.push(span); // Ajouter le bloc contenant le mot surligné à la liste
+              if (text?.match(regex)) {
+                const splittedText = text.split(regex)
+                const textNode = [...wordDiv.childNodes].filter(node=>node.nodeType == 3).pop()
+                textNode?.remove()
+                splittedText.forEach((substring,index)=>{
+                  if(index%2){
+                    const mark = document.createElement('mark')
+                    mark.innerText = substring
+                    mark.classList.add('highlight')
+                    mark.style.backgroundColor = '#0b7698'
+                    mark.style.color = 'white'
+                    wordDiv.appendChild(mark)
+                    }
+                  else{
+                    wordDiv.appendChild(document.createTextNode(substring))
+                  }
+                })
+                // newTextNode.innerHTML = text.replace(regex, '<mark class="highlight" style="background-color: #0b7698; color: white;">$1</mark>');
+                iterableSegment.value.push(wordDiv); // Ajouter le mot surligné à la liste
+                // iterableSegmentSpan.value.push(span); // Ajouter le bloc contenant le mot surligné à la liste
               }
             });
           }
@@ -164,6 +180,7 @@ export default defineComponent({
       selectedSpan,
       searchIndex,
       iterableSegment,
+      iterableSegmentSpan,
       selectedSearch,
       searchInterface,
       invertInterface,
