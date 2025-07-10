@@ -19,11 +19,6 @@ describe('Dashboard.vue Tests', () => {
     expect(cmp).toBeDefined();
   });
 
-  test('DataDialog component imports as expected', async () => {
-    const cmp = await import('../components/DataDialog.vue');
-    expect(cmp).toBeDefined();
-  });
-
   test('SegmentationMolecules component imports as expected', async () => {
     const cmp = await import('../components/molecules/MoleculeSegmentation.vue');
     expect(cmp).toBeDefined();

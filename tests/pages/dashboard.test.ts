@@ -1,29 +1,24 @@
-import {expect, describe, it }  from 'vitest'
+import {expect, describe, it,vi }  from 'vitest'
 import Dashboard from '../../pages/dashboard.vue'
-import { NuxtError } from '#app'
 import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
-import { shallowMount, type VueWrapper } from '@vue/test-utils'
+import { type VueWrapper } from '@vue/test-utils'
 import { Paginator, Select, Skeleton} from 'primevue'
 import { mockedProject as project } from '../mock'
 
 const mockedProject = ref(project)
-
 const mockedProjectLenght = ref(mockedProject.value.length)
+let refreshStatus = "sucess"
 
 vi.mock('@/stores/refresh',()=>({
   useRefreshStore : vi.fn(()=>{
     return {
-      getProjectNumber: mockedProjectLenght
+      getProjectNumber: mockedProjectLenght,
     }
   })
 }))
-
 const refreshProject = vi.fn()
-let refreshStatus = "sucess"
-
-
 let wrapper : VueWrapper
 
 mockNuxtImport('useToast', () => {
@@ -47,10 +42,8 @@ mockNuxtImport('useService',()=>{
   }
 })
 
-
-
   mockNuxtImport('useAsyncData', () => {
-    return (key) => {
+    return  (key) => {
       if(key === "projects"){
         return { data: mockedProject, refresh: refreshProject, status: refreshStatus, error: undefined  }
       }
@@ -60,8 +53,7 @@ mockNuxtImport('useService',()=>{
       return {data: null, refresh: vi.fn()}
     }
   })
-
-describe('Dashboard page', () => {
+describe('dashboard.vue', () => {
 
   beforeEach(async()=>{
     wrapper = await mountSuspended(Dashboard)
@@ -88,10 +80,8 @@ describe('Dashboard page', () => {
     expect(wrapper.vm.roleCreateProject).toBe(true)
     expect(wrapper.html()).toContain('right-[145px]')
 
-
     mockState.hasRole = false
     await wrapper.vm.$nextTick()
-
 
     expect(wrapper.vm.roleCreateProject).toBe(false)
     expect(wrapper.html()).toContain('right-[5px]')
