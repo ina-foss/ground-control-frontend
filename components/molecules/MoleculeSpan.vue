@@ -34,7 +34,7 @@
                 <Tab value="parameters">Paramètres</Tab>
               </TabList>
               <TabPanels class="!bg-secondary w-fit  !px-0 !h-fit !max-h-[calc(100%-47px)]  !pb-2">
-                <TabPanel value="span" class="flex-col flex min-w-[700px] flex-1 items-center gap-3"  >
+                <TabPanel value="span" class="flex-col flex min-w-[700px] w-[700px] flex-1 items-center gap-3"  >
                   <AtomSpanControlPanel @handle-new-group="spanForm?.open(undefined, $event)"/>
                   <!-- <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray" :labels="labels" -->
                   <!--   @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()" -->

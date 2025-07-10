@@ -96,12 +96,6 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     newFocus.value = null
   }
 
-  const dropSpan = (event : DragEvent, group, role)=>{
-    const target : HTMLDivElement = event.target
-    target.querySelector('preview').remove()
-    const spanId = event.dataTransfer.getData('span')
-    group.spans = [...group.spans, {spanId, role: role}]
-  }
 
   const handleDrop = (event : DragEvent)  => {
     event.preventDefault()
@@ -252,7 +246,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
 
   watch(()=>newFocus.value,(newValue, oldValue)=>{
     if(oldValue != undefined){
-      const oldElementArray = spanArray.value[oldValue].nodes
+      const oldElementArray = spanArray.value[oldValue]?.nodes
       if(!oldElementArray){}  // On a selectionne un groupe
       else{
         oldElementArray.forEach((span: HTMLDivElement) =>{
@@ -607,11 +601,14 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
   }
 
   return{
-    showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, dropSpan,spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected
+    showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected
   }
 }
 
-export default function (){
-  if(!spanServiceInstance) spanServiceInstance = createSpanService()
+/**
+ * @param initialization True for forcing the creation of a new instance
+  **/
+export default function (initialization?: boolean){
+  if(!spanServiceInstance || initialization) spanServiceInstance = createSpanService()
   return spanServiceInstance
 }

@@ -5,21 +5,24 @@ export default defineNuxtComponent({
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { dropSpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = inject('spanService')
+    const { spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
 
 
-    const groupIsSelected = computed(()=> newFocus.value != null && !spanArray.value[newFocus.value].tcin)
+    const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
     const groupArray = computed(()=>spanArray.value.filter(span=>{
       if(!span) return false
       return !span.tcin
     }) )
     const spanOnlyArray = computed(()=>_.difference(spanArray.value,groupArray.value).filter(span=>span?.type))
-    const selectedGroup = ref()
-    watch(()=>newFocus.value,(focus)=>{
-     const group =  _.find(groupArray.value,group => group?.id == focus)
-      selectedGroup.value = group ?? selectedGroup.value
-
+    const selectedGroup = computed((oldValue)=>{
+      const group =  _.find(groupArray.value,group => group?.id == newFocus.value)
+      if(group) return group
+      return oldValue ?? undefined
     })
+
+    function handleGroupClick (id: number) {
+      newFocus.value = id
+    }
 
     function previewSpanDrop (event : DragEvent) {
       const target : HTMLDivElement = event.target
@@ -36,8 +39,26 @@ export default defineNuxtComponent({
       target.lastChild?.remove()
     }
 
+    const dropSpan = (event : DragEvent, group, role)=>{
+      const target : HTMLDivElement = event.target
+      target.querySelector('preview')?.remove()
+      const spanId = event.dataTransfer.getData('span')
+      group.spans = [...group.spans, {spanId, role: role}]
+    }
+
     function extractTextFromSpanNodes (nodesArray: Array<Node>[]){
+      if(!nodesArray) return ''
       return nodesArray.map(node=>document.evaluate('text()', node, null, XPathResult.STRING_TYPE).stringValue).join(' ')
+    }
+
+    function getMinSizeText(span: any){
+      const tempDiv =  document.createElement('div')
+      tempDiv.classList.add('w-auto', 'p-1', 'rounded', 'border-4', 'inline-block', 'text-xs/3', 'h-fit', 'text-center')
+      tempDiv.innerText = span.type?.label
+      document.body.appendChild(tempDiv)
+      const width = tempDiv.getBoundingClientRect().width
+      document.body.removeChild(tempDiv)
+      return width
     }
 
 
@@ -56,7 +77,9 @@ export default defineNuxtComponent({
     unpreviewSpanDrop,
     extractTextFromSpanNodes,
     spanTypeOptions,
-    spanOnlyArray
+    spanOnlyArray,
+    getMinSizeText,
+    handleGroupClick,
     }
   }
 })

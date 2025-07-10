@@ -429,7 +429,7 @@ export default defineComponent({
 
   }
 
-  const spanService = useSpanService()
+  const spanService = useSpanService(true)
   provide('spanService',spanService)
 
   provide('plugin-config', config)
