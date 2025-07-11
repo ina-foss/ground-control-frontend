@@ -16,7 +16,7 @@ mockNuxtImport('useToast',()=>{
 
 const mockJumpToTopic = vi.fn()
 
-describe('Molecule Props', ()=>{
+describe('Molecule Tabs', ()=>{
   let wrapper : VueWrapper
   beforeEach(async()=>{
     wrapper = await mountSuspended(MoleculeTabs,{

@@ -45,14 +45,14 @@ describe('Atom Transcription Span',()=> {
       dataTransfer: dataTransfer
     })
 
-    expect(wrapper.findAll('div .dragged_outer').length).toBe(4)
+    expect(wrapper.findAll('.dragged_outer').length).toBe(4)
 
     await target.trigger('dragleave',{
       dataTransfer: dataTransfer
     })
 
 
-    expect(wrapper.findAll('div .dragged_outer').length).toBe(0)
+    expect(wrapper.findAll('.dragged_outer').length).toBe(0)
   })
 
   it('should extend the selection to the left ',async ()=>{
@@ -66,14 +66,14 @@ describe('Atom Transcription Span',()=> {
       dataTransfer: dataTransfer
     })
 
-    expect(wrapper.findAll('div .dragged_outer').length).toBe(4)
+    expect(wrapper.findAll('.dragged_outer').length).toBe(4)
 
     await target.trigger('dragleave',{
       dataTransfer: dataTransfer
     })
 
 
-    expect(wrapper.findAll('div .dragged_outer').length).toBe(0)
+    expect(wrapper.findAll('.dragged_outer').length).toBe(0)
   })
 
   it('should decrease the selection to the left ',async ()=>{
@@ -91,14 +91,14 @@ describe('Atom Transcription Span',()=> {
       dataTransfer: dataTransfer
     })
 
-    expect(wrapper.findAll('div .dragged_inner').length).toBe(2)
+    expect(wrapper.findAll('.dragged_inner').length).toBe(2)
 
     await target.trigger('dragleave',{
       dataTransfer: dataTransfer
     })
 
 
-    expect(wrapper.findAll('div .dragged_inner').length).toBe(0)
+    expect(wrapper.findAll('.dragged_inner').length).toBe(0)
   })
 
   it('should decrease the selection to the right ',async ()=>{
@@ -116,14 +116,14 @@ describe('Atom Transcription Span',()=> {
       dataTransfer: dataTransfer
     })
 
-    expect(wrapper.findAll('div .dragged_inner').length).toBe(2)
+    expect(wrapper.findAll('.dragged_inner').length).toBe(2)
 
     await target.trigger('dragleave',{
       dataTransfer: dataTransfer
     })
 
 
-    expect(wrapper.findAll('div .dragged_inner').length).toBe(0)
+    expect(wrapper.findAll('.dragged_inner').length).toBe(0)
   })
 
 })

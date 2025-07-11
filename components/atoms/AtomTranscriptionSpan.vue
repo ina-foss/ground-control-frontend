@@ -1,9 +1,9 @@
 <template>
-  <div class="scroll-m-12 customText max-w-[700px] border-l-inherit  " >
+  <span-transcription-wrapper class="scroll-m-12 block customText max-w-[700px] border-l-inherit  " >
     <div v-for="word in local.sublocalisations?.localisation" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev" class="mb-4" :data-tc="word.tcin" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${ _.find(['.',','],(char)=>  char == word.data.text[0] ) ? 'pl-0' : 'pl-1' } hover:bg-surface-200 `">
       {{ word.data.text[0] }}
     </div>
-  </div>
+  </span-transcription-wrapper>
 </template>
 
 <script setup lang="ts">

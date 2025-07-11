@@ -323,22 +323,27 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
         }
         state.selection.removeAllRanges()
 
+
         const selectedNodes: Node[] = []
         const treeWalker = document.createTreeWalker(
           state.range.commonAncestorContainer,
           NodeFilter.SHOW_ELEMENT,
           {
             acceptNode: (node) => {
-              if (state.range.intersectsNode(node) && node.parentNode == state.range?.commonAncestorContainer ) {
-                return NodeFilter.FILTER_ACCEPT
+              // On parcourt uniquement les noeuds qui intersectionnent la selection de l'utilisateur
+              if (state.range.intersectsNode(node) ) {
+                // Si le noeud est un wrapper on le skip et on passe a ses descendants
+                if(node.nodeName == 'SPAN-TRANSCRIPTION-WRAPPER') return NodeFilter.FILTER_SKIP
+                // Si le noeud est une div, on le parcourt, sinon (tag, border, bg... ) on le rejette
+                return node.nodeName == 'DIV' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
               }
               return NodeFilter.FILTER_REJECT
             }
           }
         )
 
-        while (treeWalker.nextNode()) {
-          selectedNodes.push(treeWalker.currentNode)
+        while (treeWalker.nextNode()){
+            selectedNodes.push(treeWalker.currentNode)
         }
 
         spanTcin = selectedNodes[0].getAttribute('tcin')
