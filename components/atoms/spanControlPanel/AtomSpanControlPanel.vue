@@ -36,7 +36,7 @@
                 <role-dropzone
   class="flex flex-col text-start gap-1 h-full w-full "
                   @drop="dropSpan($event,selectedGroup,role)" @dragover="event=>event.preventDefault()" @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
-                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role )" :key="span.id" :style="{ backgroundColor : computeColorByLabel(spanTypeOptions.map(opt=>opt.label),[spanArray[span.spanId]?.type?.label]).hex + '66'}" class=" truncate mr-2 max-w-full w-fit rounded  ">{{extractTextFromSpanNodes(spanArray[span.spanId]?.nodes)}}</role-span-content>
+                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :key="span.id" :style="{ backgroundColor : computeColorByLabel(spanTypeOptions.map(opt=>opt.label),[spanArray[span.spanId]?.type?.label]).hex + '66'}" class=" truncate mr-2 max-w-full w-fit rounded  ">{{extractTextFromSpanNodes(spanArray[span.spanId]?.nodes)}}</role-span-content>
                 </role-dropzone>
               </ScrollPanel>
             </div>
@@ -64,10 +64,11 @@
 
 </template>
 
+<script src="./span-control-panel-component.ts"></script>
+
 <style scoped >
 .hover-span:hover, .expand-type:hover .hover-span {
   width: var(--computed-width) !important
 }
 </style>
 
-<script src="./span-control-panel-component.ts"></script>

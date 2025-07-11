@@ -6,6 +6,7 @@ export default defineNuxtComponent({
   setup(props, {emit}){
 
     const { spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
+    const { unixToTimestamp } = useService().$application
 
 
     const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
@@ -13,7 +14,11 @@ export default defineNuxtComponent({
       if(!span) return false
       return !span.tcin
     }) )
-    const spanOnlyArray = computed(()=>_.difference(spanArray.value,groupArray.value).filter(span=>span?.type))
+    const spanOnlyArray = computed(()=>
+      _.difference(spanArray.value,groupArray.value)
+      .filter(span=>span?.type)
+      .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin)  )
+    )
     const selectedGroup = computed((oldValue)=>{
       const group =  _.find(groupArray.value,group => group?.id == newFocus.value)
       if(group) return group
@@ -80,6 +85,7 @@ export default defineNuxtComponent({
     spanOnlyArray,
     getMinSizeText,
     handleGroupClick,
+    unixToTimestamp,
     }
   }
 })
