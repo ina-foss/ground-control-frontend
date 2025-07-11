@@ -10,17 +10,17 @@
 import _ from 'lodash'
 import { useService } from '#imports';
 
-const { handleDrop } = inject('spanService')
+const { handleDrop, dragData } = useSpanService()
 
 const addSpanPrewiev = (event : DragEvent) =>{
   event.preventDefault()
-  if(!event.dataTransfer.getData('pin_position')) return
+  if(!dragData.pin_position) return
   let spanUnderCursor = event.target
-  const spanId = event.dataTransfer?.getData('spanid')
+  const spanId = dragData.spanid
   while(!spanUnderCursor.getAttribute('data-tc') ) spanUnderCursor = spanUnderCursor.parentNode
   if(!spanUnderCursor.querySelector(`bg${spanId}`)){ // Extension du span
       spanUnderCursor.classList.add('dragged_outer')
-    if(event.dataTransfer.getData('pin_position') == 'left'){
+    if(dragData.pin_position == 'left'){
     // Pour le cas start pin
       let nextSpan = spanUnderCursor.nextSibling
       while(!nextSpan.querySelector(`bg${spanId}`)){
@@ -38,7 +38,7 @@ const addSpanPrewiev = (event : DragEvent) =>{
   }
   else{ // Raccourcissement du span
     spanUnderCursor.classList.add('dragged_inner')
-    if(event.dataTransfer.getData('pin_position') == 'left'){ // Pour la pin de gauche
+    if(dragData.pin_position == 'left'){ // Pour la pin de gauche
       let previousSpan = spanUnderCursor.previousSibling
       while(previousSpan.querySelector(`bg${spanId}`)){
         previousSpan.classList.add('dragged_inner')
@@ -57,13 +57,13 @@ const addSpanPrewiev = (event : DragEvent) =>{
 
 const removeSpanPreview = (event) => {
   event.preventDefault()
-  if(!event.dataTransfer.getData('pin_position')) return
-  const spanId = event.dataTransfer?.getData('spanid')
+  if(!dragData.pin_position) return
+  const spanId = dragData.spanid
   let spanUnderCursor = event.target
   while(!spanUnderCursor.getAttribute('data-tc') ) spanUnderCursor = spanUnderCursor.parentNode
   if(!spanUnderCursor.querySelector(`bg${spanId}`)){ // Extension du span
       spanUnderCursor.classList.remove('dragged_outer')
-    if(event.dataTransfer.getData('pin_position') == 'left'){
+    if(dragData.pin_position == 'left'){
     // Pour le cas start pin
       let nextSpan = spanUnderCursor.nextSibling
       while(!nextSpan.querySelector(`bg${spanId}`)){
@@ -81,7 +81,7 @@ const removeSpanPreview = (event) => {
   }
   else{ // Raccourcissement du span
     spanUnderCursor.classList.remove('dragged_inner')
-    if(event.dataTransfer.getData('pin_position') == 'left'){ // Pour la pin de gauche
+    if(dragData.pin_position == 'left'){ // Pour la pin de gauche
       let previousSpan = spanUnderCursor.previousSibling
       while(previousSpan.querySelector(`bg${spanId}`)){
         previousSpan.classList.remove('dragged_inner')

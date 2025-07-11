@@ -23,13 +23,17 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
   const currentFocus = ref<number | undefined>(undefined)
   const linkCss = computed<string>(() => linkMode.value ? ' hover:border-2 ' : '')
   const spanCount = computed<number>(()=>spanArray.value.length)
-  const newFocus = ref()
+  const newFocus = ref<number | undefined>()
   const spanMenuSelected = ref<number | undefined>(undefined)
   const labelSelected = ref([])
   const freeLabel = ref()
   const spanIndex = ref<number>()
   const relationArray = ref<any[]>([])
   const spanForm = ref()
+  const dragData = reactive<{pin_position: string | undefined, spanid: number | undefined}>({
+    pin_position : undefined,
+    spanid : undefined,
+  })
   const labels = ref<string[]>(['Person', 'Citation', 'Verbe'])
   const spanTypeOptions =ref( [
     {value: 'function',label:'Fonction'},
@@ -69,8 +73,13 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
   }
 
   const recordSpanId = (event: DragEvent, direction: string) =>{
-      event.dataTransfer.setData('spanid', markRaw(spanMenuSelected.value) ?? markRaw(newFocus.value))
-      event.dataTransfer.setData('pin_position',direction)
+      // Pour l'evenement drop
+      event.dataTransfer?.setData('pin_position',direction)
+      event.dataTransfer.setData('spanid',markRaw(spanMenuSelected.value) ?? markRaw(newFocus.value))
+
+      // Pour l'evenement dragover et dragleave
+      dragData.spanid = markRaw(spanMenuSelected.value) ?? markRaw(newFocus.value)
+      dragData.pin_position = direction
   }
 
   const dropPin = () => {
@@ -606,7 +615,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
   }
 
   return{
-    showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected
+    dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected
   }
 }
 

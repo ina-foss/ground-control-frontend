@@ -5,12 +5,20 @@ import { mockedTransciptionsWithoutTopics } from '@/tests/mock'
 import { mount} from '@vue/test-utils';
 import type { VueWrapper } from '@vue/test-utils';
 
+
 describe('Atom Transcription Span',()=> {
 
   let wrapper : VueWrapper
 
-  beforeAll(()=>{
-  })
+  vi.doMock('~/composables/useSpanService', () => ({
+    default: () => ({
+      dragData: reactive({
+        pin_position: undefined,
+        spanid: undefined
+      }),
+      handleDrop: vi.fn()
+    })
+  }))
 
   beforeEach(async()=>{
 
@@ -18,16 +26,10 @@ describe('Atom Transcription Span',()=> {
       props:{
         local: mockedTransciptionsWithoutTopics[0]
       },
-      global:{
-        provide:{
-          spanService :{
-            handleDrop: vi.fn()
-          }
-        }
-      }
     })
 
   })
+
 
   it('should mount the component',async ()=>{
     expect(wrapper.exists()).toBeTruthy()
@@ -35,11 +37,15 @@ describe('Atom Transcription Span',()=> {
   })
 
   it('should extend the selection to the right ',async ()=>{
+    const { dragData } = useSpanService()
     const word = wrapper.findAll('div').at(100)
     word?.element.appendChild(document.createElement('bg1'))
     const dataTransfer = new DataTransfer()
     dataTransfer.setData('pin_position', 'right')
     dataTransfer.setData('spanid', '1')
+    dragData.pin_position = 'right'
+    dragData.spanid = 1
+    console.log(wrapper.vm.dragData)
     const target = wrapper.findAll('div').at(104)
     await target.trigger('dragover',{
       dataTransfer: dataTransfer
@@ -56,11 +62,12 @@ describe('Atom Transcription Span',()=> {
   })
 
   it('should extend the selection to the left ',async ()=>{
+    const { dragData } = useSpanService()
     const word = wrapper.findAll('div').at(100)
     word?.element.appendChild(document.createElement('bg1'))
     const dataTransfer = new DataTransfer()
-    dataTransfer.setData('pin_position', 'left')
-    dataTransfer.setData('spanid', '1')
+    dragData.pin_position = 'left'
+    dragData.spanid = 1
     const target = wrapper.findAll('div').at(96)
     await target.trigger('dragover',{
       dataTransfer: dataTransfer
@@ -77,6 +84,7 @@ describe('Atom Transcription Span',()=> {
   })
 
   it('should decrease the selection to the left ',async ()=>{
+    const {dragData} = useSpanService()
     const word1 = wrapper.findAll('div').at(100)
     word1?.element.appendChild(document.createElement('bg1'))
     const word2 = wrapper.findAll('div').at(101)
@@ -84,14 +92,14 @@ describe('Atom Transcription Span',()=> {
     const word3 = wrapper.findAll('div').at(102)
     word3?.element.appendChild(document.createElement('bg1'))
     const dataTransfer = new DataTransfer()
-    dataTransfer.setData('pin_position', 'right')
-    dataTransfer.setData('spanid', '1')
-    const target = wrapper.findAll('div').at(101)
+    dragData.pin_position = 'right'
+    dragData.spanid = 1
+    const target = wrapper.findAll('div').at(102)
     await target.trigger('dragover',{
       dataTransfer: dataTransfer
     })
 
-    expect(wrapper.findAll('.dragged_inner').length).toBe(2)
+    expect(wrapper.findAll('.dragged_inner').length).toBe(1)
 
     await target.trigger('dragleave',{
       dataTransfer: dataTransfer
@@ -102,6 +110,7 @@ describe('Atom Transcription Span',()=> {
   })
 
   it('should decrease the selection to the right ',async ()=>{
+    const {dragData} = useSpanService()
     const word1 = wrapper.findAll('div').at(100)
     word1?.element.appendChild(document.createElement('bg1'))
     const word2 = wrapper.findAll('div').at(101)
@@ -109,14 +118,14 @@ describe('Atom Transcription Span',()=> {
     const word3 = wrapper.findAll('div').at(102)
     word3?.element.appendChild(document.createElement('bg1'))
     const dataTransfer = new DataTransfer()
-    dataTransfer.setData('pin_position', 'left')
-    dataTransfer.setData('spanid', '1')
-    const target = wrapper.findAll('div').at(101)
+    dragData.pin_position = 'left'
+    dragData.spanid = 1
+    const target = wrapper.findAll('div').at(102)
     await target.trigger('dragover',{
       dataTransfer: dataTransfer
     })
 
-    expect(wrapper.findAll('.dragged_inner').length).toBe(2)
+    expect(wrapper.findAll('.dragged_inner').length).toBe(3)
 
     await target.trigger('dragleave',{
       dataTransfer: dataTransfer
