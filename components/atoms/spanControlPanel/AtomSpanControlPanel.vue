@@ -4,11 +4,7 @@
       <b class="text-xl">Spans</b>
       <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
       <span-wrapper v-for="(span,index) in spanOnlyArray"
-          :key="span.id" draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer overflow-hidden transition-all duration-300 expand-type',
-          'grid-cols-[min-content_80px_1fr_0fr]',
-          'hover:grid-cols-[min-content_120px_1fr_0fr]' ,
-          span?.label ? 'grid-cols-[min-content_80px_1fr_minmax(100px,_50%)] hover:grid-cols-[min-content_minmax(80px,_min-content)_1fr_minmax(50%,100px)]' : ''
-        ] "
+          :key="span.id" draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer overflow-hidden transition-all duration-300 expand-type' ] "
         @dragstart="event=>event.dataTransfer.setData('span', span.id)">
         <span-number class="font-bold self-center px-2">  {{index+1}} </span-number>
         <span
@@ -16,7 +12,7 @@
           class="min-w-[80px] w-[80px] transition-all duration-300 p-1 rounded border-4 inline-block text-xs/3 h-fit truncate text-center hover-span" >
            {{span?.type?.label}}
         </span>
-        <span class="self-center font-semibold grow truncate">{{span?.label ?? extractTextFromSpanNodes(span.nodes)}}</span>
+        <span class="self-center font-semibold flex-1 truncate">{{span?.label ?? extractTextFromSpanNodes(span.nodes)}}</span>
         <span v-if="span?.label" class="text-subtitle truncate flex  grow max-w-[40%] "  >
           {{extractTextFromSpanNodes(span.nodes)}}
         </span>

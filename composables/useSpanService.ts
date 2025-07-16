@@ -122,6 +122,33 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
 
   }
 
+  function decolorSpan(group){
+    if(!group) return
+
+    // List des id de spans qui appartiennent au group selectionne
+    const spanIdList : Array<any> = group.spans.map(a=>parseInt(a.spanId))
+    // Spans auxquels on enleve leur couleur
+    const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span.id) && span.tcin )
+
+    targetSpans.forEach(span=>{
+      if(span.nodes && span.nodes.length > 0){
+        span.nodes.forEach((node,index)=>{
+          node.style.backgroundColor = 'var(--grey-200)'
+          node.querySelectorAll(`bg${span.id}`).forEach(border=>border.remove())
+          if(index == 0)  node.querySelector('tag').style.backgroundColor = 'var(--grey-200)'
+        })
+      }
+    })
+  }
+
+  function recolorSpan(group){
+    // List des id de spans qui appartiennent au group selectionne
+    const spanIdList : Array<any> = group.spans.map(a=>parseInt(a.spanId))
+    // Spans auxquels on remet leur couleur
+    const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span.id) && span.tcin )
+    targetSpans.forEach(span=>applySpan(span.id))
+  }
+
   function applySpan(spanId: number){
 
     function focusSpan(spanId: number, event: Event){
@@ -132,13 +159,14 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
 
     removeSpanFromDOM(spanId)
     const span = spanArray.value[spanId]
-    span.label = freeLabel.value ? markRaw(freeLabel.value) : null
-    span.type = markRaw(labelSelected.value)
+    span.label = freeLabel.value ? markRaw(freeLabel.value) : span.label
+    span.type = span.type ?? markRaw(labelSelected.value)
     freeLabel.value = null
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
-      const color = hexToRgba(computeColorByLabel(spanTypeOptions.value.map(opt=>opt.label),[labelSelected.value.label]).hex,0.4)
+      const color = hexToRgba(computeColorByLabel(spanTypeOptions.value.map(opt=>opt.label),[span.type.label]).hex,0.4)
       const bgElement = document.createElement(`bg${spanId}`)
       bgElement.classList.add('absolute', 'w-full', 'h-full','left-0','mix-blend-multiply','pointer-events-none')
+      element.style.backgroundColor='transparent'
       bgElement.style.backgroundColor = color
       const existingBg = [...element.querySelectorAll('bg')]
       if(existingBg.length == 0 ) element.appendChild(bgElement)
@@ -152,14 +180,6 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
           }
         }
       }
-      // if(!element.style.boxShadow.includes(color)) element.style.boxShadow = element.style.boxShadow.split(',').filter(e=>e != "").concat([rgbaToShadow(color)]).join(',')
-      // if(element.style.backgroundColor == ''){
-      //   element.style.backgroundColor = color
-      //  }
-      //  else {
-      // const currentColor = element.style.backgroundColor
-      // element.style.backgroundColor  = `color-mix(in hsl, ${currentColor}, ${color} )`
-      //  }
         element.addEventListener('click', (event) => focusSpan(spanId,event))
         element.style.lineHeight = '14px'
         element.style.userSelect = 'text'
@@ -167,7 +187,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
         if(elementIndex == 0) {
           const tag = document.createElement('tag')
           const listTags = element.querySelectorAll('tag')
-          tag.innerText = labelSelected.value.label
+          tag.innerText = span.type.label ?? ''
           tag.classList.add('absolute', 'h-3' , 'px-1', 'top-[-10px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]')
           tag.style.left= '0px'
           tag.draggable = true
@@ -256,7 +276,9 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
   watch(()=>newFocus.value,(newValue, oldValue)=>{
     if(oldValue != undefined){
       const oldElementArray = spanArray.value[oldValue]?.nodes
-      if(!oldElementArray){}  // On a selectionne un groupe
+      if(!oldElementArray){
+        recolorSpan(spanArray.value[oldValue])
+      }
       else{
         oldElementArray.forEach((span: HTMLDivElement) =>{
           if(!span) return
@@ -269,7 +291,10 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     }
     if(newValue != undefined){
       const elementArray = spanArray.value[newValue].nodes
-      if(!elementArray) return  // On a selectionne un groupe
+      if(!elementArray) { // On a selectionne un groupe
+          decolorSpan(spanArray.value[newValue])
+      }
+      else {
       elementArray.forEach((span: HTMLDivElement, index: number)=>{
         const tagBorder = document.createElement('border')
         tagBorder.textContent = ' '
@@ -299,6 +324,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
         span.firstChild.before(spanBorder)
         span.querySelector(`tag[spanid="${newValue}"]`)?.firstChild.before(tagBorder)
       })
+      }
     }
   })
 

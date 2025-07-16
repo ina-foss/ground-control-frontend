@@ -11,7 +11,7 @@
         size:'4px',
       },
     }">
-    <div v-if="options.bloc" ref="blockArray" class="text-sm/4">
+    <div v-if="options.bloc" ref="blockArray" class="text-sm/4 mt-4 " >
       <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="spanForm.open(handleSelectionV2($event))"  />
     </div>
     <div v-else>
@@ -36,9 +36,6 @@
               <TabPanels class="!bg-secondary w-fit  !px-0 !h-fit !max-h-[calc(100%-47px)]  !pb-2">
                 <TabPanel value="span" class="flex-col flex min-w-[700px] w-[700px] flex-1 items-center gap-3"  >
                   <AtomSpanControlPanel @handle-new-group="spanForm?.open(undefined, $event)"/>
-                  <!-- <AtomSpanDetail :relation-array="relationArray" :focus-span="currentFocus" :span-ref-array="spanRefArray" :labels="labels" -->
-                  <!--   @link="linkMode = !linkMode" @delete-span="onDeleteSpan" @unselect="handleUnselect()" -->
-                  <!--   @focus-span="handleFocusSpan" /> -->
                 </TabPanel>
                 <TabPanel value="parameters" class=" w-[320px] flex flex-col items-center gap-3">
                   <AtomSpanOption v-model:span="options.span"  v-model:timecode-bloc="options.timecode_bloc"   v-model:bloc="options.bloc" />

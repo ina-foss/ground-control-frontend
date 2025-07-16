@@ -5,7 +5,7 @@ export default defineNuxtComponent({
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
+    const {  applySpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
 
@@ -49,6 +49,7 @@ export default defineNuxtComponent({
       target.querySelector('preview')?.remove()
       const spanId = event.dataTransfer.getData('span')
       group.spans = [...group.spans, {spanId, role: role}]
+      applySpan(parseInt(spanId))
     }
 
     function extractTextFromSpanNodes (nodesArray: Array<Node>[]){
