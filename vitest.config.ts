@@ -39,7 +39,7 @@ export default defineVitestConfig({
         ],
         coverage:{
           provider: 'istanbul',
-          reporter: ['text','html'],
+          reporter: ['text','html','lcov'],
           reportsDirectory: './coverage',
           exclude:[
             '**/node_modules/**',
