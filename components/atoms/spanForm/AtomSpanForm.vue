@@ -1,7 +1,7 @@
 <template>
   <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose" >
     <div class="w-[500px] flex flex-col gap-2  " >
-      <context-wrapper v-if="!groupDisplay" class="border-dashed border-2 rounded border-subtitle px-6 py-4 transition-all duration-300  ">
+      <context-wrapper v-if="!showContext" class="border-dashed border-2 rounded border-subtitle px-6 py-4 transition-all duration-300  ">
       <context-header class="inline-flex w-full items-center justify-between pb-3">
         <span class="font-semibold  ">Contexte</span>
         <context-button-wrapper class="inline-flex gap-4 justify-around items-center">

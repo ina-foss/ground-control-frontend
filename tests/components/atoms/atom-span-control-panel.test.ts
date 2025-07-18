@@ -64,7 +64,7 @@ describe('AtomSpanControlPanel', ()=>{
   })
 
   it('should display the list of spans', ()=>{
-    const spanWrappers = wrapper.findAll('span-wrapper')
+    const spanWrappers = wrapper.findAll('span-content-wrapper')
     expect(spanWrappers.length).toBe(2)
     expect(spanWrappers.at(0).text().includes('1')).toBeTruthy()
     expect(spanWrappers.at(1).text().includes('2')).toBeTruthy()
@@ -72,7 +72,7 @@ describe('AtomSpanControlPanel', ()=>{
 
   it('should display the list of group',()=>{
     const groupWrapper = wrapper.find('group-wrapper')
-    expect(groupWrapper.text()).toContain('Citation 1')
+    expect(groupWrapper.text()).toContain('Citation1')
   })
 
   it('should display the selected Group  ', async ()=>{
@@ -98,10 +98,11 @@ describe('AtomSpanControlPanel', ()=>{
     const newChildCount = dropzone.element.childElementCount
 
     expect(prevChildCount).toBeLessThan(newChildCount)
+    expect([...dropzone.element.children].map((child)=>child.localName)).include('preview')
     expect(dropzone.element.lastChild?.textContent).include('new span')
 
     await dropzone.trigger('dragleave')
-    expect(dropzone.element.lastElementChild?.tagName.toLowerCase()).toBe('role-span-content')
+    expect([...dropzone.element.children].map((child)=>child.localName)).not.include('preview')
 
   })
 
@@ -109,6 +110,7 @@ describe('AtomSpanControlPanel', ()=>{
     const groupWrapper = wrapper.find('group-wrapper')
     await groupWrapper.trigger('click')
     const secondDropzone = wrapper.findAll('role-dropzone').at(1)
+    expect([...secondDropzone.element.children].map(child=>child.localName)).not.include('role-span-content')
     const dataTransfer = new DataTransfer()
     dataTransfer.setData('span','2')
     await secondDropzone.trigger('drop',{
@@ -116,12 +118,8 @@ describe('AtomSpanControlPanel', ()=>{
     })
     await wrapper.vm.$nextTick()
 
-    expect(secondDropzone.element.lastElementChild?.tagName.toLocaleLowerCase()).toBe('role-span-content')
+    expect([...secondDropzone.element.children].map(child=>child.localName)).include('role-span-content')
     expect(wrapper.vm.groupArray[0].spans).toContainEqual({spanId: '2', role: 'indice'})
-
-
-
   })
-
 
 })

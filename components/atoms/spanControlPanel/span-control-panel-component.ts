@@ -5,14 +5,14 @@ export default defineNuxtComponent({
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const {  applySpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
+    const { spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
 
     const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
     const groupArray = computed(()=>spanArray.value.filter(span=>{
       if(!span) return false
-      return !span.tcin
+      return span.spans
     }) )
     const spanOnlyArray = computed(()=>
       _.difference(spanArray.value,groupArray.value)
@@ -70,6 +70,7 @@ export default defineNuxtComponent({
 
 
     return {
+    spanForm,
     groupArray,
     emit,
     spanArray,

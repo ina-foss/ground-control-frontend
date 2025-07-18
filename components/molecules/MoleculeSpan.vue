@@ -27,20 +27,22 @@
     </ScrollPanel>
 </div>
   </div>
-  <div class="  overflow-y-auto  flex-col items-center  gap-10 col-span-4">
-            <Tabs value="span" class="max-w-full !h-0 !max-h-full ">
+  <div class=" overflow-y-hidden  flex-col items-center  gap-10 col-span-4">
+            <Tabs value="span" class="max-h-full">
               <TabList  >
                 <Tab value="span"  >Spans</Tab>
                 <Tab value="parameters">Paramètres</Tab>
               </TabList>
-              <TabPanels class="!bg-secondary w-fit  !px-0 !h-fit !max-h-[calc(100%-47px)]  !pb-2">
-                <TabPanel value="span" class="flex-col flex min-w-[700px] w-[700px] flex-1 items-center gap-3"  >
-                  <AtomSpanControlPanel @handle-new-group="spanForm?.open(undefined, $event)"/>
+              <TabPanels class="!bg-secondary  w-full !pl-0  overflow-auto !pb-2">
+                <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3"  >
+                  <AtomSpanControlPanel @handle-new-group="spanForm?.open({group:true})"/>
                 </TabPanel>
-                <TabPanel value="parameters" class=" w-[320px] flex flex-col items-center gap-3">
-                  <AtomSpanOption v-model:span="options.span"  v-model:timecode-bloc="options.timecode_bloc"   v-model:bloc="options.bloc" />
-                  <atom-video-option />
-                  <AtomTaskComment />
+        <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
+                    <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">
+                      <AtomSpanOption v-model:span="options.span"  v-model:timecode-bloc="options.timecode_bloc"   v-model:bloc="options.bloc" />
+                      <atom-video-option />
+                      <AtomTaskComment />
+                  </option-wrapper>
                 </TabPanel>
               </TabPanels>
             </Tabs>

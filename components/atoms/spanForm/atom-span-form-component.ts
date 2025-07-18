@@ -6,10 +6,13 @@ export default defineNuxtComponent({
 
     const visible = ref()
 
-    const {handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, freeLabel, spanTypeOptions   } = useSpanService()
+    const {handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, freeLabel, spanTypeOptions ,newFocus  } = useSpanService()
     const {$application} = useService()
+
+    const isGroup = ref<boolean>(false)
     const {computeColor} = $application
-    const groupDisplay = computed(()=>nodes.value.length == 0)
+    const showContext = computed(()=>nodes.value.length == 0)
+    const groupDisplay = computed(()=>isGroup.value)
     const expandedContext = ref(false)
 
     const modalHeader= computed(()=>{
@@ -23,6 +26,7 @@ export default defineNuxtComponent({
     let nextNodes = ref<Nodes[]>([])
 
     const deleteLayout = ref(false)
+    let roleSelected = null
 
 
     function expandContext() {
@@ -46,32 +50,44 @@ export default defineNuxtComponent({
     }
 
     function createSpan () {
-      applySpan(_.findIndex(spanArray.value,span=>_.isEqual(span?.nodes,nodes.value)))
+      if(nodes.value.length > 0){
+        applySpan(_.findIndex(spanArray.value,span=>_.isEqual(span?.nodes,nodes.value)) )
+      }
+      else{
+        const spanId =spanArray.value.length
+        const span = {
+          id: spanId,
+          type: labelSelected.value,
+          label: freeLabel.value
+        }
+        spanArray.value[spanId] = span
+        const group = spanArray.value[newFocus.value]
+        group.spans = [...group.spans, {spanId : spanId.toString(),  role: roleSelected}]
+      }
+
     }
 
     function handleConfirmationButton (){
       if(deleteLayout.value) handleDeleteSpan()
-      else groupDisplay.value ?  createGroup() : createSpan()
+      else if (isGroup.value)  createGroup()
+      else createSpan()
       close()
     }
 
-    function open( nodesInput? : Array<any> | null , event? : Event,suppression : boolean = false){
-      if(nodesInput){ // form de creation de span
-        nodes.value = nodesInput.selection
-        prevNodes.value = nodesInput.prev
-        nextNodes.value = nodesInput.next
-      }
-      else if (event && spanMenuSelected.value != undefined) { // form de modification de span
-        nodes.value = spanArray.value[spanMenuSelected.value].nodes
-        labelSelected.value = spanArray.value[spanMenuSelected.value].type
-        freeLabel.value = spanArray.value[spanMenuSelected.value].label
+    function open(args:{spanId?: number, group?: boolean, suppression?: boolean, virtual?: boolean, role: {value: string, label:string}} ){
+      if (!args) return
+      const {spanId,group,suppression, virtual, role} = args
+      if(group) isGroup.value=group
+      else isGroup.value=false
+      if(role) roleSelected = role
+      freeLabel.value =  spanArray.value[spanId]?.label
+      labelSelected.value = spanArray.value[spanId]?.type
+      nodes.value = spanArray.value[spanId]?.nodes ?? []
+      if(!group && !virtual){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )
         nextNodes.value = reccursiveSibling(nodes.value[nodes.value.length-1], 20 )
       }
-        else if( event && spanMenuSelected.value == undefined ){ // form  de creation de groupe
-      }
-      else return
-      deleteLayout.value = suppression
+      if(suppression) deleteLayout.value = suppression
       visible.value = true
     }
 
@@ -83,6 +99,7 @@ export default defineNuxtComponent({
       if(!spanArray.value[spanArray.value.length-1]?.type ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value))
       deleteLayout.value = false
       spanMenuSelected.value = undefined
+      freeLabel.value = undefined
       nodes.value = []
     }
 
@@ -104,6 +121,7 @@ export default defineNuxtComponent({
       computeColor,
       freeLabel,
       groupDisplay,
+      showContext,
       onClose,
       expandedContext,
       expandContext,

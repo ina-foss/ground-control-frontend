@@ -14,10 +14,51 @@ const { computeColor,hexToRgba,computeColorByLabel} = $application
 const spanMenu = ref()
 const op = ref()
 
+type Span = {
+    id: number,
+    label: string,
+    nodes: Array<Node>,
+    tcin: number | string,
+    tcout: number | string,
+    type: {
+      value: string,
+      label: string
+    }
+  }
+
+type SpanGroup = {
+    id: number,
+    label: string,
+    spans: [
+      {
+        spanId: string | number,
+        role: {
+          value: string,
+          label: string,
+        }
+      }
+    ],
+    type: {
+      value: string,
+      label: string
+    },
+    tcin: number | string,
+    tcout: number | string,
+  }
+
+type VirtualSpan = {
+    id: number,
+    label: string,
+    type: {
+      value: string,
+      label: string
+    }
+  }
+
 type AtomSpanType = InstanceType<typeof AtomSpan>
   const spanClicked = ref(false)
   const spanRefArray = ref<AtomSpanType[]>([])
-  const spanArray = ref([])
+  const spanArray = ref<Array<Span | SpanGroup | VirtualSpan>>([])
   const elementArray = ref([])
   const linkMode = ref(false)
   const currentFocus = ref<number | undefined>(undefined)
@@ -390,14 +431,12 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
           tcout : spanTcout,
         }
         if(selectedNodes.length == 0) console.error("the span you atempt to create is empty")
-        const prevNodes = reccursiveSibling(selectedNodes[0],-25)
-        const nextNodes = reccursiveSibling(selectedNodes[selectedNodes.length-1],20)
         if(spanArg){
           freeLabel.value = spanArg.label
           labelSelected.value = spanArg.type
           applySpan(id)
         }
-        return {prev: prevNodes, selection : selectedNodes, next: nextNodes}
+        return {spanId: id}
       }
     }
   }

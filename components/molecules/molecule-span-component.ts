@@ -32,10 +32,10 @@ export default defineComponent({
     const { options } = storeToRefs(useOptions())
 
 
-    const {showDragPin,handleDeleteSpan, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2, handleSelection,spanRefArray, createSpan, onDeleteSpan, spanClicked, linkMode, currentFocus,labelSelected,loadSpanv2} = inject('spanService',ref([]))
+    const {showDragPin,handleDeleteSpan, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2, handleSelection,spanRefArray, createSpan, onDeleteSpan, spanClicked, linkMode, currentFocus,labelSelected,loadSpanv2} = useSpanService()
 
 
-    const formOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open(undefined,event)},{id:1, label:'Editer les bornes', command:event=>showDragPin()},{id:2, label: 'Supprimer', command: (event)=>spanForm.value?.open(undefined,event,true) }])
+    const formOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:event=>showDragPin()},{id:2, label: 'Supprimer', command: (event)=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
     const blockArray = ref<HTMLDivElement|null>(null)
     const listSegment = computed(() => blockArray.value?.children)
     const {locals} = inject('span')
@@ -226,6 +226,7 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
       AtomSpanDetail,
       onDeleteSpan,
       handleUnselect,
+      spanMenuSelected,
       options,
       currentFocus : currentFocus,
       locals,
