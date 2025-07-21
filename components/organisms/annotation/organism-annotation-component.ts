@@ -264,7 +264,7 @@ export default defineComponent({
         }
         return acc
       },[] ).findIndex(topic => topic == event.topic)
-      tabsRef.value.sentenceCarouselFunction(firstTopicListIndex)
+      if(tabsRef.value.moleculeAnnotationRef) tabsRef.value.sentenceCarouselFunction(firstTopicListIndex)
       tabsRef.value.moleculeAnnotationRef?.carouselNavTo(firstTopicListIndex)
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode({tcin:locals.value[firstTranscriptionIndex].tcin,tcout:locals.value[firstTranscriptionIndex].tcout,})
       moleculeAnnotationLeftPanelRef.value?.videoPlayer.seek()
