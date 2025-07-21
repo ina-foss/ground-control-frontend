@@ -14,46 +14,6 @@ const { computeColor,hexToRgba,computeColorByLabel} = $application
 const spanMenu = ref()
 const op = ref()
 
-type Span = {
-    id: number,
-    label: string,
-    nodes: Array<Node>,
-    tcin: number | string,
-    tcout: number | string,
-    type: {
-      value: string,
-      label: string
-    }
-  }
-
-type SpanGroup = {
-    id: number,
-    label: string,
-    spans: [
-      {
-        spanId: string | number,
-        role: {
-          value: string,
-          label: string,
-        }
-      }
-    ],
-    type: {
-      value: string,
-      label: string
-    },
-    tcin: number | string,
-    tcout: number | string,
-  }
-
-type VirtualSpan = {
-    id: number,
-    label: string,
-    type: {
-      value: string,
-      label: string
-    }
-  }
 
 type AtomSpanType = InstanceType<typeof AtomSpan>
   const spanClicked = ref(false)
@@ -167,7 +127,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     if(!group) return
 
     // List des id de spans qui appartiennent au group selectionne
-    const spanIdList : Array<any> = group.spans.map(a=>parseInt(a.spanId))
+    const spanIdList : Array<any> = group.spans.map(a=>a.spanId)
     // Spans auxquels on enleve leur couleur
     const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span.id) && span.tcin )
 
@@ -184,7 +144,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
 
   function recolorSpan(group){
     // List des id de spans qui appartiennent au group selectionne
-    const spanIdList : Array<any> = group.spans.map(a=>parseInt(a.spanId))
+    const spanIdList : Array<any> = group.spans.map(a=>a.spanId)
     // Spans auxquels on remet leur couleur
     const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span.id) && span.tcin )
     targetSpans.forEach(span=>applySpan(span.id))
@@ -312,6 +272,11 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
         span.appendChild(rightDragPin)
       }
     })
+  }
+
+  function extractTextFromSpanNodes (nodesArray: Array<Node>){
+    if(!nodesArray) return ''
+    return nodesArray.map(node=>document.evaluate('text()', node, null, XPathResult.STRING_TYPE).stringValue).join(' ')
   }
 
   watch(()=>newFocus.value,(newValue, oldValue)=>{
@@ -627,7 +592,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     // locals.value.push({id:1, type:{value: 'citation', label: 'Citation', roles: ['source', 'indice', 'citation']}, spans:[{spanId: 0, role: 'citation'}]})
     locals.value.forEach(segment =>{
       if (((!segment.sublocalisations) && (segment.property?.[0]?.key == "entityType") ) ||  !segment.data) {
-        if(!segment.spans) createSpan(segment)
+        if(!segment.spans || segment.text) createSpan(segment)
         else {
             spanArray.value[segment.id] = segment
           }
@@ -680,7 +645,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
   }
 
   return{
-    dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected
+  extractTextFromSpanNodes,  dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected
   }
 }
 

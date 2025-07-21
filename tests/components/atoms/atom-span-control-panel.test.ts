@@ -119,7 +119,7 @@ describe('AtomSpanControlPanel', ()=>{
     await wrapper.vm.$nextTick()
 
     expect([...secondDropzone.element.children].map(child=>child.localName)).include('role-span-content')
-    expect(wrapper.vm.groupArray[0].spans).toContainEqual({spanId: '2', role: 'indice'})
+    expect(wrapper.vm.groupArray[0].spans).toContainEqual({spanId: 2, role: 'indice'})
   })
 
 })

@@ -32,7 +32,7 @@ export default defineComponent({
     const { options } = storeToRefs(useOptions())
 
 
-    const {showDragPin,handleDeleteSpan, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2, handleSelection,spanRefArray, createSpan, onDeleteSpan, spanClicked, linkMode, currentFocus,labelSelected,loadSpanv2} = useSpanService()
+    const {showDragPin,handleDeleteSpan, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2, handleSelection,spanRefArray, createSpan, onDeleteSpan, spanClicked, linkMode, currentFocus,labelSelected,loadSpanv2,extractTextFromSpanNodes} = useSpanService()
 
 
     const formOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:event=>showDragPin()},{id:2, label: 'Supprimer', command: (event)=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
@@ -143,18 +143,13 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
       labelSelected.value = []
     }
 
-    const formatSpan: any = (spanRef: any) => {
-      const span = {}
-      span.id = spanRef.id
-      span.tcin = spanRef.tcin
-      span.tcout = spanRef.tcout
-      const property = []
-      spanRef.label.forEach(label => {
-        property.push({ key: 'entityType', value: label })
-      });
-      span.property = property
+    const formatSpan = (span : typeof spanArray.value[0]) => {
+      if((span as Span).nodes){
+        const spanJson = _.cloneDeep(span) as Span
+        spanJson.text = extractTextFromSpanNodes(spanJson.nodes)
+        return _.omit(spanJson,'nodes')
+      }
       return span
-
     }
 
 
@@ -188,8 +183,9 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
     })
 
     const saveSpan = (local) => {
-      _.remove(local, (el) => !el.data)
-      spanArray.value.forEach(span=>local.push(span))
+      const initialLength = local.filter(e=>e.data).length
+      // _.remove(local, (el) => !el.data)
+      spanArray.value.map(span=>formatSpan(span)).forEach(span=>local[initialLength  + span.id] = span)
       // spanRefArray.value.forEach((span) => {
       //   local.push(formatSpan(span))
       // })

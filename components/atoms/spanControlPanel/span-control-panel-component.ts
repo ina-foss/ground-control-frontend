@@ -5,7 +5,7 @@ export default defineNuxtComponent({
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
+    const { extractTextFromSpanNodes, spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
 
@@ -48,14 +48,10 @@ export default defineNuxtComponent({
       const target : HTMLDivElement = event.target
       target.querySelector('preview')?.remove()
       const spanId = event.dataTransfer.getData('span')
-      group.spans = [...group.spans, {spanId, role: role}]
+      group.spans = [...group.spans, {spanId: parseInt(spanId), role: role}]
       applySpan(parseInt(spanId))
     }
 
-    function extractTextFromSpanNodes (nodesArray: Array<Node>[]){
-      if(!nodesArray) return ''
-      return nodesArray.map(node=>document.evaluate('text()', node, null, XPathResult.STRING_TYPE).stringValue).join(' ')
-    }
 
     function getMinSizeText(span: any){
       const tempDiv =  document.createElement('div')
