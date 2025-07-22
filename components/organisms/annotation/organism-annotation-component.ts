@@ -92,7 +92,6 @@ export default defineComponent({
 
     const isAnnotationEditable = computed(()=> annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
     const annotation_type = data.value.step.annotation_type
-    provide('isAnnotationEditable',isAnnotationEditable)
 
     PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.value.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
     config.value = response;
@@ -482,7 +481,10 @@ export default defineComponent({
     tabsRef,
     isAnnotationEditable,
     panelSize,
-
+    getSelectedSegment,
+    navigateWithkeyboard,
+    globalKeydown,
+    jumpToTopic
 
 
 

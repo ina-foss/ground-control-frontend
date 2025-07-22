@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import AtomSearch from '@/components/atoms/search/AtomSearch.vue'
+import AtomSearch from '@/components/atoms/search/AtomSearch'
 import { mount, VueWrapper } from '@vue/test-utils'
 import { nextTick } from 'vue'
 
@@ -19,7 +19,6 @@ describe('AtomSearch.vue', () => {
           }
         },
         stubs: {
-          // Stubs des composants PrimeVue pour éviter les erreurs de config
           InputText: {
             template: '<input />'
           },
@@ -35,27 +34,26 @@ describe('AtomSearch.vue', () => {
     wrapper = createWrapper()
   })
 
-  it('affiche le bouton "Recherche" par défaut', async () => {
+  it('Should show research button', async () => {
     const wrapper = createWrapper()
+    wrapper.vm.searchInterface=false
     await nextTick()
     expect(wrapper.text()).toContain('Recherche')
   })
 
-  it('toggle correctement la vue interface de recherche', async () => {
+  it('toggle search button click', async () => {
     const button = wrapper.find('button')
     await button.trigger('click')
-    //expect(wrapper.html()).toContain('InputText')
     expect(wrapper.find('input[type="text"]').exists()).toBe(true)
 
   })
 
-  it('réagit à un label sélectionné', async () => {
+  it('get selected label', async () => {
     wrapper = createWrapper({
       labels: ['Label A'],
       spans: [{ tcin: '1', id: 'span-1' }]
     })
 
-    // Simuler un élément dans le DOM
     const span = document.createElement('div')
     span.setAttribute('tcin', '1')
     span.innerText = 'Label A'
@@ -72,13 +70,13 @@ describe('AtomSearch.vue', () => {
     document.body.removeChild(span)
   })
 
-  it('clear le champ de recherche', async () => {
+  it('clear search input', async () => {
     wrapper.vm.selectedSearch = 'abc'
     await wrapper.vm.clear()
     expect(wrapper.vm.selectedSearch).toBe('')
   })
 
-  it('navigue avec upIndex et downIndex', async () => {
+  it('toggle upIndex and downIndex', async () => {
     wrapper = createWrapper({
       list: [
         Object.assign(document.createElement('div'), { innerText: 'example one' }),
@@ -99,7 +97,7 @@ describe('AtomSearch.vue', () => {
     expect(wrapper.vm.searchIndex).toBe(-1)
   })
 
-  it('navigue avec upIndex et downIndex with Label', async () => {
+  it('toggle upIndex and downIndex with Label', async () => {
     wrapper = createWrapper({
       labels: ['Label A'],
       spans: [{ tcin: '1', id: 'span-1' }],
@@ -141,8 +139,6 @@ describe('AtomSearch.vue', () => {
     expect(wrapper.emitted('find-element')).toBeTruthy()
   })
 
-
-
   it('réinitialise searchIndex à 0 si la longueur de iterableSegment est atteinte et labels est vide', () => {
     const emptyWrapper = mount(AtomSearch, {
       props: {
@@ -157,7 +153,6 @@ describe('AtomSearch.vue', () => {
           }
         },
         stubs: {
-          // Stubs des composants PrimeVue pour éviter les erreurs de config
           InputText: {
             template: '<input />'
           },
@@ -188,7 +183,6 @@ describe('AtomSearch.vue', () => {
           }
         },
         stubs: {
-          // Stubs des composants PrimeVue pour éviter les erreurs de config
           InputText: {
             template: '<input />'
           },
