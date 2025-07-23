@@ -6,11 +6,15 @@ interface Topic {
   */
   id: number,
   /**
-  *
+  * Title of the topic, help defining its subject
   */
   title: string,
   /**
-   * Array of `Category`
+   * Text which summarize the original content of all the block of the topic
+   */
+  summary?: string,
+  /**
+   * Array containing some of the plugins labels
   */
   labels: Array<Label | string>
 
@@ -31,10 +35,11 @@ interface Label {
   label: string,
 }
 
+ let topicListInstance : ReturnType<typeof createTopicList> | null = null
+
+function createTopicList() {
 
   const topicList = ref<Array<Topic | undefined>>([])
-export function useTopicList() {
-
 
   function deleteTopic(topicIndex:number) {
     topicList.value[topicIndex] = undefined
@@ -76,7 +81,14 @@ export function useTopicList() {
     copyTopicData,
     fusionTopicData
   }
-
-
-
 }
+
+/**
+ * @param initialization True for forcing the creation of a new instance
+  **/
+export function useTopicList(initialization?: boolean = false) {
+  if(!topicListInstance || initialization) topicListInstance = createTopicList()
+  return topicListInstance
+}
+
+
