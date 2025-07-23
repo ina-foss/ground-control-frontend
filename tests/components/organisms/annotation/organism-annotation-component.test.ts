@@ -178,16 +178,16 @@ describe('OrganismAnnotationComponent', () => {
     const wrapper = factorySegmentation()
     expect(wrapper.exists()).toBe(true)
   })
- /* it('emits finish-annotation on finish', async () => {
+
+ it('emits finish-annotation on finish', async () => {
     const wrapper = factory()
     wrapper.vm.isAdmin=true
-    wrapper.vm.moleculeAnnotationRef = ({
-      annotationFunction: vi.fn().mockReturnValue([]),
-      locals: []
-    })
+    wrapper.vm.moleculeAnnotationRef.annotationFunction =vi.fn().mockReturnValue([])
+    wrapper.vm.moleculeAnnotationRef.locals =  []
+    expect(wrapper.emitted()['finish-annotation']).toBeFalsy()
     await wrapper.vm.handleFinish()
     expect(wrapper.emitted()['finish-annotation']).toBeTruthy()
-  })*/
+  })
 
   it('computes annotationComponent for auto-summary', async () => {
     const wrapper = factoryAutoSummary()
@@ -269,16 +269,15 @@ describe('OrganismAnnotationComponent', () => {
     expect(wrapper.emitted()['submit-annotation']).toBeTruthy()
   })
 
-  /*it('getSelectedSegment returns the selected segment', () => {
+  it('getSelectedSegment returns the selected segment', () => {
     const divMock = { classList: { contains: (cls) => cls === 'selected-segment' } }
     const wrapper = factory()
-    const a = ref({
-      listRefs: [divMock]
-    })
-    wrapper.vm.moleculeAnnotationRef=a.value
+    wrapper.vm.moleculeAnnotationRef.annotationFunction =vi.fn().mockReturnValue([])
+    wrapper.vm.moleculeAnnotationRef.locals =  []
+    wrapper.vm.moleculeAnnotationRef.listRefs = [divMock]
     const result = wrapper.vm.getSelectedSegment()
     expect(result).toStrictEqual(divMock)
-  })*/
+  })
 
 
   it('computes annotationComponent for transcription', async () => {
