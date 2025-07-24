@@ -179,11 +179,27 @@ describe('OrganismAnnotationComponent', () => {
     expect(wrapper.exists()).toBe(true)
   })
 
- it('emits finish-annotation on finish', async () => {
+ it('emits finish-annotation on finish for transcription', async () => {
     const wrapper = factory()
     wrapper.vm.isAdmin=true
     wrapper.vm.moleculeAnnotationRef.annotationFunction =vi.fn().mockReturnValue([])
     wrapper.vm.moleculeAnnotationRef.locals =  []
+    expect(wrapper.emitted()['finish-annotation']).toBeFalsy()
+    await wrapper.vm.handleFinish()
+    expect(wrapper.emitted()['finish-annotation']).toBeTruthy()
+  })
+
+  it('emits finish-annotation on finish for auto-summary', async () => {
+    const wrapper = factoryAutoSummary()
+    wrapper.vm.isAdmin=true
+    wrapper.vm.tabsRef = {
+      moleculeAnnotationRef: ref({
+        annotationFunction: vi.fn().mockReturnValue([]),
+        locals: []
+      })
+    }
+
+    wrapper.vm.spanService = { saveSpan: vi.fn().mockReturnValue([]) }
     expect(wrapper.emitted()['finish-annotation']).toBeFalsy()
     await wrapper.vm.handleFinish()
     expect(wrapper.emitted()['finish-annotation']).toBeTruthy()
@@ -253,7 +269,7 @@ describe('OrganismAnnotationComponent', () => {
     expect(wrapper.vm.videoSrc).toBe('http://video.test')
   })
 
-  it('emits submit-annotation on handleSubmit', async () => {
+  it('emits submit-annotation on handleSubmit when auto-summary', async () => {
     const wrapper = factoryAutoSummary()
 
     wrapper.vm.tabsRef = {
@@ -265,6 +281,17 @@ describe('OrganismAnnotationComponent', () => {
 
     wrapper.vm.spanService = { saveSpan: vi.fn().mockReturnValue([]) }
 
+    await wrapper.vm.handleSubmit({ showToast: true })
+    expect(wrapper.emitted()['submit-annotation']).toBeTruthy()
+  })
+
+
+  it('emits submit-annotation on handleSubmit when transcription', async () => {
+    const wrapper = factory()
+    wrapper.vm.isAdmin=true
+    wrapper.vm.moleculeAnnotationRef.annotationFunction =vi.fn().mockReturnValue([])
+    wrapper.vm.moleculeAnnotationRef.locals =  []
+    expect(wrapper.emitted()['submit-annotation']).toBeFalsy()
     await wrapper.vm.handleSubmit({ showToast: true })
     expect(wrapper.emitted()['submit-annotation']).toBeTruthy()
   })
@@ -295,7 +322,7 @@ describe('OrganismAnnotationComponent', () => {
           }
         }
       }],
-      allFetched: true
+      allFetched: false
     })
     await nextTick()
     const component = wrapper.vm.annotationComponent

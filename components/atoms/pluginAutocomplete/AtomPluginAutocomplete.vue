@@ -19,7 +19,6 @@
           optionLabel="label"
           display="chip"
           filter
-          filterMatchMode="startsWith"
           :placeholder="pluginName"
           :maxSelectedLabels="0"
           :selectedItemsLabel="pluginName"

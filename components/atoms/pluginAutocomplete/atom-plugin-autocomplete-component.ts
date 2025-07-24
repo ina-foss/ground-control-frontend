@@ -1,8 +1,7 @@
 import {defineComponent} from 'vue'
 import {useTopicList} from '../../../composables/useTopicList'
 import {inject} from 'vue';
-import type { MultiSelectFilterEvent } from 'primevue';
-import type { Store } from 'pinia';
+import {PluginService} from "~/api/generate";
 
 
 export default defineComponent({
@@ -108,6 +107,21 @@ export default defineComponent({
         }
       }
     });
+
+    watch(filterString, async (newFilter) => {
+     await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, newFilter).then(
+        (response) => {
+          if (Array.isArray(response)) {
+            options.value = response.map(item => ({
+              id: item.id,
+              ext_id: item.ext_id,
+              label: item.label,
+              plugin_id: plugin.value.id,
+            }));
+          }
+        })
+    })
+
 
     onMounted(() => {
       if (chipList.value && plugin.value?.id) {
