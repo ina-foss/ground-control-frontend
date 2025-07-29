@@ -114,7 +114,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
 
   function handleDeleteSpan() {
     removeSpanFromDOM(spanMenuSelected.value)
-    spanArray.value.filter(el=>el.spans).forEach(spanArrayElement => {
+    spanArray.value.filter(el=>el && el.spans).forEach(spanArrayElement => {
       // Retire les assignations de role du span que l'on supprime
       _.remove(spanArrayElement.spans,span=>span.spanId == spanMenuSelected.value)
     })
