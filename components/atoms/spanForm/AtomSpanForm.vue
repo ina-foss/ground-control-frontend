@@ -28,14 +28,24 @@
 
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-2">
         <label > Type de {{groupDisplay ? 'groupe':'span'}}  </label>
-        <Select v-model="labelSelected" :options="groupDisplay ? spanGroupTypeOptions : spanTypeOptions" filter option-label="label"   />
+        <Select v-if="isForResearch" v-model="labelSelected" :options="groupDisplay ? spanGroupTypeOptions : spanTypeOptions" filter option-label="label"   />
         <div class="grid gap-1 " style="grid-template-columns: repeat(auto-fit,minmax(100px,1fr))" >
-          <Button v-for="option in groupDisplay ? spanGroupTypeOptions : spanTypeOptions " class="!text-xs " size="small" :outlined="labelSelected != option" :label="option.label"  @click="()=>labelSelected= option"/>
+          <Button v-for="option in groupDisplay ? spanGroupTypeOptions : spanTypeOptions "  :key="option.label" class="!text-xs " size="small" :outlined="labelSelected?.label !== option?.label" :label="option.label"  @click="()=>labelSelected= option"/>
+        </div>
+        <div v-if="!isForResearch && labelSelected">
+          <div v-if="labelSelected.value==='suppr'">
+            <div class="flex flex-col gap-2"  v-if="nodesCount === 2">
+              <label > Nombre de mots supprimés   </label>
+              <InputNumber v-model="deletedNum" />
+            </div>
+            <label v-else class="text-red-500">{{suppWarning}}</label>
+
+          </div>
         </div>
         <label > Label libre  </label>
         <InputText v-model="freeLabel" />
-        <label > Plugin  </label>
-        <InputText />
+        <label v-if="isForResearch"> Plugin  </label>
+        <InputText v-if="isForResearch" />
 
       </plugin-wrapper>
 
@@ -45,7 +55,8 @@
 
         <div class="flex flex-row justify-between">
           <Button text severity="secondary" icon="pi pi-times" label="Annuler" @click=" close()" />
-          <Button label="Confirmer" icon="pi pi-check" @click=" handleConfirmationButton() " />
+          <Button   :disabled="!isForResearch && labelSelected?.value === 'suppr' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === '')"
+                    label="Confirmer" icon="pi pi-check" @click=" handleConfirmationButton() " />
         </div>
 
     </div>
@@ -65,6 +76,6 @@
   @keyframes highlight {
     100% {
       background-position: left;
-    };
+    }
   }
 </style>

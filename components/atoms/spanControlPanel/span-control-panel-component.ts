@@ -5,7 +5,7 @@ export default defineNuxtComponent({
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { extractTextFromSpanNodes, spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions} = useSpanService()
+    const { extractTextFromSpanNodes, spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions,isForResearch } = useSpanService()
     const { unixToTimestamp } = useService().$application
 
 
@@ -84,6 +84,7 @@ export default defineNuxtComponent({
     getMinSizeText,
     handleGroupClick,
     unixToTimestamp,
+      isForResearch,
     }
   }
 })

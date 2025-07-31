@@ -1,6 +1,7 @@
 declare interface Span {
     id: number,
     label: string,
+    deletedItems: number,
     text? : string,
     nodes: Array<Node>,
     tcin: number | string,
@@ -34,6 +35,7 @@ declare interface SpanGroup  {
 declare interface VirtualSpan  {
     id: number,
     label: string,
+    deletedItems: number,
     type: {
       value: string,
       label: string

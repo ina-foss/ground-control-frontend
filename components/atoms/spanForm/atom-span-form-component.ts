@@ -5,8 +5,10 @@ export default defineNuxtComponent({
   setup(props,{expose}) {
 
     const visible = ref()
+    const nodesCount=ref<number>()
+    const suppWarning=ref("Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés")
 
-    const {handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, freeLabel, spanTypeOptions ,newFocus  } = useSpanService()
+    const {handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, freeLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
     const {$application} = useService()
 
     const isGroup = ref<boolean>(false)
@@ -58,7 +60,8 @@ export default defineNuxtComponent({
         const span = {
           id: spanId,
           type: labelSelected.value,
-          label: freeLabel.value
+          label: freeLabel.value,
+          deletedItems: deletedNum.value,
         }
         spanArray.value[spanId] = span
         const group = spanArray.value[newFocus.value]
@@ -81,8 +84,10 @@ export default defineNuxtComponent({
       else isGroup.value=false
       if(role) roleSelected = role
       freeLabel.value =  spanArray.value[spanId]?.label
+      deletedNum.value =  spanArray.value[spanId]?.deletedItems
       labelSelected.value = spanArray.value[spanId]?.type
       nodes.value = spanArray.value[spanId]?.nodes ?? []
+      nodesCount.value = nodes.value.length
       if(!group && !virtual){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )
         nextNodes.value = reccursiveSibling(nodes.value[nodes.value.length-1], 20 )
@@ -100,6 +105,7 @@ export default defineNuxtComponent({
       deleteLayout.value = false
       spanMenuSelected.value = undefined
       freeLabel.value = undefined
+      deletedNum.value = undefined
       nodes.value = []
     }
 
@@ -128,7 +134,11 @@ export default defineNuxtComponent({
       shrinkContext,
       handleDeleteSpan,
       deleteLayout,
-      modalHeader
+      modalHeader,
+      isForResearch,
+      deletedNum,
+      nodesCount,
+      suppWarning
     }
   },
 })

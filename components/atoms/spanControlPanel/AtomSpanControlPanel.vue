@@ -20,7 +20,7 @@
         </span-content-wrapper>
       </span-wrapper>
     </div>
-    <div class="py-2">
+    <div v-if="isForResearch" class="py-2">
       <b class="text-xl">Groupe Courrant  </b>
       <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
       <div :class="{' grid  transition-all duration-300 overflow-hidden': true}" :style="{'grid-template-rows' : groupIsSelected ? '1fr': '0fr'}" >
@@ -50,7 +50,7 @@
         </selected-group-content>
       </div>
     </div>
-    <div class="flex flex-col">
+    <div v-if="isForResearch" class="flex flex-col">
       <category-header class="flex flex-row justify-between items-center">
         <b class="text-xl">Liste des groupes</b>
         <Button icon="pi pi-plus" icon-pos="right" label="Ajouter" rounded outlined size="small" class="self-end " @click="emit('handleNewGroup',$event)" />

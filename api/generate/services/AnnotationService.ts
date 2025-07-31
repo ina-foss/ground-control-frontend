@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { AnnotationDto } from '../models/AnnotationDto';
 import type { AnnotationFullCreate } from '../models/AnnotationFullCreate';
+import type { AnnotationStatus } from '../models/AnnotationStatus';
 import type { InOutEnum } from '../models/InOutEnum';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -163,6 +164,62 @@ export class AnnotationService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Get All Annotations
+     * Get a list of annotations that match the search params
+     * @param userEmail user_email
+     * @param status annotation_status
+     * @param projectId project id
+     * @param stepId step id
+     * @param startCreatedAt start create date
+     * @param endCreatedAt end create date
+     * @param startUpdatedAt start update date
+     * @param endUpdatedAt end update date
+     * @param startValidatedAt start validation date
+     * @param endValidatedAt end validation date
+     * @param skip
+     * @param limit
+     * @returns AnnotationDto Successful Response
+     * @throws ApiError
+     */
+    public static getAllAnnotationsAnnotationsGet(
+        userEmail?: string,
+        status?: AnnotationStatus,
+        projectId?: number,
+        stepId?: number,
+        startCreatedAt?: string,
+        endCreatedAt?: string,
+        startUpdatedAt?: string,
+        endUpdatedAt?: string,
+        startValidatedAt?: string,
+        endValidatedAt?: string,
+        skip?: number,
+        limit: number = 100,
+    ): CancelablePromise<Array<AnnotationDto>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/annotations',
+            query: {
+                'user_email': userEmail,
+                'status': status,
+                'project_id': projectId,
+                'step_id': stepId,
+                'start_created_at': startCreatedAt,
+                'end_created_at': endCreatedAt,
+                'start_updated_at': startUpdatedAt,
+                'end_updated_at': endUpdatedAt,
+                'start_validated_at': startValidatedAt,
+                'end_validated_at': endValidatedAt,
+                'skip': skip,
+                'limit': limit,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

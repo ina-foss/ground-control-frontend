@@ -13,6 +13,7 @@ const { $application } = useService()
 const { computeColor,hexToRgba,computeColorByLabel} = $application
 const spanMenu = ref()
 const op = ref()
+const isForResearch= ref(false)
 
 
 type AtomSpanType = InstanceType<typeof AtomSpan>
@@ -28,6 +29,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
   const spanMenuSelected = ref<number | undefined>(undefined)
   const labelSelected = ref([])
   const freeLabel = ref()
+  const deletedNum=ref<number>()
   const spanIndex = ref<number>()
   const relationArray = ref<any[]>([])
   const spanForm = ref()
@@ -36,7 +38,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     spanid : undefined,
   })
   const labels = ref<string[]>(['Person', 'Citation', 'Verbe'])
-  const spanTypeOptions =ref( [
+  let spanTypeOptions =ref( [
     {value: 'function',label:'Fonction'},
     {value: 'verb', label:'Verbe'},
     {value: 'directCitation', label: 'Citation directe'},
@@ -45,7 +47,16 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     {value: 'pronoun', label: 'Pronom'},
     {value: 'geographic', label: 'Lieu géographique'},
   ])
-  const spanGroupTypeOptions = ref([
+  const spanTypeList =ref( [
+    {value: 'en',label:'Entités nommées'},
+    {value: 'suppr', label:'Suppressions'},
+    {value: 'insert', label: 'Insertions'},
+    {value: 'inv', label: 'Contre sens'},
+  ])
+
+   spanTypeOptions = isForResearch.value ? spanTypeOptions : spanTypeList
+
+   const spanGroupTypeOptions = ref([
     {value: 'citation', label: 'Citation', roles: ['source', 'indice', 'citation']},
     {value: 'entity', label: 'Entitee nommee', roles: ['primaire','secondaire']},
   ])
@@ -90,20 +101,23 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     nodesToRemove.forEach(node=>node.classList.remove('dragged_inner'))
     const spanId = event.dataTransfer.getData('spanid')
     const span = spanArray.value[spanId]
-    removeSpanFromDOM(spanId)
-    if ( nodesToRemove.length > 0) span.nodes = _.difference(span.nodes,nodesToRemove)
-    else if(event.dataTransfer.getData('pin_position') == 'left'){
-      span.nodes = nodesToAdd.concat(span.nodes)
+    if(span?.type.value!=='suppr' && span?.nodes.length!==2)
+    {
+      removeSpanFromDOM(spanId)
+      if (nodesToRemove.length > 0) span.nodes = _.difference(span.nodes, nodesToRemove)
+      else if (event.dataTransfer.getData('pin_position') == 'left') {
+        span.nodes = nodesToAdd.concat(span.nodes)
+      } else {
+        span.nodes = span.nodes.concat(nodesToAdd)
+      }
+      span.tcin = span.nodes[0].getAttribute('tcin')
+      span.tcout = span.nodes[span.nodes.length - 1].getAttribute('tcout')
+      labelSelected.value = span.type
+      freeLabel.value = span.label
+      deletedNum.value = span.deletedItems
+      applySpan(spanId)
+      newFocus.value = null
     }
-    else{
-      span.nodes = span.nodes.concat(nodesToAdd)
-    }
-    span.tcin = span.nodes[0].getAttribute('tcin')
-    span.tcout = span.nodes[span.nodes.length-1].getAttribute('tcout')
-    labelSelected.value = span.type
-    freeLabel.value = span.label
-    applySpan(spanId)
-    newFocus.value = null
   }
 
 
@@ -161,8 +175,10 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     removeSpanFromDOM(spanId)
     const span = spanArray.value[spanId]
     span.label = freeLabel.value ? markRaw(freeLabel.value) : span.label
+    span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
     span.type = span.type ?? markRaw(labelSelected.value)
     freeLabel.value = null
+    deletedNum.value = null
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
       const color = hexToRgba(computeColorByLabel(spanTypeOptions.value.map(opt=>opt.label),[span.type.label]).hex,0.4)
       const bgElement = document.createElement(`bg${spanId}`)
@@ -398,6 +414,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
         if(selectedNodes.length == 0) console.error("the span you atempt to create is empty")
         if(spanArg){
           freeLabel.value = spanArg.label
+          deletedNum.value=spanArg.deletedItems
           labelSelected.value = spanArg.type
           applySpan(id)
         }
@@ -568,6 +585,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     span.tcin = spanRef.tcin
     span.tcout = spanRef.tcout
     const property = []
+    span.deletedItems=spanRef.deletedItems
     spanRef.label.forEach(label => {
       property.push({ key: 'entityType', value: label })
     });
@@ -641,11 +659,12 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
       span.index = index
     })
     currentFocus.value = undefined
+
     spanCount.value--
   }
 
   return{
-  extractTextFromSpanNodes,  dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected
+  extractTextFromSpanNodes,  dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected,isForResearch,deletedNum
   }
 }
 

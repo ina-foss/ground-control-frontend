@@ -21,6 +21,7 @@ export type TaskWithIdDto = {
     redundancy?: number;
     priority?: number;
     id: number;
+    created_at: (string | null);
     annotations: Array<AnnotationWithIdDto>;
 };
 

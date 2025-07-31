@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AnnotationWithIdDto } from './AnnotationWithIdDto';
 import type { MediaDto } from './MediaDto';
 import type { StepProjectDto } from './StepProjectDto';
 import type { TaskCommentDto } from './TaskCommentDto';
@@ -29,5 +30,6 @@ export type TaskListDto = {
     task_comments?: Array<TaskCommentDto>;
     step: (StepProjectDto | null);
     media: (MediaDto | null);
+    annotations: Array<AnnotationWithIdDto>;
 };
 
