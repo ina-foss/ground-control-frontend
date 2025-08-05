@@ -337,6 +337,7 @@ export default defineComponent({
           videoSrc.value = annotationsIn.value[0]?.result.asset.url
           const tcOffset = data.value.media?.player_parameters?.tc_offset ?? 0;
           setTcOffset(tcOffset);
+          spanService.setTribu(data.value.media?.player_parameters?.tribu);
         }
     })
 

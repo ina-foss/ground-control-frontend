@@ -13,7 +13,7 @@ const { $application } = useService()
 const { computeColor,hexToRgba,computeColorByLabel} = $application
 const spanMenu = ref()
 const op = ref()
-const isForResearch= ref(false)
+const isForResearch= ref(true)
 
 
 type AtomSpanType = InstanceType<typeof AtomSpan>
@@ -53,8 +53,15 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     {value: 'insert', label: 'Insertions'},
     {value: 'inv', label: 'Contre sens'},
   ])
+   const setTribu = (tribu:string|'') => {
+     if(tribu && tribu.toLowerCase()==='2IA'.toLowerCase()){
+       isForResearch.value=false
+     }
+   }
 
-   spanTypeOptions = isForResearch.value ? spanTypeOptions : spanTypeList
+   watch(isForResearch, (newValue) => {
+     spanTypeOptions.value = newValue ? spanTypeOptions.value : spanTypeList.value
+   })
 
    const spanGroupTypeOptions = ref([
     {value: 'citation', label: 'Citation', roles: ['source', 'indice', 'citation']},
@@ -664,7 +671,7 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
   }
 
   return{
-  extractTextFromSpanNodes,  dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected,isForResearch,deletedNum
+  extractTextFromSpanNodes,  dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected,isForResearch,deletedNum,setTribu
   }
 }
 
