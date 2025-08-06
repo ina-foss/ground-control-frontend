@@ -1,5 +1,5 @@
 <template>
-  <div class=" flex-col flex col-span-3 pl-5 max-h-full ">
+  <div :class="[ 'flex-col flex pl-5 max-h-full', panelSize  ]">
 
     <AtomVideoAmalia ref="videoPlayer" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
@@ -27,9 +27,14 @@
     videoSrc: {
       type: String,
       default: ''
+    },
+    panelSize: {
+      type: String,
+      default : 'large'
     }
   });
-const { locals, videoSrc } = props;
+  const { locals, videoSrc, panelSize } = props;
+
 
   const videoPlayer = ref(AtomVideoAmalia|null)
   const scrollToSegment = inject('scrollToSegment')

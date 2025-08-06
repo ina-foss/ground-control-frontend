@@ -11,5 +11,6 @@ export type AnnotationWithIdDto = {
     annotation_status: AnnotationStatus;
     version: number;
     id: number;
+    created_at: (string | null);
 };
 

@@ -16,7 +16,7 @@ mockNuxtImport('useToast',()=>{
 
 const mockJumpToTopic = vi.fn()
 
-describe('Molecule Props', ()=>{
+describe('Molecule Tabs', ()=>{
   let wrapper : VueWrapper
   beforeEach(async()=>{
     wrapper = await mountSuspended(MoleculeTabs,{
@@ -79,7 +79,6 @@ describe('Molecule Props', ()=>{
     expect(sentenceCarousel.exists()).toBeTruthy()
 
     await sentenceCarousel.vm.$emit('update:page',1)
-    console.log(sentenceCarousel.emitted())
 
     expect(mockJumpToTopic).toHaveBeenCalledOnce()
     expect(mockJumpToTopic).toHaveBeenCalledWith({topic:1})

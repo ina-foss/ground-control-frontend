@@ -102,6 +102,7 @@ export default class ApplicationService {
    * @returns {number}
    */
   public unixToTimestamp(tc: string | number ): number{
+    if (!tc) return 0
     if (typeof tc == 'number') return tc
     if (!tc.includes(':')) return parseFloat(tc)
     const millisecond = tc.split('.')[1]

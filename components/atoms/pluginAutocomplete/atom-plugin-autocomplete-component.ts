@@ -1,15 +1,16 @@
 import {defineComponent} from 'vue'
 import {useTopicList} from '../../../composables/useTopicList'
 import {inject} from 'vue';
-import type { MultiSelectFilterEvent } from 'primevue';
-import type { Store } from 'pinia';
+import {PluginService} from "~/api/generate";
+import type { PluginWithIdDto } from '~/api/generate'
+import type {PropType} from 'vue'
 
 
 export default defineComponent({
   name: 'AtomPluginAutocomplete',
   props: {
     topicIndex: {type: Object},
-    plugin: {},
+    plugin: {type :Object as PropType<PluginWithIdDto>, required: true},
     pluginItemsConfig: {},
     index: {},
     source: {}
@@ -21,6 +22,7 @@ export default defineComponent({
     const {topicIndex, plugin, pluginItemsConfig, index, source} = toRefs(props)
     const indexPlugin = index.value;
     const selectedItems = ref();
+    let debounceTimer : NodeJS.Timeout
     const options = ref();
     const filterString : Ref<string> = ref('');
     const isAnnotationEditable = inject('isAnnotationEditable')
@@ -33,9 +35,20 @@ export default defineComponent({
       multiSelectRef.value.overlayVisible = true;
     }
 
+
     function handleFilter(event) {
-      filterString.value = event.value
+      clearTimeout(debounceTimer)
+       debounceTimer = setTimeout(()=>{
+        filterString.value = event.value
+      }, 300)
+
     }
+
+    const { data, status, execute: executeSearch } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
+
+    const showSkeleton = computed(()=>{
+        return status.value == 'pending'
+    })
 
     // Sort the options array by the ascending position of the filter string in each option's labelc:w
     const sortedOptionsByFilter = computed(()=>{
@@ -109,6 +122,24 @@ export default defineComponent({
       }
     });
 
+    watch(()=>filterString.value, async (newFilter) => {
+      if(newFilter.trim().length != 0) {
+        await executeSearch()
+        if (Array.isArray(data.value)) {
+          options.value = data.value.map(item => ({
+            id: item.id,
+            ext_id: item.ext_id,
+            label: item.label,
+            plugin_id: plugin.value.id,
+          }));
+        }
+      }
+      else{
+        options.value = []
+      }
+    })
+
+
     onMounted(() => {
       if (chipList.value && plugin.value?.id) {
         selectedItems.value = chipList.value.filter(item => item.plugin_id === plugin.value.id);
@@ -126,6 +157,7 @@ export default defineComponent({
       options,
       selectedItems,
       pluginName,
+      showSkeleton,
       indexPlugin,
       handleFilter,
       source,

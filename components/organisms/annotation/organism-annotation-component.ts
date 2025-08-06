@@ -58,7 +58,7 @@ export default defineComponent({
 
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
         let index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
-        scrollToSegment({bestIndex: index})
+        index != -1 ? scrollToSegment({bestIndex: index}) : div.scrollIntoView({'behavior': 'smooth', 'block' : 'center'})
     }
     const handleSelection = (spanArg: any) => {
       getSelectedSegment()?.classList?.remove('selected-segment')
@@ -92,7 +92,6 @@ export default defineComponent({
 
     const isAnnotationEditable = computed(()=> annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
     const annotation_type = data.value.step.annotation_type
-    provide('isAnnotationEditable',isAnnotationEditable)
 
     PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.value.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
     config.value = response;
@@ -206,6 +205,14 @@ export default defineComponent({
       }
     })
 
+  const panelSize = computed(()=>{
+    switch(annotation_type) {
+      case 'span' :
+        return 'col-span-2';
+      default :
+        return 'col-span-3'
+    }
+  })
 
     const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
       if(!event.index){
@@ -256,7 +263,7 @@ export default defineComponent({
         }
         return acc
       },[] ).findIndex(topic => topic == event.topic)
-      tabsRef.value.sentenceCarouselFunction(firstTopicListIndex)
+      if(tabsRef.value.moleculeAnnotationRef) tabsRef.value.sentenceCarouselFunction(firstTopicListIndex)
       tabsRef.value.moleculeAnnotationRef?.carouselNavTo(firstTopicListIndex)
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode({tcin:locals.value[firstTranscriptionIndex].tcin,tcout:locals.value[firstTranscriptionIndex].tcout,})
       moleculeAnnotationLeftPanelRef.value?.videoPlayer.seek()
@@ -330,6 +337,7 @@ export default defineComponent({
           videoSrc.value = annotationsIn.value[0]?.result.asset.url
           const tcOffset = data.value.media?.player_parameters?.tc_offset ?? 0;
           setTcOffset(tcOffset);
+          spanService.setTribu(data.value.media?.player_parameters?.tribu);
         }
     })
 
@@ -421,7 +429,7 @@ export default defineComponent({
 
   }
 
-  const spanService = useSpanService()
+  const spanService = useSpanService(true)
   provide('spanService',spanService)
 
   provide('plugin-config', config)
@@ -472,8 +480,12 @@ export default defineComponent({
     moleculeAnnotationLeftPanelRef,
     tabsProps,
     tabsRef,
-    isAnnotationEditable
-
+    isAnnotationEditable,
+    panelSize,
+    getSelectedSegment,
+    navigateWithkeyboard,
+    globalKeydown,
+    jumpToTopic
 
 
 

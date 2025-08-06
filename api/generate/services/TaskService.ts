@@ -3,8 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Body_task_inject_step__step_id__post } from '../models/Body_task_inject_step__step_id__post';
+import type { PaginatedTasksDTO } from '../models/PaginatedTasksDTO';
 import type { TaskBaseDto } from '../models/TaskBaseDto';
 import type { TaskListDto } from '../models/TaskListDto';
+import type { TaskStatus } from '../models/TaskStatus';
 import type { TaskWithIdDto } from '../models/TaskWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -160,6 +162,67 @@ export class TaskService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Update Task Status
+     * @param taskId
+     * @param status
+     * @returns TaskListDto Successful Response
+     * @throws ApiError
+     */
+    public static updateTaskStatusTaskTaskIdStatusPost(
+        taskId: number,
+        status: TaskStatus,
+    ): CancelablePromise<TaskListDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/task/{task_id}/status',
+            path: {
+                'task_id': taskId,
+            },
+            query: {
+                'status': status,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Get Tasks By Annotated By
+     * Retrieve tasks filtered by annotated_by user (email), with priority rules.
+     * @param email
+     * @param page
+     * @param size
+     * @param taskLimitOn Toggle to enforce the max tasks per person limit
+     * @returns PaginatedTasksDTO Successful Response
+     * @throws ApiError
+     */
+    public static getTasksByAnnotatedByTasksAnnotatedByEmailGet(
+        email: string,
+        page?: number,
+        size: number = 10,
+        taskLimitOn: boolean = false,
+    ): CancelablePromise<PaginatedTasksDTO> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/tasks/annotated_by/{email}',
+            path: {
+                'email': email,
+            },
+            query: {
+                'page': page,
+                'size': size,
+                'task_limit_on': taskLimitOn,
+            },
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

@@ -9,7 +9,7 @@
     />
   </div>
     <div v-if=" !allFetched " class="grid grid-cols-10 h-0 min-h-full " >
-      <div class="col-span-3 h-full pl-5 gap-3 ">
+      <div :class="[' h-full pl-5 gap-3', panelSize ]">
         <Skeleton
 :pt="{
           root: {
@@ -33,7 +33,7 @@
           <Skeleton height="75px" width="700px"/>
         </div>
       </div>
-    <div class="col-span-2 h-full w-full ">
+    <div class="col-span-3 h-full w-full ">
       <div class="w-[300px] flex flex-col gap-3">
         <Skeleton height="50px" />
         <Skeleton height="50px" />
@@ -45,7 +45,7 @@
   <div v-else class="h-full">
     <AtomSearch class=" right-10 absolute flex items-center top-[72px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
     <div class="grid  grid-cols-10 xs:flex xs:flex-col h-full">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))" @scroll-to-segment="handleVideoTimelineClick">
+      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :panel-size="panelSize" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs ref="tabsRef" v-bind="tabsProps" />
       </MoleculeAnnotationLeftPanel>
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  :state="annotationsOut[annotationInfo?.index]?.annotation_status" v-on="annotationComponent.events" />

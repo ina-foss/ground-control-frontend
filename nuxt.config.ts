@@ -33,7 +33,7 @@ const DSINAPreset = definePreset(Lara, {
     },
     breadcrumb: {
       padding: '14px',
-      ColorScheme: {
+      colorScheme: {
         light: {
           background: 'var(--secondary-color)',
         }
@@ -107,6 +107,11 @@ const DSINAPreset = definePreset(Lara, {
 })
 
 export default defineNuxtConfig({
+    vue:{
+      compilerOptions:{
+        isCustomElement : (tag) => tag.includes('-') && !tag.startsWith('router') && !tag.startsWith('atom')
+      },
+    },
     ssr: false,
     app: {
         pageTransition: {name: 'page', mode: 'in-out'},
@@ -120,6 +125,7 @@ export default defineNuxtConfig({
     },
   css : [
     '~/node_modules/@ina/kit-ui/src/css/base.css',
+    '~/assets/css/fonts.css',
   ],
     plugins: [
       '~/directives/v-safe-html.ts',

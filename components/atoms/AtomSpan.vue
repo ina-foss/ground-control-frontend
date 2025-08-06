@@ -1,10 +1,8 @@
 <template>
-  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="`inline scroll-mt-16 items-center h-auto border-blue-400 ${currentColor == 'bg-secondary' ? 'border-2 rounded-sm px-1 ' : '' } ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${currentColor} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
-    <div ref="spanText" class="inline ">
+  <div  ref="span" :tcin="tcIn" :tcout="tcOut" :class="` relative inline scroll-mt-16 items-center h-auto border-blue-400 ${currentColor == 'bg-secondary' ? 'border-2 rounded-sm px-1 ' : '' } ${focus == true ? 'focus' : ''} ${options.span==true ? ` highlighted-text cursor-pointer ${currentColor} ` : 'text-black '}  ${linkCss != '' ? linkCss + ' cursor-crosshair' : ''} `" @click="handleClick" @mousedown="handleDrag" >
       <slot/>
-    </div>
-    <span v-if="options.span == true" class="pl-[0.5rem]">
-      <span v-for="lbl in newLabel.map(String).join(' ')" class=" align-super text-[0.70rem]  ">{{lbl}} </span>
+    <span v-if="options.span == true" :class="`absolute h-4 px-1 left-0 top-[-12px] align-top text-[0.6rem]/3 ${currentColor} `">
+      {{ label?.[0]}}
     </span>
   </div>
 </template>
@@ -39,7 +37,6 @@ const {label, tcIn, tcOut, id , linkCss, labels} = defineProps({
 const { options } = useOptions()
 const emit = defineEmits(['spanReady','editSpan','focusSpan'])
 const span= ref()
-const spanText = ref()
 const newText = ref('')
 const newId = ref(id)
 const newLabel = ref(label)
@@ -60,7 +57,7 @@ const handleDrag = () =>{
 
 const updateText = () => {
     newText.value = ''
-    const list = span.value?.firstElementChild?.children
+    const list = span.value?.children
     for (let item of list) {
       newText.value += (item.innerText + ' ')
     }

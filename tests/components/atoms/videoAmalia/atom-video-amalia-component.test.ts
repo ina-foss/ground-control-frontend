@@ -113,7 +113,6 @@ describe('AtomVideoAmalia', () => {
     })
     const rewindButton = wrapper.get('[data-testid="rewind-btn"]')
     await rewindButton.trigger('click')
-    console.log(rewindButton)
     expect(wrapper.vm.handleRewindTimecode).toBeDefined()
   })
 

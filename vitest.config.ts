@@ -3,6 +3,7 @@ import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
     test:{
+        css:true ,
         watch: false,
         environment:'nuxt',
         environmentMatchGlobs:[
@@ -39,7 +40,7 @@ export default defineVitestConfig({
         ],
         coverage:{
           provider: 'istanbul',
-          reporter: ['text','html'],
+          reporter: ['text','html','lcov'],
           reportsDirectory: './coverage',
           exclude:[
             '**/node_modules/**',
