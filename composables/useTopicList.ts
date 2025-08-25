@@ -35,10 +35,6 @@ interface Label {
   label: string,
 }
 
- let topicListInstance : ReturnType<typeof createTopicList> | null = null
-
-function createTopicList() {
-
   const topicList = ref<Array<Topic | undefined>>([])
 
   function deleteTopic(topicIndex:number) {
@@ -51,7 +47,6 @@ function createTopicList() {
     */
   function createTopic(topic: Topic){
     topicList.value[topic.id]= topic
-
   }
 
   function copyTopicData(from: number, to:number){
@@ -70,10 +65,17 @@ function createTopicList() {
     }
   }
 
+  function resetTopicList()  {
+    topicList.value = []
+  }
 
-
-
-
+/**
+ * @param reset True to reset the topicList array
+  **/
+export function useTopicList(reset?: boolean = false) {
+  if(reset) {
+    resetTopicList()
+  }
   return {
     topicList,
     createTopic,
@@ -81,14 +83,6 @@ function createTopicList() {
     copyTopicData,
     fusionTopicData
   }
-}
-
-/**
- * @param initialization True for forcing the creation of a new instance
-  **/
-export function useTopicList(initialization?: boolean = false) {
-  if(!topicListInstance || initialization) topicListInstance = createTopicList()
-  return topicListInstance
 }
 
 

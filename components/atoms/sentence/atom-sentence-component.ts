@@ -10,7 +10,7 @@ export default defineComponent({
   setup(props) {
 
     const { $application } = useService()
-    const {spanRefArray,onDeleteSpan} = inject('spanService',ref([]))
+    const {spanArray, extractTextFromSpanNodes,onDeleteSpan} = useSpanService()
     const {locals} = inject('span')
     const { computeColor,textColorPicker,computeColorByLabel,timestampToUnix,unixToTimestamp } = $application
 
@@ -18,13 +18,12 @@ export default defineComponent({
     const { transcriptions } = toRefs(props)
     const { topicList } = useTopicList()
 
-    function getTopicFromSpan(span){
+    function getTopicFromSpan(span: Span){
       if(span){
         return locals.value.reduce((topic,local)=>{
           if(unixToTimestamp(span.tcin) >= unixToTimestamp(local.tcin) && unixToTimestamp(span.tcout) <= unixToTimestamp(local.tcout) ) {
             topic = local.data.topic
           }
-
           return topic
         },undefined)
       }
@@ -32,11 +31,11 @@ export default defineComponent({
     }
 
     const spanArrayByTopic =computed(()=>{
-      return  spanRefArray.value.filter(span=>getTopicFromSpan(span)==transcriptions.value[0].data.topic)
+      return  spanArray.value.filter(span=>getTopicFromSpan(span)==transcriptions.value[0].data.topic)
     })
 
     return {
-       transcriptions,topicList,computeColor,textColorPicker,computeColorByLabel,timestampToUnix,unixToTimestamp,spanArrayByTopic,onDeleteSpan,jumpToTopic,getTopicFromSpan
+       transcriptions,topicList,computeColor,textColorPicker,computeColorByLabel,timestampToUnix,unixToTimestamp,spanArrayByTopic,onDeleteSpan,jumpToTopic,getTopicFromSpan,extractTextFromSpanNodes
     }
   }
 })

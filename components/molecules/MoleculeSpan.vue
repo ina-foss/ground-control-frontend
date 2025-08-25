@@ -1,7 +1,7 @@
 <template>
   <div :class="` col-span-4 flex flex-col h-full relative `">
     <div>
-    <AtomSearch class='hidden'  :spans="spanRefArray" :labels="labels" @find-element="handleFocusSpan" @unselect="handleSelection" />
+    <AtomSearch class='hidden'  :spans="spanArray" />
     </div>
     <div class="grow h-0 flex justify-center ">
     <ScrollPanel class="h-full pr-2 overflow-x-visible "
@@ -18,7 +18,7 @@
       <div
         v-for="word in aggregatedLocals" :key="word.tcin"  :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)"
         :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
-        @mouseup="handleSelectionv2">
+        @mouseup="handleSelectionV2">
           {{ word.data.text[0] }}
       </div>
     </div>

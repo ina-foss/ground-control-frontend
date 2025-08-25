@@ -1,5 +1,3 @@
-import AtomSjan from "../components//atoms/AtomSpan.vue";
-import {createApp} from "vue";
 import _ from 'lodash'
 import {useOptions} from '~/stores/annotation-options'
 
@@ -10,34 +8,27 @@ let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
 const {options} = useOptions()
 
 const { $application } = useService()
-const { computeColor,hexToRgba,computeColorByLabel} = $application
+const { hexToRgba,computeColorByLabel} = $application
 const spanMenu = ref()
 const op = ref()
 const isForResearch= ref(true)
 
 
-type AtomSpanType = InstanceType<typeof AtomSpan>
   const spanClicked = ref(false)
-  const spanRefArray = ref<AtomSpanType[]>([])
-  const spanArray = ref<Array<Span | SpanGroup | VirtualSpan>>([])
-  const elementArray = ref([])
+  const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([])
   const linkMode = ref(false)
   const currentFocus = ref<number | undefined>(undefined)
-  const linkCss = computed<string>(() => linkMode.value ? ' hover:border-2 ' : '')
   const spanCount = computed<number>(()=>spanArray.value.length)
   const newFocus = ref<number | undefined>()
   const spanMenuSelected = ref<number | undefined>(undefined)
   const labelSelected = ref([])
   const freeLabel = ref()
   const deletedNum=ref<number>()
-  const spanIndex = ref<number>()
-  const relationArray = ref<any[]>([])
   const spanForm = ref()
   const dragData = reactive<{pin_position: string | undefined, spanid: number | undefined}>({
     pin_position : undefined,
     spanid : undefined,
   })
-  const labels = ref<string[]>(['Person', 'Citation', 'Verbe'])
   let spanTypeOptions =ref( [
     {value: 'function',label:'Fonction'},
     {value: 'verb', label:'Verbe'},
@@ -67,9 +58,6 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     {value: 'citation', label: 'Citation', roles: ['source', 'indice', 'citation']},
     {value: 'entity', label: 'Entitee nommee', roles: ['primaire','secondaire']},
   ])
-  const filteredLocal = computed(() => {
-    return _.filter(locals.value, (local) => local.sublocalisations)
-  })
 
   function rgbaToShadow(color: string) {
     return `${color} 0px 0px 0px 1000px inset`
@@ -387,7 +375,6 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
         }
         state.selection.removeAllRanges()
 
-
         const selectedNodes: Node[] = []
         const treeWalker = document.createTreeWalker(
           state.range.commonAncestorContainer,
@@ -442,134 +429,9 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     else return startNode.previousSibling && startNode.previousSibling.nodeType == 1 ? reccursiveSibling(startNode.previousSibling,value+1).concat([startNode.previousSibling]) : []
   }
 
-  const handleSelection = ({spanArg, event} : {spanArg?: any, event?: Event}) => {
-    const currentSelection = window.getSelection()
-    if (currentSelection && currentSelection.toString() !== '' ) {
-      event?.stopPropagation()
-      if( options.unlabelled_span || labelSelected.value.length != 0 || spanArg?.tcin ) {
-        state.selection = currentSelection
-        const id = spanArg?.id != undefined ? spanArg.id : markRaw(spanCount.value)
-        const label: Array<string> = spanArg?.property?.map((label: { value: any; }) => label.value) || spanArg?.label || markRaw(labelSelected.value)
-        state.range = currentSelection.getRangeAt(0)
-        let direction
-        let indexStart
-        let indexEnd
-        let spanTcin = null
-        let spanTcout = null
-        if (!spanArg?.tcin) {
-          if (currentSelection.anchorNode?.parentElement?.parentNode == currentSelection.focusNode?.parentElement?.parentNode) {
-            indexStart = _.indexOf(currentSelection.anchorNode?.parentElement?.parentNode?.childNodes, currentSelection.anchorNode?.parentElement)
-            indexEnd = _.indexOf(currentSelection.focusNode?.parentElement?.parentNode?.childNodes, currentSelection.focusNode?.parentElement)
-            direction = (indexStart <= indexEnd) ? 'forward' : 'backward'
-          }
-          else {
-            indexStart = _.indexOf(currentSelection.anchorNode?.parentElement?.parentNode?.parentNode?.childNodes, currentSelection.anchorNode?.parentElement?.parentElement)
-            indexEnd = _.indexOf(currentSelection.focusNode?.parentElement?.parentNode?.parentNode?.childNodes, currentSelection.focusNode?.parentElement?.parentElement)
-            direction = (indexStart <= indexEnd) ? 'forward' : 'backward'
-
-          }
-          if (indexStart == indexEnd) {
-            direction = (state.selection.anchorOffset < state.selection.extentOffset) ? 'forward' : 'backward'
-          }
-          spanTcin = getAttribute(direction, currentSelection, 'tcin')
-          spanTcout = getAttribute(direction, currentSelection, 'tcout')
-          if (direction == 'forward') {
-            state.range.setEndAfter(state.selection.focusNode)
-            state.range.setStartBefore(state.selection.anchorNode?.parentNode)
-          }
-          else {
-            const startWord = state.selection.focusNode.parentNode
-            state.range.setEndAfter(state.selection.anchorNode)
-            state.range.setStartBefore(startWord)
-          }
-        }
-        if (spanTcin == null) spanTcin = spanArg?.tcin
-        if (spanTcout == null) spanTcout = spanArg?.tcout
-        state.selection.removeAllRanges()
-        const nextContainerSibling = state.range.endContainer.nextSibling
-        const span = document.createElement('span') // temporary Element to create the span DOM
-        const docFragment = state.range.extractContents() // extract all the HTMLElements in the range
-        state.selection.empty()
-        state.selection = null
-        if (!spanClicked.value) {
-          const app = createApp({
-            render() {
-              return h(AtomSpan, {
-                label: label,
-                tcIn: spanTcin,
-                tcOut: spanTcout,
-                id: id,
-                linkCss: linkCss.value,
-                labels: labels,
-                ref: el => spanRefArray.value[id] = el,
-                onSpanReady: ({ element, index }) => {
-                  elementArray.value[index] = element
-                },
-                onEditSpan: ({ index }) => {
-                  spanClicked.value = true
-                  spanIndex.value = index
-                },
-                onFocusSpan: (event) => handleFocusSpan(event)
-              })
-            }
-          })
-          app.mount(span) // Render the Span
-          const fragment = document.createDocumentFragment()
-          Array.from(span.childNodes).forEach(node => { // Add the content of the temporary element inside a document Fragment
-            fragment.appendChild(node)
-          });
-          if (docFragment.firstChild?.firstChild?.nodeType == 1) {
-            const blocs = docFragment.childNodes
-            const border = docFragment.firstChild.cloneNode(false)
-            const blocNb = blocs.length
-
-
-            blocs.forEach((previousBlock) => {
-              const wordArray = previousBlock.childNodes
-              wordArray.forEach((word) => {
-                if ((word.nodeType == 1) && word.getAttribute('tcin'))
-                  docFragment.appendChild(word.cloneNode(true))
-              })
-            })
-            let i = 0
-            while (i < blocNb) {
-              docFragment.firstChild?.remove()
-              i++
-            }
-            fragment.firstChild?.firstChild?.appendChild(docFragment) // Add all the word inside the final div
-            border.appendChild(fragment)
-            if (options.timecode_bloc) {
-              addTimecodeDiv(border.firstChild.firstElementChild, border)
-              if (nextContainerSibling?.getAttribute('tcin')) addTimecodeDiv(nextContainerSibling?.parentNode)
-            }
-            state.range.insertNode(border) // Add this document fragment to the DOM
-
-          }
-
-          else {
-            fragment.firstChild?.appendChild(docFragment) // Add all the word inside the final div
-            state.range.insertNode(fragment) // Add this document fragment to the DOM
-          }
-
-        }
-        else {
-          direction == 'forward' ? spanRefArray.value[spanIndex.value].addRight(docFragment) : spanRefArray.value[spanIndex.value].addLeft(docFragment)
-          spanClicked.value = false
-        }
-        spanIndex.value = undefined
-        formatSpan(spanRefArray.value[spanRefArray.value.length - 1])
-        }
-    }
-  }
-
   const saveSpan = (local) => {
-    _.remove(local, (el) => !el.data)
-    spanRefArray.value.forEach((span) => {
-      local.push(formatSpan(span))
-    })
-    relationArray.value.forEach((relation) => {
-      local.push(formatRelation(relation))
-    })
+    const initialLength = local.filter(e=>e.data).length
+    spanArray.value.map(span=>formatSpan(span)).forEach(span=>local[initialLength  + span.id] = span)
     return local
   }
 
@@ -586,35 +448,16 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     handleSelectionV2({spanArg: span})
   }
 
-  const formatSpan: any = (spanRef: any) => {
-    const span = {}
-    span.id = spanRef.id
-    span.tcin = spanRef.tcin
-    span.tcout = spanRef.tcout
-    const property = []
-    span.deletedItems=spanRef.deletedItems
-    spanRef.label.forEach(label => {
-      property.push({ key: 'entityType', value: label })
-    });
-    span.property = property
+  const formatSpan = (span : typeof spanArray.value[0]) => {
+    if((span as Span).nodes){
+      const spanJson = _.cloneDeep(span) as Span
+      spanJson.text = extractTextFromSpanNodes(spanJson.nodes)
+      return _.omit(spanJson,'nodes')
+    }
     return span
   }
 
-  const handleFocusSpan = ({ index }) => {
-    if (linkMode.value) {
-      relationArray.value.push({ from: currentFocus.value, to: index })
-      linkMode.value = false
-    }
-    else if(index != undefined){
-      spanClicked.value = false
-      currentFocus.value = index
-      labelSelected.value = spanRefArray.value[currentFocus.value].label
-    }
-  }
-
   function loadSpanv2 (locals){
-    // locals.value.push({id: 0, tcin:33.840087890625 ,tcout: 35.919921875, type: {value: 'physicalPerson', label:'Personne physique'}})
-    // locals.value.push({id:1, type:{value: 'citation', label: 'Citation', roles: ['source', 'indice', 'citation']}, spans:[{spanId: 0, role: 'citation'}]})
     locals.value.forEach(segment =>{
       if (((!segment.sublocalisations) && (segment.property?.[0]?.key == "entityType") ) ||  !segment.data) {
         if(!segment.spans || segment.text) createSpan(segment)
@@ -625,53 +468,15 @@ type AtomSpanType = InstanceType<typeof AtomSpan>
     })
   }
 
-  const loadSpan = (locals) => {
-    if (spanRefArray.value.length == 0) {
-      locals.value?.forEach((segment) => {
-        if (((!segment.sublocalisations) && (segment.property?.[0]?.key == "entityType") ) ||  !segment.data) {
-          createSpan(segment)
-        }
-      });
-    }
-    else {
-      spanRefArray.value?.forEach((segment) => {
-        createSpan(segment)
-      });
-    }
-    if (relationArray.value.length == 0)
-      locals.value?.forEach(segment => {
-        if ((!segment.sublocalisations) && (segment.property?.[0]?.key == 'relationType')) {
-          relationArray.value.push({ from: segment.from, to: segment.to })
-        }
-      });
-  }
-
-  const getAttribute = (direction, selection, tc) => {
-    if ((direction == 'forward' && tc == 'tcin') || (direction == 'backward' && tc == 'tcout')) return selection.anchorNode?.parentElement?.getAttribute(tc)
-    else if ((direction == 'forward' && tc == 'tcout') || (direction == 'backward' && tc == 'tcin')) return selection.focusNode?.parentElement.getAttribute(tc)
-  }
-
   const onDeleteSpan = ({ index }: { index: number }) => {
-    const element: Element = elementArray.value[index]
-    const text = spanRefArray.value[index].text
-    if (element && element.parentNode) {
-      const parent = element.parentNode // on recupere la div contenant la phrase
-      parent.replaceChild(document.createTextNode(text), element) // on remplace le span par du text
-      parent.normalize(); // On fusionne les 3 textes
-
-    }
-    _.remove(relationArray.value, (relation) => relation.to == index || relation.from == index)
-    spanRefArray.value.splice(index, 1)
-    spanRefArray.value.forEach((span, index) => {
-      span.index = index
-    })
+    removeSpanFromDOM(index)
+    spanArray.value[index] = null
     currentFocus.value = undefined
 
-    spanCount.value--
   }
 
   return{
-  extractTextFromSpanNodes,  dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanGroupTypeOptions, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, handleSelection, spanRefArray, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus,saveSpan,loadSpan, labelSelected,isForResearch,deletedNum,setTribu
+  saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,setTribu
   }
 }
 

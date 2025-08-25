@@ -45,9 +45,11 @@
           @on-segment-click="handleSegmentClick"
           @deactivate-topic="deactivateTopic({index})"
           @activate-topic="activateTopic({index})"
+          @create-span="spanForm.open(handleSelectionV2($event))"
         />
         </ol>
     </ScrollPanel>
+    <AtomSpanForm ref="spanForm"/>
     </div>
     </div>
   </div>

@@ -12,6 +12,12 @@ import AtomSegmentation from "~/components/atoms/AtomSegmentation.vue";
 import AtomSpanOption from '@/components/atoms/AtomSpanOption.vue';
 import AtomVideoOption from '@/components/atoms/atom-video-option.vue';
 
+  vi.mock('~/composables/useSpanService', () => ({
+    default: () => ({
+      loadSpanv2: vi.fn()
+    })
+  }))
+
 describe('Molecule Segmentation', ()=>{
   let wrapper : VueWrapper
   let wrapper2 : VueWrapper
@@ -50,9 +56,6 @@ describe('Molecule Segmentation', ()=>{
       global: {
         plugins: [PrimeVue],
         provide: {
-          spanService:{
-            loadSpan: vi.fn()
-          },
           jumpToTopic: vi.fn(),
           annotation_type: 'segmentation',
           isAnnotationEditable: true,
