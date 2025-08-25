@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import AtomSentence from '@/components/atoms/sentence/AtomSentence.vue'
 import { nextTick, ref } from 'vue'
+import { mockNuxtImport} from "@nuxt/test-utils/runtime";
 
 const mockTranscriptions = [{
   tcin: 123,
@@ -21,6 +22,7 @@ const mockSpanRefArray = ref([
   { id: 3, text: 'Phrase 3', tcin: 1000, tcout: 1100 },
 ])
 
+const onDeleteSpan = vi.fn()
 const mockLocals = ref([
   {
     tcin: '00:02:00.000',
@@ -29,15 +31,24 @@ const mockLocals = ref([
   }
 ])
 
+mockNuxtImport('useSpanService', async()=>{
+  return ()=>({
+    spanArray: mockSpanRefArray,
+    extractTextFromSpanNodes: vi.fn().mockReturnValue("span text content"),
+    onDeleteSpan
+  })
+})
+
+
 vi.mock('@/composables/useTopicList', () => ({
   useTopicList: () => ({ topicList: mockTopicList })
 }))
 
 describe('AtomSentence.vue', () => {
   let wrapper: any
-  const onDeleteSpan = vi.fn()
   const jumpToTopic = vi.fn()
   const timestampToUnix = (tcin: number) => `${tcin}s`
+
 
   beforeEach(() => {
     wrapper = mount(AtomSentence, {

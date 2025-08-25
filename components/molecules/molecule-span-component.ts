@@ -13,7 +13,7 @@ import AtomTaskComment from "../atoms/AtomTaskComment.vue";
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import AtomSpanForm from '../atoms/spanForm/AtomSpanForm.vue'
 import AtomSpanControlPanel from '../atoms/spanControlPanel/AtomSpanControlPanel.vue'
-import {AnnotationStatus} from "~/api/generate";
+import type {AnnotationStatus} from "~/api/generate";
 
 
 export default defineComponent({
@@ -25,14 +25,12 @@ export default defineComponent({
   },
   setup(props, { emit, expose }) {
 
-    type AtomSpanType = InstanceType<typeof AtomSpan>
-
     const { $application } = useService()
-    const { timestampToUnix, unixToTimestamp ,computeColorByLabel} = $application
+    const { timestampToUnix, unixToTimestamp } = $application
     const { options } = storeToRefs(useOptions())
 
 
-    const {showDragPin,handleDeleteSpan, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2, handleSelection,spanRefArray, createSpan, onDeleteSpan, spanClicked, linkMode, currentFocus,labelSelected,loadSpanv2,extractTextFromSpanNodes} = useSpanService()
+    const {showDragPin, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan} = useSpanService()
 
 
     const formOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:event=>showDragPin()},{id:2, label: 'Supprimer', command: (event)=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
@@ -52,16 +50,6 @@ export default defineComponent({
       return result
     })
 
-    const app = createApp()
-    app.directive('badge', BadgeDirective)
-    const elementArray = ref([])
-    const newLabel = ref<string>('')
-    const linkCss = computed<string>(() => linkMode.value ? ' hover:border-2 ' : '')
-    const spanCount = ref<number>(spanRefArray.value.length)
-    const spanIndex = ref<number>()
-    const relationArray = ref<any[]>([])
-    const lastFocus = ref<number | undefined>(undefined)
-    const labels = ref<string[]>(['Person', 'Citation', 'Verbe'])
     const filteredLocal = computed(() => {
       return _.filter(locals.value, (local) => local.sublocalisations)
     })
@@ -74,12 +62,6 @@ export default defineComponent({
     const state: State = reactive({
       selection: null,
       range: null
-    })
-
-watch(()=>labelSelected.value,(labels)=>{
-      if(currentFocus.value != undefined){
-          spanRefArray.value[currentFocus.value].label = labels
-      }
     })
 
 watch(() => options.value.timecode_bloc,async (timecode : boolean ) => {
@@ -117,100 +99,21 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
 
   watch(()=>options.value.bloc,async ()=> {
     await nextTick()
-    spanCount.value = 0
-    loadSpan()
+    loadSpanv2(locals)
 
-  })
-
-
-watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
-  lastFocus.value = oldFocus
-  if( typeof lastFocus.value == 'number' && spanRefArray.value[oldFocus]) spanRefArray.value[oldFocus].focus = false
-  if( typeof currentFocus.value == 'number') spanRefArray.value[newFocus].focus = true
-},{immediate:true})
-
-
-  const addLabel = () => {
-    if(newLabel.value != ''){
-      labels.value.push(newLabel.value)
-      newLabel.value = ''
-    }
-  }
-
-    const handleUnselect = () => {
-      spanRefArray.value[currentFocus.value].focus = false
-      currentFocus.value = undefined
-      labelSelected.value = []
-    }
-
-    const formatSpan = (span : typeof spanArray.value[0]) => {
-      if((span as Span).nodes){
-        const spanJson = _.cloneDeep(span) as Span
-        spanJson.text = extractTextFromSpanNodes(spanJson.nodes)
-        return _.omit(spanJson,'nodes')
-      }
-      return span
-    }
-
-
-    const handleFocusSpan = ({ index }) => {
-      if (linkMode.value) {
-        relationArray.value.push({ from: currentFocus.value, to: index })
-        linkMode.value = false
-      }
-      else if(index != undefined){
-        spanClicked.value = false
-        currentFocus.value = index
-        labelSelected.value = spanRefArray.value[currentFocus.value].label
-      }
-    }
-
-    function formatRelation(relationArg: never): any {
-      const relation = {}
-      relation.property = []
-      const property = {}
-      property.key = 'relationType'
-      property.value = 'Indiciates'
-      relation.property.push(property)
-      relation.from = relationArg.from
-      relation.to = relationArg.to
-      return relation
-    }
-
+})
     onMounted(async () => {
       await nextTick()
       loadSpanv2(locals)
     })
 
-    const saveSpan = (local) => {
-      const initialLength = local.filter(e=>e.data).length
-      // _.remove(local, (el) => !el.data)
-      spanArray.value.map(span=>formatSpan(span)).forEach(span=>local[initialLength  + span.id] = span)
-      // spanRefArray.value.forEach((span) => {
-      //   local.push(formatSpan(span))
-      // })
-      // relationArray.value.forEach((relation) => {
-      //   local.push(formatRelation(relation))
-      // })
-      return local
-    }
-
-
       expose({annotationFunction: saveSpan, listRefs: listSegment })
 
     return{
-      labelSelected,
-      relationArray,
       aggregatedLocals,
-      labels: labels,
-      newLabel,
-      addLabel,
       spanForm,
       formOptions,
-      spanRefArray,
       spanArray,
-      handleFocusSpan,
-      handleSelection,
       handleSelectionV2,
       blockArray,
       isAnnotationEditable,
@@ -221,10 +124,8 @@ watch(()=>currentFocus.value,(newFocus:any, oldFocus:any)=>{
       AtomSpanOption,
       AtomSpanDetail,
       onDeleteSpan,
-      handleUnselect,
       spanMenuSelected,
       options,
-      currentFocus : currentFocus,
       locals,
       pullAt,
       find,

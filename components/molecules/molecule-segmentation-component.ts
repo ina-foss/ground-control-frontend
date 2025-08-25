@@ -3,6 +3,7 @@ import { useOptions } from "~/stores/annotation-options";
 import AtomSegmentation from "~/components/atoms/AtomSegmentation.vue";
 import AtomProgressBar from "~/components/atoms/AtomProgressBar.vue";
 import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
+import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
 import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ , {sortBy} from 'lodash'
@@ -13,7 +14,7 @@ import AtomHelp from "../atoms/AtomHelp.vue";
 
 export default defineComponent({
   name: 'MoleculeSegmentation',
-  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList,AtomHelp},
+  components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList,AtomHelp, AtomSpanForm},
   emits: ['on-segment-click'],
   props: {
     result: {type: Object, default: ()=> {} },
@@ -26,7 +27,7 @@ export default defineComponent({
   },
   setup(props, { emit, expose }) {
 
-    const { loadSpan } = inject('spanService')
+    const { loadSpanv2, handleSelectionV2} = useSpanService()
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData, copyTopicData } = useTopicList(true)
     const { computeColor } = $application
@@ -37,6 +38,7 @@ export default defineComponent({
     const {result,transcriptions} = toRefs(props)
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = inject('isAnnotationEditable')
+    const spanForm = ref()
 
 
     const handleSegmentation = (event) => {
@@ -205,9 +207,10 @@ export default defineComponent({
     }
 
     const spans = inject('spans')
+
     onMounted(() => {
       loadTopics()
-      loadSpan(spans)
+      loadSpanv2(spans)
     })
 
 
@@ -229,7 +232,9 @@ export default defineComponent({
       activateTopic,
       jumpToTopic,
       tcOffset,
-      transcriptions
+      transcriptions,
+      spanForm,
+      handleSelectionV2
     }
 
 

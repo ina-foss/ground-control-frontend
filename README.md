@@ -13,7 +13,7 @@ All the variables are initialize from the [config.json](./public/config.json) fi
 List of variables that can be override in production:
 | VARIABLE             | EXEMPLE                             | PURPOSE                                                                          |
 |----------------------|-------------------------------------|----------------------------------------------------------------------------------|
-| authorityUrl         | "http://localhost:9080/realms/ground-control"       | Keycloak realm url to setup authentication                               |
+| authorityUrl         | "http://localhost:9080/realms/ground_control"       | Keycloak realm url to setup authentication                               |
 | version                | 1.0.0                    | Actual version of Ground Control  |
 | client_id            | "web_app"                           | Identifier for Keycloak to know it's the frontend that reache it|
 | apiBasePath        | "localhost:8000"  | API address for the browser  |
