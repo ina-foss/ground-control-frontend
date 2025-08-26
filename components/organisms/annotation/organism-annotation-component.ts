@@ -237,7 +237,7 @@ export default defineComponent({
     const jumpToTopic = (event: {topic: number, event?: Event }) => {
       let firstTranscriptionIndex
       if(event.event?.ctrlKey){
-        firstTranscriptionIndex = topics.value.findIndex((topic,index) => topics.value[index-1] == event.topic && topic != event.topic)
+        firstTranscriptionIndex = topics.value.findIndex((topic,index) => topics.value[index-1] == event.topic && topic != event.topic) - 1
       }
       else{
         firstTranscriptionIndex = topics.value.findIndex((topic) => topic == event.topic)
@@ -252,7 +252,7 @@ export default defineComponent({
       tabsRef.value.moleculeAnnotationRef?.carouselNavTo(firstTopicListIndex)
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode({tcin:locals.value[firstTranscriptionIndex].tcin,tcout:locals.value[firstTranscriptionIndex].tcout,})
       moleculeAnnotationLeftPanelRef.value?.videoPlayer.seek()
-      if (firstTranscriptionIndex >= 0) moleculeAnnotationRef.value.listRefs[firstTranscriptionIndex].scrollIntoView({ behavior: "smooth"})
+      if (firstTranscriptionIndex >= 0) moleculeAnnotationRef.value.listRefs[firstTranscriptionIndex].firstElementChild.scrollIntoView({ behavior: "smooth"})
     }
 
   const annotationComponent = computed(() => {
