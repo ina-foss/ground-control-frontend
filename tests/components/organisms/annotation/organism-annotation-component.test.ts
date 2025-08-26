@@ -12,6 +12,14 @@ vi.mock('~/stores/annotation-options', () => ({
   useOptions: vi.fn()
 }))
 
+vi.mock('~/stores/plugins', () => ({
+  usePluginStore: ()=>({
+    readAllPluginsPluginsStepStepIdDisplayGet: vi.fn(),
+    updatePluginList: vi.fn().mockResolvedValue([]),
+    initialFetch: vi.fn()
+  })
+}))
+
 vi.mock('~/composables/useTcOffset', () => ({ useTcOffset: () => ({ setTcOffset: vi.fn() }) }))
 vi.mock('~/composables/useTopicList', () => ({ useTopicList: () => ({ topicList: [] }) }))
 

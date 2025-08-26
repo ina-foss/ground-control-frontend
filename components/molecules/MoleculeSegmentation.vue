@@ -50,6 +50,7 @@
         </ol>
     </ScrollPanel>
     <AtomSpanForm ref="spanForm"/>
+    <ContextMenu ref="spanMenu" :model="contextMenuOptions"  />
     </div>
     </div>
   </div>

@@ -23,7 +23,7 @@
     <div>
 
       <div>
-        <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :source="dialogVisible" />
+        <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :source="dialogVisible" v-model:pluginValues="pluginValues" />
       </div>
 
     </div>
@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import {useService} from "~/composables/useService.js";
 import AtomPluginBlock from "./pluginBlock/AtomPluginBlock.vue";
+import type {PluginAutocompleteValueDTO} from "~/api/generate"
 
 const props = defineProps<{
   dialogVisible: boolean;
@@ -47,5 +48,6 @@ const props = defineProps<{
 const { dialogVisible, phrase, title, topicIndex, isTopicFirstSegment } = toRefs(props);
 const emits = defineEmits(['toggle-dialog'])
 const deleteDialog = ref(false)
+const pluginValues = defineModel<Record<string,PluginAutocompleteValueDTO>>('pluginValues')
 const { $application } = useService()
 </script>

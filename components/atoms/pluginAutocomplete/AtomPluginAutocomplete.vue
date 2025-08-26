@@ -1,7 +1,7 @@
 <template>
   <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
-    <MultiSelect :disabled="!isAnnotationEditable"  v-model="selectedItems" :options="sortedOptionsByFilter" emptyMessage="Rechercher un label" :emptyFilterMessage="' '" optionLabel="label" filter @filter="handleFilter" :placeholder="pluginName" :loading="showSkeleton"
-                   :maxSelectedLabels="0" :selectedItemsLabel="pluginName" class="w-fit " > >
+    <MultiSelect :disabled="!isAnnotationEditable"  v-model="pluginValue" :options="sortedOptionsByFilter" emptyMessage="Rechercher un label" :emptyFilterMessage="' '" optionLabel="label" filter @filter="handleFilter" :placeholder="pluginName" :loading="showSkeleton"
+                   :maxSelectedLabels="0" :selectedItemsLabel="pluginName" fluid  > >
     <template #option="slotProps">
       <div class="flex items-center ">
           <div >{{ slotProps.option.label }}</div>

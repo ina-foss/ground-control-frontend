@@ -3,13 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Enum representing the different types available for plugin.
+ *     Enum representing the different plugin types.
  *
- * Attributes:
- * LABEL (str): Represents a label plugin.
- * AUTOCOMPLETE (str): Represents an autocomplete plugin.
+ * Values:
+ * LABEL: Label plugin
+ * AUTOCOMPLETE: List with autocomplete functionality.
+ * LIST_ITEMS: Displays tags and list of items.
+ * SUGGESTION_LIST: Interactive suggestion block.
+ * .       INPUT_LABEL: Simple text input field.
  */
 export enum TypePlugin {
     LABEL = 'label',
     AUTOCOMPLETE = 'autocomplete',
+    LISTITEMS = 'listitems',
+    SUGGESTIONLIST = 'suggestionlist',
+    INPUTLABEL = 'inputlabel',
 }

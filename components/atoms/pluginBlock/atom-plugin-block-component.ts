@@ -2,6 +2,8 @@ import { defineComponent } from 'vue'
 import { useTopicList } from '../../../composables/useTopicList'
 import AtomPluginAutocomplete from '../pluginAutocomplete/AtomPluginAutocomplete.vue'
 import AtomPluginLabel from '../pluginLabel/AtomPluginLabel.vue'
+import { usePluginStore } from '~/stores/plugins'
+import type {PluginAutocompleteValueDTO} from "~/api/generate"
 
 
 export default defineComponent({
@@ -10,44 +12,26 @@ export default defineComponent({
   props: {
     topicIndex: {type: Number},
     isTopicFirstSegment: {type: Boolean},
-    source:{type: Boolean}
+    source:{type: Boolean},
+    pluginValues: {type: Object as ()=> Record<string,PluginAutocompleteValueDTO[]>}
   },
-   setup(props, {emit}){
-    const { topicList} = useTopicList()
-    const {topicIndex,isTopicFirstSegment,source} = toRefs(props)
+  emits:['update:pluginValues'],
+  setup(props,{emit} ){
+    const {getPluginList} = storeToRefs(usePluginStore())
 
-    const chipList = inject('chipList');
-    const config = inject('plugin-config')
-    const pluginItemsConfig = inject('plugin-items-config')
-    onMounted(()=>{
-      chipList.value = topicList.value[topicIndex.value]?.labels ;
-      watch(()=>topicIndex.value,(newTopic,oldTopic)=>{
-        chipList.value = topicList.value[newTopic]?.labels;
-      })
+    const { selectComponent } = usePluginStore()
+
+    const pluginValues = computed({
+        get: ()  => props.pluginValues,
+        set : newValue  => emit('update:pluginValues',newValue)
     })
 
-     function selectComponent(pluginConfig) {
-      if (!pluginItemsConfig.value) return null;
-      switch (pluginConfig.type) {
-        case 'autocomplete':
-          const itemlist=pluginItemsConfig.value
-            .then((list) => {
-              return list.find((item) => item.id === pluginConfig.id).data;
-            })
-          return {component: AtomPluginAutocomplete, props : {topicIndex: topicIndex, pluginItemsConfig:itemlist,source:source  } }
-        case 'label':
-          return {component: AtomPluginLabel, props : {topicIndex: topicIndex, isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:pluginItemsConfig } }
-        default:
-          break;
-      }
-    }
+    const config = getPluginList.value
 
     return {
       config,
       selectComponent,
-      chipList,
-      pluginItemsConfig
-
+      pluginValues
     }
   }
 })

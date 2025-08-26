@@ -1,15 +1,26 @@
 import _ from 'lodash'
+import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
+import {usePluginStore} from '~/stores/plugins'
+import type {PluginAutocompleteValueDTO} from "~/api/generate"
+
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
+  components: {AtomPluginItemslist},
   setup(props,{expose}) {
 
     const visible = ref()
     const nodesCount=ref<number>()
     const suppWarning=ref("Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés")
+    const {getPluginList} = storeToRefs(usePluginStore())
+    const { selectComponent } = usePluginStore()
 
-    const {handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, freeLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
+    const {pluginValues, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, freeLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
     const {$application} = useService()
+
+    const tidiedPluginList = computed(()=>{
+      return Object.groupBy(getPluginList.value,({display_zone})=>display_zone)
+    })
 
     const isGroup = ref<boolean>(false)
     const {computeColor} = $application
@@ -23,13 +34,24 @@ export default defineNuxtComponent({
     })
 
 
+    onMounted(()=>{
+      initPluginValues(getPluginList.value)
+    })
+
     let nodes = ref<Nodes[]>([])
     let prevNodes = ref<Nodes[]>([])
     let nextNodes = ref<Nodes[]>([])
 
     const deleteLayout = ref(false)
     let roleSelected = null
+    let pluginSelected=ref('');
+    watch(pluginValues, (newVal) => {
 
+      const selected = Object.values(newVal).find(
+        (plugin: any) => plugin?.ext_id === 'suppr'
+      )
+      pluginSelected.value = selected?.ext_id || ''
+    }, { deep: true })
 
     function expandContext() {
       expandedContext.value = true
@@ -52,13 +74,14 @@ export default defineNuxtComponent({
     }
 
     function createSpan () {
-      if(nodes.value.length > 0){
+      if(nodes.value.length > 0){ // real spans
         applySpan(_.findIndex(spanArray.value,span=>_.isEqual(span?.nodes,nodes.value)) )
       }
-      else{
+      else{ // virtual spans
         const spanId =spanArray.value.length
         const span = {
           id: spanId,
+          plugins: _.cloneDeep(pluginValues),
           type: labelSelected.value,
           label: freeLabel.value,
           deletedItems: deletedNum.value,
@@ -83,9 +106,11 @@ export default defineNuxtComponent({
       if(group) isGroup.value=group
       else isGroup.value=false
       if(role) roleSelected = role
+      pluginSelected.value=''
+      affectPluginValues(spanArray.value[spanId]?.plugins)
       freeLabel.value =  spanArray.value[spanId]?.label
       deletedNum.value =  spanArray.value[spanId]?.deletedItems
-      labelSelected.value = spanArray.value[spanId]?.type
+      labelSelected.value = spanArray.value[spanId]?.type ?? []
       nodes.value = spanArray.value[spanId]?.nodes ?? []
       nodesCount.value = nodes.value.length
       if(!group && !virtual){
@@ -105,6 +130,7 @@ export default defineNuxtComponent({
       deleteLayout.value = false
       spanMenuSelected.value = undefined
       freeLabel.value = undefined
+      initPluginValues(getPluginList.value)
       deletedNum.value = undefined
       nodes.value = []
     }
@@ -138,7 +164,11 @@ export default defineNuxtComponent({
       isForResearch,
       deletedNum,
       nodesCount,
-      suppWarning
+      suppWarning,
+      tidiedPluginList,
+      selectComponent,
+      pluginValues,
+      pluginSelected
     }
   },
 })

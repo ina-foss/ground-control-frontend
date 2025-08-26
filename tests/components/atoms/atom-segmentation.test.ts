@@ -157,6 +157,10 @@ describe('SegmentComponent', () => {
 
   it('appelle remove avec le bon tableau et le bon prédicat', async () => {
     const mockChipList = ref(['labelA', 'labelB', 'labelC'])
+    const pluginValues = {'plugin-1':[
+      {id: 1, ext_id: 1, label: 'label 1', plugin_id: 1},
+      {id: 2, ext_id: 2, label: 'label 2', plugin_id: 1}
+    ]}
     const mockTopicList = [
       { labels: ['labelA', 'labelB', 'labelC'] },
       { labels: ['labelD', 'labelE'] }
@@ -173,15 +177,15 @@ describe('SegmentComponent', () => {
           }
         },
         segment: {},
-        index: 0,
+        index: 1,
         isSelected: false,
-        topics: ['a', 'a'],
+        topics: [1, 1],
         topicList: {
-        }
+          1: { labels: [] }
+        },
       },
       global: {
         provide: {
-          topics: ['t1', 't2'],
           spanService: {
             handleSelection: vi.fn(),
           },
@@ -191,9 +195,12 @@ describe('SegmentComponent', () => {
       }
     })
 
-    wrapper.vm.chipList = mockChipList
-    wrapper.vm.topicIndex  = computed(() => 0)
+    wrapper.vm.pluginValues['plugin-1'] = pluginValues['plugin-1']
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.chipList.length).toBe(2)
     wrapper.vm.handleRemove(1)
-    wrapper.vm.handleSegmentation()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.vm.chipList.length).toBe(1)
   })
 })

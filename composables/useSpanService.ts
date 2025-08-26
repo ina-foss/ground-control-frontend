@@ -1,3 +1,4 @@
+
 import _ from 'lodash'
 import {useOptions} from '~/stores/annotation-options'
 
@@ -29,6 +30,7 @@ const isForResearch= ref(true)
     pin_position : undefined,
     spanid : undefined,
   })
+  const contextMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:event=>showDragPin()},{id:2, label: 'Supprimer', command: (event)=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
   let spanTypeOptions =ref( [
     {value: 'function',label:'Fonction'},
     {value: 'verb', label:'Verbe'},
@@ -44,10 +46,25 @@ const isForResearch= ref(true)
     {value: 'insert', label: 'Insertions'},
     {value: 'inv', label: 'Contre sens'},
   ])
-   const setTribu = (tribu:string|'') => {
-     if(tribu && tribu.toLowerCase()==='2IA'.toLowerCase()){
-       isForResearch.value=false
-     }
+
+  type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
+  let pluginValues = reactive<pluginValues>({})
+
+  function initPluginValues (iterator){
+    iterator.forEach(plugin=>{
+      pluginValues[`plugin-${plugin.id}`] = [] // Creation des variables utilisee en tant qu'input
+    })
+  }
+
+  function affectPluginValues(values : pluginValues){
+   if(values){
+      Object.assign(pluginValues,values)
+    }
+  }
+
+
+   const setDisableGroup = (disable_group:boolean|false) => {
+       isForResearch.value=!disable_group
    }
 
    watch(isForResearch, (newValue) => {
@@ -169,6 +186,7 @@ const isForResearch= ref(true)
 
     removeSpanFromDOM(spanId)
     const span = spanArray.value[spanId]
+    span.plugins = _.cloneDeep(pluginValues)
     span.label = freeLabel.value ? markRaw(freeLabel.value) : span.label
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
     span.type = span.type ?? markRaw(labelSelected.value)
@@ -375,6 +393,7 @@ const isForResearch= ref(true)
         }
         state.selection.removeAllRanges()
 
+
         const selectedNodes: Node[] = []
         const treeWalker = document.createTreeWalker(
           state.range.commonAncestorContainer,
@@ -410,6 +429,7 @@ const isForResearch= ref(true)
           freeLabel.value = spanArg.label
           deletedNum.value=spanArg.deletedItems
           labelSelected.value = spanArg.type
+          affectPluginValues(spanArg.plugins)
           applySpan(id)
         }
         return {spanId: id}
@@ -476,7 +496,8 @@ const isForResearch= ref(true)
   }
 
   return{
-  saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,setTribu
+  saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
+ affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions
   }
 }
 

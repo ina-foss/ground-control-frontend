@@ -6,7 +6,7 @@ import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
 import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
 import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
-import _ , {sortBy} from 'lodash'
+import _ from 'lodash'
 import AtomTopicList from "~/components/atoms/topicList/AtomTopicList.vue";
 import {AnnotationStatus} from '~/api/generate/models/AnnotationStatus';
 import AtomHelp from "../atoms/AtomHelp.vue";
@@ -27,7 +27,7 @@ export default defineComponent({
   },
   setup(props, { emit, expose }) {
 
-    const { loadSpanv2, handleSelectionV2} = useSpanService()
+    const { loadSpanv2, handleSelectionV2, spanMenu, contextMenuOptions, spanForm} = useSpanService()
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData, copyTopicData } = useTopicList(true)
     const { computeColor } = $application
@@ -38,7 +38,6 @@ export default defineComponent({
     const {result,transcriptions} = toRefs(props)
     const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = inject('isAnnotationEditable')
-    const spanForm = ref()
 
 
     const handleSegmentation = (event) => {
@@ -234,7 +233,9 @@ export default defineComponent({
       tcOffset,
       transcriptions,
       spanForm,
-      handleSelectionV2
+      handleSelectionV2,
+      contextMenuOptions,
+      spanMenu,
     }
 
 
