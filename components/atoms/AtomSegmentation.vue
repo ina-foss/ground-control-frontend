@@ -34,7 +34,7 @@
                   </div>
                   <Button v-if="isAnnotationEditable" class="min-w-[33px] "  icon="pi pi-pencil" severity="contrast" text @click="editTitle = true" />
                 </div>
-                <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment"
+                <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" v-model:pluginValues="pluginValues"
                   :chipList="chipList" />
                 </div>
             </div>
@@ -45,7 +45,7 @@
               </div>
             </div>
             <Button v-if="topicIndex != 0 && isAnnotationEditable" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text @click="dialogVisible = true" :disabled="!isAnnotationEditable" />
-            <AtomPluginAutocompleteList  :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
+            <AtomPluginAutocompleteList v-model:pluginValues="pluginValues" :phrase="phrase" :title="title" :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
             <Button  v-if="topicIndex != 0 && isAnnotationEditable" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
             <Button  v-else-if="isAnnotationEditable" severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
           </div>
@@ -131,6 +131,7 @@ import AtomComment from './AtomComment.vue';
 import { remove } from 'lodash'
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
 import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";
+import type {PluginAutocompleteValueDTO} from "~/api/generate"
 
 const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset, transcriptions} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset','transcriptions'])
 const emit = defineEmits(['segmentation', 'on-segment-click','activateTopic', 'deactivateTopic','dragging-start','dragging-end','create-span'])
@@ -163,14 +164,59 @@ const annotation_type = inject('annotation_type')
 const autoSummaries = inject('transcriptions')
 const isAnnotationEditable = inject('isAnnotationEditable') && annotation_type == 'segmentation'
 
-const chipList = ref(topicList[topicIndex.value]?.labels || []);
+
+type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
+
+/**
+ * Object contenant les variables utilisees pour recueuillir les inputs des plugins
+ * les proprietes de `pluginValues` sont de la forme "plugin-[pluginId]" et contiennent un tableau de valeurs
+ *
+ * @example
+ * {
+ *  'plugin-4' : [
+ *   {
+ *    extId: "4264545",
+ *    id: "HIS",
+ *     label: "Histoire",
+ *    plugin_id: 4
+ *   }
+ *  ]
+ * }
+**/
+const pluginValues = reactive<pluginValues>({})
+
+onMounted(()=>{
+  watch(()=>topicList[topicIndex.value],
+    (newTopicList) => {
+      // Assignation des valeurs presentes dans la topicList aux inputs
+      newTopicList?.labels.forEach(label=>{
+        if(!pluginValues[`plugin-${label.plugin_id}`]) pluginValues[`plugin-${label.plugin_id}`] = [] // Creation des variables utilisee en tant qu'input
+        pluginValues[`plugin-${label.plugin_id}`].push(label)
+      })
+    },{once:true})
+})
+
+
 const topicHeader = ref<HTMLDivElement>()
 const commentWrapper = ref<HTMLDivElement>()
 const firstSegmentPadding = ref<HTMLDivElement>()
 
-    function handleRemove(index){
-      remove(topicList[topicIndex.value]?.labels ,(el)=>chipList.value[index] == el)
-    }
+const chipList = computed(()=>{
+  let resultList = []
+  for (const pluginId in pluginValues) {
+    resultList.push(...pluginValues[pluginId])
+    topicList[topicIndex.value].labels = resultList
+  }
+
+  if(topicList[topicIndex.value]){
+  }
+  return resultList
+})
+
+function handleRemove(index){
+  let pluginId = chipList.value[index].plugin_id
+  remove(pluginValues[`plugin-${pluginId}`],value=>value == chipList.value[index])
+}
 
 onMounted(()=>{
   watch(()=>topics,()=>{
@@ -401,7 +447,6 @@ const handleSegmentation = () => {
 
 defineExpose({  id: topicIndex, })
 
-provide('chipList', chipList);
 </script>
 
 <style scoped lang="postcss">

@@ -23,7 +23,7 @@
       </div>
     </div>
     <AtomSpanForm ref="spanForm"/>
-    <ContextMenu ref="spanMenu" :model="formOptions"  />
+    <ContextMenu ref="spanMenu" :model="contextMenuOptions"  />
     </ScrollPanel>
 </div>
   </div>

@@ -4,12 +4,12 @@ import MoleculeSpan from "~/components/molecules/MoleculeSpan.vue";
 import MoleculeSegmentation from "~/components/molecules/MoleculeSegmentation.vue";
 import MoleculeTranscription from "~/components/molecules/MoleculeTranscription.vue";
 import _,{sortBy} from 'lodash';
-import {AnnotationStatus, PluginService} from '~/api/generate';
+import {AnnotationStatus} from '~/api/generate';
 import { useService } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
 import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
-import type AtomSpan from "~/components/atoms/AtomSpan.vue";
+import { usePluginStore } from "~/stores/plugins";
 
 export default defineComponent({
   name: "OrganismAnnotation",
@@ -53,9 +53,6 @@ export default defineComponent({
 
     const tabsRef = ref()
 
-    type AtomSpanType = InstanceType<typeof AtomSpan>
-    const spanRefArray = ref<[]>([])
-
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
         let index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
         index != -1 ? scrollToSegment({bestIndex: index}) : div.scrollIntoView({'behavior': 'smooth', 'block' : 'center'})
@@ -76,7 +73,6 @@ export default defineComponent({
     const { userEmail } = storeToRefs(authStore)
     const { options } = storeToRefs(optionStore)
     const annotationStatus = AnnotationStatus.DONE
-    const { topicList } = useTopicList()
     const config = ref(null)
     const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
     let bestIndex = 0
@@ -93,21 +89,10 @@ export default defineComponent({
     const isAnnotationEditable = computed(()=> annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
     const annotation_type = data.value.step.annotation_type
 
-    PluginService.readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet(data.value.step_id,"AUTOCOMPLETE","BLOC").then((response)=>{
-    config.value = response;
-      const transformedData = Promise.all(
-        response.map(async (item) => {
-          const result = await PluginService.searchPluginsPluginsPluginIdSearchGet(item.id, ' ')
-          return {
-            id: item.id,
-            data: result,
-          };
-        })
-      );
-      configItemPlugin.value = transformedData;
-    } )
+    const pluginStore = usePluginStore()
 
-
+    pluginStore.updatePluginList(data.value.step_id,annotation_type)
+    .then(()=>pluginStore.initialFetch())
 
     const userAnnotations = computed(() => { // return array of users annotations
       let response = []
@@ -337,7 +322,7 @@ export default defineComponent({
           videoSrc.value = annotationsIn.value[0]?.result.asset.url
           const tcOffset = data.value.media?.player_parameters?.tc_offset ?? 0;
           setTcOffset(tcOffset);
-          spanService.setTribu(data.value.media?.player_parameters?.tribu);
+          spanService.setDisableGroup(data.value.media?.player_parameters?.disable_group);
         }
     })
 
