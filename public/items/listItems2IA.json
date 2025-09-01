@@ -1,0 +1,26 @@
+[
+  {
+    "id":"1",
+    "extId":"en",
+    "label": "Entités nommées",
+    "value": "en"
+  },
+  {
+    "id":"2",
+    "extId":"suppr",
+    "label": "Suppressions",
+    "value": "suppr"
+  },
+  {
+    "id":"3",
+    "extId":"insert",
+    "label": "Insertions",
+    "value": "insert"
+  },
+  {
+    "id":"4",
+    "extId":"inv",
+    "label": "Contre sens",
+    "value": "inv"
+  }
+]
