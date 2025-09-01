@@ -1,120 +1,89 @@
-# Nuxt 3 Minimal Starter
+# Ground Control Frontend
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Ground Control frontend application designed for ground truth data management and secure client interaction with the Ground Control API backend.
 
-> **IMPORTANT**  
-> Make sure to have the last version of BOTH repositories locally installed and up to date before running `docker compose up`.
-> To do that, go to your local develop branch using `git checkout develop` and then `git pull` on both frontend and backend directories.
-> The 2 application needs to interact with each other so you need to work.
+## Description
 
-## Deployment
+Ground Control Frontend provides an intuitive, responsive web interface for managing ground truth data in machine learning workflows.
 
-All the variables are initialize from the [config.json](./public/config.json) file.
-List of variables that can be override in production:
-| VARIABLE             | EXEMPLE                             | PURPOSE                                                                          |
-|----------------------|-------------------------------------|----------------------------------------------------------------------------------|
-| authorityUrl         | "http://localhost:9080/realms/ground_control"       | Keycloak realm url to setup authentication                               |
-| version                | 1.0.0                    | Actual version of Ground Control  |
-| client_id            | "web_app"                           | Identifier for Keycloak to know it's the frontend that reache it|
-| apiBasePath        | "localhost:8000"  | API address for the browser  |
+## Key Technologies & Techniques
 
+- **Nuxt 3** - Full-stack Vue framework with server-side rendering and static generation
+- **Vue 3** - Progressive JavaScript framework with Composition API
+- **TypeScript** - Type-safe development with enhanced IDE support
+- **Pinia** - Modern state management for Vue with TypeScript support
+- **PrimeVue** - Comprehensive UI component library with theming support
+- **OIDC Client** - Standards-based authentication with Keycloak integration
+- **Tailwind CSS** - Utility-first CSS framework for rapid styling
+- **Vitest** - Fast unit testing framework with coverage reporting
+- **ESLint** - Code quality and consistency enforcement
 
-## Setup
+## Notable Libraries & Dependencies
 
-Make sure to install the dependencies:
+- **@ina/amalia** - Media player integration for video/audio content
+- **@ina/kit-ui** - Custom UI components and design system
+- @hey-api/openapi-ts - OpenAPI to TypeScript codegen for API services
+- **oidc-client-ts** - OpenID Connect client library for authentication
+- **hls.js** - HTTP Live Streaming support for media playback
+- **markdown-it** - Markdown parsing and rendering
+- **dompurify** - XSS protection for HTML sanitization
+- **lodash** - Utility functions for JavaScript operations
+- **socket.io** - Real-time bidirectional communication
 
-```bash
-# npm
-npm install
+## Project Structure
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+```
+├── api/                        # API client generation and types
+├── assets/                     # Uncompiled assets (CSS, images)
+│   └── css/                    # Stylesheets and fonts
+├── components/                 # Vue components
+├── composables/               # Vue composition functions
+├── directives/                # Custom Vue directives
+├── layouts/                   # Application layouts
+├── middleware/                # Route middleware
+├── pages/                     # File-based routing pages
+├── plugins/                   # Nuxt plugins
+├── public/                    # Static files served directly
+├── server/                    # Server-side code (API routes)
+├── stores/                    # Pinia state management stores
+├── tests/                     # Test suite (unit and integration)
+├── types/                     # TypeScript type definitions
+├── utils/                     # Utility functions and helpers
+├── nuxt.config.ts             # Nuxt configuration
+├── tailwind.config.js         # Tailwind CSS configuration
+├── vitest.config.ts           # Vitest testing configuration
+└── config.json               # Application configuration
 ```
 
-## Development Server
+## Key Directories
 
-Start the development server on `http://localhost:3000`:
+- **components/** - Reusable Vue components organized by feature/domain
+- **pages/** - File-based routing with automatic route generation
+- **stores/** - Centralized state management with Pinia stores
+- **composables/** - Shared composition functions for business logic
+- **middleware/** - Authentication and route protection logic
+- **api/** - Generated API client from OpenAPI specification
 
-```bash
-# npm
-npm run dev
+## Configuration
 
-# pnpm
-pnpm run dev
+The application uses environment-based configuration through the `config.json` file and runtime configuration. Key configuration options include:
 
-# yarn
-yarn dev
+### Available Configuration Options
 
-# bun
-bun run dev
-```
+- **apiBasePath** - Backend API base URL (default: `http://localhost:8000`)
+- **authorityUrl** - OIDC provider URL (default: `http://localhost:9080/realms/ground_control`)
+- **clientId** - OIDC client identifier (default: `web_app`)
+- **version** - Application version for cache busting and deployment tracking
 
-## Running unit tests
+## Features
 
-`npm run test` to execute the unit tests via vitest (`vitest`: the default command).
-`npm run coverage` to run and get a coverage report of unit tests (`vitest run --coverage`: the default command) .
+- **🔐 Secure Authentication** - OIDC/Keycloak integration with automatic token refresh
+- **🎨 Modern UI** - PrimeVue components with custom theming and dark mode support
+- **🧪 Testing** - Comprehensive test suite with Vitest and Vue Testing Library
+- **📹 Media Support** - Advanced video/audio playback with HLS streaming
 
-These commands are specified in a script in `package.json`
-To make your own vitest unit tests configuration , you may use `vitest.config.ts` file to set up various options like environment, outputFile ...
+## Quick Start
 
-## Running eslint
+For detailed development setup instructions, see the [Developer Guide](.docs/developer-guide.md).
 
-`npm run lint` to execute the lint (`eslint .`: the default command).
-`npm run lint:fix` to run and fix lint warnings and errors (`eslint . --fix`: the default command) .
-
-These commands are specified in a script in `package.json`
-To make your own eslint configuration , you may use `eslint.config.mjs` file to set up desired config.
-
-## Updating OpenAPI services & models
-
-```bash
-npm run update-api
-```
-This project uses a fastAPI backend which expose `openapi.json` file in its uvicorn server.
-
-The [@hey-api/openapi-ts](https://heyapi.vercel.app/openapi-ts/get-started.html) dependency use this exposed file to create all services and models, and store them in the [/api/generate/](./api/generate/) directory.
-The content of the directory is update each time the projet docker image of the project is built but if you want to run it mannualy, use the above command.
-
-
-
-
-
-## About authentication
-
-<div align="center">
-
-```mermaid
----
-title: Authentication Flow
----
-flowchart TD;
-  Z["import config"] --> A[Middleware];
-  A --> B{Is sign In ?};
-  B-->|No| C[Redirect Keycloak] ;
-  B--->|Yes| D[Store token in AuthStore];
-  D --> E["setup OpenAPI Header"]
-  C --> Z;
-  E --> F["Check if user is in DB"];
-  F --> G{Is alreday registered ?};
-  G --> |Yes| H[🥳 Access Ground Control 🥳];
-  G --> |No| I[Create new user];
-  I --> H;
-```
-
-</div>
-The authentication flow of the application is handled by Keycloak. All the variable needed for configuration are in the [config.json file](./assets/config.json). It contains the address of the Keycloak container and the one from the API. The file is loaded at the application creation in [this plugin](../plugins/backend-openapi-config.ts)
-In development mode, you can see all the tokens and user information in Pinia tab of the Nuxt DevTool. These infos are also store in a WebStorageSession which means the user is still connecting after closing the application tabs on its browser.
-
-The global middleware of the application redirect any incoming user who are not logged. After login in the Keycloak page, user gets redirected to `/auth` page where the actual sign in function is called. Finally, he comes back to the root of the application.
-
-The access token, used in every API call to the backend application, may eventually expire during long session. The page `/silent-refresh` allow user to refresh its access token using the refresh token. This route is called automatically upon access token expiration.
-
-## Production
-
-Pour compiler le projet, utilisez la commande `npm run build`. Celle-ci génère un répertoire dist contenant les fichiers à déployer avec Nginx
+``

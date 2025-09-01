@@ -1,8 +1,6 @@
 /** @type {import('tailwindcss').Config} */
-import { extendConfig } from './node_modules/@ina/kit-ui/src/tailwindExtend.ts'
+import {extendConfig} from './node_modules/@ina/kit-ui/src/tailwindExtend.ts'
 import typography from "@tailwindcss/typography";
-
-
 
 export default {
   content: {
@@ -14,23 +12,23 @@ export default {
     ],
   },
   safelist: [
-  'bg-extra1',
-  'bg-extra2',
-  'bg-extra3',
-  'bg-extra4',
-  'bg-extra5',
-  'bg-extra6',
-  'bg-extra7',
-  'bg-extra8',
-  'bg-extra9',
-  'gap-6',
+    'bg-extra1',
+    'bg-extra2',
+    'bg-extra3',
+    'bg-extra4',
+    'bg-extra5',
+    'bg-extra6',
+    'bg-extra7',
+    'bg-extra8',
+    'bg-extra9',
+    'gap-6',
   ],
   theme: {
     extend: {
       fontSize: {
         'xs': '12px',
-        sm: ['14px','17px'],
-        base: ['1rem','17px'],
+        sm: ['14px', '17px'],
+        base: ['1rem', '17px'],
         xl: '16px',
         '2xl': '18px',
         '3xl': '20px',
@@ -40,10 +38,10 @@ export default {
       },
       fontFamily: {
         sans: ["Lato"],
-      },...extendConfig
+      }, ...extendConfig
     },
     screens: {
-      'xs': { 'max': '769px' },
+      'xs': {'max': '769px'},
       'sm': '640px',
       'md': '768px',
       'lg': '1024px',
