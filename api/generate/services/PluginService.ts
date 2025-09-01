@@ -2,8 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { DisplayZone } from '../models/DisplayZone';
 import type { PluginAutocompleteValueDTO } from '../models/PluginAutocompleteValueDTO';
-import type { PluginCreate } from '../models/PluginCreate';
+import type { PluginCreate_Input } from '../models/PluginCreate_Input';
+import type { PluginCreate_Output } from '../models/PluginCreate_Output';
 import type { PluginWithIdDto } from '../models/PluginWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -78,6 +80,35 @@ export class PluginService {
         });
     }
     /**
+     * Read All Plugins
+     * Retrieve plugins for a given step and display zone,
+     * only those with display_config set, ordered by display_config['order'].
+     * @param stepId
+     * @param zone
+     * @returns PluginWithIdDto Successful Response
+     * @throws ApiError
+     */
+    public static readAllPluginsPluginsStepStepIdDisplayGet(
+        stepId: number,
+        zone: Array<DisplayZone>,
+    ): CancelablePromise<Array<PluginWithIdDto>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/plugins/step/{step_id}/display/',
+            path: {
+                'step_id': stepId,
+            },
+            query: {
+                'zone': zone,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
      * Create Plugin
      * Create a new plugin.
      *
@@ -87,12 +118,12 @@ export class PluginService {
      * Returns:
      * PluginCreate: The newly created plugin's details.
      * @param requestBody
-     * @returns PluginCreate Successful Response
+     * @returns PluginCreate_Output Successful Response
      * @throws ApiError
      */
     public static createPluginPluginPost(
-        requestBody: PluginCreate,
-    ): CancelablePromise<PluginCreate> {
+        requestBody: PluginCreate_Input,
+    ): CancelablePromise<PluginCreate_Output> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/plugin',

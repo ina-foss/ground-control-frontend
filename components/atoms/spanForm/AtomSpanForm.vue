@@ -27,13 +27,12 @@
     </context-wrapper>
 
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-2">
-        <label > Type de {{groupDisplay ? 'groupe':'span'}}  </label>
-        <Select v-if="isForResearch" v-model="labelSelected" :options="groupDisplay ? spanGroupTypeOptions : spanTypeOptions" filter option-label="label"   />
-        <div class="grid gap-1 " style="grid-template-columns: repeat(auto-fit,minmax(100px,1fr))" >
-          <Button v-for="option in groupDisplay ? spanGroupTypeOptions : spanTypeOptions "  :key="option.label" class="!text-xs " size="small" :outlined="labelSelected?.label !== option?.label" :label="option.label"  @click="()=>labelSelected= option"/>
-        </div>
-        <div v-if="!isForResearch && labelSelected">
-          <div v-if="labelSelected.value==='suppr'">
+        <span-modal-left-wrapper v-for="(plugin,index) in tidiedPluginList.span_modal_left" >
+          <b>{{ plugin.name }}</b>
+          <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" v-model:pluginValue="pluginValues[`plugin-${plugin.id}`]" />
+        </span-modal-left-wrapper>
+        <div v-if="!isForResearch">
+          <div v-if="pluginSelected==='suppr'">
             <div class="flex flex-col gap-2"  v-if="nodesCount === 2">
               <label > Nombre de mots supprimés   </label>
               <InputNumber v-model="deletedNum" />
@@ -55,7 +54,7 @@
 
         <div class="flex flex-row justify-between">
           <Button text severity="secondary" icon="pi pi-times" label="Annuler" @click=" close()" />
-          <Button   :disabled="!isForResearch && labelSelected?.value === 'suppr' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === '')"
+          <Button   :disabled="!isForResearch && pluginSelected === 'suppr' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === '')"
                     label="Confirmer" icon="pi pi-check" @click=" handleConfirmationButton() " />
         </div>
 

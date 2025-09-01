@@ -6,5 +6,7 @@ export type PluginAutocompleteValueDTO = {
     id: (string | null);
     ext_id: (string | null);
     label: (string | null);
+    image?: (string | null);
+    description?: (string | null);
 };
 

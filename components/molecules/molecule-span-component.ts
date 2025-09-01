@@ -30,10 +30,9 @@ export default defineComponent({
     const { options } = storeToRefs(useOptions())
 
 
-    const {showDragPin, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan} = useSpanService()
+    const {showDragPin, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions} = useSpanService()
 
 
-    const formOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:event=>showDragPin()},{id:2, label: 'Supprimer', command: (event)=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
     const blockArray = ref<HTMLDivElement|null>(null)
     const listSegment = computed(() => blockArray.value?.children)
     const {locals} = inject('span')
@@ -112,7 +111,7 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
     return{
       aggregatedLocals,
       spanForm,
-      formOptions,
+      contextMenuOptions,
       spanArray,
       handleSelectionV2,
       blockArray,

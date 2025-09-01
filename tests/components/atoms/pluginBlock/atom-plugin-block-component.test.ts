@@ -1,9 +1,11 @@
 import { mount ,shallowMount,flushPromises} from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
 import AtomPluginBlock from '@/components/atoms/pluginBlock/AtomPluginBlock.vue'
 import AtomPluginAutocomplete from '@/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
 import AtomPluginLabel from '@/components/atoms/pluginLabel/AtomPluginLabel.vue'
 import { nextTick } from 'vue'
+import { usePluginStore } from '~/stores/plugins'
 
 // Mocks
 vi.mock('~/composables/useTopicList', () => ({
@@ -15,16 +17,50 @@ vi.mock('~/composables/useTopicList', () => ({
   })
 }))
 
-const pluginItemsMock = Promise.resolve([
+vi.mock('~/stores/plugins',async ()=>{
+  return {
+  usePluginStore: () => ({
+        getPluginList:  ref(configMock),
+        getAllPluginOptionList:  ref(pluginItemsMock),
+        selectComponent: (pluginConfig) => {
+          if (pluginItemsMock.length === 0) return null;
+
+          switch (pluginConfig.type) {
+            case 'autocomplete': {
+              const itemlist = pluginItemsMock.find((item) => item.id === pluginConfig.id)?.data
+              return {
+                component: AtomPluginAutocomplete,
+                props: { pluginItemsConfig: itemlist, plugin: pluginConfig }
+              }
+            }
+            case 'label':
+              return {
+                component: AtomPluginLabel,
+                props: {
+                  isTopicFirstSegment: true,
+                  pluginItemsConfig: []
+                }
+              }
+            default:
+              return null;
+          }
+        }
+      })
+  }
+})
+
+const  pluginItemsMock = [
   { id: 'autocomplete', data: [{ id: 1, ext_id: 'a', label: 'test' }] },
   { id: 'label', data: [] }
-])
+]
 
-const configMock = [
+ const configMock = [
   { id: 'autocomplete', type: 'autocomplete', name: 'Autocomplete Plugin' },
   { id: 'label', type: 'label', name: 'Label Plugin' },
   { id: 'other', type: 'other', name: 'other Plugin' }
 ]
+
+
 
 describe('AtomPluginBlock.vue', () => {
   let globalMountOptions: any
@@ -45,7 +81,12 @@ describe('AtomPluginBlock.vue', () => {
       props: {
         topicIndex: 0,
         isTopicFirstSegment: true,
-        source: true
+        source: true,
+        pluginValues: {
+          'plugin-autocomplete': [],
+          'plugin-label': [],
+          'plugin-other' : [],
+        }
       }
     }
   })
@@ -65,13 +106,10 @@ describe('AtomPluginBlock.vue', () => {
 
 
   it('renders the correct number of plugin components', async () => {
-    const wrapper = mount(AtomPluginBlock, globalMountOptions = {
+
+
+    const wrapper = await mountSuspended(AtomPluginBlock, globalMountOptions = {
       global: {
-        provide: {
-          chipList: ref([]),
-          'plugin-config': configMock,
-          'plugin-items-config': {value:  pluginItemsMock}
-        },
         stubs: {
           AtomPluginAutocomplete: true,
           AtomPluginLabel: true
@@ -80,11 +118,16 @@ describe('AtomPluginBlock.vue', () => {
       props: {
         topicIndex: 0,
         isTopicFirstSegment: true,
-        source: true
+        source: true,
+        pluginValues: {
+          'plugin-autocomplete': [],
+          'plugin-label': [],
+          'plugin-other' : [],
+        }
       }
     })
 
-    await nextTick()
+    await wrapper.vm.$nextTick()
     const autocomplete = wrapper.findComponent(AtomPluginAutocomplete)
     const label = wrapper.findComponent(AtomPluginLabel)
     const other = wrapper.findComponent('')

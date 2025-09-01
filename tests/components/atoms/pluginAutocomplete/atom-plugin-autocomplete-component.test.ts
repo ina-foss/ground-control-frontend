@@ -30,10 +30,10 @@ describe('AtomPluginAutocomplete.vue', () => {
   beforeEach(() => {
     pluginMock = ref({ id: 1, name: 'Plugin test' })
     chipListMock = ref([])
-    pluginItemsConfigMock = ref(Promise.resolve([
+    pluginItemsConfigMock = ref([
       { id: 1, ext_id: 'ext1', label: 'Option A' },
       { id: 2, ext_id: 'ext2', label: 'Option B' }
-    ]))
+    ])
   })
 
   function createWrapper(propsOverride = {}) {
@@ -135,14 +135,13 @@ describe('AtomPluginAutocomplete.vue', () => {
   it('met à jour chipList si aucun élément est retiré', async () => {
     const pluginMock = ref({ id: 1, label: 'Plugin 1' })
     const pluginItemsConfigMock = ref([])
-    const chipList = ref([{ id: 1, label: 'Option A', plugin_id: 1 }])
     const topicList = ref([{ labels: [{ id: 1, label: 'Option A' }] }])
+    const pluginValue =[ {id:1,extId: 34124, label: 'Option A' }]
 
     const wrapper = mount(AtomPluginAutocomplete, {
       global: {
         plugins: [PrimeVue],
         provide: {
-          chipList,
           isAnnotationEditable: true
         },
         mocks: {
@@ -155,15 +154,19 @@ describe('AtomPluginAutocomplete.vue', () => {
         plugin: pluginMock.value,
         pluginItemsConfig: pluginItemsConfigMock.value,
         index:1,
-        source: false
+        source: false,
+        pluginValue: pluginValue
       }
     })
 
     await flushPromises()
-    wrapper.vm.selectedItems = []
     await nextTick()
+    const multiselect = wrapper.findComponent(MultiSelect)
+    expect(wrapper.emitted('update:pluginValue')).toBeFalsy()
+    await multiselect.vm.$emit('update:modelValue', [])
+    expect(wrapper.emitted('update:pluginValue')).toBeTruthy()
+
     expect(topicList.value[0].labels).toHaveLength(1)
-    expect(chipList.value).toEqual([])
   })
 
 })

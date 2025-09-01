@@ -1,11 +1,9 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
-
 import Lara from '@primevue/themes/lara'
 import {definePreset} from '@primevue/themes'
 
 const DSINAPreset = definePreset(Lara, {
-  semantic:{
-    primary:{
+  semantic: {
+    primary: {
       50: 'rgb(var(--primary-50))',
       100: 'rgb(var(--primary-100))',
       200: 'rgb(var(--primary-200))',
@@ -18,18 +16,18 @@ const DSINAPreset = definePreset(Lara, {
       900: 'rgb(var(--primary-900))',
       950: 'rgb(var(--primary-950))',
     },
-    secondary:{
+    secondary: {
       color: "var(--secondary-color)"
     }
   },
-  components:{
+  components: {
     accordion: {
       header: {
         color: 'var(--title)',
         activeColor: 'var(--title)',
-        hoverColor:'var(--title)',
+        hoverColor: 'var(--title)',
       },
-      contentBorderWidth:' 0 0 0 0',
+      contentBorderWidth: ' 0 0 0 0',
     },
     breadcrumb: {
       padding: '14px',
@@ -39,9 +37,9 @@ const DSINAPreset = definePreset(Lara, {
         }
       }
     },
-    panel:{
+    panel: {
       colorScheme: {
-        light:{
+        light: {
           headerBackground: 'white',
           borderColor: 'white',
           headerColor: 'text-title'
@@ -49,11 +47,11 @@ const DSINAPreset = definePreset(Lara, {
       },
       toggleableHeaderPadding: '12px',
       borderRadius: '12px',
-      header:{
+      header: {
         borderWidth: '0px',
       }
     },
-    tag:{
+    tag: {
       padding: "8px",
       iconSize: '16px',
       colorScheme: {
@@ -68,7 +66,7 @@ const DSINAPreset = definePreset(Lara, {
         }
       }
     },
-    toggleswitch:{
+    toggleswitch: {
       borderRadius: '12px',
     },
     button: {
@@ -77,7 +75,7 @@ const DSINAPreset = definePreset(Lara, {
       smPaddingX: '11px',
       paddingY: '7px',
       paddingX: '11px',
-      hoverColor:'{primary.color}',
+      hoverColor: '{primary.color}',
       colorScheme: {
         light: {
           outlinedPrimaryBorderColor: '{primary.color}',
@@ -85,13 +83,13 @@ const DSINAPreset = definePreset(Lara, {
         }
       }
     },
-    datatable:{
+    datatable: {
       headerCellPadding: '12px',
       headerCellColor: 'var(--title)',
       bodyCellPadding: '12px',
       bodyCellColor: 'var(--title)',
       columnTitleFontWeight: '900',
-      rowColor:'var(--title)',
+      rowColor: 'var(--title)',
       colorScheme: {
         light: {
           rowHoverBackground: '{surface.50}',
@@ -99,7 +97,7 @@ const DSINAPreset = definePreset(Lara, {
         }
       }
     },
-    select:{
+    select: {
       paddingX: '8px',
       paddingY: '8px',
     }
@@ -107,67 +105,66 @@ const DSINAPreset = definePreset(Lara, {
 })
 
 export default defineNuxtConfig({
-    vue:{
-      compilerOptions:{
-        isCustomElement : (tag) => tag.includes('-') && !tag.startsWith('router') && !tag.startsWith('atom')
-      },
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => tag.includes('-') && !tag.startsWith('router') && !tag.startsWith('atom')
     },
-    ssr: false,
-    app: {
-        pageTransition: {name: 'page', mode: 'in-out'},
-    },
-    devtools: {
-        enabled: true,
+  },
+  ssr: false,
+  app: {
+    pageTransition: {name: 'page', mode: 'in-out'},
+  },
+  devtools: {
+    enabled: true,
 
-        timeline: {
-            enabled: true
-        }
-    },
-  css : [
+    timeline: {
+      enabled: true
+    }
+  },
+  css: [
     '~/node_modules/@ina/kit-ui/src/css/base.css',
     '~/assets/css/fonts.css',
   ],
-    plugins: [
-      '~/directives/v-safe-html.ts',
-      '~/plugins/error-handler.ts',
+  plugins: [
+    '~/directives/v-safe-html.ts',
+    '~/plugins/error-handler.ts',
   ],
-    runtimeConfig: {
-        public: {
-        }
-    },
-    modules: ['@nuxtjs/tailwindcss','@nuxtjs/color-mode','@primevue/nuxt-module', '@pinia/nuxt',"nuxt-lodash",'@nuxt/eslint'],
-    colorMode: {
-      classSuffix:'',
-    },
-    primevue: {
-      options: {
-        pt: {
-          datatable: {
-            columnTitle: {
-              style: 'font-style: bold'
-            },
+  runtimeConfig: {
+    public: {}
+  },
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint'],
+  colorMode: {
+    classSuffix: '',
+  },
+  primevue: {
+    options: {
+      pt: {
+        datatable: {
+          columnTitle: {
+            style: 'font-style: bold'
           },
         },
-          theme: {
-            preset: DSINAPreset,
-            options: {
-              darkModeSelector: ".dark",
-            },
-          }
       },
-      components: {
-          include: '*',
-          exclude: ['Chart', 'Editor', 'Form', 'FormField']
+      theme: {
+        preset: DSINAPreset,
+        options: {
+          darkModeSelector: ".dark",
+        },
       }
     },
-    postcss: {
-        plugins: {
-            tailwindcss: {},
-            autoprefixer: {},
-        }
-    },
-    eslint: {
-        stylistic: true,
-        files: './**/*.{ts,js,vue}'
+    components: {
+      include: '*',
+      exclude: ['Chart', 'Editor', 'Form', 'FormField']
     }
-  })
+  },
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    }
+  },
+  eslint: {
+    stylistic: true,
+    files: './**/*.{ts,js,vue}'
+  }
+})

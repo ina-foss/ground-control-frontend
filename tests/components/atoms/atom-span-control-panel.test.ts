@@ -61,7 +61,6 @@ describe('AtomSpanControlPanel', ()=>{
 
   it('should mount',() =>{
     expect(wrapper.text().includes('Spans')).toBeTruthy()
-
   })
 
   it('should display the list of spans', ()=>{
