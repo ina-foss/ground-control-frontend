@@ -54,7 +54,7 @@
 
         <div class="flex flex-row justify-between">
           <Button text severity="secondary" icon="pi pi-times" label="Annuler" @click=" close()" />
-          <Button   :disabled="!isForResearch && labelSelected?.value === 'suppr' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === '')"
+          <Button   :disabled="!isForResearch && pluginSelected === 'suppr' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === '')"
                     label="Confirmer" icon="pi pi-check" @click=" handleConfirmationButton() " />
         </div>
 

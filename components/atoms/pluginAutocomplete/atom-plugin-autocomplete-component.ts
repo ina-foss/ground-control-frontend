@@ -64,7 +64,9 @@ export default defineComponent({
 
     }
 
-    const { data, status, execute: executeSearch } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
+    const { data, status, execute: executeSearch } = useAsyncData(
+      `plugin-search-${plugin.value?.id}`,
+      async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
 
     const showSkeleton = computed(()=>{
         return status.value == 'pending'
@@ -77,7 +79,7 @@ export default defineComponent({
 
 
     watch(()=>filterString.value, async (newFilter) => {
-      if(newFilter.trim().length != 0) {
+      if(newFilter.trim().length != 0 && plugin.value?.id) {
         await executeSearch()
       }
     })
