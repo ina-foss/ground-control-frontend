@@ -5,6 +5,7 @@
 import type { ConfigData } from './ConfigData';
 import type { DisplayConfig } from './DisplayConfig';
 import type { DisplayZone } from './DisplayZone';
+import type { JsonValue } from './JsonValue';
 import type { TypePlugin } from './TypePlugin';
 /**
  * DTO to create a plugin object.
@@ -21,16 +22,17 @@ import type { TypePlugin } from './TypePlugin';
  * data_property (Optional[str]): Data property reference for embedded plugins.
  * children_plugins (Optional[List[PluginCreate]]): List of embedded child plugins.
  */
-export type PluginCreate_Input = {
+export type PluginCreate = {
     name: string;
     type: TypePlugin;
     data_categories: string;
     display_zone: DisplayZone;
     step_id: number;
+    available_plugins?: (JsonValue | null);
     config_data: ConfigData;
     display_config?: (DisplayConfig | null);
     enable_search?: (boolean | null);
     data_property?: (string | null);
-    children?: (Array<PluginCreate_Input> | null);
+    children?: (Array<PluginCreate> | null);
 };
 

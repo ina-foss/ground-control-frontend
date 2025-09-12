@@ -30,16 +30,23 @@
         <span-modal-left-wrapper v-for="(plugin,index) in tidiedPluginList.span_modal_left" >
           <b>{{ plugin.name }}</b>
           <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" v-model:pluginValue="pluginValues[`plugin-${plugin.id}`]" />
+            <div v-if="childPluginMap[plugin.id]?.length">
+                <div class="flex flex-col gap-2">
+                    <div v-for="(child,childIndex) in childPluginMap[plugin.id]"  :key="child.id" >
+                        <b>{{ child.name }}</b>
+                        <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" v-model:pluginValue="pluginValues[`plugin-${child.id}`]" />
+                    </div>
+                </div>
+            </div>
         </span-modal-left-wrapper>
         <div v-if="!isForResearch">
-          <div v-if="pluginSelected==='suppr'">
-            <div class="flex flex-col gap-2"  v-if="nodesCount === 2">
-              <label > Nombre de mots supprimés   </label>
-              <InputNumber v-model="deletedNum" />
+            <div v-if="pluginSelected">
+                <div class="flex flex-col gap-2"  v-if="nodesCount === 2">
+                    <label > Nombre de mots supprimés   </label>
+                    <InputNumber v-model="deletedNum" />
+                </div>
+                <label v-else class="text-red-500">{{suppWarning}}</label>
             </div>
-            <label v-else class="text-red-500">{{suppWarning}}</label>
-
-          </div>
         </div>
         <label > Label libre  </label>
         <InputText v-model="freeLabel" />
@@ -54,7 +61,7 @@
 
         <div class="flex flex-row justify-between">
           <Button text severity="secondary" icon="pi pi-times" label="Annuler" @click=" close()" />
-          <Button   :disabled="!isForResearch && pluginSelected === 'suppr' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === '')"
+          <Button   :disabled="!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === '')"
                     label="Confirmer" icon="pi pi-check" @click=" handleConfirmationButton() " />
         </div>
 

@@ -4,8 +4,7 @@
 /* eslint-disable */
 import type { DisplayZone } from '../models/DisplayZone';
 import type { PluginAutocompleteValueDTO } from '../models/PluginAutocompleteValueDTO';
-import type { PluginCreate_Input } from '../models/PluginCreate_Input';
-import type { PluginCreate_Output } from '../models/PluginCreate_Output';
+import type { PluginCreate } from '../models/PluginCreate';
 import type { PluginWithIdDto } from '../models/PluginWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -118,12 +117,12 @@ export class PluginService {
      * Returns:
      * PluginCreate: The newly created plugin's details.
      * @param requestBody
-     * @returns PluginCreate_Output Successful Response
+     * @returns PluginWithIdDto Successful Response
      * @throws ApiError
      */
     public static createPluginPluginPost(
-        requestBody: PluginCreate_Input,
-    ): CancelablePromise<PluginCreate_Output> {
+        requestBody: PluginCreate,
+    ): CancelablePromise<PluginWithIdDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/plugin',

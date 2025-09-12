@@ -1,11 +1,5 @@
 <template>
   <div class="flex flex-wrap gap-2  ">
-    <Select v-if="isForResearch" fluid
-        v-model="pluginValue"
-        :options="dropdownOptions"
-        filter
-        option-label="label"
-    />
     <div
         class="grid gap-1 w-full " style="grid-auto-rows: 50px ;grid-template-columns: repeat(auto-fit,minmax(100px,1fr))">
       <Button
@@ -18,6 +12,12 @@
           @click="()=>pluginValue=option"
       />
     </div>
+    <Select v-if="isForResearch" fluid
+            v-model="pluginValue"
+            :options="dropdownOptions"
+            filter
+            option-label="label"
+    />
   </div>
 </template>
 
