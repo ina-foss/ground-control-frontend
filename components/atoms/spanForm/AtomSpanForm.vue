@@ -27,7 +27,7 @@
     </context-wrapper>
 
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-2">
-        <span-modal-left-wrapper v-for="(plugin,index) in tidiedPluginList.span_modal_left" >
+        <main-plugins-wrapper v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" >
           <b>{{ plugin.name }}</b>
           <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" v-model:pluginValue="pluginValues[`plugin-${plugin.id}`]" />
             <div v-if="childPluginMap[plugin.id]?.length">
@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </div>
-        </span-modal-left-wrapper>
+        </main-plugins-wrapper>
         <div v-if="!isForResearch">
             <div v-if="pluginSelected">
                 <div class="flex flex-col gap-2"  v-if="nodesCount === 2">

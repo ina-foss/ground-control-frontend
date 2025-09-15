@@ -3,6 +3,7 @@ import { PluginService, DisplayZone  } from "~/api/generate"
 import AtomPluginAutocomplete from '../components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
 import AtomPluginLabel from '../components/atoms/pluginLabel/AtomPluginLabel.vue'
 import AtomPluginItemslist from "~/components/atoms/pluginItemsList/AtomPluginItemslist.vue"
+import _ from 'lodash'
 
 export const usePluginStore = defineStore('plugin',{
   state: () =>{

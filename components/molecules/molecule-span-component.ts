@@ -30,7 +30,8 @@ export default defineComponent({
     const { options } = storeToRefs(useOptions())
 
 
-    const {showDragPin, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions} = useSpanService()
+    const {showDragPin, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions, mainPluginId} = useSpanService()
+    const {pluginList } = storeToRefs(usePluginStore())
 
 
     const blockArray = ref<HTMLDivElement|null>(null)
@@ -130,6 +131,8 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
       find,
       spanMenu,
       op,
+      mainPluginId,
+      pluginList
     }
 
   }

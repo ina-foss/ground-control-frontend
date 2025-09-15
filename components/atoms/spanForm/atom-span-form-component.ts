@@ -92,7 +92,7 @@ export default defineNuxtComponent({
     function createGroup() {
       const spanId = spanArray.value.length
       let spanGroup = {
-        type : labelSelected.value,
+        plugins: _.cloneDeep(pluginValues),
         id : spanId,
         label: freeLabel.value,
         spans: [],
@@ -110,8 +110,6 @@ export default defineNuxtComponent({
         const span = {
           id: spanId,
           plugins: _.cloneDeep(pluginValues),
-          type: labelSelected.value,
-          label: freeLabel.value,
           deletedItems: deletedNum.value,
         }
         spanArray.value[spanId] = span
@@ -154,7 +152,7 @@ export default defineNuxtComponent({
     }
 
     function onClose(){
-      if(!spanArray.value[spanArray.value.length-1]?.type ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value))
+      if(!spanArray.value[spanArray.value.length-1]?.plugins ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value))
       deleteLayout.value = false
       spanMenuSelected.value = undefined
       freeLabel.value = undefined

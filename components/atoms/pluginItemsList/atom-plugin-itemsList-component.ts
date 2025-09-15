@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import type { PluginWithIdDto } from '~/api/generate'
 export default defineComponent({
   name: 'AtomPluginItemslist',
@@ -20,21 +21,30 @@ export default defineComponent({
     },
   },
   setup(props, {emit}) {
-    const {isForResearch  } = useSpanService()
+    const {isForResearch, createSpanColorPalette } = useSpanService()
 
-    const {groupDisplay,plugin,pluginItemsConfig} = toRefs(props)
+    const {groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
 
-    const allOptions = computed(()=> data.value ?? pluginItemsConfig.value)
+
+    const allOptions = computed(()=> data.value ?? pluginItemsConfig.value.map(plugin=>{
+     // OPTIMIZE:  parse la description pour avoir les roles des groupes de plugin
+      if(!Array.isArray(plugin.description) && plugin.description ){
+        plugin.description = JSON.parse(plugin.description?.replace(/'/g, '"'))
+      }
+      return plugin
+      }
+    ))
 
 
     const { data, status, execute: executeSearch } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
 
     const pluginValue = computed({
         get: () => props.pluginValue,
-        set : newValue => emit('update:pluginValue',newValue)
+        set : newValue => emit('update:pluginValue',[newValue])
     })
 
     return {
+      isEqual: _.isEqual,
       pluginValue,
       groupDisplay,
       allOptions,

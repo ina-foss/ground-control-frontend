@@ -9,9 +9,9 @@
           @dragstart="event=>event.dataTransfer.setData('span', span.id)">
           <span-number class="font-bold self-center px-2">  {{index+1}} </span-number>
           <span
-  :style="{backgroundColor : computeColorByLabel(spanTypeOptions.map(opt=>opt?.label),[span?.type?.label]).hex +'66', borderColor:computeColorByLabel(spanTypeOptions.map(opt=>opt?.label),[span?.type?.label]).hex, '--computed-width' : getMinSizeText(span) + 'px' }"
+            :style="{backgroundColor : createSpanColorPalette(mainPluginId,span.plugins?.[`plugin-${mainPluginId}`]), borderColor:createSpanColorPalette(mainPluginId,span.plugins?.[`plugin-${mainPluginId}`],1), '--computed-width' : getMinSizeText(span) + 'px' }"
             class="min-w-[80px] w-[80px] transition-all duration-300 p-1 rounded border-4 inline-block text-xs/3 h-fit truncate text-center hover-span" >
-            {{span?.type?.label}}
+            {{span?.plugins?.[`plugin-${mainPluginId}`]?.map(value=>value?.label).join(', ')}}
           </span>
           <span class="self-center font-semibold flex-1 truncate">{{span?.label ?? extractTextFromSpanNodes(span.nodes)}}</span>
           <span v-if="span?.label" class="text-subtitle truncate flex  grow max-w-[40%] "  >
@@ -26,21 +26,24 @@
       <div :class="{' grid  transition-all duration-300 overflow-hidden': true}" :style="{'grid-template-rows' : groupIsSelected ? '1fr': '0fr'}" >
         <selected-group-content v-show="selectedGroup" :style="{'min-height' : 0}"  >
           <div
-  :style="{backgroundColor : computeColorByLabel(spanGroupTypeOptions.map(opt=>opt?.label),[selectedGroup?.type?.label]).hex +'66', borderColor:computeColorByLabel(spanGroupTypeOptions.map(opt=>opt?.label),[selectedGroup?.type?.label]).hex,}"
+  :style="{backgroundColor : createSpanColorPalette(pluginList.value?.findIndex(lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0],lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0])), borderColor:createSpanColorPalette(pluginList.value?.findIndex(lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0],lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0]),1)}"
             class=" p-1 rounded border-4 w-fit text-xs/3 h-fit truncate text-center hover-span" >
-            {{selectedGroup?.type?.label}}
+            {{ lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0]?.[0]?.label }}
           </div>
           <span class="font-semibold">Roles</span>
           <role-wrapper class="grid" style="grid-template-columns: repeat(auto-fit,minmax(150px, 1fr));">
-            <div v-for="role in selectedGroup?.type?.roles" class="p-2  border-surface-200   text-center">
+            <div v-for="role in lodashOrder(selectedGroup?.plugins,value=>value.length,'desc')?.[0]?.[0].description" class="p-2  border-surface-200   text-center">
               <ScrollPanel class=" h-[150px] border border-surface-400 rounded " >
                 <role-dropzone
                   class="flex flex-col text-start gap-1 h-full w-full "
                   @drop="dropSpan($event,selectedGroup,role)" @dragover="event=>event.preventDefault()" @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
                   <role-span-title class="text-center">{{ role }}</role-span-title>
-                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :key="span.id" :style="{ backgroundColor : computeColorByLabel(spanTypeOptions.map(opt=>opt.label),[spanArray[span.spanId]?.type?.label]).hex + '66'}" class=" px-1 truncate mr-2 max-w-full w-fit rounded ">{{ spanArray[span.spanId]?.label ?? extractTextFromSpanNodes(spanArray[span.spanId]?.nodes)}}</role-span-content>
+                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :style="{ backgroundColor : createSpanColorPalette(mainPluginId,spanArray[span.spanId]?.plugins[`plugin-${mainPluginId}`])}" class=" px-1 truncate mr-2 max-w-full w-fit rounded ">
+                    {{spanArray[span.spanId]?.id}} -
+                    {{ extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) ?? spanArray[span.spanId]?.plugins[`plugin-${mainPluginId}`]?.map(value=>value.label).join(', ') }}
+                  </role-span-content>
                   <virtual-span-preview  class="w-full flex flex-col items-center justify-center cursor-pointer " @click="spanForm.open({virtual: true, role: role})" >
-                      <div class="h-6 w-6 rounded-full text-xl bg-primary-500 leading-5 text-center ">+</div>
+                    <div class="h-6 w-6 rounded-full text-xl bg-primary-500 leading-5 text-center ">+</div>
                        <div class="text-subtitle"> nouveau span virtuel</div>
                   </virtual-span-preview>
                 </role-dropzone>
@@ -62,7 +65,7 @@
             v-for=" (group,index) in groupArray" :class="{' hover:bg-primary-100 cursor-pointer p-2 rounded-md flex items-center' :true, 'border-2 bg-surface-100 border-title font-semibold' : newFocus== group.id}"
             @click="handleGroupClick(group.id)" >
             <group-number class="font-bold self-center px-2 h-fit">  {{index+1}} </group-number>
-            <group-label class="grow">{{ group?.label ?? group.type?.label }}</group-label>
+            <group-label class="grow">{{  lodashOrder(group.plugins,value => value.length,'desc')[0]?.[0]?.label ?? `Groupe ${index+1}` }}</group-label>
             <span class="  text-center rounded-full p-0 text-xl leading-10  h-10 w-10 bg-surface-100  ">{{ group.spans.length }}</span>
           </group-wrapper>
       </div>

@@ -7,16 +7,18 @@
           :key="option.label"
           class="!text-xs"
           size="small"
-          :outlined="pluginValue !== option"
+          :outlined="!isEqual(pluginValue?.[0],option)"
           :label="option.label"
           @click="()=>pluginValue=option"
       />
     </div>
-    <Select v-if="isForResearch" fluid
-            v-model="pluginValue"
-            :options="dropdownOptions"
-            filter
-            option-label="label"
+    <Select
+        v-if="isForResearch"
+        v-model="pluginValue"
+        fluid
+        :options="dropdownOptions"
+        filter
+        option-label="label"
     />
   </div>
 </template>
