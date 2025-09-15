@@ -29,6 +29,8 @@ export default defineComponent({
             ext_id: item.ext_id,
             label: item.label,
             plugin_id: plugin.value.id,
+            description: item?.description,
+            image: item?.image,
           }));
       }
       else if ((pluginItemsConfig.value) && (Array.isArray(pluginItemsConfig.value))) {
@@ -37,6 +39,8 @@ export default defineComponent({
             ext_id: item.ext_id,
             label: item.label,
             plugin_id: plugin.value.id,
+            description: item?.description,
+            image: item?.image,
           }));
       }
       else return []

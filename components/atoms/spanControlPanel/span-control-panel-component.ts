@@ -1,12 +1,15 @@
-import _ from 'lodash'
+import _, { sortBy } from 'lodash'
 
 export default defineNuxtComponent({
   name:"AtomSpanControlPanel",
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { extractTextFromSpanNodes, spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanGroupTypeOptions, spanTypeOptions,isForResearch } = useSpanService()
+    const { extractTextFromSpanNodes, spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanTypeOptions,isForResearch , createSpanColorPalette, mainPluginId, pluginValues} = useSpanService()
     const { unixToTimestamp } = useService().$application
+
+    const { pluginList } = usePluginStore()
+
 
 
     const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
@@ -16,7 +19,7 @@ export default defineNuxtComponent({
     }) )
     const spanOnlyArray = computed(()=>
       _.difference(spanArray.value,groupArray.value)
-      .filter(span=>span?.type)
+      .filter(span=>span?.tcin && span?.tcout)
       .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin)  )
     )
     const selectedGroup = computed((oldValue)=>{
@@ -53,10 +56,11 @@ export default defineNuxtComponent({
     }
 
 
+
     function getMinSizeText(span: any){
       const tempDiv =  document.createElement('div')
       tempDiv.classList.add('w-auto', 'p-1', 'rounded', 'border-4', 'inline-block', 'text-xs/3', 'h-fit', 'text-center')
-      tempDiv.innerText = span.type?.label
+      tempDiv.innerText = span.plugins[`plugin-${mainPluginId.value}`]?.[0]?.label
       document.body.appendChild(tempDiv)
       const width = tempDiv.getBoundingClientRect().width
       document.body.removeChild(tempDiv)
@@ -74,7 +78,6 @@ export default defineNuxtComponent({
     groupIsSelected,
     selectedGroup,
     computeColorByLabel,
-    spanGroupTypeOptions,
     dropSpan,
     previewSpanDrop,
     unpreviewSpanDrop,
@@ -84,7 +87,11 @@ export default defineNuxtComponent({
     getMinSizeText,
     handleGroupClick,
     unixToTimestamp,
-      isForResearch,
+    isForResearch,
+    createSpanColorPalette,
+    mainPluginId,
+    lodashOrder: _.orderBy,
+    pluginList
     }
   }
 })

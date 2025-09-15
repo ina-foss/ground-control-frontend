@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
-import type {PluginAutocompleteValueDTO} from "~/api/generate"
 
 
 export default defineNuxtComponent({
@@ -14,12 +13,17 @@ export default defineNuxtComponent({
     const suppWarning=ref("Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés")
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
-
+    let filteredPlugins=[]
     const {pluginValues, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, freeLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
     const {$application} = useService()
-
+      const childPluginMap = ref<Record<number, any[]>>({})
     const tidiedPluginList = computed(()=>{
-      return Object.groupBy(getPluginList.value,({display_zone})=>display_zone)
+      const listPlugin= getPluginList.value
+      const childIds = new Set(
+          listPlugin.flatMap(plugin => plugin.children?.map(child => child.id) ?? [])
+      );
+       filteredPlugins = listPlugin.filter(plugin => !childIds.has(plugin.id));
+      return Object.groupBy( filteredPlugins,({display_zone})=>display_zone)
     })
 
     const isGroup = ref<boolean>(false)
@@ -46,11 +50,35 @@ export default defineNuxtComponent({
     let roleSelected = null
     let pluginSelected=ref('');
     watch(pluginValues, (newVal) => {
-
-      const selected = Object.values(newVal).find(
-        (plugin: any) => plugin?.ext_id === 'suppr'
-      )
-      pluginSelected.value = selected?.ext_id || ''
+      pluginSelected.value=""
+      const extIdMap = Object.entries(newVal).reduce<Record<string, string>>((acc, [key, value]) => {
+        if (value && typeof value === "object" && !Array.isArray(value) && "ext_id" in value) {
+          acc[key.split("-")[1]] = (value as any).ext_id;
+        }
+        return acc;
+      }, {});
+      if(extIdMap) {
+          childPluginMap.value={}
+          Object.entries(extIdMap).forEach(([key, value]) => {
+              const numberKey = parseInt(key, 10);
+              const usedPlugin = getPluginList.value?.find(plugin => plugin.id == numberKey);
+              if (usedPlugin?.available_plugins) {
+                  const pName = (usedPlugin.available_plugins as Record<string, any>)[value];
+                  if (pName) {
+                      const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
+                      if (childrenPlugin) {
+                          if (!childPluginMap.value[numberKey]) {
+                              childPluginMap.value[numberKey] = [];
+                          }
+                          childPluginMap.value[numberKey].push(childrenPlugin);
+                      }
+                      else{
+                          pluginSelected.value=pName
+                      }
+                  }
+              }
+          });
+      }
     }, { deep: true })
 
     function expandContext() {
@@ -64,7 +92,7 @@ export default defineNuxtComponent({
     function createGroup() {
       const spanId = spanArray.value.length
       let spanGroup = {
-        type : labelSelected.value,
+        plugins: _.cloneDeep(pluginValues),
         id : spanId,
         label: freeLabel.value,
         spans: [],
@@ -82,8 +110,6 @@ export default defineNuxtComponent({
         const span = {
           id: spanId,
           plugins: _.cloneDeep(pluginValues),
-          type: labelSelected.value,
-          label: freeLabel.value,
           deletedItems: deletedNum.value,
         }
         spanArray.value[spanId] = span
@@ -126,7 +152,7 @@ export default defineNuxtComponent({
     }
 
     function onClose(){
-      if(!spanArray.value[spanArray.value.length-1]?.type ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value))
+      if(!spanArray.value[spanArray.value.length-1]?.plugins ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value))
       deleteLayout.value = false
       spanMenuSelected.value = undefined
       freeLabel.value = undefined
@@ -168,7 +194,8 @@ export default defineNuxtComponent({
       tidiedPluginList,
       selectComponent,
       pluginValues,
-      pluginSelected
+      pluginSelected,
+      childPluginMap
     }
   },
 })

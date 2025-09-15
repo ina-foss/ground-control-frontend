@@ -1,7 +1,7 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div :style="`${dynamicStyle(computeColor(topicIndex).hex)} `" ref="segment" :tcin="phrase.tcin" @dragstart="startDrag"
     @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
-    :class="`bg-gray-300 transition-all ${index == 0 ? '!mt-0': ''}  group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg' : ''} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    :class="`bg-gray-300 transition-all ${index == 0 ? '!mt-0': ''}  group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg ' : ' scroll-mt-16'} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
     <div v-if="isTopicFirstSegment" ref="firstSegmentPadding" :class="`flex transition-all  justify-center items-center h-[40px] sticky top-0  w-fit`">
     </div>
     <div v-if="isTopicFirstSegment" ref="titleContainer"

@@ -1,18 +1,20 @@
-
 import _ from 'lodash'
+import { PluginConfigType, TypePlugin } from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
 
 let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
 
  function createSpanService (){
 
+
 const {options} = useOptions()
 
 const { $application } = useService()
-const { hexToRgba,computeColorByLabel} = $application
+const { hexToRgba,computeColorByLabel,computeColor} = $application
 const spanMenu = ref()
 const op = ref()
 const isForResearch= ref(true)
+const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
 
 
   const spanClicked = ref(false)
@@ -22,6 +24,7 @@ const isForResearch= ref(true)
   const spanCount = computed<number>(()=>spanArray.value.length)
   const newFocus = ref<number | undefined>()
   const spanMenuSelected = ref<number | undefined>(undefined)
+  const mainPluginId = ref<undefined | number>() // Id du plugin servant à coloriser les spans
   const labelSelected = ref([])
   const freeLabel = ref()
   const deletedNum=ref<number>()
@@ -49,6 +52,19 @@ const isForResearch= ref(true)
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
   let pluginValues = reactive<pluginValues>({})
+
+  watch(
+    ()=>mainPluginId.value,
+    ()=> {
+      spanArray.value.forEach(span=>{
+        if(span){
+          affectPluginValues(span.plugins)
+          if (span.tcin) applySpan(span.id)
+        }
+      })
+    },
+    {immediate: false}
+  )
 
   function initPluginValues (iterator){
     iterator.forEach(plugin=>{
@@ -84,16 +100,13 @@ const isForResearch= ref(true)
     const span = spanArray.value[spanId]
     let tag = document.querySelector(`tag[spanid="${spanId}"]`)
     if( tag ) tag.remove()
-    span.nodes.forEach((node: HTMLDivElement)=>{
-      if(span?.type){
-        let color = hexToRgba(computeColorByLabel(spanTypeOptions.value.map(opt=>opt.label),[span.type.label]).hex,0.33)
-        node.style.boxShadow = node.style.boxShadow.replace(rgbaToShadow(color),'')
+    if(span.nodes){
+      span.nodes.forEach((node: HTMLDivElement)=>{
         node.querySelectorAll('border').forEach(border=>border.remove())
         node.querySelectorAll(`bg${spanId}`).forEach(border=>border.remove())
         node.querySelectorAll('pinWrapper').forEach(pin=>pin.remove())
-      }
-    })
-
+      })
+    }
   }
 
   const recordSpanId = (event: DragEvent, direction: string) =>{
@@ -176,6 +189,22 @@ const isForResearch= ref(true)
     targetSpans.forEach(span=>applySpan(span.id))
   }
 
+  function createSpanColorPalette(pluginId: number, pluginValue: any, opacity? : number = 0.4){
+    const index = pluginList.value.findIndex(plugin=>plugin.id == pluginId)
+    const [plugin, options]= [pluginList.value[index], pluginOptionsList.value[index]]
+    if(pluginList && plugin && pluginValue && pluginValue.length){
+      if(plugin.type == TypePlugin.LISTITEMS  || ( plugin.type == TypePlugin.AUTOCOMPLETE && plugin.config_data.type == 'get plugin' ) ) {
+        return hexToRgba(computeColorByLabel(options.data.map(option=>option.label),pluginValue.map(value=>value.label)).hex,opacity)
+      }
+      else if(plugin.type == TypePlugin.AUTOCOMPLETE && plugin.config_data.type == 'post plugin'){
+        const seed = pluginValue?.map(value=>value.label.split('').reduce((acc,value)=>acc+=value.charCodeAt(0),0)).reduce((acc,value)=>acc+=value,0)
+        return hexToRgba(computeColor(seed).hex,opacity)
+      }
+      else return "rgba(213,32,123)"
+    }
+    else return "rgba(170,170,170)"
+  }
+
   function applySpan(spanId: number){
 
     function focusSpan(spanId: number, event: Event){
@@ -183,17 +212,15 @@ const isForResearch= ref(true)
       event.stopPropagation()
     }
 
-
     removeSpanFromDOM(spanId)
     const span = spanArray.value[spanId]
     span.plugins = _.cloneDeep(pluginValues)
     span.label = freeLabel.value ? markRaw(freeLabel.value) : span.label
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
-    span.type = span.type ?? markRaw(labelSelected.value)
     freeLabel.value = null
     deletedNum.value = null
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
-      const color = hexToRgba(computeColorByLabel(spanTypeOptions.value.map(opt=>opt.label),[span.type.label]).hex,0.4)
+      const color = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`])
       const bgElement = document.createElement(`bg${spanId}`)
       bgElement.classList.add('absolute', 'w-full', 'h-full','left-0','mix-blend-multiply','pointer-events-none')
       element.style.backgroundColor='transparent'
@@ -217,7 +244,7 @@ const isForResearch= ref(true)
         if(elementIndex == 0) {
           const tag = document.createElement('tag')
           const listTags = element.querySelectorAll('tag')
-          tag.innerText = span.type.label ?? ''
+          tag.innerText = span.plugins[`plugin-${mainPluginId.value}`]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
           tag.classList.add('absolute', 'h-3' , 'px-1', 'top-[-10px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]')
           tag.style.left= '0px'
           tag.draggable = true
@@ -304,7 +331,7 @@ const isForResearch= ref(true)
   }
 
   function extractTextFromSpanNodes (nodesArray: Array<Node>){
-    if(!nodesArray) return ''
+    if(!nodesArray) return null
     return nodesArray.map(node=>document.evaluate('text()', node, null, XPathResult.STRING_TYPE).stringValue).join(' ')
   }
 
@@ -480,7 +507,7 @@ const isForResearch= ref(true)
   function loadSpanv2 (locals){
     locals.value.forEach(segment =>{
       if (((!segment.sublocalisations) && (segment.property?.[0]?.key == "entityType") ) ||  !segment.data) {
-        if(!segment.spans || segment.text) createSpan(segment)
+        if(!segment.spans && segment.text) createSpan(segment)
         else {
             spanArray.value[segment.id] = segment
           }
@@ -497,7 +524,7 @@ const isForResearch= ref(true)
 
   return{
   saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions
+ affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette
   }
 }
 
