@@ -131,20 +131,17 @@ const formatTitle=(title)=>{
 defineEmits(['refreshData']);
 const refreshStore = useRefreshStore()
 
-const {error,status,execute:deleteProject} =    await useAsyncData(
-  'deleteProject',
-  async () => {
-    try {
-      await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
-      await refresh()
-      deleteDialog.value = false
-    } catch (err) {
-      console.error("Error deleting project:", err);
-      $handleApiError(err)
-    }
-  },
-  { immediate:false }
-)
+const deleteProject = async () => {
+  try {
+    await ProjectService.deleteProjectProjectProjectIdDelete(project.id)
+    await refresh()
+    deleteDialog.value = false
+  } catch (err) {
+    console.error("Error deleting project:", err);
+    $handleApiError(err)
+  }
+}
+
 </script>
 <style>
 
