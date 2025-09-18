@@ -126,8 +126,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
     nodesToRemove.forEach(node=>node.classList.remove('dragged_inner'))
     const spanId = event.dataTransfer.getData('spanid')
     const span = spanArray.value[spanId]
-    if(span?.type.value!=='suppr' && span?.nodes.length!==2)
-    {
+    if(!span?.deletedItems){
       removeSpanFromDOM(spanId)
       if (nodesToRemove.length > 0) span.nodes = _.difference(span.nodes, nodesToRemove)
       else if (event.dataTransfer.getData('pin_position') == 'left') {
@@ -137,12 +136,12 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
       }
       span.tcin = span.nodes[0].getAttribute('tcin')
       span.tcout = span.nodes[span.nodes.length - 1].getAttribute('tcout')
-      labelSelected.value = span.type
-      freeLabel.value = span.label
       deletedNum.value = span.deletedItems
+      affectPluginValues(span.plugins)
       applySpan(spanId)
       newFocus.value = null
     }
+
   }
 
 
@@ -170,6 +169,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
     // Spans auxquels on enleve leur couleur
     const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span.id) && span.tcin )
 
+
     targetSpans.forEach(span=>{
       if(span.nodes && span.nodes.length > 0){
         span.nodes.forEach((node,index)=>{
@@ -186,7 +186,10 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
     const spanIdList : Array<any> = group.spans.map(a=>a.spanId)
     // Spans auxquels on remet leur couleur
     const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span.id) && span.tcin )
-    targetSpans.forEach(span=>applySpan(span.id))
+    targetSpans.forEach(span=>{
+      affectPluginValues(span.plugins)
+      applySpan(span.id)
+    })
   }
 
   function createSpanColorPalette(pluginId: number, pluginValue: any, opacity? : number = 0.4){
@@ -215,12 +218,10 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
     removeSpanFromDOM(spanId)
     const span = spanArray.value[spanId]
     span.plugins = _.cloneDeep(pluginValues)
-    span.label = freeLabel.value ? markRaw(freeLabel.value) : span.label
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
-    freeLabel.value = null
     deletedNum.value = null
+    const color = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`])
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
-      const color = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`])
       const bgElement = document.createElement(`bg${spanId}`)
       bgElement.classList.add('absolute', 'w-full', 'h-full','left-0','mix-blend-multiply','pointer-events-none')
       element.style.backgroundColor='transparent'
@@ -453,9 +454,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
         }
         if(selectedNodes.length == 0) console.error("the span you atempt to create is empty")
         if(spanArg){
-          freeLabel.value = spanArg.label
           deletedNum.value=spanArg.deletedItems
-          labelSelected.value = spanArg.type
           affectPluginValues(spanArg.plugins)
           applySpan(id)
         }
@@ -523,7 +522,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
   }
 
   return{
-  saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
+ recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
  affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette
   }
 }

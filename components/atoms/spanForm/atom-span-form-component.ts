@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
-
+import { toRaw } from "vue"
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
@@ -51,33 +51,37 @@ export default defineNuxtComponent({
     let pluginSelected=ref('');
     watch(pluginValues, (newVal) => {
       pluginSelected.value=""
-      const extIdMap = Object.entries(newVal).reduce<Record<string, string>>((acc, [key, value]) => {
-        if (value && typeof value === "object" && !Array.isArray(value) && "ext_id" in value) {
-          acc[key.split("-")[1]] = (value as any).ext_id;
+
+      const rawVal = toRaw(newVal);
+      const firstObj = Array.isArray(rawVal) ? rawVal[0] ?? {} : rawVal ?? {};
+      const extIdMap = Object.entries(firstObj).reduce<Record<string, string>>((acc, [key, value]) => {
+        const val = Array.isArray(value) ? value[0] : value;
+        if (val && typeof val === "object" && "ext_id" in val) {
+          acc[key.split("-")[1]] = val.ext_id;
         }
         return acc;
       }, {});
-      if(extIdMap) {
-          childPluginMap.value={}
-          Object.entries(extIdMap).forEach(([key, value]) => {
-              const numberKey = parseInt(key, 10);
-              const usedPlugin = getPluginList.value?.find(plugin => plugin.id == numberKey);
-              if (usedPlugin?.available_plugins) {
-                  const pName = (usedPlugin.available_plugins as Record<string, any>)[value];
-                  if (pName) {
-                      const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
-                      if (childrenPlugin) {
-                          if (!childPluginMap.value[numberKey]) {
-                              childPluginMap.value[numberKey] = [];
-                          }
-                          childPluginMap.value[numberKey].push(childrenPlugin);
-                      }
-                      else{
-                          pluginSelected.value=pName
-                      }
-                  }
+
+      if (extIdMap) {
+        childPluginMap.value = {}
+        Object.entries(extIdMap).forEach(([key, value]) => {
+          const numberKey = parseInt(key, 10);
+          const usedPlugin = getPluginList.value?.find(plugin => plugin.id == numberKey);
+          if (usedPlugin?.available_plugins && usedPlugin.children?.length != 0) {
+            const pName = (usedPlugin.available_plugins as Record<string, any>)[value];
+            if (pName) {
+              const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
+              if (childrenPlugin) {
+                if (!childPluginMap.value[numberKey]) {
+                  childPluginMap.value[numberKey] = [];
+                }
+                childPluginMap.value[numberKey].push(childrenPlugin);
+              } else {
+                pluginSelected.value = pName
               }
-          });
+            }
+          }
+        });
       }
     }, { deep: true })
 

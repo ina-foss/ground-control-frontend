@@ -28,7 +28,7 @@ export default defineComponent({
 
     const allOptions = computed(()=> data.value ?? pluginItemsConfig.value.map(plugin=>{
      // OPTIMIZE:  parse la description pour avoir les roles des groupes de plugin
-      if(!Array.isArray(plugin.description) && plugin.description ){
+      if( plugin.description && !Array.isArray(plugin.description) ){
         plugin.description = JSON.parse(plugin.description?.replace(/'/g, '"'))
       }
       return plugin

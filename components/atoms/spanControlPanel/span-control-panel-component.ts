@@ -5,7 +5,7 @@ export default defineNuxtComponent({
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { extractTextFromSpanNodes, spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanTypeOptions,isForResearch , createSpanColorPalette, mainPluginId, pluginValues} = useSpanService()
+    const { recolorSpan, decolorSpan, affectPluginValues ,extractTextFromSpanNodes, spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanTypeOptions,isForResearch , createSpanColorPalette, mainPluginId, pluginValues} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
     const { pluginList } = usePluginStore()
@@ -19,7 +19,7 @@ export default defineNuxtComponent({
     }) )
     const spanOnlyArray = computed(()=>
       _.difference(spanArray.value,groupArray.value)
-      .filter(span=>span?.tcin && span?.tcout)
+      .filter(span=>span?.tcin && span?.tcout && span?.plugins)
       .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin)  )
     )
     const selectedGroup = computed((oldValue)=>{
@@ -29,7 +29,8 @@ export default defineNuxtComponent({
     })
 
     function handleGroupClick (id: number) {
-      newFocus.value = id
+      if(newFocus.value == id) newFocus.value = undefined
+      else newFocus.value = id
     }
 
     function previewSpanDrop (event : DragEvent) {
@@ -48,11 +49,12 @@ export default defineNuxtComponent({
     }
 
     const dropSpan = (event : DragEvent, group, role)=>{
+      recolorSpan(group)
       const target : HTMLDivElement = event.target
       target.querySelector('preview')?.remove()
       const spanId = event.dataTransfer.getData('span')
       group.spans = [...group.spans, {spanId: parseInt(spanId), role: role}]
-      applySpan(parseInt(spanId))
+      decolorSpan(group)
     }
 
 
@@ -91,6 +93,7 @@ export default defineNuxtComponent({
     createSpanColorPalette,
     mainPluginId,
     lodashOrder: _.orderBy,
+    findKey :_.findKey,
     pluginList
     }
   }

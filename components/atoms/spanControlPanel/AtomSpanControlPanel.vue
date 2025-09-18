@@ -26,8 +26,11 @@
       <div :class="{' grid  transition-all duration-300 overflow-hidden': true}" :style="{'grid-template-rows' : groupIsSelected ? '1fr': '0fr'}" >
         <selected-group-content v-show="selectedGroup" :style="{'min-height' : 0}"  >
           <div
-  :style="{backgroundColor : createSpanColorPalette(pluginList.value?.findIndex(lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0],lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0])), borderColor:createSpanColorPalette(pluginList.value?.findIndex(lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0],lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0]),1)}"
-            class=" p-1 rounded border-4 w-fit text-xs/3 h-fit truncate text-center hover-span" >
+          :style="{
+            backgroundColor : createSpanColorPalette(findKey(selectedGroup?.plugins,plugin => plugin == lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0])?.split('-')[1] ,lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0]),
+            borderColor:createSpanColorPalette(findKey(selectedGroup?.plugins,plugin => plugin == lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0])?.split('-')[1] ,lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0],1)
+          }"
+            class=" p-1 rounded border-4 w-fit text-xs/3 h-fit truncate text-center "  >
             {{ lodashOrder(selectedGroup?.plugins,value => value.length,'desc')[0]?.[0]?.label }}
           </div>
           <span class="font-semibold">Roles</span>
