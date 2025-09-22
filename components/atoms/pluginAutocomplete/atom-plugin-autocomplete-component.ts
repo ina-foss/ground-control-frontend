@@ -30,7 +30,7 @@ export default defineComponent({
             label: item.label,
             plugin_id: plugin.value.id,
             description: item?.description,
-            image: item?.image,
+            image: item?.image|| 'https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg',
           }));
       }
       else if ((pluginItemsConfig.value) && (Array.isArray(pluginItemsConfig.value))) {
