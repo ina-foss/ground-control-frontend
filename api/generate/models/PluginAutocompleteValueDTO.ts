@@ -8,5 +8,6 @@ export type PluginAutocompleteValueDTO = {
     label: (string | null);
     image?: (string | null);
     description?: (string | null);
+    categories?: (string | null);
 };
 

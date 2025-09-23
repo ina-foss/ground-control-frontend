@@ -35,7 +35,7 @@
           </div>
           <span class="font-semibold">Roles</span>
           <role-wrapper class="grid" style="grid-template-columns: repeat(auto-fit,minmax(150px, 1fr));">
-            <div v-for="role in lodashOrder(selectedGroup?.plugins,value=>value.length,'desc')?.[0]?.[0].description" class="p-2  border-surface-200   text-center">
+            <div v-for="role in lodashOrder(selectedGroup?.plugins,value=>value.length,'desc')?.[0]?.[0].categories" class="p-2  border-surface-200   text-center">
               <ScrollPanel class=" h-[150px] border border-surface-400 rounded " >
                 <role-dropzone
                   class="flex flex-col text-start gap-1 h-full w-full "

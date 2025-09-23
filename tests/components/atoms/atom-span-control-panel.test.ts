@@ -21,7 +21,7 @@ mockNuxtImport('useSpanService', async()=>{
                 label: "Citation",
                 id: 2,
                 ext_id: 2,
-                description: ["role 1","role 2"]
+                categories: ["role 1","role 2"]
               }
             ]
           }
