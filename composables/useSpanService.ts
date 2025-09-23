@@ -156,6 +156,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
       // Retire les assignations de role du span que l'on supprime
       _.remove(spanArrayElement.spans,span=>span.spanId == spanMenuSelected.value)
     })
+
     spanArray.value[spanMenuSelected.value] = undefined
 
 
