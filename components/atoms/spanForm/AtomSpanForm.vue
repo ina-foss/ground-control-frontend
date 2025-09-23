@@ -48,10 +48,8 @@
                 <label v-else class="text-red-500">{{suppWarning}}</label>
             </div>
         </div>
-        <label > Label libre  </label>
-        <InputText v-model="freeLabel" />
-        <label v-if="isForResearch"> Plugin  </label>
-        <InputText v-if="isForResearch" />
+        <label > Label </label>
+        <InputText v-model="defaultLabel" />
 
       </plugin-wrapper>
 

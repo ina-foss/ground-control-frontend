@@ -26,7 +26,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
   const spanMenuSelected = ref<number | undefined>(undefined)
   const mainPluginId = ref<undefined | number>() // Id du plugin servant à coloriser les spans
   const labelSelected = ref([])
-  const freeLabel = ref()
+  const defaultLabel = ref()
   const deletedNum=ref<number>()
   const spanForm = ref()
   const dragData = reactive<{pin_position: string | undefined, spanid: number | undefined}>({
@@ -220,6 +220,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
     const span = spanArray.value[spanId]
     span.plugins = _.cloneDeep(pluginValues)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
+    span.label = markRaw(defaultLabel.value)
     deletedNum.value = null
     const color = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`])
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
@@ -523,7 +524,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
   }
 
   return{
- recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, freeLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
+ recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
  affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette
   }
 }

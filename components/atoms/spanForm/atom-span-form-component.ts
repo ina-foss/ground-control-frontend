@@ -14,7 +14,7 @@ export default defineNuxtComponent({
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]
-    const {pluginValues, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, freeLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
+    const {pluginValues, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
     const {$application} = useService()
       const childPluginMap = ref<Record<number, any[]>>({})
     const tidiedPluginList = computed(()=>{
@@ -98,11 +98,11 @@ export default defineNuxtComponent({
       let spanGroup = {
         plugins: _.cloneDeep(pluginValues),
         id : spanId,
-        label: freeLabel.value,
+        label: defaultLabel.value,
         spans: [],
       }
       spanArray.value[spanId]=spanGroup
-      freeLabel.value = null
+      defaultLabel.value = null
     }
 
     function createSpan () {
@@ -115,9 +115,11 @@ export default defineNuxtComponent({
           id: spanId,
           plugins: _.cloneDeep(pluginValues),
           deletedItems: deletedNum.value,
+          label: defaultLabel.value
         }
         spanArray.value[spanId] = span
         const group = spanArray.value[newFocus.value]
+        defaultLabel.value = null
         group.spans = [...group.spans, {spanId : spanId.toString(),  role: roleSelected}]
       }
 
@@ -138,7 +140,7 @@ export default defineNuxtComponent({
       if(role) roleSelected = role
       pluginSelected.value=''
       affectPluginValues(spanArray.value[spanId]?.plugins)
-      freeLabel.value =  spanArray.value[spanId]?.label
+      defaultLabel.value =  spanArray.value[spanId]?.label
       deletedNum.value =  spanArray.value[spanId]?.deletedItems
       labelSelected.value = spanArray.value[spanId]?.type ?? []
       nodes.value = spanArray.value[spanId]?.nodes ?? []
@@ -159,7 +161,7 @@ export default defineNuxtComponent({
       if(!spanArray.value[spanArray.value.length-1]?.plugins ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value))
       deleteLayout.value = false
       spanMenuSelected.value = undefined
-      freeLabel.value = undefined
+      defaultLabel.value = undefined
       initPluginValues(getPluginList.value)
       deletedNum.value = undefined
       nodes.value = []
@@ -181,7 +183,7 @@ export default defineNuxtComponent({
       nextNodes,
       close,
       computeColor,
-      freeLabel,
+      defaultLabel,
       groupDisplay,
       showContext,
       onClose,

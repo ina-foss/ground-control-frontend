@@ -68,7 +68,7 @@
             v-for=" (group,index) in groupArray" :class="{' hover:bg-primary-100 cursor-pointer p-2 rounded-md flex items-center' :true, 'border-2 bg-surface-100 border-title font-semibold' : newFocus== group.id}"
             @click="handleGroupClick(group.id)" >
             <group-number class="font-bold self-center px-2 h-fit">  {{index+1}} </group-number>
-            <group-label class="grow">{{  lodashOrder(group.plugins,value => value.length,'desc')[0]?.[0]?.label ?? `Groupe ${index+1}` }}</group-label>
+            <group-label class="grow">{{ group.label ?? lodashOrder(group.plugins,value => value.length,'desc')[0]?.[0]?.label  }}</group-label>
             <span class="  text-center rounded-full p-0 text-xl leading-10  h-10 w-10 bg-surface-100  ">{{ group.spans.length }}</span>
           </group-wrapper>
       </div>
