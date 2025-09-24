@@ -47,7 +47,7 @@ export default class ApplicationService {
   }
 
   public computeColorByLabel(labels,label): { full: string; hex: string } {
-    if(label.length == 0) return {hex: '#EEEEEEEE', full: 'bg-secondary'}
+    if(!label.length || !labels?.length ) return {hex: '#EEEEEEEE', full: 'bg-secondary'}
     let labelIndex=  (labels.map(label => String(label).trim())).indexOf(label.toString())
     if(label.length != 1){
       labelIndex = label.reduce((sum, l) => sum + l.length, 0);

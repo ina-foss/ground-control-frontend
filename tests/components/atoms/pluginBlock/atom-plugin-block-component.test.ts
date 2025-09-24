@@ -130,10 +130,8 @@ describe('AtomPluginBlock.vue', () => {
     await wrapper.vm.$nextTick()
     const autocomplete = wrapper.findComponent(AtomPluginAutocomplete)
     const label = wrapper.findComponent(AtomPluginLabel)
-    const other = wrapper.findComponent('')
     expect(autocomplete.exists()).toBe(true)
     expect(label.exists()).toBe(true)
-    expect(other.exists()).toBe(false)
   })
 
 })

@@ -89,10 +89,6 @@ export default defineComponent({
     const isAnnotationEditable = computed(()=> annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
     const annotation_type = data.value.step.annotation_type
 
-    const pluginStore = usePluginStore()
-
-    pluginStore.updatePluginList(data.value.step_id,annotation_type)
-    .then(()=>pluginStore.initialFetch())
 
     const userAnnotations = computed(() => { // return array of users annotations
       let response = []
@@ -471,9 +467,6 @@ export default defineComponent({
     navigateWithkeyboard,
     globalKeydown,
     jumpToTopic
-
-
-
   }
 
 },

@@ -43,8 +43,9 @@ export const usePluginStore = defineStore('plugin',{
           availableZones = []
       }
 
-      return PluginService.readAllPluginsPluginsStepStepIdDisplayGet(step_id,availableZones)
-      .then((response)=> this.setPluginList(response))
+      const response = PluginService.readAllPluginsPluginsStepStepIdDisplayGet(step_id,availableZones)
+      const plugins = await response
+      this.setPluginList(plugins)
     },
 
     async initialFetch(){

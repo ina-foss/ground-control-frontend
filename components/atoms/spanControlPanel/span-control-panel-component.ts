@@ -5,12 +5,15 @@ export default defineNuxtComponent({
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { recolorSpan, decolorSpan, affectPluginValues ,extractTextFromSpanNodes, spanForm, applySpan, spanArray, newFocus,computeColorByLabel, spanTypeOptions,isForResearch , createSpanColorPalette, mainPluginId, pluginValues} = useSpanService()
+    const { recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel, spanTypeOptions,isForResearch , createSpanColorPalette, mainPluginId, pluginValues} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
-    const { pluginList } = usePluginStore()
+    const { pluginList } = storeToRefs(usePluginStore())
 
 
+    onMounted(()=>{
+      mainPluginId.value = pluginList.value.find(plugin=>plugin.display_config?.main_plugin == true)?.id
+    })
 
     const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
     const groupArray = computed(()=>spanArray.value.filter(span=>{
@@ -62,7 +65,7 @@ export default defineNuxtComponent({
     function getMinSizeText(span: any){
       const tempDiv =  document.createElement('div')
       tempDiv.classList.add('w-auto', 'p-1', 'rounded', 'border-4', 'inline-block', 'text-xs/3', 'h-fit', 'text-center')
-      tempDiv.innerText = span.plugins[`plugin-${mainPluginId.value}`]?.[0]?.label
+      tempDiv.innerText = span.plugins[`plugin-${mainPluginId.value}`]?.[0]?.label ?? " "
       document.body.appendChild(tempDiv)
       const width = tempDiv.getBoundingClientRect().width
       document.body.removeChild(tempDiv)

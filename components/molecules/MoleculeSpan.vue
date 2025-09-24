@@ -36,14 +36,6 @@
               <TabPanels class="!bg-secondary  w-full !pl-0  overflow-auto !pb-2">
                 <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3"  >
                   <AtomSpanControlPanel @handle-new-group="spanForm?.open({group:true})"/>
-                  <span >Plugin Principal</span>
-                  <Select v-model="mainPluginId" :options="pluginList" option-label="name" option-value="id"  >
-                    <template #option="slotProps">
-                        <div>
-                <span> {{slotProps.option.name}} - {{slotProps.option.type}} - {{slotProps.option.id}}</span>
-                        </div>
-                     </template>
-                  </Select>
                 </TabPanel>
         <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
                     <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">

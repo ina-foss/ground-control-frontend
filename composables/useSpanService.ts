@@ -53,9 +53,16 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
   let pluginValues = reactive<pluginValues>({})
 
-  watch(
-    ()=>mainPluginId.value,
-    ()=> {
+  watch( ()=>mainPluginId.value,
+    (value)=> {
+      // store value for this task in localStorage
+      // keep other task stored value
+      const savedList : Array<any> = JSON.parse(localStorage.getItem('mainPluginId')) ?? []
+      const existingValue = savedList.find(e=>e.taskId == useRoute().params.id)
+      if(existingValue) existingValue.value = value
+      else savedList.push({taskId: useRoute().params.id, value})
+      localStorage.setItem('mainPluginId',JSON.stringify(savedList) )
+
       spanArray.value.forEach(span=>{
         if(span){
           affectPluginValues(span.plugins)
@@ -198,7 +205,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
     const [plugin, options]= [pluginList.value[index], pluginOptionsList.value[index]]
     if(pluginList && plugin && pluginValue && pluginValue.length){
       if(plugin.type == TypePlugin.LISTITEMS  || ( plugin.type == TypePlugin.AUTOCOMPLETE && plugin.config_data.type == 'get plugin' ) ) {
-        return hexToRgba(computeColorByLabel(options.data.map(option=>option.label),pluginValue.map(value=>value.label)).hex,opacity)
+        return hexToRgba(computeColorByLabel(options?.data.map(option=>option.label),pluginValue.map(value=>value.label)).hex,opacity)
       }
       else if(plugin.type == TypePlugin.AUTOCOMPLETE && plugin.config_data.type == 'post plugin'){
         const seed = pluginValue?.map(value=>value.label.split('').reduce((acc,value)=>acc+=value.charCodeAt(0),0)).reduce((acc,value)=>acc+=value,0)
@@ -220,7 +227,11 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
     const span = spanArray.value[spanId]
     span.plugins = _.cloneDeep(pluginValues)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
-    span.label = markRaw(defaultLabel.value)
+    span.label = (()=>{
+      if (!defaultLabel.value) return span.label
+      else if (span.label && defaultLabel.value) return markRaw(defaultLabel.value)
+      else if (!span.label) return markRaw(defaultLabel.value)
+    })()
     deletedNum.value = null
     const color = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`])
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
@@ -453,6 +464,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
           nodes : selectedNodes,
           tcin : spanTcin,
           tcout : spanTcout,
+          label: spanArg?.label,
         }
         if(selectedNodes.length == 0) console.error("the span you atempt to create is empty")
         if(spanArg){

@@ -67,10 +67,27 @@ const { data: annotations_out, status: pending_out, refresh: refresh_out} =  use
 })
 
 
+const pluginStore = usePluginStore()
+
+// Holds the status of the plugin fetch
+const pluginFetched = ref(false)
+
+if (!pluginFetched.value) {
+   (async () =>{
+    try{
+      await pluginStore.updatePluginList(data.value.step_id,data.value.step.annotation_type)
+      await pluginStore.initialFetch()
+      pluginFetched.value = true
+    }
+    catch(error){
+      console.error(error)
+      pluginFetched.value = false
+    }
+  })()
+}
 
 const allFetched = computed(() => {
-    // return annotation_bool.in && annotation_bool.out
-    return status_in.value!='pending' && (pending_out.value!='pending' || annotations_out.value)
+    return status_in.value!='pending' && (pending_out.value!='pending' || annotations_out.value) && pluginFetched.value
 })
 
 const annotationInfo = computed(() => {
