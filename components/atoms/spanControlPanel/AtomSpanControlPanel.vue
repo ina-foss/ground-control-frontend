@@ -9,9 +9,9 @@
           @dragstart="event=>event.dataTransfer.setData('span', span.id)">
           <span-number class="font-bold self-center px-2">  {{index+1}} </span-number>
           <span
-            :style="{backgroundColor : createSpanColorPalette(mainPluginId,span.plugins?.[`plugin-${mainPluginId}`]), borderColor:createSpanColorPalette(mainPluginId,span.plugins?.[`plugin-${mainPluginId}`],1), '--computed-width' : getMinSizeText(span) + 'px' }"
+            :style="{backgroundColor : createSpanColorPalette(mainPluginId,span.plugins[mainPluginIndex]), borderColor:createSpanColorPalette(mainPluginId,span.plugins?.[mainPluginIndex],1), '--computed-width' : getMinSizeText(span) + 'px' }"
             class="min-w-[80px] w-[80px] transition-all duration-300 p-1 rounded border-4 inline-block text-xs/3 h-fit truncate text-center hover-span" >
-            {{span?.plugins?.[`plugin-${mainPluginId}`]?.map(value=>value?.label).join(', ')}}
+            {{span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')}}
           </span>
           <span class="self-center font-semibold flex-1 truncate">{{span?.label ?? extractTextFromSpanNodes(span.nodes)}}</span>
           <span v-if="span?.label" class="text-subtitle truncate flex  grow max-w-[40%] "  >
@@ -41,9 +41,9 @@
                   class="flex flex-col text-start gap-1 h-full w-full "
                   @drop="dropSpan($event,selectedGroup,role)" @dragover="event=>event.preventDefault()" @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
                   <role-span-title class="text-center">{{ role }}</role-span-title>
-                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :style="{ backgroundColor : createSpanColorPalette(mainPluginId,spanArray[span.spanId]?.plugins[`plugin-${mainPluginId}`])}" class=" px-1 truncate mr-2 max-w-full w-fit rounded ">
+                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :style="{ backgroundColor : createSpanColorPalette(mainPluginId,spanArray[span.spanId]?.plugins[readPluginValues(spanArray[span.spanId])])}" class=" px-1 truncate mr-2 max-w-full w-fit rounded ">
                     {{spanArray[span.spanId]?.id}} -
-                    {{ extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) ?? spanArray[span.spanId]?.plugins[`plugin-${mainPluginId}`]?.map(value=>value.label).join(', ') }}
+                    {{ extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) ?? spanArray[span.spanId]?.plugins[mainPluginIndex]?.map(value=>value.label).join(', ') }}
                   </role-span-content>
                   <virtual-span-preview  class="w-full flex flex-col items-center justify-center cursor-pointer " @click="spanForm.open({virtual: true, role: role})" >
                     <div class="h-6 w-6 rounded-full text-xl bg-primary-500 leading-5 text-center ">+</div>

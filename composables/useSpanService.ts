@@ -2,20 +2,21 @@ import _ from 'lodash'
 import { PluginConfigType, TypePlugin } from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
 
-let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
 
- function createSpanService (){
+function createSpanService (){
 
 
-const {options} = useOptions()
+  const {options} = useOptions()
 
-const { $application } = useService()
-const { hexToRgba,computeColorByLabel,computeColor} = $application
-const spanMenu = ref()
-const op = ref()
-const isForResearch= ref(true)
-const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
-
+  const { $application } = useService()
+  const { hexToRgba,computeColorByLabel,computeColor} = $application
+  const spanMenu = ref()
+  const op = ref()
+  const isForResearch= ref(true)
+  // ----- Plugin Store ------
+  const pluginStore = usePluginStore()
+  const pluginList = computed(()=>pluginStore.pluginList)
+  const pluginOptionsList = computed(()=>pluginStore.pluginOptionsList)
 
   const spanClicked = ref(false)
   const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([])
@@ -73,11 +74,24 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
     {immediate: false}
   )
 
-  function initPluginValues (iterator){
+  function initPluginValues (iterator :Array<PluginWithIdDto>){
     iterator.forEach(plugin=>{
-      pluginValues[`plugin-${plugin.id}`] = [] // Creation des variables utilisee en tant qu'input
+      if(plugin.data_property) pluginValues[plugin.data_property] = [] // Creation des variables utilisee en tant qu'input
+      else pluginValues[`plugin-${plugin.id}`] = [] // Creation des variables utilisee en tant qu'input
     })
   }
+
+  function readPluginValues(plugin:PluginWithIdDto){
+    return plugin.data_property ? plugin.data_property : `plugin-${plugin.id}`
+  }
+
+  const mainPluginIndex = computed(()=>{
+    if(mainPluginId.value) {
+      const mainPlugin = pluginList.value.find(plugin=>plugin.id = mainPluginId.value)
+      return mainPlugin.data_property ? mainPlugin.data_property : `plugin-${mainPlugin.id}`
+    }
+    return undefined
+  })
 
   function affectPluginValues(values : pluginValues){
    if(values){
@@ -289,6 +303,7 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
 
       }
     })
+    initPluginValues(pluginList.value)
   }
 
   /**
@@ -537,9 +552,11 @@ const {pluginList, pluginOptionsList} = storeToRefs(usePluginStore())
 
   return{
  recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette
+ affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex
   }
 }
+
+let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
 
 /**
  * @param initialization True for forcing the creation of a new instance

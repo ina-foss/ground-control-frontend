@@ -14,7 +14,7 @@ export default defineNuxtComponent({
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]
-    const {pluginValues, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
+    const {readPluginValues,pluginValues, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
     const {$application} = useService()
       const childPluginMap = ref<Record<number, any[]>>({})
     const tidiedPluginList = computed(()=>{
@@ -201,7 +201,8 @@ export default defineNuxtComponent({
       selectComponent,
       pluginValues,
       pluginSelected,
-      childPluginMap
+      childPluginMap,
+      readPluginValues
     }
   },
 })

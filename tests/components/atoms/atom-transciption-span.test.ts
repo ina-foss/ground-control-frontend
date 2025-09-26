@@ -45,7 +45,6 @@ describe('Atom Transcription Span',()=> {
     dataTransfer.setData('spanid', '1')
     dragData.pin_position = 'right'
     dragData.spanid = 1
-    console.log(wrapper.vm.dragData)
     const target = wrapper.findAll('div').at(104)
     await target.trigger('dragover',{
       dataTransfer: dataTransfer
