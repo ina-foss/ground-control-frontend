@@ -15,13 +15,17 @@ vi.mock('~/composables/useTopicList', () => ({
   })
 }))
 
-vi.mock('~/api/generate', () => ({
-  PluginService: {
-    searchPluginsPluginsPluginIdSearchGet: vi.fn().mockResolvedValue([
-      { id: 1, label: 'Option A', ext_id: 'a' }
-    ])
+vi.mock('~/api/generate',async (importOriginal) => {
+  const actual =  await importOriginal()
+  return {
+    ...actual,
+    PluginService: {
+      searchPluginsPluginsPluginIdSearchGet: vi.fn().mockResolvedValue([
+        { id: 1, label: 'Option A', ext_id: 'a' }
+      ])
+    }
   }
-}))
+})
 describe('AtomPluginAutocomplete.vue', () => {
   let pluginMock: any
   let chipListMock: any

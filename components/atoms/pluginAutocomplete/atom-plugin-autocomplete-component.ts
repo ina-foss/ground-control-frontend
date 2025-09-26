@@ -1,6 +1,6 @@
 import {defineComponent} from 'vue'
 import {inject} from 'vue';
-import {PluginService} from "~/api/generate";
+import {DisplayZone, PluginService} from "~/api/generate";
 import type { PluginWithIdDto } from '~/api/generate'
 import type {PropType} from 'vue'
 import _ from 'lodash'
@@ -54,6 +54,10 @@ export default defineComponent({
     const keepDropdownOpen = () => {
       multiSelectRef.value.overlayVisible = true;
     }
+
+    const showValue = computed(()=>{
+      return plugin.value.display_zone != DisplayZone.BLOC
+    })
 
     const pluginValue = computed({
         get: () => props.pluginValue,
@@ -111,6 +115,7 @@ export default defineComponent({
       keepDropdownOpen,
       sortedOptionsByFilter,
       multiSelectRef,
+      showValue,
     }
   }
 })

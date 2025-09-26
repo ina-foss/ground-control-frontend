@@ -2,8 +2,9 @@
   <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
     <MultiSelect :disabled="!isAnnotationEditable" v-model="pluginValue" :options="sortedOptionsByFilter"
                  emptyMessage="Rechercher un label" :emptyFilterMessage="' '" optionLabel="label" filter
+                  :max-selected-labels="0"
                  @filter="handleFilter" :placeholder="pluginName" :loading="showSkeleton"
-                 :maxSelectedLabels="0" :selectedItemsLabel="pluginName" fluid> >
+                  :selectedItemsLabel="pluginName" fluid> >
       <template #option="slotProps">
         <div class="flex items-center space-x-2 ">
           <img
@@ -21,6 +22,11 @@
               {{ slotProps.option.description }}
             </span>
           </div>
+        </div>
+      </template>
+      <template #value="slotProps" >
+        <div v-if="pluginValue?.length && showValue" class="h-full">
+          {{pluginValue.map(value => value.label).join(', ')  }}
         </div>
       </template>
     </MultiSelect>

@@ -38,8 +38,8 @@ export default defineComponent({
     const { data, status, execute: executeSearch } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
 
     const pluginValue = computed({
-        get: () => props.pluginValue,
-        set : newValue => emit('update:pluginValue',[newValue])
+        get: () => Array.isArray(props.pluginValue) ? props.pluginValue[0] : props.pluginValue,
+        set : newValue => Array.isArray(newValue) ? emit('update:pluginValue',newValue) : emit('update:pluginValue',[newValue])
     })
 
     return {

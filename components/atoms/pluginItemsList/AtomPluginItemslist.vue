@@ -7,7 +7,7 @@
           :key="option.label"
           class="!text-xs"
           size="small"
-          :outlined="!isEqual(pluginValue?.[0],option)"
+          :outlined="!isEqual(pluginValue,option)"
           :label="option.label"
           @click="()=>pluginValue=option"
       />
