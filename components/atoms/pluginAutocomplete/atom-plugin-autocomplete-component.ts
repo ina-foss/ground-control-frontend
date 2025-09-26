@@ -15,11 +15,12 @@ export default defineComponent({
     index: {},
     source: {required: false, default: ()=>false},
     pluginValue:{type: Array},
+    textSpan: { type: String }
   },
   emits: ['update:pluginValue'],
   setup(props, {emit}) {
     const value = ref([]);
-    const {pluginItemsConfig, plugin, index, source} = toRefs(props)
+    const {pluginItemsConfig, plugin, index, source,textSpan} = toRefs(props)
     const indexPlugin = index.value;
     let debounceTimer : NodeJS.Timeout
     const options = computed(()=>{
@@ -92,6 +93,14 @@ export default defineComponent({
       }
     })
 
+    function onDropdownOpen() {
+      if(textSpan.value !== "") {
+        filterString.value = textSpan.value?.trim().replace(/\s+/g, " ") ?? '';
+        if (multiSelectRef.value) {
+          (multiSelectRef.value as any).filterValue = filterString.value;
+        }
+      }
+    }
 
     onMounted(() => {
       if (source.value) {
@@ -115,6 +124,8 @@ export default defineComponent({
       keepDropdownOpen,
       sortedOptionsByFilter,
       multiSelectRef,
+      onDropdownOpen,
+      textSpan,
       showValue,
     }
   }

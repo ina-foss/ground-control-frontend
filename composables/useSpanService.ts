@@ -35,21 +35,6 @@ function createSpanService (){
     spanid : undefined,
   })
   const contextMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:event=>showDragPin()},{id:2, label: 'Supprimer', command: (event)=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
-  let spanTypeOptions =ref( [
-    {value: 'function',label:'Fonction'},
-    {value: 'verb', label:'Verbe'},
-    {value: 'directCitation', label: 'Citation directe'},
-    {value: 'physicalPerson', label: 'Personne physique'},
-    {value: 'indirectPerson', label: 'Citation indirecte'},
-    {value: 'pronoun', label: 'Pronom'},
-    {value: 'geographic', label: 'Lieu géographique'},
-  ])
-  const spanTypeList =ref( [
-    {value: 'en',label:'Entités nommées'},
-    {value: 'suppr', label:'Suppressions'},
-    {value: 'insert', label: 'Insertions'},
-    {value: 'inv', label: 'Contre sens'},
-  ])
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
   let pluginValues = reactive<pluginValues>({})
@@ -103,15 +88,6 @@ function createSpanService (){
    const setDisableGroup = (disable_group:boolean|false) => {
        isForResearch.value=!disable_group
    }
-
-   watch(isForResearch, (newValue) => {
-     spanTypeOptions.value = newValue ? spanTypeOptions.value : spanTypeList.value
-   })
-
-   const spanGroupTypeOptions = ref([
-    {value: 'citation', label: 'Citation', roles: ['source', 'indice', 'citation']},
-    {value: 'entity', label: 'Entitee nommee', roles: ['primaire','secondaire']},
-  ])
 
   function rgbaToShadow(color: string) {
     return `${color} 0px 0px 0px 1000px inset`
@@ -551,7 +527,7 @@ function createSpanService (){
   }
 
   return{
- recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, spanGroupTypeOptions, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanTypeOptions, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
+ recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
  affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex
   }
 }

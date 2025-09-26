@@ -5,7 +5,7 @@ export default defineNuxtComponent({
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel, spanTypeOptions,isForResearch , createSpanColorPalette, mainPluginId, pluginValues} = useSpanService()
+    const { mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId, pluginValues} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
     const { pluginList } = storeToRefs(usePluginStore())
@@ -87,7 +87,6 @@ export default defineNuxtComponent({
     previewSpanDrop,
     unpreviewSpanDrop,
     extractTextFromSpanNodes,
-    spanTypeOptions,
     spanOnlyArray,
     getMinSizeText,
     handleGroupClick,

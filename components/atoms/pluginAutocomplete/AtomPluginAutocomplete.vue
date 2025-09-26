@@ -1,10 +1,10 @@
 <template>
   <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
-    <MultiSelect :disabled="!isAnnotationEditable" v-model="pluginValue" :options="sortedOptionsByFilter"
+    <MultiSelect  ref="multiSelectRef" :disabled="!isAnnotationEditable" v-model="pluginValue" :options="sortedOptionsByFilter"
                  emptyMessage="Rechercher un label" :emptyFilterMessage="' '" optionLabel="label" filter
                   :max-selected-labels="0"
                  @filter="handleFilter" :placeholder="pluginName" :loading="showSkeleton"
-                  :selectedItemsLabel="pluginName" fluid> >
+                 :selectedItemsLabel="pluginName" fluid  @show="onDropdownOpen">
       <template #option="slotProps">
         <div class="flex items-center space-x-2 ">
           <img

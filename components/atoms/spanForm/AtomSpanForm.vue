@@ -29,12 +29,12 @@
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-2">
         <main-plugins-wrapper v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" >
           <b>{{ plugin.name }}</b>
-          <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" v-model:plugin-value="pluginValues[readPluginValues(plugin)]"  />
+          <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]"  />
             <div v-if="childPluginMap[plugin.id]?.length">
                 <div class="flex flex-col gap-2">
                     <div v-for="(child,childIndex) in childPluginMap[plugin.id]"  :key="child.id" >
                         <b>{{ child.name }}</b>
-                        <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" v-model:pluginValue="pluginValues[readPluginValues(plugin)]" />
+                        <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(plugin)]" />
                     </div>
                 </div>
             </div>
@@ -59,7 +59,7 @@
 
         <div class="flex flex-row justify-between">
           <Button text severity="secondary" icon="pi pi-times" label="Annuler" @click=" close()" />
-          <Button   :disabled="!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === '')"
+          <Button   :disabled="!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === 0)"
                     label="Confirmer" icon="pi pi-check" @click=" handleConfirmationButton() " />
         </div>
 

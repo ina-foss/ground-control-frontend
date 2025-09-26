@@ -7,14 +7,14 @@ export default defineNuxtComponent({
   name:'AtomSpanForm',
   components: {AtomPluginItemslist},
   setup(props,{expose}) {
-
+    const textSpan=ref()
     const visible = ref()
     const nodesCount=ref<number>()
     const suppWarning=ref("Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés")
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]
-    const {readPluginValues,pluginValues, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanGroupTypeOptions, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel, spanTypeOptions ,newFocus,isForResearch,deletedNum  } = useSpanService()
+    const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum  } = useSpanService()
     const {$application} = useService()
       const childPluginMap = ref<Record<number, any[]>>({})
     const tidiedPluginList = computed(()=>{
@@ -144,6 +144,7 @@ export default defineNuxtComponent({
       deletedNum.value =  spanArray.value[spanId]?.deletedItems
       labelSelected.value = spanArray.value[spanId]?.type ?? []
       nodes.value = spanArray.value[spanId]?.nodes ?? []
+      textSpan.value=extractTextFromSpanNodes(nodes.value)
       nodesCount.value = nodes.value.length
       if(!group && !virtual){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )
@@ -171,10 +172,8 @@ export default defineNuxtComponent({
 
 
     return {
-      spanGroupTypeOptions,
       computeColorByLabel,
       visible,
-      spanTypeOptions,
       labelSelected,
       handleConfirmationButton,
       createSpan,
@@ -202,6 +201,7 @@ export default defineNuxtComponent({
       pluginValues,
       pluginSelected,
       childPluginMap,
+      textSpan,
       readPluginValues
     }
   },
