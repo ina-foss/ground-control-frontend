@@ -28,12 +28,12 @@
 
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-2">
         <main-plugins-wrapper v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" >
-          <b>{{ plugin.name }}</b>
+          <b>{{ plugin?.display_config?.label ?? plugin?.name }}</b>
           <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]"  />
             <div v-if="childPluginMap[plugin.id]?.length">
                 <div class="flex flex-col gap-2">
                     <div v-for="(child,childIndex) in childPluginMap[plugin.id]"  :key="child.id" >
-                        <b>{{ child.name }}</b>
+                        <b>{{ plugin?.display_config?.label ?? plugin?.name }}</b>
                         <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(plugin)]" />
                     </div>
                 </div>

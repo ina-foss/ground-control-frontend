@@ -15,5 +15,6 @@ export type DisplayConfig = {
     max_items?: (number | null);
     order?: (number | null);
     main_plugin?: (boolean | null);
+    label?: (string | null);
 };
 

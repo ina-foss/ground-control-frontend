@@ -49,7 +49,7 @@ export default defineComponent({
     const filterString : Ref<string> = ref('');
     const isAnnotationEditable = inject('isAnnotationEditable')
     const pluginName = computed(() => {
-      return plugin.value.name || "";
+      return plugin.value?.display_config?.label || plugin.value.name || "";
     });
     const multiSelectRef = ref(null);
     const keepDropdownOpen = () => {
