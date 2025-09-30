@@ -27,7 +27,7 @@
     </context-wrapper>
 
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-5">
-        <main-plugins-wrapper v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]"  :key="index" class=" grid grid-cols-[100px_auto] gap-3 gap-y-5">
+        <main-plugins-wrapper v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" :key="index" class=" grid grid-cols-[100px_auto] gap-3 gap-y-5">
           <b class="pt-2 text-right ">{{ plugin?.display_config?.label ?? plugin?.name.charAt(0).toUpperCase() + plugin?.name.slice(1)  }}</b>
           <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]"  />
             <div v-if="childPluginMap[plugin.id]?.length">
