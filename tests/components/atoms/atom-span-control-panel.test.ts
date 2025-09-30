@@ -1,7 +1,5 @@
 import {expect, describe, it }  from 'vitest'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
-import { mockedTransciptionsWithoutTopics } from '@/tests/mock'
-import { mount} from '@vue/test-utils';
 import type { VueWrapper } from '@vue/test-utils';
 import AtomSpanControlPanel from '~/components/atoms/spanControlPanel/AtomSpanControlPanel.vue';
 
@@ -123,7 +121,6 @@ describe('AtomSpanControlPanel', ()=>{
   it('should add the span to the group on drop', async()=>{
     const groupWrapper = wrapper.find('group-wrapper')
     await groupWrapper.trigger('click')
-    const firstDropzone = wrapper.findAll('role-dropzone').at(0)
     const secondDropzone = wrapper.findAll('role-dropzone').at(1)
     expect([...secondDropzone.element.children].map(child=>child.localName)).not.include('role-span-content')
     const dataTransfer = new DataTransfer()

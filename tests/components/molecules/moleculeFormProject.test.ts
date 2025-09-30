@@ -1,10 +1,8 @@
-import PrimeVue from 'primevue/config';
 import {expect, describe, it }  from 'vitest'
 import type { VueWrapper } from '@vue/test-utils'
-import { flushPromises, mount } from '@vue/test-utils'
 import { mockNuxtImport, mountSuspended} from "@nuxt/test-utils/runtime";
-import { Button, Dialog, StepList,Stepper, StepPanels, Step, FileUpload, InputText} from 'primevue';
-import {ProjectService, StepService } from '~/api/generate';
+import { Button, InputText} from 'primevue';
+import { StepService } from '~/api/generate';
 import MoleculeFormProject from '../../../components/molecules/MoleculeFormProject.vue';
 
 let mockedProject = {title: "Project creation",

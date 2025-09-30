@@ -1,6 +1,6 @@
-import {expect, describe, it, not }  from 'vitest'
+import {expect, describe, it }  from 'vitest'
 import PrimeVue from 'primevue/config';
-import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
+import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import MoleculeSegmentation from '../../../components/molecules/MoleculeSegmentation.vue'
 import {mockedReturn, mockedTransciptionsWithoutTopics, mockedTransciptionsWithTopics} from '~/tests/mock';
 import { mount} from '@vue/test-utils';

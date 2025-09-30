@@ -34,9 +34,8 @@ export default defineComponent({
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
-    const { colors, topics, locals , state,tcOffset } = props
+    const { colors, topics, locals ,tcOffset } = props
     const {result,transcriptions} = toRefs(props)
-    const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
     const isAnnotationEditable = inject('isAnnotationEditable')
 
 

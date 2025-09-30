@@ -98,8 +98,8 @@ const annotationInfo = computed(() => {
         info = {index: index, id: annotation.id}
       }
     })
-    return info
   }
+  return info
 });
 
 const submitExistantAnnotation =(locals,action,timeSpent,options)=>{

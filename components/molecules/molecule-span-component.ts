@@ -1,7 +1,6 @@
-import {defineComponent, inject, createApp, createVNode, render } from "vue";
+import {defineComponent, inject, createVNode, render } from "vue";
 import type { PropType } from "vue";
 import { useOptions } from "~/stores/annotation-options";
-import BadgeDirective from 'primevue/badgedirective';
 import _,{pullAt, find}  from 'lodash';
 import { Tag } from 'primevue';
 import AtomSpan from "../atoms/AtomSpan.vue";
@@ -30,7 +29,7 @@ export default defineComponent({
     const { options } = storeToRefs(useOptions())
 
 
-    const {showDragPin, spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions, mainPluginId} = useSpanService()
+    const {spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions, mainPluginId} = useSpanService()
     const {pluginList } = storeToRefs(usePluginStore())
 
 

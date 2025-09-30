@@ -1,7 +1,7 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import AtomTimecodeList from '@/components/atoms/AtomTimecodeList.vue';
 import { vi,it } from 'vitest';
-import { nextTick, ref } from 'vue';
+import { ref } from 'vue';
 
 
 vi.mock('@/composables/useTimecodeHistory', () => ({

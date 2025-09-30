@@ -1,5 +1,5 @@
 import {expect, describe, it }  from 'vitest'
-import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
+import { mountSuspended } from "@nuxt/test-utils/runtime";
 import AtomSpan from '~/components/atoms/AtomSpan.vue';
 import type { VueWrapper } from '@vue/test-utils';
 

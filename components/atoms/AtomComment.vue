@@ -13,7 +13,7 @@
       <Button class="hover:!bg-primary" icon="pi pi-arrow-right" @click="createComment"/>
     </div>
     <div v-else>
-      <div class="flex flex-col gap-[12px]" v-for="comment in phrase.data.comments">
+      <div class="flex flex-col gap-[12px]" v-for="comment in phrase.data.comments" :key="comment">
         <InputText v-if="isAnnotationEditable" v-model=comment.text variant="filled" @focus=" startEdit"/>
         <span v-else class="border p-sm rounded-md"> {{ comment.text }}</span>
         <div v-if="!isEdited" class="flex flex-col">
@@ -52,7 +52,6 @@ const {userEmail} = useAuth()
 
 const commentText = ref('')
 let lastText = ''
-const test = ref(document.activeElement?.tagName)
 const isEdited = ref(false)
 const isAnnotationEditable = inject('isAnnotationEditable')
 

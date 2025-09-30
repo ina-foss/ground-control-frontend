@@ -1,11 +1,8 @@
-import {expect, describe, it, not }  from 'vitest'
-import PrimeVue from 'primevue/config';
+import {expect, describe, it }  from 'vitest'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import MoleculeTabs from '../../../components/molecules/MoleculeTabs.vue'
-import {mockedReturn, mockedTransciptionsWithoutTopics, mockedTransciptionsWithTopics, mockedTransciptionsWithTopics} from '~/tests/mock';
-import { mount} from '@vue/test-utils';
+import {mockedTransciptionsWithTopics, mockedTransciptionsWithTopics} from '~/tests/mock';
 import type { VueWrapper } from '@vue/test-utils';
-import AtomSentence from '~/components/atoms/sentence/AtomSentence.vue';
 import { Carousel } from 'primevue';
 
 mockNuxtImport('useToast',()=>{

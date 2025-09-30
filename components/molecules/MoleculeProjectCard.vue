@@ -76,7 +76,7 @@
 <script setup>
 import {defineEmits} from 'vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
-import { useRefreshStore, useService} from '#imports';
+import { useService} from '#imports';
 import {ProjectService} from "../api/generate";
 import { Permission } from '~/api/generate';
 
@@ -129,7 +129,6 @@ const formatTitle=(title)=>{
   }
 }
 defineEmits(['refreshData']);
-const refreshStore = useRefreshStore()
 
 const deleteProject = async () => {
   try {

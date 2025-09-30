@@ -60,7 +60,7 @@ export default defineComponent({
       } else emit('unselect')
     })
 
-    watch(() => searchIndex.value, (newIndex, oldIndex) => {
+    watch(() => searchIndex.value, (newIndex) => {
       if (selectedSpan.value.length > 0) {
         const spanId = correspondingSpan(searchIndex.value)?.id
         if (spanId) {
@@ -69,8 +69,6 @@ export default defineComponent({
         } else if (iterableSegmentSpan.value.length !== 0) {
           emit('find-element', {div: iterableSegmentSpan.value[searchIndex.value]})
         } else {
-          // iterableSegment.value[newIndex].firstElementChild?.classList.toggle('fond-bold')
-          // iterableSegment.value[oldIndex].firstElementChild?.classList.toggle('font-bold')
           emit('find-element', {div: iterableSegment.value[newIndex]})
         }
       }

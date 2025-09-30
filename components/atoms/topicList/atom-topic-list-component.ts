@@ -34,10 +34,10 @@ export default defineComponent({
     const cleanedColors = computed(() => { // delete the first element
       const cleanedSort = {}
 
-      topics.value.forEach((topic: number, index: number) => {
+      topics.value.forEach((topic: number) => {
         // Add to cleanedSort object each topic in the order
         // they appear in the transcription
-        if (!_.findKey(cleanedSort, (el,index) => el === topic) && topic) {
+        if (!_.findKey(cleanedSort, (el) => el === topic) && topic) {
           cleanedSort[" " + topic.toString()] = computeColor(topic).hex
         }
 

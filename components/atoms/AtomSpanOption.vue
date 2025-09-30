@@ -5,7 +5,7 @@
         <AccordionHeader class="!bg-white hover:!bg-white rounded !border-t-transparent !border-l-transparent !border-r-transparent ">Affichage</AccordionHeader>
         <AccordionContent class="!border-transparent">
           <div class="flex flex-col gap-[10px] text-title ">
-            <div class="flex justify-between items-center self-stretch py-1 "v-if="span != undefined">
+            <div class="flex justify-between items-center self-stretch py-1 " v-if="span != undefined">
               <span>Span</span>
               <ToggleSwitch v-model="span" />
             </div>

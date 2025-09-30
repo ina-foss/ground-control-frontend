@@ -33,7 +33,7 @@ export default defineComponent({
       if(isTopicFirstSegment.value == true){
           editedTitle.value = titleLabel.value
       }
-      watch(() => showInput.value, (newValue, oldValue) => {
+      watch(() => showInput.value, (newValue) => {
         if (isTopicFirstSegment.value && newValue == false && topicList.value[topicIndex.value]) {
           if(titleLabel.value != undefined){
             editTitle(editedTitle.value)

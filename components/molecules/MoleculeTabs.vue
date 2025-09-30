@@ -55,14 +55,11 @@
 import AtomMarkdown from "../atoms/AtomMarkdown.vue";
 import AtomTimecodeList from "../atoms/AtomTimecodeList.vue";
 import AtomSentence from "../atoms/sentence/AtomSentence.vue"
-import AtomTrancription from "../atoms/AtomTrancription.vue";
 import MoleculeTranscription from "../../components/molecules/MoleculeTranscription.vue"
 import {AnnotationStatus} from '../../api/generate';
 
-const { topicList } = useTopicList()
 const carouselRef = ref()
 const currentPage = computed(()=>carouselRef.value.d_page)
-const activeIndex =ref(0)
 const moleculeAnnotationRef = ref()
 const jumpToTopic = inject('jumpToTopic')
 

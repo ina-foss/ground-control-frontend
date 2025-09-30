@@ -21,7 +21,7 @@ export default defineComponent({
     },
   },
   setup(props, {emit}) {
-    const {isForResearch, createSpanColorPalette } = useSpanService()
+    const {isForResearch } = useSpanService()
 
     const {groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
 
@@ -35,7 +35,7 @@ export default defineComponent({
     ))
 
 
-    const { data, status, execute: executeSearch } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
+    const { data } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
 
     const pluginValue = computed({
         get: () => Array.isArray(props.pluginValue) ? props.pluginValue[0] : props.pluginValue,

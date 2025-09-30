@@ -1,5 +1,4 @@
 import { defineComponent } from 'vue'
-import { useTopicList } from '../../../composables/useTopicList'
 import AtomPluginAutocomplete from '../pluginAutocomplete/AtomPluginAutocomplete.vue'
 import AtomPluginLabel from '../pluginLabel/AtomPluginLabel.vue'
 import { usePluginStore } from '~/stores/plugins'

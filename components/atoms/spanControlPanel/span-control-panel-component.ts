@@ -1,11 +1,11 @@
-import _, { sortBy } from 'lodash'
+import _ from 'lodash'
 
 export default defineNuxtComponent({
   name:"AtomSpanControlPanel",
   emits: ['handleNewGroup'],
   setup(props, {emit}){
 
-    const { mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId, pluginValues} = useSpanService()
+    const { mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
     const { pluginList } = storeToRefs(usePluginStore())

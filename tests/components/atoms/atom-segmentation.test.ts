@@ -156,7 +156,6 @@ describe('SegmentComponent', () => {
   })
 
   it('appelle remove avec le bon tableau et le bon prédicat', async () => {
-    const mockChipList = ref(['labelA', 'labelB', 'labelC'])
     const pluginValues = {'plugin-1':[
       {id: 1, ext_id: 1, label: 'label 1', plugin_id: 1},
       {id: 2, ext_id: 2, label: 'label 2', plugin_id: 1}

@@ -9,7 +9,6 @@ import { useService } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
 import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
-import { usePluginStore } from "~/stores/plugins";
 
 export default defineComponent({
   name: "OrganismAnnotation",
@@ -57,7 +56,7 @@ export default defineComponent({
         let index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
         index != -1 ? scrollToSegment({bestIndex: index}) : div.scrollIntoView({'behavior': 'smooth', 'block' : 'center'})
     }
-    const handleSelection = (spanArg: any) => {
+    const handleSelection = () => {
       getSelectedSegment()?.classList?.remove('selected-segment')
     }
     const listRefs = computed(()=>{

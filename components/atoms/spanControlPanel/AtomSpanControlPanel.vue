@@ -35,13 +35,13 @@
           </div>
           <span class="font-semibold">Roles</span>
           <role-wrapper class="grid" style="grid-template-columns: repeat(auto-fit,minmax(150px, 1fr));">
-            <div v-for="role in lodashOrder(selectedGroup?.plugins,value=>value.length,'desc')?.[0]?.[0].categories" class="p-2  border-surface-200   text-center">
+            <div v-for="role in lodashOrder(selectedGroup?.plugins,value=>value.length,'desc')?.[0]?.[0].categories" :key="role" class="p-2  border-surface-200   text-center">
               <ScrollPanel class=" h-[150px] border border-surface-400 rounded " >
                 <role-dropzone
                   class="flex flex-col text-start gap-1 h-full w-full "
                   @drop="dropSpan($event,selectedGroup,role)" @dragover="event=>event.preventDefault()" @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
                   <role-span-title class="text-center">{{ role }}</role-span-title>
-                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :style="{ backgroundColor : createSpanColorPalette(mainPluginId,spanArray[span.spanId]?.plugins[readPluginValues(spanArray[span.spanId])])}" class=" px-1 truncate mr-2 max-w-full w-fit rounded ">
+                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :key="span" :style="{ backgroundColor : createSpanColorPalette(mainPluginId,spanArray[span.spanId]?.plugins[readPluginValues(spanArray[span.spanId])])}" class=" px-1 truncate mr-2 max-w-full w-fit rounded ">
                     {{spanArray[span.spanId]?.id}} -
                     {{ extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) ?? spanArray[span.spanId]?.plugins[mainPluginIndex]?.map(value=>value.label).join(', ') }}
                   </role-span-content>

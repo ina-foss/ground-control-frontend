@@ -1,8 +1,7 @@
 import {expect, describe, it }  from 'vitest'
 import AtomTranscriptionSpan  from '@/components/atoms/AtomTranscriptionSpan.vue'
-import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
+import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { mockedTransciptionsWithoutTopics } from '@/tests/mock'
-import { mount} from '@vue/test-utils';
 import type { VueWrapper } from '@vue/test-utils';
 
 

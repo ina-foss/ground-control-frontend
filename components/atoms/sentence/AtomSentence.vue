@@ -14,7 +14,7 @@
         </span>
       </div>
       <div class="flex flex-col gap-4 " v-if="spanArrayByTopic.length">
-        <div v-for="span in spanArrayByTopic" class=" flex items-center bg-secondary-color border-extra2 border p-3 gap-2 rounded h-fit justify-between ">
+        <div v-for="span in spanArrayByTopic" :key="span" class=" flex items-center bg-secondary-color border-extra2 border p-3 gap-2 rounded h-fit justify-between ">
           <span class="font-bold  ">{{extractTextFromSpanNodes(span.nodes)}}</span>
           <span class="pi pi-trash h-full cursor-pointer hover:bg-disabled p-1 rounded-full " @click="onDeleteSpan({index: span.id})" style="font-size: 1.4rem" ></span>
         </div>

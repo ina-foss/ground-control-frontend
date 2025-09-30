@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import { PluginConfigType, TypePlugin } from '~/api/generate'
+import {TypePlugin} from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
+import {usePluginStore} from "~/stores/plugins";
 
 
 function createSpanService (){
@@ -34,7 +35,7 @@ function createSpanService (){
     pin_position : undefined,
     spanid : undefined,
   })
-  const contextMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:event=>showDragPin()},{id:2, label: 'Supprimer', command: (event)=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
+  const contextMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:()=>showDragPin()},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
   let pluginValues = reactive<pluginValues>({})
@@ -88,10 +89,6 @@ function createSpanService (){
    const setDisableGroup = (disable_group:boolean|false) => {
        isForResearch.value=!disable_group
    }
-
-  function rgbaToShadow(color: string) {
-    return `${color} 0px 0px 0px 1000px inset`
-  }
 
   function removeSpanFromDOM(spanId: number){
     const span = spanArray.value[spanId]
@@ -247,7 +244,6 @@ function createSpanService (){
         element.classList.add('relative')
         if(elementIndex == 0) {
           const tag = document.createElement('tag')
-          const listTags = element.querySelectorAll('tag')
           tag.innerText = span.plugins[`plugin-${mainPluginId.value}`]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
           tag.classList.add('absolute', 'h-3' , 'px-1', 'top-[-10px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]')
           tag.style.left= '0px'

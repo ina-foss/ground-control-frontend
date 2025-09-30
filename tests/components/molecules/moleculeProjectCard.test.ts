@@ -1,12 +1,10 @@
 import {expect, describe, it }  from 'vitest'
-import { mount } from '@vue/test-utils'
 import type { VueWrapper } from '@vue/test-utils'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFormProject from '~/components/molecules/MoleculeFormProject.vue'
 import { ProjectService } from '~/api/generate';
 import { Dialog } from 'primevue';
-import handleApiError from '~/plugins/error-handler.ts'
 
 
 let mockedProject = {title: "Project creation",
@@ -62,7 +60,6 @@ const mockStatus = reactive({
       }}
     }
   })
-const mockHandleError = vi.fn()
 
 describe('MoleculeProjectCard component', ()=>{
 

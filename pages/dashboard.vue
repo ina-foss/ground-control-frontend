@@ -69,14 +69,13 @@ import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue
 
 
 const refreshStore = useRefreshStore()
-const {fetchProject,totalRecords} = refreshStore
+const {fetchProject} = refreshStore
 const {getProjectNumber} = storeToRefs(refreshStore)
 const first = ref(0)
 const paginatorSize = computed(()=> window.innerWidth > 1600 ? 20 : 16)
 
 // On renomme error pour eviter un conflit avec @nuxt/test-utils/runtime
 const {data:data,refresh, status, error: projectError} = await useAsyncData('projects',async ()=> await fetchProject(first.value, paginatorSize.value),{server:false})
-// const {data: projectNumber, refresh: getTotalRecords } = await useAsyncData('total_project_number',async ()=> await totalRecords(),{server:false})
 
 const dashboardRef = ref()
 localStorage.setItem('breadcrumbItems', null);

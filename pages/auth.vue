@@ -7,10 +7,9 @@
 <script setup>
 import { useService } from "@/composables/useService";
 import { onMounted } from "vue";
-import { useRouter } from "vue-router";
 
 const services = useService();
-const router = useRouter();
+
 const { $handleApiError } = useNuxtApp()
 
 const authenticateOidc = async () => {

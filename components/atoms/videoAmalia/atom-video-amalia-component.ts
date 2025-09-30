@@ -31,7 +31,7 @@ export default defineComponent({
     let dynamicTumbnails = ref()
     let downloadUrl = ref()
     let waveformUrl = ref()
-    const {timestampToUnix, unixToTimestamp} = $application
+    const {unixToTimestamp} = $application
     const {getHistory, consumeTimecode} = useTimecodeHistory()
 
     const timecodeHistory = getHistory
@@ -58,7 +58,7 @@ export default defineComponent({
     ];
     const selectedCategories = ref([]);
 
-    watch([selectedCategories, visibleRight], async ([newSelectedCategories, newVisibleRight]) => {
+    watch([selectedCategories, visibleRight], async () => {
       const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
       if (visibleRight.value === false) {
         await Promise.all([hlsPlayer(), playerParams()]).then(()=>{

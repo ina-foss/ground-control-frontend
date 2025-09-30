@@ -233,14 +233,11 @@ const refreshStore = useRefreshStore()
 const toast = useToast()
 const { $application } = useService()
 
-const {getProject} = storeToRefs(refreshStore)
 const {fetchTasks} = refreshStore
 
 const dialogVisible = ref(false)
 const deleteModal = reactive({visible: false, data: {},loading:false})
-const dialogContent = ref('')
 const clickedRowData = ref(null)
-const spinnerVisible = ref(true)
 const formStepClick = ref()
 const loadingExport = ref(false)
 const buttonMenu = ref()
@@ -260,7 +257,6 @@ const getFirstLine = (markdownText) => {
 const expandedRows = ref()
 
 const editMode = ref(false)
-// const data = ref(getProject)
 const {data, refresh, status} = useAsyncData(`task_${route.params.id}` ,async () => await fetchTasks(route.params.id))
 
 const buttonItems = [

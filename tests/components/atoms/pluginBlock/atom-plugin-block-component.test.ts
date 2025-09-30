@@ -1,11 +1,9 @@
-import { mount ,shallowMount,flushPromises} from '@vue/test-utils'
+import { shallowMount} from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import AtomPluginBlock from '@/components/atoms/pluginBlock/AtomPluginBlock.vue'
 import AtomPluginAutocomplete from '@/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
 import AtomPluginLabel from '@/components/atoms/pluginLabel/AtomPluginLabel.vue'
-import { nextTick } from 'vue'
-import { usePluginStore } from '~/stores/plugins'
 
 // Mocks
 vi.mock('~/composables/useTopicList', () => ({

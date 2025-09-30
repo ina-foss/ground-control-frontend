@@ -27,7 +27,7 @@
     </context-wrapper>
 
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-2">
-        <main-plugins-wrapper v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" >
+        <main-plugins-wrapper v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" :key="index" >
           <b>{{ plugin?.display_config?.label ?? plugin?.name }}</b>
           <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]"  />
             <div v-if="childPluginMap[plugin.id]?.length">

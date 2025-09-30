@@ -120,7 +120,7 @@ const handleConfirm = (event, index) => {
   isChanged = true
 }
 
-const transcriptionFunction = (localSubmit) => {
+const transcriptionFunction = () => {
   const locals = []
   localChanges.value?.forEach((el, index) => {
     if (el == null) locals[index] = null
