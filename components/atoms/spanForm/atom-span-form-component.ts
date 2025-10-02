@@ -7,6 +7,7 @@ export default defineNuxtComponent({
   name:'AtomSpanForm',
   components: {AtomPluginItemslist},
   setup(props,{expose}) {
+    let currentSpanId = undefined
     const textSpan=ref()
     const visible = ref()
     const nodesCount=ref<number>()
@@ -107,7 +108,7 @@ export default defineNuxtComponent({
 
     function createSpan () {
       if(nodes.value.length > 0){ // real spans
-        applySpan(_.findIndex(spanArray.value,span=>_.isEqual(span?.nodes,nodes.value)) )
+        applySpan(currentSpanId)
       }
       else{ // virtual spans
         const spanId =spanArray.value.length
@@ -139,6 +140,7 @@ export default defineNuxtComponent({
       else isGroup.value=false
       if(role) roleSelected = role
       pluginSelected.value=''
+      currentSpanId = spanId
       affectPluginValues(spanArray.value[spanId]?.plugins)
       defaultLabel.value =  spanArray.value[spanId]?.label
       deletedNum.value =  spanArray.value[spanId]?.deletedItems
@@ -165,6 +167,7 @@ export default defineNuxtComponent({
       defaultLabel.value = undefined
       initPluginValues(getPluginList.value)
       deletedNum.value = undefined
+      currentSpanId = undefined
       nodes.value = []
     }
 
