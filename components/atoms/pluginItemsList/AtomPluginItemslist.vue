@@ -1,22 +1,22 @@
 <template>
-  <div class="flex flex-wrap gap-2  ">
+  <div class="flex flex-wrap gap-4  ">
     <div
-        class="grid gap-1 w-full " style="grid-auto-rows: 50px ;grid-template-columns: repeat(auto-fit,minmax(100px,1fr))">
+        class=" w-full flex gap-3 " >
       <Button
           v-for="option in visibleOptions"
           :key="option.label"
-          class="!text-xs"
-          size="small"
+          class="h-[33px] rounded-[6px] "
           :outlined="!isEqual(pluginValue,option)"
           :label="option.label"
           @click="()=>pluginValue=option"
       />
     </div>
     <Select
-        v-if="isForResearch"
+        v-if="isForResearch && dropdownOptions.length"
         v-model="pluginValue"
-        fluid
         :options="dropdownOptions"
+        :placeholder="`Choisir un autre ${plugin.name} `"
+        class="w-[215px]"
         filter
         option-label="label"
     />

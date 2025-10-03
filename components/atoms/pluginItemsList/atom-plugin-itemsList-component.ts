@@ -17,7 +17,7 @@ export default defineComponent({
 
     },
     dropdownOptions() {
-      return this.allOptions
+      return  _.difference(this.allOptions, this.visibleOptions)
     },
   },
   setup(props, {emit}) {
