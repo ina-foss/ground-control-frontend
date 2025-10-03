@@ -2,16 +2,18 @@
   <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
     <MultiSelect  ref="multiSelectRef" :disabled="!isAnnotationEditable" v-model="pluginValue" :options="sortedOptionsByFilter"
                  emptyMessage="Rechercher un label" :emptyFilterMessage="' '" optionLabel="label" filter
+                  class="w-[215px]"
                   :max-selected-labels="0"
+      scrollHeight="500px"
                  @filter="handleFilter" :placeholder="pluginName" :loading="showSkeleton"
                  :selectedItemsLabel="pluginName" fluid  @show="onDropdownOpen">
       <template #option="slotProps">
-        <div class="flex items-center space-x-2 ">
+        <div class="flex items-center space-x-2 w-[250px] ">
           <img
               v-if="slotProps.option.image"
               :src="slotProps.option.image"
               alt="icon"
-              class="w-7 h-7 object-contain"
+              class="w-14 h-14 object-contain"
           />
 
           <div class="flex flex-col">
