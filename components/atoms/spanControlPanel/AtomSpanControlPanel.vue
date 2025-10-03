@@ -4,7 +4,8 @@
       <b class="text-xl">Spans</b>
       <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
       <span-wrapper class="overflow-auto max-h-[500px] block">
-        <span-content-wrapper v-for="(span,index) in spanOnlyArray"
+        <span-content-wrapper
+            v-for="(span,index) in spanOnlyArray"
             :key="span.id" draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer overflow-hidden transition-all duration-300 expand-type' ] "
           @dragstart="event=>event.dataTransfer.setData('span', span.id)">
           <span-number class="font-bold self-center px-2">  {{index+1}} </span-number>
@@ -41,7 +42,7 @@
                   class="flex flex-col text-start gap-1 h-full w-full "
                   @drop="dropSpan($event,selectedGroup,role)" @dragover="event=>event.preventDefault()" @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
                   <role-span-title class="text-center">{{ role }}</role-span-title>
-                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :key="span" :style="{ backgroundColor : createSpanColorPalette(mainPluginId,spanArray[span.spanId]?.plugins[readPluginValues(spanArray[span.spanId])])}" class=" px-1 truncate mr-2 max-w-full w-fit rounded ">
+                  <role-span-content v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))" :key="span" :style="{ backgroundColor : createSpanColorPalette(mainPluginId,spanArray[span.spanId]?.plugins[mainPluginIndex])}" class=" px-1 truncate mr-2 max-w-full w-fit rounded ">
                     {{spanArray[span.spanId]?.id}} -
                     {{ extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) ?? spanArray[span.spanId]?.plugins[mainPluginIndex]?.map(value=>value.label).join(', ') }}
                   </role-span-content>
@@ -64,8 +65,8 @@
       <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
       <div class="flex flex-col gap-3">
         <group-wrapper
-          :key="group.id"
-            v-for=" (group,index) in groupArray" :class="{' hover:bg-primary-100 cursor-pointer p-2 rounded-md flex items-center' :true, 'border-2 bg-surface-100 border-title font-semibold' : newFocus== group.id}"
+          v-for=" (group,index) in groupArray"
+            :key="group.id" :class="{' hover:bg-primary-100 cursor-pointer p-2 rounded-md flex items-center' :true, 'border-2 bg-surface-100 border-title font-semibold' : newFocus== group.id}"
             @click="handleGroupClick(group.id)" >
             <group-number class="font-bold self-center px-2 h-fit">  {{index+1}} </group-number>
             <group-label class="grow">{{ group.label ?? lodashOrder(group.plugins,value => value.length,'desc')[0]?.[0]?.label  }}</group-label>

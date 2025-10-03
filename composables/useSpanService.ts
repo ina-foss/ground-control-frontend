@@ -74,7 +74,7 @@ function createSpanService (){
   const mainPluginIndex = computed(()=>{
     if(mainPluginId.value) {
       const mainPlugin = pluginList.value.find(plugin=>plugin.id = mainPluginId.value)
-      return mainPlugin.data_property ? mainPlugin.data_property : `plugin-${mainPlugin.id}`
+      return readPluginValues(mainPlugin)
     }
     return undefined
   })
