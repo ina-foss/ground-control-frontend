@@ -1,29 +1,29 @@
 <template>
   <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose" >
-    <div class="w-[650px] flex flex-col gap-6  " >
-      <context-wrapper v-if="!showContext" class="flex flex-col border-dashed border-2 rounded border-subtitle p-5 transition-all duration-300 gap-2 bg-grey-50 ">
-        <context-header class="inline-flex w-full items-center justify-between pb-3">
-          <span class="font-semibold  ">Contexte</span>
-          <context-button-wrapper class="inline-flex gap-4 justify-around items-center">
-            <span
-                :class="['pi pi-minus rounded-full  border p-1 text-[10px]/3 font-bold   ',
-              !expandedContext ? 'text-disabled  border-disabled' : 'cursor-pointer border-black hover:bg-primary-50'
-            ]"
-              @click="shrinkContext"/>
-            <span
-                :class="['pi pi-plus rounded-full  border p-1 text-[10px]/3 font-bold   ',
-              expandedContext ? 'text-disabled  border-disabled' : 'cursor-pointer border-black hover:bg-primary-50'
-            ]"
-              @click="expandContext()"/>
-          </context-button-wrapper>
-        </context-header>
-        <div v-if="!groupDisplay" :class="['w-full  items-center  gap-1 text-sm/6 ', expandedContext ? 'inline'  : 'flex']"  >
-            <span :class="[!expandedContext ?  '  truncate  ' : '  text-justify']" :style="{'direction': expandedContext ? 'ltr' : 'rtl'}"> {{ prevNodes.map(n=>n.firstChild.nodeValue).join(' ') + " " }}</span>
-            <span :class="[ 'highlight-text max-w-full text-justify  ', expandedContext ? '' : 'truncate' ]" style="flex: 1 0 min-content;" >
-              {{ nodes?.map(node=>Array.from(node.childNodes).filter(child=>child.nodeType == 3 )[0].nodeValue).join(' ')}}
-            </span>
-          <span :class="[!expandedContext ?  '  truncate ' : 'text-justify ']"> {{ " " + nextNodes.map(n=>n.firstChild.nodeValue).join(' ') }}</span>
-        </div>
+    <div class="w-[500px] flex flex-col gap-2  " >
+      <context-wrapper v-if="!showContext" class="border-dashed border-2 rounded border-subtitle px-6 py-4 transition-all duration-300  ">
+      <context-header class="inline-flex w-full items-center justify-between pb-3">
+        <span class="font-semibold  ">Contexte</span>
+        <context-button-wrapper class="inline-flex gap-4 justify-around items-center">
+          <span
+              :class="['pi pi-minus rounded-full  border p-1 text-[10px]/3 font-bold   ',
+            !expandedContext ? 'text-disabled  border-disabled' : 'cursor-pointer border-black hover:bg-primary-50'
+          ]"
+            @click="shrinkContext"/>
+          <span
+              :class="['pi pi-plus rounded-full  border p-1 text-[10px]/3 font-bold   ',
+            expandedContext ? 'text-disabled  border-disabled' : 'cursor-pointer border-black hover:bg-primary-50'
+          ]"
+            @click="expandContext()"/>
+        </context-button-wrapper>
+      </context-header>
+      <div v-if="!groupDisplay" :class="['w-full  items-center  gap-1 text-sm/6 ', expandedContext ? 'inline'  : 'flex']"  >
+          <span :class="[!expandedContext ?  '  truncate  ' : '  text-justify']" :style="{'direction': expandedContext ? 'ltr' : 'rtl'}"> {{ prevNodes.map(n=>n.firstChild.nodeValue).join(' ') + " " }}</span>
+          <span :class="[ 'highlight-text max-w-full text-justify  ', expandedContext ? '' : 'truncate' ]" style="flex: 1 0 min-content;" >
+            {{ nodes?.map(node=>Array.from(node.childNodes).filter(child=>child.nodeType == 3 )[0].nodeValue).join(' ')}}
+          </span>
+         <span :class="[!expandedContext ?  '  truncate ' : 'text-justify ']"> {{ " " + nextNodes.map(n=>n.firstChild.nodeValue).join(' ') }}</span>
+      </div>
     </context-wrapper>
 
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-5">
