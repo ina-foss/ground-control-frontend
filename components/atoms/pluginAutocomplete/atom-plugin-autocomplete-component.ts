@@ -17,7 +17,7 @@ export default defineComponent({
     pluginValue:{type: Array},
     textSpan: { type: String }
   },
-  emits: ['update:pluginValue'],
+  emits: ['update:pluginValue','last-selected'],
   setup(props, {emit}) {
     const value = ref([]);
     const {pluginItemsConfig, plugin, index, source,textSpan} = toRefs(props)
@@ -63,6 +63,10 @@ export default defineComponent({
     const pluginValue = computed({
         get: () => props.pluginValue,
         set : newValue => emit('update:pluginValue',newValue)
+    })
+
+    watch(pluginValue, (newValues, oldValues) => {
+        emit('last-selected', newValues?.find(v => !oldValues?.includes(v))?.label)
     })
 
     function handleFilter(event) {
