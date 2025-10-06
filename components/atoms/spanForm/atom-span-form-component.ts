@@ -43,6 +43,10 @@ export default defineNuxtComponent({
       initPluginValues(getPluginList.value)
     })
 
+    function onLastSelected(value:any) {
+        defaultLabel.value = value ??  textSpan.value
+    }
+
     let nodes = ref<Nodes[]>([])
     let prevNodes = ref<Nodes[]>([])
     let nextNodes = ref<Nodes[]>([])
@@ -142,11 +146,11 @@ export default defineNuxtComponent({
       pluginSelected.value=''
       currentSpanId = spanId
       affectPluginValues(spanArray.value[spanId]?.plugins)
-      defaultLabel.value =  spanArray.value[spanId]?.label
       deletedNum.value =  spanArray.value[spanId]?.deletedItems
       labelSelected.value = spanArray.value[spanId]?.type ?? []
       nodes.value = spanArray.value[spanId]?.nodes ?? []
       textSpan.value=extractTextFromSpanNodes(nodes.value)
+      defaultLabel.value =  spanArray.value[spanId]?.label ?? textSpan.value
       nodesCount.value = nodes.value.length
       if(!group && !virtual){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )
@@ -205,7 +209,8 @@ export default defineNuxtComponent({
       pluginSelected,
       childPluginMap,
       textSpan,
-      readPluginValues
+      readPluginValues,
+      onLastSelected
     }
   },
 })
