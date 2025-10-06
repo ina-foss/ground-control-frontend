@@ -29,12 +29,12 @@
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-5">
         <main-plugins-wrapper v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]"  class=" grid grid-cols-[100px_auto] gap-3 gap-y-5">
           <b class="pt-2 text-right ">{{ plugin?.display_config?.label ?? plugin?.name.charAt(0).toUpperCase() + plugin?.name.slice(1)  }}</b>
-          <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]"  />
+          <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected"/>
             <div v-if="childPluginMap[plugin.id]?.length">
                 <div class="flex flex-col gap-2">
                     <div v-for="(child,childIndex) in childPluginMap[plugin.id]" :key="child.id" >
                         <b>{{ plugin?.display_config?.label ?? plugin?.name }}</b>
-                        <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(plugin)]" />
+                        <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected" />
                     </div>
                 </div>
             </div>
