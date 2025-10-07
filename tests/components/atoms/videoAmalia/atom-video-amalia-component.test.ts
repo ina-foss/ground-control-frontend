@@ -20,12 +20,14 @@ vi.mock('#imports', () => ({
   })
 }))
 
-vi.mock('@/components/atoms/videoAmalia/atom-video-amalia-component.ts', async (original) => {
-  const actual = await original()
-  return {
-    ...actual
-  }
-})
+vi.mock('@/components/atoms/videoAmalia/atom-video-amalia-component.ts', () => ({
+  initAmaliaPlayer: vi.fn(() => ({
+    player: document.createElement('div'),
+    seek: vi.fn(),
+    handleRewindTimecode: vi.fn(),
+    destroy: vi.fn(),
+  })),
+}))
 
 vi.mock('@/composables/useTimecodeHistory', () => ({
   default: () => ({
