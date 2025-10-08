@@ -2,7 +2,6 @@
   <div v-if="status == 'pending' && !data" class=" items-center h-full">
     <LoadingSpinner style="height: 100%"/>
   </div>
-
   <div v-else class="grid h-full p-3">
     <div class="p-3 w-fit h-[70px] ml-auto fixed z-40 right-[-5px] mr-12 flex items-center top-[0px]">
       <label class="text-primary font-semibold p-2">Etapes</label>
@@ -21,7 +20,65 @@
     }"
       />
     </div>
-    <DataTable
+    <div class="p-3 ml-auto fixed z-40 right-[-20px] mr-12 top-[70px] flex justify-end">
+      <Card
+        class="rounded-xl shadow-md bg-white overflow-hidden justify-center h-[33px] cursor-pointer"
+        @click="toggleStrategy"
+      >
+        <template #title class="flex justify-items-center">
+          <div class="items-center grid transition-all duration-300  "
+        :style="{'grid-template-columns' : showStrategy ? 'auto 1fr' : 'auto 0fr'}"
+          >
+            <div class="flex items-center ">
+              <h2 class="text-xs font-semibold whitespace-nowrap">
+                {{ showStrategy ? "Stratégie >" : "< Stratégie" }}
+              </h2>
+            </div>
+            <transition name="fade" style="min-width: 0px; min-height: 0px" class="overflow-hidden ">
+              <div
+                class="flex items-center gap-x-6 text-[10px] text-gray-600  "
+              >
+                <div v-if="statusParameters === 'pending'" class="text-gray-400">
+                  Chargement...
+                </div>
+
+                <div v-else-if="projectParameters" class="flex items-center gap-x-6 line-clamp-1 ">
+                  <div class="flex gap-1 items-center truncate">
+                    <span class="font-medium">Redondance</span>
+                    <span class="px-1 border border-gray-900 rounded-sm">
+                      {{ projectParameters.redundancy }}
+                    </span>
+                  </div>
+                  <div class="flex gap-1 items-center truncate">
+                    <span class="font-medium">Coverage des tâches</span>
+                    <span class="px-1 border border-gray-900 rounded-sm">
+                      {{ projectParameters.completeness_rate }}%
+                    </span>
+                  </div>
+                  <div class="flex gap-1 items-center truncate">
+                    <span class="font-medium">Annotation vide</span>
+                    <span class="px-1 border border-gray-900 rounded-sm">
+                      {{ projectParameters.allow_empty_annotation ? "Oui" : "Non" }}
+                    </span>
+                  </div>
+                  <div class="flex gap-1 items-center truncate">
+                    <span class="font-medium">Max tâche / personne</span>
+                    <span class="px-1 border border-gray-900 rounded-sm">
+                      {{ projectParameters.max_tasks_per_person }}
+                    </span>
+                  </div>
+                </div>
+
+                <div v-else class="text-red-500 text-nowrap ">
+                  Impossible de charger les paramètres
+                </div>
+              </div>
+            </transition>
+          </div>
+        </template>
+      </Card>
+    </div>
+   <DataTable
       v-model:expanded-rows="expandedRows" class=" overflow-scroll-full custom-data-table p-3" :context-menu=true
       :pt="{
       row:{
@@ -77,23 +134,28 @@
       </Column>
       <Column :row-editor="true" body-style="text-align:center" style="width: 5%; min-width: 5rem"  body-class="text-sm"/>
       <Column id="test" expander style="width: 5rem;" class="txt"  body-class="text-sm p-3"/>
-
       <template #expansion="slotProps">
         <div class="border-surface-200 shadow-lg table-border-left" style="box-shadow: 0 4px 6px rgba(237, 237, 237, 1);">
           <DataTable
             v-model:filters = "filters"
             filterDisplay="row"
             :globalFilterFields = "['name']"
-            :row-class="()=> 'hover:bg-surface-100 cursor-pointer'"
+            :row-class="rowData => 
+              isAdmin
+                ? 'hover:bg-surface-100 cursor-pointer'
+                : rowData.status === 'draft'
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'hover:bg-surface-100 cursor-pointer'
+            "
             class="overflow-scroll"
             :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
-      row:{
-        class:'p-3',
-        style: { backgroundColor: 'black', color: 'white' },
-      },
-       style: {height:'88px',padding: '20px !important'}
-    }"
+            row:{
+              class:'p-3',
+              style: { backgroundColor: 'black', color: 'white' },
+            },
+            style: {height:'88px',padding: '20px !important'}
+          }"
             @row-click="handleRowClick($event)">
             <template #empty>Aucune tâche trouvée.</template>
             <Column  class="txt" body-class="text-sm" field="name" header="Titre" style="width : 8rem ; min-width: 70px;">
@@ -139,7 +201,7 @@
                 <Tag  :severity="getStatusClass(nestedData.status)" class="mb-1 scale-90" style="font-weight:500">{{translatedAnnotationStatus(nestedData.status) }}</Tag>
               </template>
             </Column>
-            <Column class="txt" body-class="text-sm" header="Annoté par" style="width: 12rem">
+            <Column class="txt" body-class="text-sm" header="Annotateurs" style="width: 12rem">
               <template #body="{data: nestedData}">
                 <div class="flex justify-start gap-2 ">
                   <Avatar
@@ -151,7 +213,16 @@
                 </div>
               </template>
             </Column>
-            <Column field="name" header="Date de création" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
+            <Column field="name" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
+              <template #header>
+                <span class="flex justify-center items-center gap-1 text-sm font-bold">
+                  Création
+                  <i 
+                    class="pi pi-info-circle text-gray-500 cursor-help pt-1" 
+                    v-tooltip="'Date de création'"
+                  ></i>
+                </span>
+              </template>
               <template #body="slotProps">
                 <p>
                   {{
@@ -164,7 +235,16 @@
                 </p>
               </template>
             </Column>
-            <Column field="name" header="Date de démarrage" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
+            <Column field="name" class="txt" style="width: 8rem; min-width: 70px;" body-class="p-3">
+              <template #header>
+                <span class="flex justify-center items-center gap-1 text-sm font-bold">
+                  Début
+                  <i 
+                    class="pi pi-info-circle text-gray-500 cursor-help pt-1" 
+                    v-tooltip="'Date début de traitement'"
+                  ></i>
+                </span>
+              </template>
               <template #body="slotProps">
                 <p>
                   {{
@@ -177,23 +257,82 @@
                 </p>
               </template>
             </Column>
-            <Column field="name" header="Date d'expiration" class="txt" style="width : 8rem ; min-width: 70px;"   body-class="p-3 ">
-              <template #body="slotProps">
-                <p > {{ slotProps.data.expiration_date ?? '__' }}</p>
+            <Column field="expiration_date" dataType="date" style="width: 10rem;">
+              <template #header>
+                <span class="flex justify-center items-center gap-1 text-sm font-bold">
+                  Fin
+                  <i 
+                    class="pi pi-info-circle text-gray-500 cursor-help pt-1" 
+                    v-tooltip="'Date de fin de traitement'"
+                  ></i>
+                </span>
+              </template>
+              <template #body="{ data }">
+                <Calendar
+                  :modelValue="data.expiration_date && new Date(data.expiration_date)"          
+                  dateFormat="dd/mm/yy"
+                  showIcon
+                  :disabled="!roleUpdateExpirationDate"
+                  class="w-full"
+                  :invalid="data.expiration_date && new Date(data.expiration_date) < new Date()" 
+                  @update:modelValue="(value) => onExpirationDateChange(value, data)"
+                  :minDate="new Date()"     
+                />
+              </template>
+              <template #filter="{ filterModel, filterCallback }">
+                <Dropdown
+                  v-model="filterModel.value"
+                  :options="[
+                    { label: 'Toutes', value: null },
+                    { label: 'Non expirées', value: 'active' },
+                    { label: 'Expirées', value: 'expired' }
+                  ]"
+                  placeholder="Filtrer"
+                  optionLabel="label"
+                  optionValue="value"
+                  @change="filterCallback()"
+                  class="w-full"
+                />
               </template>
             </Column>
+
             <Column class="txt" body-class="text-sm" field="instruction" header="Instruction">
               <template #body="{ data: nestedData }">
                 <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
               </template>
-            </Column>            <Column v-if="roleDeleteTask" >
-            <template #body="{data: nestedData}">
-              <div class="flex justify-end px-4">
-                <Button label="Supprimer" severity="danger" outlined @click="showDeleteTaskModal(nestedData)"/>
-              </div>
-            </template>
-          </Column>
-
+            </Column>            
+            <Column class="txt" body-class="text-sm" field="actions" header="Actions">
+              <template #body="{ data: nestedData }">
+                <div class="flex items-center gap-2 ">
+                  <div>
+                  <Button 
+                    v-if="roleActivateTask && nestedData.status === 'draft'"  
+                    label="Activer" 
+                    severity="primary" 
+                    outlined 
+                    @click="activateTask(nestedData.id)" 
+                  />
+                  </div>
+                  <div>
+                   <Button
+                    v-if="roleDeleteTask"
+                    severity="danger"
+                    outlined
+                    @click="showDeleteTaskModal(nestedData)"
+                    style="height: 22px; padding:0; margin:auto; color:#0C7DA2;"
+                    text
+                    rounded
+                  >
+                    <img
+                      src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
+                      alt="Trash Icon"
+                      style="height:18px;width:18px;filter: brightness(0) saturate(100%) invert(48%) sepia(72%) saturate(4640%) hue-rotate(337deg) brightness(98%) contrast(91%);"
+                    />
+                  </Button>
+                  </div>
+                </div>
+              </template>
+            </Column>
           </DataTable>
         </div>
       </template>
@@ -221,12 +360,35 @@
 
 import _ from 'lodash';
 import {ref} from 'vue';
-import {AnnotationService, AnnotationStatus, StepStatus, TaskService, Permission} from '../../api/generate';
+import {AnnotationService, AnnotationStatus, StepStatus, TaskService, Permission, TaskStatus, ProjectService } from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {useRefreshStore} from '../stores/refresh';
-import { FilterMatchMode } from '@primevue/core/api';
+import { FilterMatchMode, FilterService } from '@primevue/core/api';
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
-import type { DataTableFilterMeta } from 'primevue';
+import type { ColorPicker } from '#components';
+
+const strategy = {
+  redundancy: 1,
+  completeness: 100,
+  allow_empty_annotation: true,
+  max_task_per_person: 1,
+};
+
+FilterService.register('expirationFilter', (value, filter) => {
+  if (!filter) return true; 
+
+  const today = new Date();
+  if (filter === 'active') {
+    return !value || new Date(value) >= today;
+  }
+
+  if (filter === 'expired') {
+    return value && new Date(value) < today;
+  }
+
+  return true;
+});
+
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
@@ -242,14 +404,24 @@ const formStepClick = ref()
 const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
+const { $handleApiError } = useNuxtApp()
+
+const showStrategy = ref(false)
+
+const toggleStrategy = () => {
+  showStrategy.value = !showStrategy.value
+}
 
 const filters = ref<DataTableFilterMeta>({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  name: {value:null, matchMode: FilterMatchMode.CONTAINS}
+  name: {value:null, matchMode: FilterMatchMode.CONTAINS},
+  expiration_date: { value: null, matchMode: 'expirationFilter' },
 })
 
 const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
 const roleDeleteTask = computed(() => $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE));
+const roleActivateTask = computed(() => $application.hasRole(Permission.GROUND_CONTROL_TASK_ACTIVATE));
+const roleUpdateExpirationDate = computed(() => $application.hasRole(Permission.GROUND_CONTROL_TASK_UPDATE_EXPIRATION_DATTE));
 const getFirstLine = (markdownText) => {
   if (!markdownText) return "";
   return markdownText.split("\n")[0] ;
@@ -258,6 +430,10 @@ const expandedRows = ref()
 
 const editMode = ref(false)
 const {data, refresh, status} = useAsyncData(`task_${route.params.id}` ,async () => await fetchTasks(route.params.id))
+const { data: projectParameters, status: statusParameters } = useAsyncData(
+  `project_${route.params.id}_parameters`,
+  async () => await ProjectService.readProjectParametersProjectIdParametersGet(Number(route.params.id))
+)
 
 const buttonItems = [
   {
@@ -294,6 +470,10 @@ const showDeleteTaskModal = (rowData)=>{
   deleteModal.loading = false
   deleteModal.visible = true
   deleteModal.data= rowData
+}
+
+const activateTask = (task_id) => {
+  TaskService.updateTaskStatusTaskTaskIdStatusPost(task_id,TaskStatus.PENDING).then(()=> refresh())
 }
 
 const hideDeleteTaskModal = () => {
@@ -412,7 +592,7 @@ const stepCreate = (stepId) => {
 
 let email_clicked
 const handleRowClick = (event) => {
-
+  if (event.data.status === 'draft') return;
   if(typeof event == 'string' && isAdmin.value) email_clicked = event
   clickedRowData.value = event.data;
 
@@ -439,6 +619,21 @@ const onCellEditComplete = () => {
   editMode.value = false
 }
 
+const onExpirationDateChange = async (value: Date, row: any) => {
+  const oldValue = row.expiration_date
+  row.expiration_date = value.toISOString().split("T")[0]
+  try {
+    await TaskService.updateDataTaskTaskTaskIdPatch(row.id, {
+      expiration_date: row.expiration_date,
+    })
+  } catch (err: any) {
+    console.error("❌ Error updating expiration date:", err)
+    $handleApiError(err)
+    row.expiration_date = oldValue
+  } 
+}
+
+
 </script>
 <style scoped>
 .table-border-left {
@@ -456,5 +651,18 @@ const onCellEditComplete = () => {
   overflow-x: hidden;
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+
+:deep(.p-card-body) {
+  gap: 0 !important;
+}
 
 </style>

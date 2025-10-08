@@ -198,7 +198,7 @@ export class TaskService {
     }
     /**
      * Get Tasks By Annotated By
-     * Retrieve tasks filtered by annotated_by user (email), with priority rules.
+     * Retrieve tasks filtered by anno tated_by user (email), with priority rules.
      * @param email
      * @param page
      * @param size
@@ -222,6 +222,35 @@ export class TaskService {
                 'page': page,
                 'size': size,
                 'task_limit_on': taskLimitOn,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Get Tasks For Step
+     * Retrieve tasks for a specific step and user, with priority rules:
+     * 1. IN_PROGRESS tasks already annotated by user.
+     * 2. IN_PROGRESS tasks with unmet redundancy that user hasn’t annotated.
+     * 3. PENDING tasks that are due soon with high priority.
+     * @param stepId
+     * @param email
+     * @returns TaskListDto Successful Response
+     * @throws ApiError
+     */
+    public static getTasksForStepTasksStepStepIdEmailGet(
+        stepId: number,
+        email: string,
+    ): CancelablePromise<Array<TaskListDto>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/tasks/step/{step_id}/{email}',
+            path: {
+                'step_id': stepId,
+                'email': email,
             },
             errors: {
                 401: `Unauthorized`,

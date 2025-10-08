@@ -22,7 +22,8 @@ const mockedStepObject = {
                       "id": 3,
                       "created_at": "2025-04-09T14:44:37.700049",
                       "updated_at": "2025-04-09T14:44:37.700049",
-                      "tasks": []
+                      "tasks": [],
+                      "expiration_date" : "2025-04-09T14:44:37.700049"
                     }
 
 describe('Molecule Form Task',()=>{
@@ -99,7 +100,8 @@ describe('Molecule Form Task',()=>{
       expect(MediaService.createMediaMediaPost).toHaveBeenCalledOnce()
       expect(MediaService.createMediaMediaPost).toHaveBeenLastCalledWith({url: "http://example.com", type: "video", player_parameters: {}})
       expect(TaskService.createTaskTaskPost).toHaveBeenCalledOnce()
-      expect(TaskService.createTaskTaskPost).toHaveBeenLastCalledWith({name: 'Task title',instruction:'Task instruction', data_type: TaskDataType.LDD, status: TaskStatus.DRAFT, lead_time: null, step_id: mockedStepObject.id, media_id: 2  })
+      expect(TaskService.createTaskTaskPost).toHaveBeenLastCalledWith({name: 'Task title',
+        expiration_date : null, instruction:'Task instruction', data_type: TaskDataType.AMALIA, status: TaskStatus.DRAFT, lead_time: null, step_id: mockedStepObject.id, media_id: 2  })
 
       // Wait for all asynchronous operations to complete
       await flushPromises()

@@ -5,6 +5,7 @@
 import type { ProjectBaseDto } from '../models/ProjectBaseDto';
 import type { ProjectDetailDto } from '../models/ProjectDetailDto';
 import type { ProjectListDto } from '../models/ProjectListDto';
+import type { ProjectParametersResponse } from '../models/ProjectParametersResponse';
 import type { ProjectWithIdDto } from '../models/ProjectWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -60,7 +61,7 @@ export class ProjectService {
     }
     /**
      * Read Project
-     * Get details of a single project by ID.
+     * Get details of a single project by ID with prioritized tasks per step.
      * @param projectId
      * @returns ProjectListDto Successful Response
      * @throws ApiError
@@ -121,6 +122,28 @@ export class ProjectService {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/project/{project_id}',
+            path: {
+                'project_id': projectId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Read Project Parameters
+     * @param projectId
+     * @returns ProjectParametersResponse Successful Response
+     * @throws ApiError
+     */
+    public static readProjectParametersProjectIdParametersGet(
+        projectId: number,
+    ): CancelablePromise<ProjectParametersResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/{project_id}/parameters',
             path: {
                 'project_id': projectId,
             },

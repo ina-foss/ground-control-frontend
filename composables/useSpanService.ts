@@ -491,7 +491,6 @@ function createSpanService (){
     const selection: Selection | null = window.getSelection()
     selection?.empty()
     selection?.addRange(range)
-
     handleSelectionV2({spanArg: span})
   }
 
