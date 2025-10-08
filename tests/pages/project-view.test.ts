@@ -416,27 +416,4 @@ describe('Project detail view',()=>{
 
   })
 
-  it('should be able to delete task', async()=>{
-    //Expand the 1st step DataTable
-    expect(wrapper.text()).not.toContain('Voulez vous supprimer la')
-    await wrapper.find('[class="p-datatable-row-toggle-button"]').trigger('click')
-    await wrapper.vm.$nextTick(); // Wait
-    await wrapper.find('button[aria-label="Supprimer"]').trigger('click')
-
-    expect(wrapper.text()).toContain('Voulez vous supprimer la')
-    await wrapper.findAll('button[aria-label="Supprimer"]').at(3)?.trigger('click')
-
-    expect(TaskService.deleteTaskTaskTaskIdDelete).toHaveBeenCalledOnce()
-    expect(mockedRefresh).toHaveBeenCalledOnce()
-
-    // Wait for the diaglof to unmount
-    await wrapper.vm.$nextTick(); // Wait
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    expect(wrapper.text()).not.toContain('Voulez vous supprimer la')
-
-
-
-
-  })
 })

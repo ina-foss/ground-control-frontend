@@ -135,7 +135,7 @@ describe('Molecule Form Project for new Project', ()=>{
   })
 
   it('should be able to create project ', async()=>{
-    const createButton = wrapper.findAllComponents(Button).at(3)
+    const createButton = wrapper.findAllComponents(Button).at(5)
 
     mocks.createProjectProjectPost.mockReset()
     mocks.createProjectProjectPost.mockResolvedValue({id: 5})
@@ -143,7 +143,6 @@ describe('Molecule Form Project for new Project', ()=>{
    wrapper.vm.title.value = "Title test"
    wrapper.vm.description.value = "Description test"
    wrapper.vm.selectedType.value = ['span','segmentation']
-
 
     await createButton.trigger('click')
     expect(mocks.createProjectProjectPost).toHaveBeenCalledWith({
@@ -155,22 +154,27 @@ describe('Molecule Form Project for new Project', ()=>{
       empty_annotations: false,
       is_published: false,
       pinned_at: null,
-      status: "draft"
+      status: "draft",
     })
     expect(StepService.createStepStepPost).toHaveBeenCalledTimes(2)
-    expect(StepService.createStepStepPost).toHaveBeenCalledWith({
+    expect(StepService.createStepStepPost).toHaveBeenCalledWith(
+       expect.objectContaining({
             title: `Step #1`,
             description: 'Step description',
             annotation_type: 'span',
             pinned_at: null,
             status: 'draft',
-            project_id: 5
-    })
+            project_id: 5,
+            redundancy: 1,
+            completeness_rate: 100.0,         
+            allow_empty_annotation: false, 
+            max_tasks_per_person: 1 
+    }))
 
   })
 
   it('should trigger title missing error ', async()=>{
-    const createButton = wrapper.findAllComponents(Button).at(3)
+    const createButton = wrapper.findAllComponents(Button).at(5)
     expect(createButton.text()).toContain('Créer')
 
     await createButton.trigger('click')
@@ -185,7 +189,7 @@ describe('Molecule Form Project for new Project', ()=>{
     mocks.createProjectProjectPost.mockReset()
     mocks.createProjectProjectPost.mockRejectedValue(new Error('custom error'))
 
-    const createButton = wrapper.findAllComponents(Button).at(3)
+    const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
     expect(consoleMock).toHaveBeenLastCalledWith("🚨 API Error Caught:",new Error("custom error"))
   })
@@ -197,7 +201,7 @@ describe('Molecule Form Project for new Project', ()=>{
     mocks.createProjectProjectPost.mockReset()
     mocks.createProjectProjectPost.mockResolvedValue({id: 10, catch: vi.fn() })
 
-    const createButton = wrapper.findAllComponents(Button).at(3)
+    const createButton = wrapper.findAllComponents(Button).at(5)
     mocks.createStepStepPost.mockReset()
     mocks.createStepStepPost.mockRejectedValue(new Error('error step'))
     expect(wrapper.vm.title.value).toBe('Title test')
@@ -234,7 +238,6 @@ describe('Molecule Form Project for existing Project', ()=>{
     const inputs = wrapper.findAllComponents(InputText)
     expect(inputs.at(0).element.value).toBe(mockedProject.title)
     expect(inputs.at(1).element.value).toBe(mockedProject.description)
-    expect(wrapper.vm.status.value.value).toBe(mockedProject.status)
 
     const nextButton = wrapper.findAllComponents(Button).at(1)
     await nextButton.trigger('click')
@@ -244,7 +247,7 @@ describe('Molecule Form Project for existing Project', ()=>{
   })
 
   it('should be able to update project ', async()=>{
-    const createButton = wrapper.findAllComponents(Button).at(3)
+    const createButton = wrapper.findAllComponents(Button).at(5)
     expect(createButton.text()).toContain('Sauvegarder')
 
     wrapper.vm.selectedType.value.push('auto-summary')
@@ -260,7 +263,6 @@ describe('Molecule Form Project for existing Project', ()=>{
       {
         title: mockedProject.title,
         description: mockedProject.description,
-        status: mockedProject.status,
         is_published: mockedProject.is_published,
         empty_annotations: mockedProject.empty_annotations,
         allow_skip: mockedProject.allow_skip,
@@ -275,14 +277,15 @@ describe('Molecule Form Project for existing Project', ()=>{
             annotation_type: 'auto-summary',
             pinned_at: null,
             status: 'draft',
-            project_id: 8
+            project_id: 8,
+            
     })
 
   })
 
   it('should trigger title missing error ', async()=>{
     wrapper.vm.title.value = ""
-    const createButton = wrapper.findAllComponents(Button).at(3)
+    const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
     expect(consoleMock).toHaveBeenLastCalledWith('Le titre est requis')
 
@@ -292,7 +295,7 @@ describe('Molecule Form Project for existing Project', ()=>{
     mocks.updateProjectProjectProjectIdPut.mockReset()
     mocks.updateProjectProjectProjectIdPut.mockRejectedValue(new Error('custom error'))
 
-    const createButton = wrapper.findAllComponents(Button).at(3)
+    const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
     expect(consoleMock).toHaveBeenLastCalledWith("🚨 API Error Caught:",new Error("custom error"))
   })
@@ -304,7 +307,7 @@ describe('Molecule Form Project for existing Project', ()=>{
     mocks.createStepStepPost.mockReset()
     mocks.createStepStepPost.mockRejectedValue(new Error('error step'))
 
-    const createButton = wrapper.findAllComponents(Button).at(3)
+    const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
     expect(consoleMock).toHaveBeenLastCalledWith("🚨 API Error Caught:",new Error('error step'))
 

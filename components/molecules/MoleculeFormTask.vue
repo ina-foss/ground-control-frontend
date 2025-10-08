@@ -8,44 +8,47 @@
         <Step value="2">Données</Step>
       </StepList>
       <StepPanels>
-
-        <StepPanel value="1" v-slot="{ activateCallback }" >
-          <div class=" grid grid-cols-1 grid-rows-3 gap-2 min-w-[70vh]">
-            <span class="text-slate-400 ">Entrez la configuration de la tâche</span>
-            <div class="flex">
-              <label class="self-center basis-1/5 pr-4">Titre</label>
-              <InputText v-model="name" placeholder="Entrez le titre de la tâche" autocomplete="off"
-                         class="input-box flex-auto custom-placeholder"/>
-            </div>
-            <div class="flex">
-              <label class="self-center basis-1/5 pr-4">Instruction</label>
-              <InputText
-                v-model="instruction" placeholder="Entrez l'instruction de tâche" autocomplete="off"
-                class="flex-auto input-box custom-placeholder"/>
-            </div>
-            <div class="grid grid-cols-2 flex justify-between">
+        <StepPanel value="1" v-slot="{ activateCallback }">
+            <div class="flex flex-col gap-4 justify-center min-w-[70vh] pr-24 pl-24">
               <div class="flex">
-                <label class="self-center basis-1/2,5 pr-4 -mr-1">Type de données</label>
-                <Select class="custom-dropdown" v-model="dataType" :options="Object.values(TaskDataType)"
-                        placeholder=""/>
+                <label class="self-center w-24 pr-6">Titre</label>
+                <InputText
+                  v-model="name"
+                  placeholder="Entrez le titre de la tâche"
+                  autocomplete="off"
+                  class="input-box flex-auto custom-placeholder"
+                />
               </div>
               <div class="flex">
-                <label class="self-center basis-1/2,5 pr-4 -mr-1"> Statut </label>
-                <Select class="custom-dropdown" v-model="status" :options="translatedTaskStatus" optionLabel="label"
-                        placeholder=""/>
+                <label class="self-center w-24 pr-6">Instruction</label>
+                <InputText
+                  v-model="instruction"
+                  placeholder="Entrez l'instruction de tâche"
+                  autocomplete="off"
+                  class="input-box flex-auto custom-placeholder"
+                />
+              </div>
+              <div class="flex">
+                <label class="self-center w-24 pr-4">Date de fin</label>
+                <Calendar
+                  v-model="endDate"
+                  dateFormat="dd/mm/yy"
+                  showIcon
+                  class="input-box flex-auto"
+                  :minDate="new Date()"
+                />
               </div>
             </div>
-          </div>
           <div class="flex justify-end pt-5">
             <Button
               class="button"
-              icon="pi pi-arrow-right" icon-pos="left"
+              icon="pi pi-arrow-right"
+              icon-pos="left"
               label="Suivant"
               size="small"
               @click="activateCallback('2')"
             />
           </div>
-
         </StepPanel>
         <StepPanel value="2" v-slot="{ activateCallback }" >
           <div class="grid grid-cols-1 w-[70vh] gap-3">
@@ -118,7 +121,6 @@
             </FileUpload>
 
           </div>
-
           <div class="flex justify-between pt-8">
             <Button class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left"
                     size="small" @click="activateCallback('1')"/>
@@ -148,30 +150,14 @@ const refreshStore = useRefreshStore()
 const authStore = useAuth()
 const emits = defineEmits(['toggle-dialog', 'refreshData'])
 const {dialogVisible, stepObject} = defineProps(['dialogVisible', 'stepObject'])
-const {fetchTasks} = refreshStore
 const {userEmail} = storeToRefs(authStore)
 const { $handleApiError } = useNuxtApp()
 const toast = useToast()
 
 const templateRef = ref()
-const translations = {
-  draft: 'Brouillon',
-  pending: 'En attente',
-  'in-progress': 'En cours',
-  done: 'Terminé',
-  skipped: 'Passé'
-}
-const translatedTaskStatus = computed(() => {
-  return Object.values(TaskStatus).map(status => ({
-    label: translations[status],
-    value: status,
-  }));
-})
-
 let name = ref('')
 let instruction = ref('')
-let dataType = ref(TaskDataType.LDD)
-let status = ref(translatedTaskStatus.value[0])
+const endDate = ref(null)
 const fileData = ref([])
 const deleteDialog = ref(false)
 
@@ -223,11 +209,13 @@ const createTask = async () => {
     type: fileData.value[0].asset.media_type,
     player_parameters: fileData.value[0].asset.player_parameters
   }).then((res) => {
+    
     TaskService.createTaskTaskPost({
       name: name.value,
       instruction: instruction.value,
-      data_type: dataType.value,
-      status: status.value.value,
+      data_type: TaskDataType.AMALIA,
+      status: TaskStatus.DRAFT,
+      expiration_date: endDate.value,
       lead_time: null,
       step_id: stepObject.id,
       media_id: res.id
