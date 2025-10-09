@@ -8,7 +8,7 @@
           class="h-[33px] rounded-[6px] "
           :outlined="!isEqual(pluginValue,option)"
           :label="option.label"
-          @click="()=>pluginValue=option"
+          @click="() => pluginValue = isEqual(pluginValue, option) ? all_entities_plugin : option"
       />
     </div>
     <Select
@@ -19,6 +19,8 @@
         class="w-[215px]"
         filter
         option-label="label"
+        show-clear
+        @change="onClearSelect"
     />
   </div>
 </template>

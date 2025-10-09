@@ -25,7 +25,14 @@ export default defineComponent({
 
     const {groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
 
-
+    const all_entities_plugin =  {
+      id: "",
+      ext_id: "",
+      label: "Chercher",
+      description: null,
+      image: null,
+      categories:null,
+    }
     const allOptions = computed(()=> data.value ?? pluginItemsConfig.value.map(plugin=>{
       if( plugin.categories && !Array.isArray(plugin.categories) ){
         plugin.categories = JSON.parse(plugin.categories?.replace(/'/g, '"'))
@@ -41,13 +48,29 @@ export default defineComponent({
         get: () => Array.isArray(props.pluginValue) ? props.pluginValue[0] : props.pluginValue,
         set : newValue => Array.isArray(newValue) ? emit('update:pluginValue',newValue) : emit('update:pluginValue',[newValue])
     })
+    onMounted(() => {
+      if(props.plugin.available_plugins) {
+        const foundPlugin = (props.plugin.available_plugins as Record<string, any>)['']
+        if (foundPlugin) {
+          emit('update:pluginValue', [all_entities_plugin])
+        }
+      }
+    })
 
+    const onClearSelect = async (event: any) => {
+      if (event.value === null) {
+        await nextTick()
+        pluginValue.value = all_entities_plugin
+      }
+    }
     return {
       isEqual: _.isEqual,
       pluginValue,
       groupDisplay,
       allOptions,
-      isForResearch
+      isForResearch,
+      all_entities_plugin,
+      onClearSelect
     }
   },
 })
