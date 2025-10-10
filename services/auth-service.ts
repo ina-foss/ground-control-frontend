@@ -7,6 +7,7 @@ import { useService } from "../composables/useService"
 export default class AuthService {
     authStore = useAuth();
     private userManager!: UserManager;
+    private isRenewing = false; // Prevent multiple simultaneous renewals
 
     constructor() {
         this.initializedOidc();
@@ -29,14 +30,17 @@ export default class AuthService {
             const authStore = useAuth();
           this.userManager.events.addAccessTokenExpiring(() => {
             /* eslint-disable no-console */
-            console.log("⏳ Token va expirer, tentative de renouvellement...");
-            this.renewToken(); // essaie silent renew automatiquement
+            if (!this.isRenewing) {
+              console.log("⏳ Token va expirer, tentative de renouvellement...");
+              this.renewToken();
+            }
           });
 
           // Détecte que le token a expiré (fail du silent renew)
           this.userManager.events.addAccessTokenExpired(() => {
-             
+            /* eslint-disable no-console */
             console.warn("⛔ Token expiré et non renouvelé !");
+            this.isRenewing = false;
           });
 
           // Quand un nouveau token est chargé (ex: après renew)
@@ -47,6 +51,7 @@ export default class AuthService {
               user?.profile?.name || "(anonyme)",
             );
             authStore.setUpUserCredentials(user);
+            this.isRenewing = false;
             if (import.meta.client) {
               const { $application } = useService();
               $application.setupHeader();
@@ -80,7 +85,16 @@ export default class AuthService {
     }
 
     public renewToken(): Promise<User|null> {
-        return this.userManager.signinSilent();
+        if (this.isRenewing) {
+          /* eslint-disable no-console */
+          console.log("⏸️ Renouvellement déjà en cours, skip...");
+          return Promise.resolve(null);
+        }
+        this.isRenewing = true;
+        return this.userManager.signinSilent().catch((err) => {
+          this.isRenewing = false;
+          throw err;
+        });
     }
 
     public logout(): Promise<void> {
