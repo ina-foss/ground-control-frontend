@@ -140,13 +140,10 @@
             v-model:filters = "filters"
             filterDisplay="row"
             :globalFilterFields = "['name']"
-            :row-class="rowData => 
-              isAdmin
-                ? 'hover:bg-surface-100 cursor-pointer'
-                : rowData.status === 'draft'
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'hover:bg-surface-100 cursor-pointer'
-            "
+            :row-class="rowData => rowData.status === 'draft'
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              : 'hover:bg-surface-100 cursor-pointer'"
+
             class="overflow-scroll"
             :value="slotProps.data.tasks" :sort-order=0 breakpoint="300px" column-resize-mode="fit"
             :pt="{
@@ -165,7 +162,14 @@
                   style="width : 100% ; min-width: 70px; "/>
               </template>
               <template #body="{ data: nestedData }">
-                <p class="cursor-text	"> {{ nestedData.name }}</p>
+                  <p
+                    class="cursor-text"
+                    v-tooltip="nestedData.status === 'draft' 
+                      ? `Soit sûr d'avoir la permission et activer la tâche pour la commencer`
+                      : null"
+                  >
+                    {{ nestedData.name }}
+                  </p>
               </template>
               <template #filter="{ filterModel, filterCallback }">
                 <InputText v-model="filterModel.value" type="text" @input="filterCallback()" placeholder="Rechercher par titre ..." />

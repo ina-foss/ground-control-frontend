@@ -7,6 +7,7 @@ import type { ProjectDetailDto } from '../models/ProjectDetailDto';
 import type { ProjectListDto } from '../models/ProjectListDto';
 import type { ProjectParametersResponse } from '../models/ProjectParametersResponse';
 import type { ProjectWithIdDto } from '../models/ProjectWithIdDto';
+import type { TaskWithIdDto } from '../models/TaskWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -61,7 +62,7 @@ export class ProjectService {
     }
     /**
      * Read Project
-     * Get details of a single project by ID with prioritized tasks per step.
+     * Get details of a single project by ID.
      * @param projectId
      * @returns ProjectListDto Successful Response
      * @throws ApiError
@@ -144,6 +145,50 @@ export class ProjectService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/{project_id}/parameters',
+            path: {
+                'project_id': projectId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Finish Project
+     * @param projectId
+     * @returns ProjectWithIdDto Successful Response
+     * @throws ApiError
+     */
+    public static finishProjectProjectIdFinishPost(
+        projectId: number,
+    ): CancelablePromise<ProjectWithIdDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/{project_id}/finish',
+            path: {
+                'project_id': projectId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Get Progressed Tasks For Project
+     * @param projectId
+     * @returns TaskWithIdDto Successful Response
+     * @throws ApiError
+     */
+    public static getProgressedTasksForProjectProjectIdProgressedTasksPost(
+        projectId: number,
+    ): CancelablePromise<Array<TaskWithIdDto>> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/{project_id}/progressed_tasks',
             path: {
                 'project_id': projectId,
             },
