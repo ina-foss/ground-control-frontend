@@ -11,13 +11,13 @@ import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";
 import AtomTaskComment from "../atoms/AtomTaskComment.vue";
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import AtomSpanForm from '../atoms/spanForm/AtomSpanForm.vue'
-import AtomSpanControlPanel from '../atoms/spanControlPanel/AtomSpanControlPanel.vue'
+import MoleculeSpanControlPanel from './spanControlPanel/MoleculeSpanControlPanel.vue'
 import type {AnnotationStatus} from "~/api/generate";
 
 
 export default defineComponent({
   name: "MoleculeSpan",
-  components: {AtomSpanControlPanel, AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption,AtomTaskComment, AtomSpanForm},
+  components: {MoleculeSpanControlPanel, AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption,AtomTaskComment, AtomSpanForm},
   emits: ['on-segment-click'],
   props: {
     state: {type: String as PropType<AnnotationStatus>},

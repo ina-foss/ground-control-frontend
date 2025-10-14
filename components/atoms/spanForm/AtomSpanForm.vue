@@ -19,7 +19,7 @@
         </context-header>
         <div v-if="!groupDisplay" :class="['w-full  items-center  gap-1 text-sm/6 ', expandedContext ? 'inline'  : 'flex']"  >
             <span :class="[!expandedContext ?  '  truncate  ' : '  text-justify']" :style="{'direction': expandedContext ? 'ltr' : 'rtl'}"> {{ prevNodes.map(n=>n.firstChild.nodeValue).join(' ') + " " }}</span>
-            <span :class="[ 'highlight-text max-w-full text-justify  ', expandedContext ? '' : 'truncate' ]" style="flex: 1 0 min-content;" >
+            <span :class="[ ' max-w-full text-justify rounded px-2 border-2 !border-[--extra-1]  ', expandedContext ? '' : 'truncate' ]" style="flex: 1 0 min-content; background-color: #86d4ff40 ;" >
               {{ nodes?.map(node=>Array.from(node.childNodes).filter(child=>child.nodeType == 3 )[0].nodeValue).join(' ')}}
             </span>
           <span :class="[!expandedContext ?  '  truncate ' : 'text-justify ']"> {{ " " + nextNodes.map(n=>n.firstChild.nodeValue).join(' ') }}</span>

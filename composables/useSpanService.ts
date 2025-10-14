@@ -20,7 +20,7 @@ function createSpanService (){
   const pluginOptionsList = computed(()=>pluginStore.pluginOptionsList)
 
   const spanClicked = ref(false)
-  const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([])
+  const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([{id:0,label:"", plugins: []}])
   const linkMode = ref(false)
   const currentFocus = ref<number | undefined>(undefined)
   const spanCount = computed<number>(()=>spanArray.value.length)
@@ -159,10 +159,11 @@ function createSpanService (){
   function decolorSpan(group){
     if(!group) return
 
+
     // List des id de spans qui appartiennent au group selectionne
     const spanIdList : Array<any> = group.spans.map(a=>a.spanId)
     // Spans auxquels on enleve leur couleur
-    const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span.id) && span.tcin )
+    const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span?.id) && span?.tcin )
 
 
     targetSpans.forEach(span=>{
@@ -177,17 +178,21 @@ function createSpanService (){
   }
 
   function recolorSpan(group){
-    // List des id de spans qui appartiennent au group selectionne
-    const spanIdList : Array<any> = group.spans.map(a=>a.spanId)
-    // Spans auxquels on remet leur couleur
-    const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span.id) && span.tcin )
+    let targetSpans
+    if(group){
+      // List des id de spans qui appartiennent au group selectionne
+      const spanIdList : Array<any> = group.spans.map(a=>a.spanId)
+      // Spans auxquels on remet leur couleur
+       targetSpans = spanArray.value.filter(span => !spanIdList.includes(span?.id) && span?.tcin )
+    }
+    else targetSpans = spanArray.value.filter(span=> span?.nodes)
     targetSpans.forEach(span=>{
       affectPluginValues(span.plugins)
       applySpan(span.id)
     })
   }
 
-  function createSpanColorPalette(pluginId: number, pluginValue: any, opacity? : number = 0.4){
+  function createSpanColorPalette(pluginId: number, pluginValue: any, opacity? : number = 0.25){
     const index = pluginList.value.findIndex(plugin=>plugin.id == pluginId)
     const [plugin, options]= [pluginList.value[index], pluginOptionsList.value[index]]
     if(pluginList && plugin && pluginValue && pluginValue.length){
@@ -198,9 +203,9 @@ function createSpanService (){
         const seed = pluginValue?.map(value=>value.label.split('').reduce((acc,value)=>acc+=value.charCodeAt(0),0)).reduce((acc,value)=>acc+=value,0)
         return hexToRgba(computeColor(seed).hex,opacity)
       }
-      else return "rgba(213,32,123)"
+      else return `rgba(213,32,123)`
     }
-    else return "rgba(170,170,170)"
+    else return `rgba(170,170,170,${opacity})`
   }
 
   function applySpan(spanId: number){
@@ -221,34 +226,32 @@ function createSpanService (){
     })()
     deletedNum.value = null
     const color = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`])
+    const borderColor = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`],1)
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
       const bgElement = document.createElement(`bg${spanId}`)
-      bgElement.classList.add('absolute', 'w-full', 'h-full','left-0','mix-blend-multiply','pointer-events-none')
+      bgElement.classList.add('absolute', 'min-w-full', 'h-[16px]','left-0','top-[-2px]','mix-blend-multiply','pointer-events-none','py-2')
       element.style.backgroundColor='transparent'
       bgElement.style.backgroundColor = color
-      const existingBg = [...element.querySelectorAll('bg')]
-      if(existingBg.length == 0 ) element.appendChild(bgElement)
-      else{
-        for (const [index,bg] of existingBg.entries()) {
-          if(bg.style.backgroundColor == color) {
-            break
-          }
-          if(index == existingBg.length-1){
-              element.appendChild(bgElement)
-          }
-        }
-      }
+      bgElement.classList.add('border-y-2',)
+      bgElement.style.borderColor = borderColor
         element.addEventListener('click', (event) => focusSpan(spanId,event))
         element.style.lineHeight = '14px'
         element.style.userSelect = 'text'
         element.classList.add('relative')
+        if(elementIndex == span.nodes.length-1) {
+          bgElement.classList.add('border-r-2','pr-4')
+          bgElement.style.borderRadius = "0px 4px 4px 0px"
+        }
         if(elementIndex == 0) {
+          bgElement.classList.add('border-l-2')
+          bgElement.style.borderRadius = "4px 0px 0px 4px"
           const tag = document.createElement('tag')
           tag.innerText = span.plugins[`plugin-${mainPluginId.value}`]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
-          tag.classList.add('absolute', 'h-3' , 'px-1', 'top-[-10px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]')
+          tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded')
           tag.style.left= '0px'
           tag.draggable = true
           tag.style.backgroundColor = color
+          tag.style.borderColor = borderColor
           tag.setAttribute('spanId',spanId)
           tag.style.zIndex= '50'
           element.appendChild(tag)
@@ -273,6 +276,18 @@ function createSpanService (){
           if(overlapingEndTags.length > 0 )
           if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
 
+      }
+      const existingBg = [...element.querySelectorAll('bg')]
+      if(existingBg.length == 0 ) element.appendChild(bgElement)
+      else{
+        for (const [index,bg] of existingBg.entries()) {
+          if(bg.style.backgroundColor == color) {
+            break
+          }
+          if(index == existingBg.length-1){
+              element.appendChild(bgElement)
+          }
+        }
       }
     })
     initPluginValues(pluginList.value)
@@ -339,10 +354,10 @@ function createSpanService (){
   watch(()=>newFocus.value,(newValue, oldValue)=>{
     if(oldValue != undefined){
       const oldElementArray = spanArray.value[oldValue]?.nodes
-      if(!oldElementArray){
+      if(!oldElementArray){ // on deselectionne un groupe
         recolorSpan(spanArray.value[oldValue])
       }
-      else{
+      else{ // on deselectionne un span
         oldElementArray.forEach((span: HTMLDivElement) =>{
           if(!span) return
           span.style.border = 'none'
@@ -353,7 +368,7 @@ function createSpanService (){
 
     }
     if(newValue != undefined){
-      const elementArray = spanArray.value[newValue].nodes
+      const elementArray = spanArray.value[newValue]?.nodes
       if(!elementArray) { // On a selectionne un groupe
           decolorSpan(spanArray.value[newValue])
       }

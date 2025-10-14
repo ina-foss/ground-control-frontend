@@ -1,52 +1,54 @@
 <template>
-  <div :class="` col-span-4 flex flex-col h-full relative `">
-    <div>
-    <AtomSearch class='hidden'  :spans="spanArray" />
-    </div>
-    <div class="grow h-0 flex justify-center ">
-    <ScrollPanel class="h-full pr-2 overflow-x-visible "
-      :dt="{
-      bar : {
-        background: 'var(--primary-color)',
-        size:'4px',
-      },
-    }">
-    <div v-if="options.bloc" ref="blockArray" class="text-sm/4 mt-4 " >
-      <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="spanForm.open(handleSelectionV2($event))"  />
-    </div>
-    <div v-else>
-      <div
-        v-for="word in aggregatedLocals" :key="word.tcin"  :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)"
-        :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
-        @mouseup="handleSelectionV2">
-          {{ word.data.text[0] }}
+  <molecule-span-wrapper class="col-span-8 flex">
+    <div :class="` flex flex-col h-full relative `">
+      <div>
+        <AtomSearch class='hidden'  :spans="spanArray" />
+      </div>
+      <div class="grow h-0 flex justify-center relative overflow-visible ">
+        <ScrollPanel class="h-full pr-2 overflow-x-visible "
+          :dt="{
+          bar : {
+            background: 'var(--primary-color)',
+            size:'4px',
+          },
+        }">
+          <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col" >
+            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="spanForm.open(handleSelectionV2($event))"  />
+          </div>
+          <div v-else>
+            <div
+              v-for="word in aggregatedLocals" :key="word.tcin"  :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)"
+              :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
+              @mouseup="handleSelectionV2">
+                {{ word.data.text[0] }}
+            </div>
+          </div>
+          <AtomSpanForm ref="spanForm"/>
+          <ContextMenu ref="spanMenu" :model="contextMenuOptions"  />
+        </ScrollPanel>
       </div>
     </div>
-    <AtomSpanForm ref="spanForm"/>
-    <ContextMenu ref="spanMenu" :model="contextMenuOptions"  />
-    </ScrollPanel>
-</div>
-  </div>
-  <div class=" overflow-y-hidden  flex-col items-center  gap-10 col-span-4">
-            <Tabs value="span" class="max-h-full">
-              <TabList  >
-                <Tab value="span"  >Spans</Tab>
-                <Tab value="parameters">Paramètres</Tab>
-              </TabList>
-              <TabPanels class="!bg-secondary  w-full !pl-0  overflow-auto !pb-2">
-                <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3"  >
-                  <AtomSpanControlPanel @handle-new-group="spanForm?.open({group:true})"/>
-                </TabPanel>
-        <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
-                    <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">
-                      <AtomSpanOption v-model:span="options.span"  v-model:timecode-bloc="options.timecode_bloc"   v-model:bloc="options.bloc" />
-                      <atom-video-option />
-                      <AtomTaskComment />
-                  </option-wrapper>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-  </div>
+    <div class=" overflow-y-hidden  flex-col items-center w-full gap-10  ">
+              <Tabs value="span" class="max-h-full">
+                <TabList  >
+                  <Tab value="span"  >Spans</Tab>
+                  <Tab value="parameters">Paramètres</Tab>
+                </TabList>
+                <TabPanels class="!bg-secondary  w-full !pl-0  overflow-auto !pb-2">
+                  <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3"  >
+                    <MoleculeSpanControlPanel @handle-new-group="spanForm?.open({group:true})"/>
+                  </TabPanel>
+          <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
+                      <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">
+                        <AtomSpanOption v-model:span="options.span"  v-model:timecode-bloc="options.timecode_bloc"   v-model:bloc="options.bloc" />
+                        <atom-video-option />
+                        <AtomTaskComment />
+                    </option-wrapper>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+    </div>
+  </molecule-span-wrapper>
 </template>
 
 <script src="./molecule-span-component.ts" lang="ts">

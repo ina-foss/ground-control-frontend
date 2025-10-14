@@ -6,10 +6,7 @@ declare interface Span {
     nodes: Array<Node>,
     tcin: number | string,
     tcout: number | string,
-    type: {
-      value: string,
-      label: string
-    }
+    plugins: Array
   }
 
 declare interface SpanGroup  {
@@ -24,10 +21,7 @@ declare interface SpanGroup  {
         }
       }
     ],
-    type: {
-      value: string,
-      label: string
-    },
+    plugins: Array,
     tcin: number | string,
     tcout: number | string,
   }
@@ -35,9 +29,6 @@ declare interface SpanGroup  {
 declare interface VirtualSpan  {
     id: number,
     label: string,
-    deletedItems: number,
-    type: {
-      value: string,
-      label: string
-    }
-  }
+    deletedItems?: number,
+    plugins: Array
+}
