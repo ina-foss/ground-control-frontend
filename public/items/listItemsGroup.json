@@ -1,0 +1,45 @@
+[
+  {
+    "id":"1",
+    "extId":"1",
+    "label": "Fonction",
+    "categories": "[\"role 1\",\"role 2\"]"
+  },
+  {
+    "id":"2",
+    "extId":"2",
+    "label": "Verbe",
+    "categories": "[\"role 1\",\"role 2\"]"
+  },
+  {
+    "id":"3",
+    "extId":"3",
+    "label": "Citation directe",
+    "categories": "[\"role 1\",\"role 2\"]"
+  },
+  {
+    "id":"4",
+    "extId":"4",
+    "label": "Personne Physique",
+    "categories": "[\"role 1\",\"role 2\"]"
+  },
+  {
+    "id":"5",
+    "extId":"5",
+    "label": "Citaton indirecte",
+    "categories": "[\"role 1\",\"role 2\"]"
+  },
+  {
+    "id":"6",
+    "extId":"6",
+    "label": "Pronom",
+    "categories": "[\"role 1\",\"role 2\"]"
+  },
+  {
+    "id":"7",
+    "extId":"7",
+    "label": "Lieu géographique",
+    "categories": "[\"role 1\",\"role 2\"]"
+  }
+]
+
