@@ -24,6 +24,8 @@ export default defineNuxtComponent({
     const groupDeleted = ref<SpanGroup | null>(null)
     const spanFilter = ref()
     const groupFilter = ref()
+    const dialogVirtualSpan = ref()
+    const virtualSpanLabel = ref()
 
     const layout = ref('grid')
 
@@ -32,25 +34,22 @@ export default defineNuxtComponent({
     })
     const mainGroupPluginIndex = computed(()=> readPluginValues(pluginList.value.find(p=>p.id == mainGroupPluginId.value)))
 
-    onMounted(()=>{
-      mainPluginId.value = pluginList.value.find(plugin=>plugin.display_config?.main_plugin == true)?.id
-    })
-
 
     const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
-    const groupArray = computed(()=>spanArray.value.filter(span=>{
-      if(!span) return false
-      return span.spans
-    }).filter(span=> !groupFilter.value || _.some(span.plugins?.[mainGroupPluginIndex.value], item=> _.isEqual(item,groupFilter.value))
+
+const spanOnlyArray = computed(()=>{
+  return spanArray.value
+    .filter(span=> (span && span.nodes) || span?.id == 0)
+    .filter(span => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
+    .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
+})
+
+    const groupArray = computed(()=>
+      spanArray.value
+      .filter(span=> span && span.spans)
+      .filter(span=> !groupFilter.value || _.some(span.plugins?.[mainGroupPluginIndex.value], item=> _.isEqual(item,groupFilter.value))
     ))
 
-    const spanOnlyArray = computed(()=>
-      _.difference(spanArray.value,groupArray.value)
-      .filter(span=>span)
-      // .filter(span=>span?.tcin && span?.tcout && span?.plugins)
-      .filter(span => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
-      .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin)  )
-    )
     const selectedGroup = computed((oldValue)=>{
       const group =  _.find(groupArray.value,group => group?.id == newFocus.value)
       if(group) return group
@@ -73,16 +72,28 @@ export default defineNuxtComponent({
     }
 
     function previewSpanDrop (event : DragEvent) {
-      const target : HTMLDivElement = event.target
-      if (target.getAttribute('data-pc-name') == 'scrollpanel') return
-      const previewElement = document.createElement('preview')
-      previewElement.textContent = 'new span'
-      previewElement.classList.add('bg-gray-200')
-      target.appendChild(previewElement)
+      const currentTarget : HTMLDivElement = event.currentTarget
+      if (currentTarget.tagName.toLowerCase() == 'role-dropzone') {
+        const previewElement = document.createElement('preview')
+        previewElement.textContent = '+'
+        previewElement.classList.add( 'px-2', 'py-1' , 'font-bold', 'truncate' ,'w-[80px]','border',  'rounded', 'text-center', 'border-grey-400', 'leading-4')
+        currentTarget.appendChild(previewElement)
+      }
+
     }
 
     function handleCancelRemoveGroup(){
       groupDeleted.value = null
+    }
+
+    function handleCreateVirtualSpan(){
+      const id = spanArray.value.length
+      spanArray.value[id] = {
+        id: id,
+        label: virtualSpanLabel.value
+      }
+      selectedGroup.value.spans = [...selectedGroup.value.spans,{spanId: id, role: dialogVirtualSpan.value}]
+      dialogVirtualSpan.value = false
     }
 
     function handleRemoveGroup (targetGroup? : SpanGroup){
@@ -98,18 +109,22 @@ export default defineNuxtComponent({
     }
 
     function unpreviewSpanDrop (event: DragEvent)  {
-      const target : HTMLDivElement = event.target
-      if (target.getAttribute('data-pc-name') == 'scrollpanel') return
-      target.lastChild?.remove()
+      const currentTarget : HTMLDivElement = event.currentTarget
+      if (currentTarget.tagName.toLowerCase() == 'role-dropzone') {
+        currentTarget.lastElementChild?.remove()
+      }
     }
 
-    const dropSpan = (event : DragEvent, group, role)=>{
+    const dropSpan = (event : DragEvent, group, category)=>{
       recolorSpan(group)
-      const target : HTMLDivElement = event.target
+      const target : HTMLDivElement = event.currentTarget
       target.querySelector('preview')?.remove()
       const spanId = event.dataTransfer.getData('span')
-      if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: role}))){
-        group.spans = [...group.spans, {spanId: parseInt(spanId), role: role}]
+      if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
+        group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
+      }
+      if(category.options?.trigger_rename){ // renommer le groupe
+        group.label = spanArray.value[parseInt(spanId)].label
       }
       decolorSpan(group)
     }
@@ -121,40 +136,44 @@ export default defineNuxtComponent({
     }
 
     return {
-    spanForm,
-    groupArray,
-    emit,
-    spanArray,
-    newFocus,
-    groupIsSelected,
-    selectedGroup,
-    computeColorByLabel,
-    dropSpan,
-    previewSpanDrop,
-    unpreviewSpanDrop,
-    extractTextFromSpanNodes,
-    spanOnlyArray,
-    handleGroupClick,
-    unixToTimestamp,
-    isForResearch,
-    createSpanColorPalette,
-    mainPluginId,
-    lodashOrder: _.orderBy,
-    findKey :_.findKey,
-    pluginList: getPluginList,
-    mainPluginIndex,
-    handleRemoveGroup,
-    groupDeleted,
-    spanFilter,
-    pluginOptionsList : getAllPluginOptionList,
-    mainPluginName,
-    groupFilter,
-    mainGroupPluginId,
-    mainGroupPluginName,
-    mainGroupPluginIndex,
-    unlinkSpan,
-    handleCancelRemoveGroup,
-    layout
+      spanForm,
+      groupArray,
+      emit,
+      spanArray,
+      newFocus,
+      groupIsSelected,
+      selectedGroup,
+      computeColorByLabel,
+      dropSpan,
+      previewSpanDrop,
+      unpreviewSpanDrop,
+      extractTextFromSpanNodes,
+      spanOnlyArray,
+      handleGroupClick,
+      unixToTimestamp,
+      isForResearch,
+      createSpanColorPalette,
+      mainPluginId,
+      isEqual : _.isEqual,
+      lodashOrder: _.orderBy,
+      findKey :_.findKey,
+      pluginList: getPluginList,
+      mainPluginIndex,
+      handleRemoveGroup,
+      groupDeleted,
+      spanFilter,
+      pluginOptionsList : getAllPluginOptionList,
+      mainPluginName,
+      groupFilter,
+      mainGroupPluginId,
+      mainGroupPluginName,
+      mainGroupPluginIndex,
+      unlinkSpan,
+      handleCancelRemoveGroup,
+      layout,
+      dialogVirtualSpan,
+      virtualSpanLabel,
+      createVirtualSpan : handleCreateVirtualSpan
     }
   }
 })

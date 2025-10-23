@@ -5,7 +5,7 @@
         <img style="height:14px;width:14px;filter: invert(1);" :src="helpIcon" alt="help icon" />
       </Button>
     </div>
-    <Sidebar v-model:visible="visibleRight" header="Raccourcis clavier" position="right"
+    <Drawer v-model:visible="visibleRight" header="Raccourcis clavier" position="right"
              class="shadow-xl rounded-lg border border-gray-300 "  :style="{ height: '75vh', width:'fit-content', marginRight: '30px' }">
 
         <ul class="-m-4 my-2">
@@ -18,7 +18,7 @@
             </div>
           </li>
         </ul>
-    </Sidebar>
+    </Drawer>
 
   </div>
 

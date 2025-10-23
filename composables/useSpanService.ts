@@ -16,7 +16,7 @@ function createSpanService (){
   const isForResearch= ref(true)
   // ----- Plugin Store ------
   const pluginStore = usePluginStore()
-  const pluginList = computed(()=>pluginStore.pluginList)
+  const { pluginList } = storeToRefs(pluginStore)
   const pluginOptionsList = computed(()=>pluginStore.pluginOptionsList)
 
   const spanClicked = ref(false)
@@ -26,7 +26,6 @@ function createSpanService (){
   const spanCount = computed<number>(()=>spanArray.value.length)
   const newFocus = ref<number | undefined>()
   const spanMenuSelected = ref<number | undefined>(undefined)
-  const mainPluginId = ref<undefined | number>() // Id du plugin servant à coloriser les spans
   const labelSelected = ref([])
   const defaultLabel = ref()
   const deletedNum=ref<number>()
@@ -39,6 +38,10 @@ function createSpanService (){
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
   let pluginValues = reactive<pluginValues>({})
+
+  const mainPluginId = computed(()=>{
+      return pluginList?.value?.find(plugin=>plugin.display_config?.main_plugin == true)?.id  || undefined
+  })
 
   watch( ()=>mainPluginId.value,
     (value)=> {
@@ -73,7 +76,7 @@ function createSpanService (){
 
   const mainPluginIndex = computed(()=>{
     if(mainPluginId.value) {
-      const mainPlugin = pluginList.value.find(plugin=>plugin.id = mainPluginId.value)
+      const mainPlugin = pluginList.value.find(plugin=>plugin.id == mainPluginId.value)
       return readPluginValues(mainPlugin)
     }
     return undefined
@@ -192,7 +195,7 @@ function createSpanService (){
     })
   }
 
-  function createSpanColorPalette(pluginId: number, pluginValue: any, opacity? : number = 0.25){
+  function createSpanColorPalette(pluginId: number | undefined, pluginValue: any, opacity? : number = 0.25){
     const index = pluginList.value.findIndex(plugin=>plugin.id == pluginId)
     const [plugin, options]= [pluginList.value[index], pluginOptionsList.value[index]]
     if(pluginList && plugin && pluginValue && pluginValue.length){
@@ -217,6 +220,7 @@ function createSpanService (){
 
     removeSpanFromDOM(spanId)
     const span = spanArray.value[spanId]
+    if (!span) return
     span.plugins = _.cloneDeep(pluginValues)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
     span.label = (()=>{
@@ -225,8 +229,8 @@ function createSpanService (){
       else if (!span.label) return markRaw(defaultLabel.value)
     })()
     deletedNum.value = null
-    const color = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`])
-    const borderColor = createSpanColorPalette(mainPluginId.value,span.plugins[`plugin-${mainPluginId.value}`],1)
+    const color = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value])
+    const borderColor = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value],1)
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
       const bgElement = document.createElement(`bg${spanId}`)
       bgElement.classList.add('absolute', 'min-w-full', 'h-[16px]','left-0','top-[-2px]','mix-blend-multiply','pointer-events-none','py-2')
@@ -246,7 +250,7 @@ function createSpanService (){
           bgElement.classList.add('border-l-2')
           bgElement.style.borderRadius = "4px 0px 0px 4px"
           const tag = document.createElement('tag')
-          tag.innerText = span.plugins[`plugin-${mainPluginId.value}`]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
+          tag.innerText = span.plugins[mainPluginIndex.value]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
           tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded')
           tag.style.left= '0px'
           tag.draggable = true
@@ -492,8 +496,7 @@ function createSpanService (){
   }
 
   const saveSpan = (local) => {
-    const initialLength = local.filter(e=>e.data).length
-    spanArray.value.map(span=>formatSpan(span)).forEach(span=>local[initialLength  + span.id] = span)
+    local = [...local,...spanArray.value.map(span=> span ? formatSpan(span) : undefined)]
     return local
   }
 
@@ -510,7 +513,7 @@ function createSpanService (){
   }
 
   const formatSpan = (span : typeof spanArray.value[0]) => {
-    if((span as Span).nodes){
+    if((span as Span)?.nodes){
       const spanJson = _.cloneDeep(span) as Span
       spanJson.text = extractTextFromSpanNodes(spanJson.nodes)
       return _.omit(spanJson,'nodes')
@@ -520,10 +523,10 @@ function createSpanService (){
 
   function loadSpanv2 (locals){
     locals.value.forEach(segment =>{
-      if (((!segment.sublocalisations) && (segment.property?.[0]?.key == "entityType") ) ||  !segment.data) {
-        if(!segment.spans && segment.text) createSpan(segment)
+      if (((!segment?.sublocalisations) && (segment?.property?.[0]?.key == "entityType") ) ||  !segment?.data) {
+        if(!segment?.spans && segment?.text) createSpan(segment)
         else {
-            spanArray.value[segment.id] = segment
+            spanArray.value[segment?.id] = segment
           }
       }
     })

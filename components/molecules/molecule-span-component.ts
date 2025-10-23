@@ -50,7 +50,7 @@ export default defineComponent({
     })
 
     const filteredLocal = computed(() => {
-      return _.filter(locals.value, (local) => local.sublocalisations)
+      return _.filter(locals.value, (local) => local?.sublocalisations)
     })
 
     interface State {
@@ -62,9 +62,9 @@ export default defineComponent({
       selection: null,
       range: null
     })
-    
+
     const isReadMode = computed(() => props.state === AnnotationStatus.ARCHIVED)
-    
+
 
 watch(() => options.value.timecode_bloc,async (timecode : boolean ) => {
   await nextTick()

@@ -100,7 +100,7 @@ export default defineComponent({
         const annotation = annotationsOut.value[annotationInfo.value.index];
 
         if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
-          response = [...annotation.result.data.localisation[0].sublocalisations.localisation].filter(el=>el.data);
+          response = [...annotation.result.data.localisation[0].sublocalisations.localisation].filter(el=>el?.data);
         }  }
       return response
     })
@@ -119,8 +119,8 @@ export default defineComponent({
     const locals = computed(() => {
       if(allFetched.value){
       return (annotationInfo.value == null || data.value.step.annotation_type == 'auto-summary')
-        ? _.sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))
-        : _.sortBy(annotationsOut.value[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))
+        ? _.sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
+        : _.sortBy(annotationsOut.value[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
       }
       return []
     })

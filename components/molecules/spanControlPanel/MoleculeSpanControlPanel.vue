@@ -23,7 +23,7 @@
             <span-wrapper class="block">
         <span-content-wrapper
             v-for="(span,index) in spanOnlyArray"
-            :key="span?.id" draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type' ] "
+            :key="span.id" draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type' ] "
           @dragstart="event=>{
             event.dataTransfer.setData('span', span.id)
             event.dataTransfer.setDragImage([...event.target.children][1],10,10)
@@ -51,33 +51,32 @@
             :text="selectedGroup?.plugins[mainGroupPluginIndex]?.[0]?.label"
           />
         </group-title-wrapper>
-        <layout-button-wrapper v-if="groupIsSelected" class="flex gap-3">
+        <layout-button-wrapper v-if="groupIsSelected" class="flex gap-sm">
           <span :class="['pi pi-th-large text-2xl cursor-pointer ', layout == 'grid' ? 'opacity-100' : 'opacity-50']" @click="()=>layout = 'grid' " > </span>
           <span :class="['pi pi-list text-2xl cursor-pointer ', layout == 'list' ? 'opacity-100' : 'opacity-50' ] "  @click="()=>layout = 'list' " > </span>
+          <div @click="dialogVirtualSpan = true" class="flex items-center gap-1 cursor-pointer"> <span class="pi pi-plus-circle text-xl"></span>Span virtuel</div>
         </layout-button-wrapper>
       </div>
       <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
       <div :class="{' grid  transition-all duration-300 overflow-hidden': true}" :style="{'grid-template-rows' : groupIsSelected ? '1fr': '0fr'}" >
         <selected-group-content v-show="selectedGroup" :style="{'min-height' : 0}"  >
           <role-wrapper class="grid" :style="`grid-template-columns: repeat(auto-fit,minmax(${ layout == 'grid' ? '150px' : '1fr'}, 1fr));`">
-            <div v-for="role in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories" :key="role" class="p-2  border-surface-200   text-center">
+            <div v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories" :key="category" class="p-2  border-surface-200 text-center flex flex-col gap-3">
+              <role-title-wrapper class="flex  justify-center relative ">
+                <role-span-title class="text-center font-bold  ">{{ category.label }}</role-span-title>
+              </role-title-wrapper>
               <ScrollPanel class=" h-[150px] border-2 border-dashed border-surface-400 rounded-md " >
                 <role-dropzone
-                  class="flex flex-col text-start h-full w-full gap-[10px] p-[10px] bg-secondary-color "
-                  @drop="dropSpan($event,selectedGroup,role)" @dragover="event=>event.preventDefault()" @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
-                  <role-span-title class="text-center font-bold ">{{ role }}</role-span-title>
+                  class="flex flex-col text-start min-h-full  w-full gap-[10px] p-[10px] bg-secondary-color relative "
+                  @drop="dropSpan($event,selectedGroup,category)" @dragover="event=>event.preventDefault()" @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
                   <group-linked-span
-                    v-for="span in selectedGroup?.spans.filter(span => span.role == role ).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))"
+                    v-for="span in selectedGroup?.spans.filter(span => isEqual(span.role,category)).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))"
                     :key="span" class="flex justify-between items-center max-w-full span-tag ">
                     <AtomSpanTag
                       :plugin-id="mainPluginId" :plugin-value="spanArray[span.spanId]?.plugins?.[mainPluginIndex]"
                       :text="spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value=>value.label).join(', ')"   />
                       <span class="pi pi-trash  hover:bg-disabled rounded-full p-1" @click="unlinkSpan(span,selectedGroup)" />
                   </group-linked-span>
-                  <virtual-span-preview  class="w-full flex flex-col items-center justify-center cursor-pointer " @click="spanForm.open({virtual: true, role: role})" >
-                    <div class="h-6 w-6 rounded-full text-xl bg-primary-500 leading-5 text-center ">+</div>
-                       <div class="text-subtitle"> nouveau span virtuel</div>
-                  </virtual-span-preview>
                 </role-dropzone>
               </ScrollPanel>
             </div>
@@ -139,6 +138,42 @@
               </delete-group-wrapper>
             </Dialog>
 
+           <!-- ADD VIRTUAL SPAN DIALOG -->
+            <Dialog
+              :visible="!!dialogVirtualSpan"
+              header="Span: creation virtuelle"
+              @update:visible="()=>dialogVirtualSpan = false"
+              @after-hide="()=> virtualSpanLabel = ''"
+            >
+            <div class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
+              <b class=" text-right ">Role</b>
+              <div class="flex flex-wrap gap-4  ">
+                <div class=" w-full flex gap-3 items-center " >
+                  <Button
+                      v-for="category in selectedGroup?.plugins[mainGroupPluginIndex][0].categories"
+                      :key="category.label"
+                      class="h-[33px] rounded-[6px] "
+                      :outlined="!isEqual(category,dialogVirtualSpan)"
+                      :label="category.label"
+                      @click="()=>dialogVirtualSpan = category"
+                  />
+                </div>
+              </div>
+              <b class="text-right" > Label </b>
+              <InputText
+                  v-model="virtualSpanLabel"
+                  placeholder="Entrez le nom du span virtuel"
+                  class="w-[215px]"
+                  :invalid="!virtualSpanLabel"
+                  />
+            </div>
+            <div class="flex flex-row justify-end gap-2">
+              <Button outlined severity="contrast" icon="pi pi-times" label="Annuler" @click="()=>dialogVirtualSpan = false" />
+              <Button :disabled="!dialogVirtualSpan.label || !virtualSpanLabel"  label="Confirmer" icon="pi pi-check" @click="createVirtualSpan()" />
+            </div>
+            </Dialog>
+
+
           </group-wrapper>
       </div>
     </div>
@@ -153,15 +188,13 @@
   width: var(--computed-width) !important
 }
 virtual-span-preview{
-  flex: 0 1 0%;
   height: 0px;
   display: none
   }
 
-role-dropzone:hover virtual-span-preview  {
-  flex-grow: 1;
+role-title-wrapper:hover virtual-span-preview  {
   height: auto;
-  display: flex;
+  display: block;
   opacity: 50%
 }
 virtual-span-preview:hover{
@@ -175,5 +208,6 @@ virtual-span-preview:hover{
 .span-tag span {
   opacity: 20%;
 }
-</style>
 
+
+</style>
