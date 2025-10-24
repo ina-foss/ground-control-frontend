@@ -17,7 +17,7 @@ export default defineNuxtComponent({
     let filteredPlugins=[]
     const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum  } = useSpanService()
     const {$application} = useService()
-      const childPluginMap = ref<Record<number, any[]>>({})
+      const childPluginMap = ref<Record<string, any[]>>({})
     const tidiedPluginList = computed(()=>{
       const listPlugin= getPluginList.value
       const childIds = new Set(
@@ -55,40 +55,44 @@ export default defineNuxtComponent({
     let roleSelected = null
     let pluginSelected=ref('');
     watch(pluginValues, (newVal) => {
-      pluginSelected.value=""
+      pluginSelected.value = "";
 
       const rawVal = toRaw(newVal);
       const firstObj = Array.isArray(rawVal) ? rawVal[0] ?? {} : rawVal ?? {};
-      const extIdMap = Object.entries(firstObj).reduce<Record<string, string>>((acc, [key, value]) => {
+
+      const extIdMap = Object.entries(firstObj).reduce<Record<string, string>>((acc, [dataProperty, value]) => {
         const val = Array.isArray(value) ? value[0] : value;
         if (val && typeof val === "object" && "ext_id" in val) {
-          acc[key.split("-")[1]] = val.ext_id;
+          acc[dataProperty] = val.ext_id;
         }
         return acc;
       }, {});
 
       if (extIdMap) {
-        childPluginMap.value = {}
-        Object.entries(extIdMap).forEach(([key, value]) => {
-          const numberKey = parseInt(key, 10);
-          const usedPlugin = getPluginList.value?.find(plugin => plugin.id == numberKey);
-          if (usedPlugin?.available_plugins && usedPlugin.children?.length != 0) {
-            const pName = (usedPlugin.available_plugins as Record<string, any>)[value];
+        childPluginMap.value = {};
+
+        Object.entries(extIdMap).forEach(([dataProperty, extId]) => {
+          const usedPlugin = getPluginList.value?.find(
+              plugin => plugin.data_property === dataProperty
+          );
+
+          if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
+            const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
             if (pName) {
               const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
               if (childrenPlugin) {
-                if (!childPluginMap.value[numberKey]) {
-                  childPluginMap.value[numberKey] = [];
+                if (!childPluginMap.value[dataProperty]) {
+                  childPluginMap.value[dataProperty] = [];
                 }
-                childPluginMap.value[numberKey].push(childrenPlugin);
+                childPluginMap.value[dataProperty].push(childrenPlugin);
               } else {
-                pluginSelected.value = pName
+                pluginSelected.value = pName;
               }
             }
           }
         });
       }
-    }, { deep: true })
+    }, { deep: true });
 
     function expandContext() {
       expandedContext.value = true
