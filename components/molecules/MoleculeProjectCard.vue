@@ -105,9 +105,12 @@
                 >{{ project.steps.length }} </span
               ><i class="pi pi-list-check"
             /></span>
-            <Tag class="mb-1 scale-90" :severity="status_map[project.status]?.severity || ''">{{
-              status_map[project.status]?.label || project.status
-            }}</Tag>
+            <Tag class="mb-1 scale-90" 
+              :class="`tag-${project.status}`"
+              :style="{
+                color: status_map[project.status]?.colorText || '#000',
+                backgroundColor: status_map[project.status]?.colorBg || '#ccc'
+              }">{{status_map[project.status]?.label || project.status}}</Tag>
           </div>
         </div>
         <div
@@ -279,12 +282,12 @@ const roleUnarchiveProject = computed(() =>
 const { $handleApiError } = useNuxtApp();
 
 const status_map = {
-  draft:       { label: "Brouillon", severity: "info" },
-  pending:     { label: "En attente", severity: "warn" },
-  "in-progress": { label: "En cours", severity: "info" },
-  done:        { label: "Terminé", severity: "success" },
-  skipped:     { label: "Ignoré", severity: "secondary" },
-  archived:    { label: "Archivé", severity: "secondary" },
+  draft:       { label: "Brouillon", colorText: "#FFF", colorBg:"#757575" },
+  pending:     { label: "En attente", colorText: "#000", colorBg:"#FFC107"  },
+  "in-progress": { label: "En cours", colorText: "#000", colorBg:"#F9D621"  },
+  done:        { label: "Terminé", colorText: "#000", colorBg:"#9ADC82"  },
+  skipped:     { label: "Abondonné", colorText: "#FFF", colorBg:"#EF4444"  },
+  archived:    { label: "Archivé", colorText: "#000", colorBg:"#B3DDF4"  },
 };
 
 const formatTitle = (title) => {

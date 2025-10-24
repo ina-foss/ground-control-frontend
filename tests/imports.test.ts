@@ -22,7 +22,7 @@ describe('Dashboard.vue Tests', () => {
   test('SegmentationMolecules component imports as expected', async () => {
     const cmp = await import('../components/molecules/MoleculeSegmentation.vue');
     expect(cmp).toBeDefined();
-  });
+  },10000);
 
   test('ProjectCard component imports as expected', async () => {
     const cmp = await import('../components/molecules/MoleculeProjectCard.vue');

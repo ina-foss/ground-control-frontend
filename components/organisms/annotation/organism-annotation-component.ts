@@ -42,7 +42,7 @@ export default defineComponent({
       default: false,
     }
   },
-  emits: [ 'submit-annotation', 'finish-annotation' ],
+  emits: [ 'submit-annotation', 'finish-annotation', 'skip-annotation' ],
   setup(props, {emit}) {
 
     const { data, annotationsIn, annotationsOut, allFetched } = toRefs(props)
@@ -314,6 +314,8 @@ export default defineComponent({
     emit('finish-annotation', { locals: savingLocals, options: {showToast: true} })
   }
 
+  const handleSkip = () => emit('skip-annotation', { locals: {}, options: { showToast: true } })
+  
   onMounted(()=>{
     window.addEventListener("keydown", globalKeydown);
 
@@ -448,6 +450,7 @@ export default defineComponent({
     annotationStatus,
     handleSubmit,
     handleFinish,
+    handleSkip,
     allFetched,
     listRefs,
     handleFocusElement,

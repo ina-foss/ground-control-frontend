@@ -9,8 +9,8 @@ let mockedProject = {title: "Project creation",
       description: "test",
       status: "draft",
       is_published: false,
-      empty_annotations: false,
-      allow_skip: false,
+      empty_annotations: true,
+      allow_skip: true,
       control_weights: 10,
       pinned_at: null,
       created_by: "admin@localhost.com",
@@ -148,10 +148,10 @@ describe('Molecule Form Project for new Project', ()=>{
     expect(mocks.createProjectProjectPost).toHaveBeenCalledWith({
       title:"Title test",
       description: "Description test",
-      allow_skip: false,
+      allow_skip: true,
       control_weights: 10,
       created_by: 'user',
-      empty_annotations: false,
+      empty_annotations: true,
       is_published: false,
       pinned_at: null,
       status: "draft",
@@ -167,7 +167,7 @@ describe('Molecule Form Project for new Project', ()=>{
             project_id: 5,
             redundancy: 1,
             completeness_rate: 100.0,         
-            allow_empty_annotation: false, 
+            allow_empty_annotation: true, 
             max_tasks_per_person: 1 
     }))
 

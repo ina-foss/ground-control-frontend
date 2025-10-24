@@ -7,5 +7,6 @@ export type ProjectParametersResponse = {
     completeness_rate: number;
     allow_empty_annotation: boolean;
     max_tasks_per_person: number;
+    allow_skip: boolean;
 };
 

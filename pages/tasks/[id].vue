@@ -4,6 +4,7 @@
       :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
       :annotations-out="annotations_out"
       :is-read-mode="isReadMode"
+      @skip-annotation="handleSubmit($event,'skip')"
       @submit-annotation="handleSubmit($event,'submit')"
       @finish-annotation="handleSubmit($event,'end')"/>
   </div>
@@ -23,11 +24,13 @@ const refresh = useRefreshStore()
 const route = useRoute()
 const toast = useToast()
 const authStore = useAuth()
+const { mode } = useOptions()
 const {$application} = useService()
-
+const { $handleApiError } = useNuxtApp();
 const {getData} = storeToRefs(refresh)
 const {userEmail} = storeToRefs(authStore)
 const {fetchAnnotations} = refresh
+
 let timeAnnotationStart
 
 const data = ref(getData)
@@ -67,7 +70,6 @@ const { data: annotations_out, status: pending_out, refresh: refresh_out} =  use
   server: false
 })
 
-
 const pluginStore = usePluginStore()
 
 // Holds the status of the plugin fetch
@@ -98,16 +100,16 @@ const annotationInfo = computed(() => {
   if (annotations_out.value) {
     annotations_out.value.forEach((annotation, index) => {
       if (annotation.user_email == userEmail.value || annotation.user_email == route.query.email) {
-        info = {index: index, id: annotation.id}
+        info = {index: index, id: annotation.id, status: annotation.annotation_status, email:annotation.user_email}
       }
     })
   }
+  
   return info
 });
-const isReadMode = computed(() => project.status === ProjectStatus.ARCHIVED)
 
+const isReadMode = computed(() => annotationInfo.value?.status === ProjectStatus.ARCHIVED || annotationInfo.value?.status === ProjectStatus.SKIPPED || mode == "read")
 const submitExistantAnnotation =(locals,action,timeSpent,options)=>{
-
   const result = annotations_out.value[0].result
   result.data.localisation[0].sublocalisations.localisation = locals
   result.data.timeSpent = result.data.timeSpent ? result.data.timeSpent + timeSpent : timeSpent
@@ -156,8 +158,6 @@ const submitNewAnnotation =(locals,action,timeSpent,options)=>{
   const result = JSON.parse(JSON.stringify(annotations_in.value[0].result))
   result.data.localisation[0].sublocalisations.localisation = locals
   result.data.timeSpent = timeSpent
-
-  // L'utilisateur n'a jamais annoté cette tâche
   AnnotationService.createAnnotationAnnotationPost({
     annotation: {
       user_email: userEmail.value,
@@ -199,7 +199,7 @@ onMounted(()=>{
   timeAnnotationStart = new Date().getTime()
 })
 
-const handleSubmit = (event, action) => {
+const handleSubmit = async(event, action) => {
   const locals = JSON.parse(JSON.stringify(event.locals))
 
   const timeAnnotationEnd = new Date().getTime()
@@ -207,15 +207,34 @@ const handleSubmit = (event, action) => {
   const timeSpentOnScreen = (timeAnnotationEnd-timeAnnotationStart)/1000
 
   timeAnnotationStart = timeAnnotationEnd
-
-
+    if (action === 'skip') {
+    try {
+      const annotationId = annotationInfo.value?.id
+      await AnnotationService.skipAnnotationAnnotationSkipAnnotationIdPatch(annotationId)
+      if (event.options?.showToast) {       
+        toast.add({
+        severity: 'info',
+        summary: 'Cette annotation a été abondonnée',
+        life: 4000
+      })}
+      navigateTo({
+        path: `/projects/${route.query.project_id}`,
+      })
+    } catch (error) {
+      console.error('Failed to skip annotation:', error)
+      $handleApiError(error)
+    }
+    return
+  }
+ 
+   if( mode != "read"){
    if (annotationInfo.value != null) {
      submitExistantAnnotation(locals,action,timeSpentOnScreen,event.options);
 
    } else {
      submitNewAnnotation(locals,action,timeSpentOnScreen,event.options);
    }
-
+  }
 }
 
 </script>

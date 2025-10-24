@@ -147,38 +147,31 @@ describe('MoleculeProjectCard component', ()=>{
 
   })
 
-  it('should display success tag', async()=>{
-    let tag = wrapper.find('span[class~="p-tag-info"]')
-    expect(tag.exists()).toBeTruthy()
+  it('should display done tag', async () => {
+    let tag = wrapper.find('.tag-draft')
+    expect(tag.exists()).toBe(true)
     expect(tag.text()).toContain('Brouillon')
 
-    mockedProject.status = "done"
-    await wrapper.setProps({project:mockedProject})
-    tag = wrapper.find('span[class~="p-tag-success"]')
+    mockedProject.status = 'done'
+    await wrapper.setProps({ project: mockedProject })
+    tag = wrapper.find('.tag-done')
+    expect(tag.exists()).toBe(true)
     expect(tag.text()).toContain('Terminé')
-    expect(tag.exists()).toBeTruthy()
+  })
 
-
-
-  } )
-
-  it('should display warn tag', async()=>{
-    mockedProject.status = "pending"
-    await wrapper.setProps({project:mockedProject})
-    let tag = wrapper.find('span[class~="p-tag-warn"]')
+  it('should display pending tag', async () => {
+    mockedProject.status = 'pending'
+    await wrapper.setProps({ project: mockedProject })
+    const tag = wrapper.find('.tag-pending')
+    expect(tag.exists()).toBe(true)
     expect(tag.text()).toContain('En attente')
-    expect(tag.exists()).toBeTruthy()
+  })
 
-  } )
-
-  it('should display in-progress tag', async()=>{
-    mockedProject.status = "in-progress"
-    await wrapper.setProps({project:mockedProject})
-    let tag = wrapper.find('span[class~="p-tag-info"]')
+  it('should display in-progress tag', async () => {
+    mockedProject.status = 'in-progress'
+    await wrapper.setProps({ project: mockedProject })
+    const tag = wrapper.find('.tag-in-progress')
+    expect(tag.exists()).toBe(true)
     expect(tag.text()).toContain('En cours')
-    expect(tag.exists()).toBeTruthy()
-
-
-  } )
-
+  })
 })

@@ -2,7 +2,13 @@
   <div
     v-if="isAnnotationEditable"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
-    <Button  class="mr-4" outlined label="Soumettre"  
+    <Button  class="mr-4 text-xs" label="Abondonner"  
+      :disabled="isReadMode"
+      variant="text"
+      :style="{ textDecoration: 'underline' }"
+      @click="handleSkip({})"
+      />
+    <Button  class="mr-4" outlined label="Enregistrer"  
     :disabled="isReadMode"
     @click="handleSubmit({})"/>
     <Button class="button-overwrite"

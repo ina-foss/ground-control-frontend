@@ -76,10 +76,15 @@
             </div>
             <div class="flex flex-col justify-start gap-4">
               <div class="flex items-center gap-2">
-                <label class="text-sm text-black">Autoriser les annotations vides ?</label>
-                <ToggleSwitch v-model="emptyAnnotations" />
+                <label class="text-sm text-black">Autoriser les annotations vides?</label>
+                <ToggleSwitch v-model="emptyAnnotations" class="shrink-0"/>
+              </div>
+              <div class="flex items-center gap-2">
+                <label class="text-sm text-black">Autorisation de l’abandon d’une tâche?</label>
+                <ToggleSwitch v-model="allowSkip" class="shrink-0"/>
               </div>
             </div>
+            
           </div>
             <div class="flex justify-end pt-5">
               <Button class="button button-prev mx-3" outlined label="Précédent" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="activateCallback('1')"/>
@@ -153,8 +158,8 @@ const translations = {
 let title = ref(project?.title || '')
 let description = ref(project?.description || '')
 let isPublished = ref(project?.is_published || false)
-let allowSkip = ref(project?.allow_skip || false)
-let emptyAnnotations = ref(project?.empty_annotations || false)
+let allowSkip = ref(project?.allow_skip || true)
+let emptyAnnotations = ref(project?.empty_annotations || true)
 let redundancy = ref(project?.steps[0].redundancy || 1)
 let completeness_rate = ref(project?.steps[0].completeness_rate || 100)
 let max_tasks_per_person = ref(project?.steps[0].max_tasks_per_person || 1)
@@ -214,7 +219,7 @@ const createProject = async () => {
       status: ProjectStatus.DRAFT,
       is_published: false,
       empty_annotations: emptyAnnotations.value,
-      allow_skip: false,
+      allow_skip: allowSkip.value,
       control_weights: 10,
       pinned_at: null,
       created_by: userEmail,

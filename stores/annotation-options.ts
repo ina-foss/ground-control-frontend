@@ -46,6 +46,8 @@ export type Options =  {
   unlabelled_span: boolean
 }
 
+export type AnnotationMode = 'read' | 'edit' | 'none'
+
 export const useOptions = defineStore("annotation-options",() => {
 
     const options = reactive<Options>({
@@ -60,8 +62,15 @@ export const useOptions = defineStore("annotation-options",() => {
       unlabelled_span: true,
     })
 
+    const mode = ref<AnnotationMode>('read')
+
+    function setMode(newMode: AnnotationMode) {
+      mode.value = newMode
+    }
 
     return {
-      options
+      options,
+      mode,
+      setMode,
   }
 })

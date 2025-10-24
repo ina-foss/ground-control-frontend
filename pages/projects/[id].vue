@@ -67,6 +67,12 @@
                       {{ projectParameters.max_tasks_per_person }}
                     </span>
                   </div>
+                  <div class="flex gap-1 items-center truncate">
+                    <span class="font-medium">Possibilité d’abandonner une tâche</span>
+                    <span class="px-1 border border-gray-900 rounded-sm">
+                      {{ projectParameters.allow_skip ? "Oui" : "Non" }}
+                    </span>
+                  </div>
                 </div>
 
                 <div v-else class="text-red-500 text-nowrap ">
@@ -103,7 +109,11 @@
       <Column field="annotation_type" class="txt" header="Type"  body-class="" style="width : 9rem ; min-width: 70px;"/>
       <Column header="Statut" class="txt"  body-class="" style="width : 9rem ; min-width: 70px;">
         <template #body="slotProps">
-          <Tag  :severity="status_map.find(s => s.value === slotProps.data.status)?.severity" class="mb-1 scale-90" style="font-weight:500">
+          <Tag class="mb-1 scale-90" style="font-weight:500"
+                :style="{
+                  color: status_map.find(s => s.value === slotProps.data.status)?.colorText || '#000',
+                  backgroundColor: status_map.find(s => s.value === slotProps.data.status)?.colorBg || '#ccc'
+                }">
             {{ status_map.find(s => s.value === slotProps.data.status)?.label || slotProps.data.status }}
           </Tag>
         </template>
@@ -205,7 +215,11 @@
             </Column>
             <Column header="Statut" class="txt" style="width: 100px "   >
               <template #body="{ data: nestedData }">
-                <Tag  :severity="status_map.find(s => s.value === nestedData.status)?.severity" class="mb-1 scale-90" style="font-weight:500">
+                <Tag class="mb-1 scale-90" style="font-weight:500"
+                :style="{
+                  color: status_map.find(s => s.value === nestedData.status)?.colorText || '#000',
+                  backgroundColor: status_map.find(s => s.value === nestedData.status)?.colorBg || '#ccc'
+                }">
                   {{ status_map.find(s => s.value === nestedData.status)?.label || nestedData.status }}
                 </Tag>
               </template>
@@ -314,8 +328,25 @@
               <template #body="{ data: nestedData }">
                 <div class="flex items-center gap-2 ">
                   <div>
+                   <Button
+                    severity="primary"
+                    outlined
+                    style="height:32px; padding:2; margin:auto; color:#1E90FF;"
+                    text
+                    rounded
+                    title="Consulter la tâche"
+                    @click="consultTask(nestedData.id)"
+                  >
+                    <img
+                      src="../../public/icons/icons-svg/icons-svg/view-icon.svg"
+                      alt="View Icon"
+                      style="height:30px;width:20px;filter: brightness(0) saturate(100%) invert(35%) sepia(98%) saturate(2500%) hue-rotate(203deg) brightness(95%) contrast(90%);"
+                    />
+                  </Button>
+                  </div>
+                  <div>
                   <Button 
-                    v-if="roleActivateTask && nestedData.status === 'draft'"  
+                    v-if="roleActivateTask && nestedData.status === 'draft' || nestedData.status === 'skipped'"  
                     label="Activer" 
                     severity="primary" 
                     outlined 
@@ -333,6 +364,7 @@
                     style="height: 22px; padding:0; margin:auto; color:#0C7DA2;"
                     text
                     rounded
+                    title="Supprimer la tâche"
                   >
                     <img
                       src="../../public/icons/icons-svg/icons-svg/trash-icon.svg"
@@ -373,17 +405,8 @@ import _ from 'lodash';
 import {ref} from 'vue';
 import {AnnotationService, AnnotationStatus, StepStatus, TaskService, Permission, TaskStatus, ProjectService } from '../../api/generate';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
-import {useRefreshStore} from '../stores/refresh';
 import { FilterMatchMode, FilterService } from '@primevue/core/api';
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
-import type { ColorPicker } from '#components';
-
-const strategy = {
-  redundancy: 1,
-  completeness: 100,
-  allow_empty_annotation: true,
-  max_task_per_person: 1,
-};
 
 FilterService.register('expirationFilter', (value, filter) => {
   if (!filter) return true; 
@@ -403,6 +426,7 @@ FilterService.register('expirationFilter', (value, filter) => {
 
 const route = useRoute()
 const refreshStore = useRefreshStore()
+const { setMode } = useOptions()
 const toast = useToast()
 const { $application } = useService()
 
@@ -417,7 +441,6 @@ const buttonMenu = ref()
 const selectedRow = ref()
 const selectedStatus = ref(null); 
 const showStrategy = ref(false)
-
 const { $handleApiError } = useNuxtApp()
 
 const toggleStrategy = () => {
@@ -471,6 +494,15 @@ const buttonItems = [
   }
 ]
 
+const status_map = [
+  { value: "draft", label: "Brouillon", colorText: "#FFF", colorBg:"#757575"},
+  { value: "pending", label: "En attente", colorText: "#000", colorBg:"#FFC107" },
+  { value: "in-progress", label: "En cours", colorText: "#000", colorBg:"#F9D621" },
+  { value: "done", label: "Terminé", colorText: "#000", colorBg:"#9ADC82" },
+  { value: "skipped", label: "Abondonné", colorText: "#FFF", colorBg:"#EF4444" },
+  { value: "archived", label: "Archivé", colorText: "#000", colorBg:"#B3DDF4" },
+];
+
 const showDeleteTaskModal = (rowData)=>{
   deleteModal.loading = false
   deleteModal.visible = true
@@ -490,15 +522,6 @@ const deleteTask = (task_id) => {
   deleteModal.loading = true
   TaskService.deleteTaskTaskTaskIdDelete(task_id).then(()=> refresh()).then(()=> hideDeleteTaskModal())
 }
-
-const status_map = [
-  { value: "draft", label: "Brouillon", severity: "info" },
-  { value: "pending", label: "En attente", severity: "warn" },
-  { value: "in-progress", label: "En cours", severity: "info" },
-  { value: "done", label: "Terminé", severity: "success" },
-  { value: "skipped", label: "Ignoré", severity: "secondary" },
-  { value: "archived", label: "Archivé", severity: "secondary" },
-];
 
 // Filtrer les projets en fonction du statut sélectionné
 const filteredProjects = computed(() => {
@@ -575,7 +598,8 @@ const navigateToTask = (id: number, email?: string) => {
   navigateTo({
     path: `/tasks/${id}`,
     query: {
-      email: email
+      email: email,
+      project_id: route.params.id,
     }
   })
 }
@@ -587,12 +611,12 @@ const stepCreate = (stepId) => {
   dialogVisible.value = true
 }
 
-let email_clicked
+let email_clicked: string | undefined
 const handleRowClick = (event) => {
+  setMode('edit')
   if (event.data.status === 'draft') return;
   if(typeof event == 'string' && isAdmin.value) email_clicked = event
   clickedRowData.value = event.data;
-
   if (editMode.value === false) navigateToTask(clickedRowData.value.id,email_clicked)
 
 }
@@ -615,6 +639,10 @@ const onExpirationDateChange = async (value: Date, row: any) => {
   } 
 }
 
+const consultTask = (annotation_id: number) => {
+  setMode("read")
+  navigateToTask(annotation_id,email_clicked)
+}
 
 </script>
 <style scoped>
