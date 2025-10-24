@@ -105,7 +105,7 @@ export default defineComponent({
 
     function onDropdownOpen() {
       if (textSpan.value !== "") {
-        filterString.value = textSpan.value?.trim().replace(/\s+/g, " ") ?? '';
+        filterString.value = textSpan.value?.trim().replace(/[.,;\s]+/g, " ") ?? '';
         if (multiSelectRef.value) {
           (multiSelectRef.value as any).filterValue = filterString.value;
         }

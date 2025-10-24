@@ -154,7 +154,7 @@ export default defineNuxtComponent({
       labelSelected.value = spanArray.value[spanId]?.type ?? []
       nodes.value = spanArray.value[spanId]?.nodes ?? []
       textSpan.value=extractTextFromSpanNodes(nodes.value)
-      defaultLabel.value =  spanArray.value[spanId]?.label ?? textSpan.value
+      defaultLabel.value =  (spanArray.value[spanId]?.label ?? textSpan.value)?.trim().replace(/[.,;\s]+/g, " ")
       nodesCount.value = nodes.value.length
       if(!group && !virtual){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )
