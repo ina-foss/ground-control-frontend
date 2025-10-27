@@ -469,6 +469,12 @@ const { data: projectParameters, status: statusParameters } = useAsyncData(
   `project_${route.params.id}_parameters`,
   async () => await ProjectService.readProjectParametersProjectIdParametersGet(Number(route.params.id))
 )
+watch(projectParameters, (newVal) => {
+  if (newVal && !isEqual(newVal, refreshStore.strategy_parameters)) {
+    refreshStore.setParameters(newVal)
+  }
+})
+
 
 const buttonItems = [
   {
@@ -613,7 +619,11 @@ const stepCreate = (stepId) => {
 
 let email_clicked: string | undefined
 const handleRowClick = (event) => {
-  setMode('edit')
+  setMode(
+    [TaskStatus.ARCHIVED, TaskStatus.SKIPPED].includes(event.data?.status)
+      ? 'read'
+      : 'edit'
+  )
   if (event.data.status === 'draft') return;
   if(typeof event == 'string' && isAdmin.value) email_clicked = event
   clickedRowData.value = event.data;

@@ -2,7 +2,7 @@
   <div
     v-if="isAnnotationEditable"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
-    <Button  class="mr-4 text-xs" label="Abondonner"  
+    <Button  v-if="allow_skip" class="mr-4 text-xs" label="Abondonner"  
       :disabled="isReadMode"
       variant="text"
       :style="{ textDecoration: 'underline' }"

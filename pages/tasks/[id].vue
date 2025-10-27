@@ -3,7 +3,6 @@
     <OrganismAnnotation
       :data="data" :all-fetched="allFetched" :annotations-in="annotations_in"
       :annotations-out="annotations_out"
-      :is-read-mode="isReadMode"
       @skip-annotation="handleSubmit($event,'skip')"
       @submit-annotation="handleSubmit($event,'submit')"
       @finish-annotation="handleSubmit($event,'end')"/>
@@ -14,7 +13,7 @@
 <script setup>
 
 import {ref} from 'vue';
-import { AnnotationService, AnnotationStatus, ProjectStatus} from '~/api/generate';
+import { AnnotationService, AnnotationStatus, ProjectStatus, TaskStatus} from '~/api/generate';
 import {useAuth} from '~/stores/auth';
 import {storeToRefs} from 'pinia';
 import {useRefreshStore} from '#imports';
@@ -108,7 +107,6 @@ const annotationInfo = computed(() => {
   return info
 });
 
-const isReadMode = computed(() => annotationInfo.value?.status === ProjectStatus.ARCHIVED || annotationInfo.value?.status === ProjectStatus.SKIPPED || mode == "read")
 const submitExistantAnnotation =(locals,action,timeSpent,options)=>{
   const result = annotations_out.value[0].result
   result.data.localisation[0].sublocalisations.localisation = locals
@@ -226,8 +224,8 @@ const handleSubmit = async(event, action) => {
     }
     return
   }
- 
-   if( mode != "read"){
+
+   if( mode != "read" && data.value.status!=TaskStatus.ARCHIVED && data.value.status != TaskStatus.SKIPPED){
    if (annotationInfo.value != null) {
      submitExistantAnnotation(locals,action,timeSpentOnScreen,event.options);
 

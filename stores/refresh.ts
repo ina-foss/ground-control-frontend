@@ -3,7 +3,13 @@ import {defineStore} from 'pinia'
 import {ProjectService, TaskService} from '../api/generate'
 import { getApplicationConfiguration } from '~/services/dynamic-configuration-service'
 
-
+interface ProjectParametersResponse {
+  redundancy: number
+  completeness_rate: number
+  allow_empty_annotation: boolean
+  max_tasks_per_person: number
+  allow_skip: boolean
+}
 
 export const useRefreshStore = defineStore('refresh', {
   state: () => {
@@ -12,6 +18,13 @@ export const useRefreshStore = defineStore('refresh', {
       project: [] as Record<string,any>,
       project_number: 0 as number,
       last_index: 0 as number,
+      strategy_parameters: {
+        redundancy: 1,
+        completeness_rate: 100,
+        allow_empty_annotation: true,
+        max_tasks_per_person: 1,
+        allow_skip: true,
+      } as ProjectParametersResponse,
     }
   },
   actions: {
@@ -28,6 +41,9 @@ export const useRefreshStore = defineStore('refresh', {
       this.project_number = data.length
 
       return data.length;
+    },
+    setParameters(newParams: Partial<ProjectParametersResponse>) {
+      this.strategy_parameters = { ...this.strategy_parameters, ...newParams }
     },
     async fetchProject(skip: number, limit: number) {
       const default_limit = window.innerWidth > 1600 ? 20 : 16
@@ -59,7 +75,7 @@ export const useRefreshStore = defineStore('refresh', {
       const res = await TaskService.readTaskTaskTaskIdGet(taskid)
       this.data = res
       return res
-    }
+    },
   },
   getters: {
     getData(state) {
@@ -70,6 +86,7 @@ export const useRefreshStore = defineStore('refresh', {
     },
     getProjectNumber(state){
       return state.project_number
-    }
+    },
+    getParameters: (state) => state.strategy_parameters,
   }
 })

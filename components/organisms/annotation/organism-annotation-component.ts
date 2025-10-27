@@ -53,7 +53,10 @@ export default defineComponent({
     const {addTimecodeHistory} = useTimecodeHistory()
     const { unixToTimestamp  } = $application
     const{setTcOffset}= useTcOffset()
-
+    const refresh = useRefreshStore()
+    const { getParameters } = storeToRefs(refresh)
+    const allow_skip = computed(() => getParameters.value.allow_skip)
+    
     const tabsRef = ref()
 
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
@@ -473,7 +476,8 @@ export default defineComponent({
     getSelectedSegment,
     navigateWithkeyboard,
     globalKeydown,
-    jumpToTopic
+    jumpToTopic,
+    allow_skip,
   }
 
 },
