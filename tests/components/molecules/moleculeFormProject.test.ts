@@ -4,6 +4,7 @@ import { mockNuxtImport, mountSuspended} from "@nuxt/test-utils/runtime";
 import { Button, InputText} from 'primevue';
 import { StepService } from '~/api/generate';
 import MoleculeFormProject from '../../../components/molecules/MoleculeFormProject.vue';
+import { flushPromises } from '@vue/test-utils';
 
 let mockedProject = {title: "Project creation",
       description: "test",
@@ -71,6 +72,11 @@ describe('Molecule Form Project for new Project', ()=>{
   let wrapper : VueWrapper
 
   beforeEach(async()=>{
+    consoleMock.mockClear()
+    mocks.createStepStepPost.mockClear()
+    mocks.createProjectProjectPost.mockClear()
+    mocks.updateProjectProjectProjectIdPut.mockClear()
+
     wrapper = await mountSuspended(MoleculeFormProject,{
       global:{
         stubs:{
@@ -135,16 +141,34 @@ describe('Molecule Form Project for new Project', ()=>{
   })
 
   it('should be able to create project ', async()=>{
-    const createButton = wrapper.findAllComponents(Button).at(5)
-
     mocks.createProjectProjectPost.mockReset()
     mocks.createProjectProjectPost.mockResolvedValue({id: 5})
 
-   wrapper.vm.title.value = "Title test"
-   wrapper.vm.description.value = "Description test"
-   wrapper.vm.selectedType.value = ['span','segmentation']
+    // Fill in the form fields
+    const inputs = wrapper.findAllComponents(InputText)
+    await inputs.at(0).setValue("Title test")  // title
+    await inputs.at(1).setValue("Description test")  // description
 
+    // Navigate to step 2
+    const nextButton1 = wrapper.findAllComponents(Button).at(1)
+    await nextButton1.trigger('click')
+    await wrapper.vm.$nextTick()
+
+    // Navigate to step 3 to select types
+    const nextButton2 = wrapper.findAllComponents(Button).at(1)
+    await nextButton2.trigger('click')
+    await wrapper.vm.$nextTick()
+
+    // Select types using Listbox component
+    const listbox = wrapper.findComponent({name: 'Listbox'})
+    await listbox.vm.$emit('update:modelValue', ['span', 'segmentation'])
+    await wrapper.vm.$nextTick()
+
+    // Click create button
+    const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
+    await flushPromises()
+
     expect(mocks.createProjectProjectPost).toHaveBeenCalledWith({
       title:"Title test",
       description: "Description test",
@@ -166,9 +190,9 @@ describe('Molecule Form Project for new Project', ()=>{
             status: 'draft',
             project_id: 5,
             redundancy: 1,
-            completeness_rate: 100.0,         
-            allow_empty_annotation: true, 
-            max_tasks_per_person: 1 
+            completeness_rate: 100.0,
+            allow_empty_annotation: true,
+            max_tasks_per_person: 1
     }))
 
   })
@@ -183,29 +207,54 @@ describe('Molecule Form Project for new Project', ()=>{
   })
 
   it('should trigger project error if call fails ', async()=>{
-    wrapper.vm.title.value = 'Title test'
-    wrapper.vm.description.value = 'Description test'
-    wrapper.vm.selectedType.value = ['span','segmentation']
+    // Fill in the form fields
+    const inputs = wrapper.findAllComponents(InputText)
+    await inputs.at(0).setValue("Title test")
+    await inputs.at(1).setValue("Description test")
+
+    // Navigate to step 3
+    const nextButton1 = wrapper.findAllComponents(Button).at(1)
+    await nextButton1.trigger('click')
+    const nextButton2 = wrapper.findAllComponents(Button).at(1)
+    await nextButton2.trigger('click')
+
+    // Select types
+    const listbox = wrapper.findComponent({name: 'Listbox'})
+    await listbox.vm.$emit('update:modelValue', ['span', 'segmentation'])
+
     mocks.createProjectProjectPost.mockReset()
     mocks.createProjectProjectPost.mockRejectedValue(new Error('custom error'))
 
     const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
+    await flushPromises()
     expect(consoleMock).toHaveBeenLastCalledWith("🚨 API Error Caught:",new Error("custom error"))
   })
 
   it('should trigger step error if call fails ', async()=>{
-    wrapper.vm.title.value = 'Title test'
-    wrapper.vm.description.value = 'Description test'
-    wrapper.vm.selectedType.value = ['span','segmentation']
+    // Fill in the form fields
+    const inputs = wrapper.findAllComponents(InputText)
+    await inputs.at(0).setValue("Title test")
+    await inputs.at(1).setValue("Description test")
+
+    // Navigate to step 3
+    const nextButton1 = wrapper.findAllComponents(Button).at(1)
+    await nextButton1.trigger('click')
+    const nextButton2 = wrapper.findAllComponents(Button).at(1)
+    await nextButton2.trigger('click')
+
+    // Select types
+    const listbox = wrapper.findComponent({name: 'Listbox'})
+    await listbox.vm.$emit('update:modelValue', ['span', 'segmentation'])
+
     mocks.createProjectProjectPost.mockReset()
     mocks.createProjectProjectPost.mockResolvedValue({id: 10, catch: vi.fn() })
-
-    const createButton = wrapper.findAllComponents(Button).at(5)
     mocks.createStepStepPost.mockReset()
     mocks.createStepStepPost.mockRejectedValue(new Error('error step'))
-    expect(wrapper.vm.title.value).toBe('Title test')
+
+    const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
+    await flushPromises()
     expect(consoleMock).toHaveBeenLastCalledWith("🚨 API Error Caught:",new Error('error step'))
 
   })
@@ -215,6 +264,11 @@ describe('Molecule Form Project for existing Project', ()=>{
   let wrapper : VueWrapper
 
   beforeEach(async()=>{
+    consoleMock.mockClear()
+    mocks.createStepStepPost.mockClear()
+    mocks.createProjectProjectPost.mockClear()
+    mocks.updateProjectProjectProjectIdPut.mockClear()
+
     wrapper = await mountSuspended(MoleculeFormProject,{
       global:{
         stubs:{
@@ -239,25 +293,40 @@ describe('Molecule Form Project for existing Project', ()=>{
     expect(inputs.at(0).element.value).toBe(mockedProject.title)
     expect(inputs.at(1).element.value).toBe(mockedProject.description)
 
-    const nextButton = wrapper.findAllComponents(Button).at(1)
-    await nextButton.trigger('click')
+    // Navigate to step 2
+    const nextButton1 = wrapper.findAllComponents(Button).at(1)
+    await nextButton1.trigger('click')
 
-    expect(wrapper.vm.selectedType.value).toContain('span')
-    expect(wrapper.vm.selectedType.value).toContain('segmentation')
+    // Navigate to step 3 to check selected types
+    const nextButton2 = wrapper.findAllComponents(Button).at(1)
+    await nextButton2.trigger('click')
+
+    // Check that the listbox has the correct selected values
+    const listbox = wrapper.findComponent({name: 'Listbox'})
+    expect(listbox.props('modelValue')).toContain('span')
+    expect(listbox.props('modelValue')).toContain('segmentation')
   })
 
   it('should be able to update project ', async()=>{
     const createButton = wrapper.findAllComponents(Button).at(5)
     expect(createButton.text()).toContain('Sauvegarder')
 
-    wrapper.vm.selectedType.value.push('auto-summary')
-    wrapper.vm.selectedType.value.push('transcription')
+    // Navigate to step 3 to modify types
+    const nextButton1 = wrapper.findAllComponents(Button).at(1)
+    await nextButton1.trigger('click')
+    const nextButton2 = wrapper.findAllComponents(Button).at(1)
+    await nextButton2.trigger('click')
+
+    // Add more types
+    const listbox = wrapper.findComponent({name: 'Listbox'})
+    await listbox.vm.$emit('update:modelValue', ['span', 'segmentation', 'auto-summary', 'transcription'])
     mocks.updateProjectProjectProjectIdPut.mockReset()
     mocks.updateProjectProjectProjectIdPut.mockResolvedValue({id: 8})
     mocks.createStepStepPost.mockReset()
     mocks.createStepStepPost.mockResolvedValue({id: 8})
 
     await createButton.trigger('click')
+    await flushPromises()
     expect(mocks.updateProjectProjectProjectIdPut).toHaveBeenCalledWith(
       mockedProject.id,
       {
@@ -278,13 +347,16 @@ describe('Molecule Form Project for existing Project', ()=>{
             pinned_at: null,
             status: 'draft',
             project_id: 8,
-            
+
     })
 
   })
 
   it('should trigger title missing error ', async()=>{
-    wrapper.vm.title.value = ""
+    // Clear the title field
+    const inputs = wrapper.findAllComponents(InputText)
+    await inputs.at(0).setValue("")
+
     const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
     expect(consoleMock).toHaveBeenLastCalledWith('Le titre est requis')
@@ -297,11 +369,20 @@ describe('Molecule Form Project for existing Project', ()=>{
 
     const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
+    await flushPromises()
     expect(consoleMock).toHaveBeenLastCalledWith("🚨 API Error Caught:",new Error("custom error"))
   })
 
   it('should trigger step error if call fails ', async()=>{
-    wrapper.vm.selectedType.value = ['span','segmentation','auto-summary']
+    // Navigate to step 3 to add a new type
+    const nextButton1 = wrapper.findAllComponents(Button).at(1)
+    await nextButton1.trigger('click')
+    const nextButton2 = wrapper.findAllComponents(Button).at(1)
+    await nextButton2.trigger('click')
+
+    // Add a new type
+    const listbox = wrapper.findComponent({name: 'Listbox'})
+    await listbox.vm.$emit('update:modelValue', ['span', 'segmentation', 'auto-summary'])
     mocks.updateProjectProjectProjectIdPut.mockReset()
     mocks.updateProjectProjectProjectIdPut.mockResolvedValue({id: 10, catch: vi.fn() })
     mocks.createStepStepPost.mockReset()
@@ -309,6 +390,7 @@ describe('Molecule Form Project for existing Project', ()=>{
 
     const createButton = wrapper.findAllComponents(Button).at(5)
     await createButton.trigger('click')
+    await flushPromises()
     expect(consoleMock).toHaveBeenLastCalledWith("🚨 API Error Caught:",new Error('error step'))
 
   })

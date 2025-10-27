@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import type { PluginWithIdDto } from '~/api/generate'
+import { PluginService } from '~/api/generate'
+
 export default defineComponent({
   name: 'AtomPluginItemslist',
   props: {
@@ -8,6 +10,7 @@ export default defineComponent({
     },
     plugin: {type :Object as PropType<PluginWithIdDto>, required: true},
     pluginItemsConfig: {},
+    groupDisplay: {}
   },
   emits:['update:pluginValue'],
   computed: {

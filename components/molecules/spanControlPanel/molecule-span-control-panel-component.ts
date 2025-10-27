@@ -123,7 +123,7 @@ const spanOnlyArray = computed(()=>{
       if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
         group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
       }
-      if(category.options?.trigger_rename){ // renommer le groupe
+      if(category.options?.trigger_rename && !group.label ){ // renommer le groupe
         group.label = spanArray.value[parseInt(spanId)].label
       }
       decolorSpan(group)

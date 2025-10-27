@@ -61,17 +61,17 @@
       <div :class="{' grid  transition-all duration-300 overflow-hidden': true}" :style="{'grid-template-rows' : groupIsSelected ? '1fr': '0fr'}" >
         <selected-group-content v-show="selectedGroup" :style="{'min-height' : 0}"  >
           <role-wrapper class="grid" :style="`grid-template-columns: repeat(auto-fit,minmax(${ layout == 'grid' ? '150px' : '1fr'}, 1fr));`">
-            <div v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories" :key="category" class="p-2  border-surface-200 text-center flex flex-col gap-3">
+            <div v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories" :key="category" class="p-2  border-surface-200 text-center min-w-0 flex flex-col gap-3">
               <role-title-wrapper class="flex  justify-center relative ">
                 <role-span-title class="text-center font-bold  ">{{ category.label }}</role-span-title>
               </role-title-wrapper>
-              <ScrollPanel class=" h-[150px] border-2 border-dashed border-surface-400 rounded-md " >
+              <ScrollPanel class=" h-[150px] border-2 border-dashed border-surface-400 rounded-md min-w-0 " >
                 <role-dropzone
-                  class="flex flex-col text-start min-h-full  w-full gap-[10px] p-[10px] bg-secondary-color relative "
+                  class="flex flex-col text-start min-h-full  w-full gap-[10px] p-[10px] bg-secondary-color min-w-0 relative "
                   @drop="dropSpan($event,selectedGroup,category)" @dragover="event=>event.preventDefault()" @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
                   <group-linked-span
                     v-for="span in selectedGroup?.spans.filter(span => isEqual(span.role,category)).sort((a,b)=>unixToTimestamp(spanArray[a.spanId].tcin) - unixToTimestamp(spanArray[b.spanId].tcin))"
-                    :key="span" class="flex justify-between items-center max-w-full span-tag ">
+                    :key="span" class="flex justify-between items-center max-w-full span-tag min-w-0 ">
                     <AtomSpanTag
                       :plugin-id="mainPluginId" :plugin-value="spanArray[span.spanId]?.plugins?.[mainPluginIndex]"
                       :text="spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value=>value.label).join(', ')"   />
@@ -104,9 +104,9 @@
             v-for=" (group,index) in groupArray" :class="{' hover:bg-primary-100 cursor-pointer p-2 rounded-md flex items-center gap-2' :true, 'border-2 bg-surface-100 border-title font-semibold' : newFocus== group.id}"
             @click="handleGroupClick(group.id)" >
             <group-number class="font-bold self-center px-2 h-fit">  {{index+1}} </group-number>
-            <group-label class="grow">{{ group?.label || group?.plugins[mainGroupPluginIndex]?.[0].label  }}</group-label>
-            <group-span-count class="  text-center rounded-full p-0 text-xl leading-10  h-10 w-10 bg-surface-100  ">{{ group.spans.length }}</group-span-count>
-            <span @click.stop="handleRemoveGroup(group)">
+            <group-label class=" grow line-clamp-1">{{ group?.label || group?.plugins[mainGroupPluginIndex]?.[0].label  }}</group-label>
+            <group-span-count class="  text-center rounded-full p-0 text-xl leading-10  h-10 w-10 bg-surface-100 shrink-0 ">{{ group.spans.length }}</group-span-count>
+            <span class="shrink-0" @click.stop="handleRemoveGroup(group)">
               <img
                 style="height:18px;width:18px;filter: brightness(0) saturate(100%) invert(48%) sepia(72%) saturate(4640%) hue-rotate(337deg) brightness(98%) contrast(91%);"
                 src="../../../public/icons/icons-svg/icons-svg/trash-icon.svg"
@@ -172,7 +172,6 @@
               <Button :disabled="!dialogVirtualSpan.label || !virtualSpanLabel"  label="Confirmer" icon="pi pi-check" @click="createVirtualSpan()" />
             </div>
             </Dialog>
-
 
           </group-wrapper>
       </div>

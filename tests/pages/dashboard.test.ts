@@ -3,7 +3,7 @@ import Dashboard from '../../pages/dashboard.vue'
 import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
-import { type VueWrapper } from '@vue/test-utils'
+import { flushPromises, type VueWrapper } from '@vue/test-utils'
 import { Paginator, Select, Skeleton} from 'primevue'
 import { mockedProject as project } from '../mock'
 
@@ -120,8 +120,10 @@ describe('Paginator', () => {
     const paginator = wrapper.findComponent(Paginator)
     expect(refreshProject).not.toHaveBeenCalled()
     await paginator.find('button[class="p-paginator-next"]').trigger('click')
+    await wrapper.vm.$nextTick()
+    await flushPromises()
 
-    expect(wrapper.vm.first.value).toBe(16)
+    expect(paginator.props('first')).toBe(16)
     expect(refreshProject).toHaveBeenCalled()
 
   })
