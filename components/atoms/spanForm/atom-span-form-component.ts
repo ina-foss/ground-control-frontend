@@ -11,7 +11,7 @@ export default defineNuxtComponent({
     const textSpan=ref()
     const visible = ref()
     const nodesCount=ref<number>()
-    const suppWarning=ref("Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés")
+    const suppWarning=ref("Pour créer un span de type “suppression” , seuls 2 mots doivent être sélectionnés.")
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]

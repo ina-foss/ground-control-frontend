@@ -26,7 +26,17 @@ export default defineComponent({
     const options = computed(() => {
       if (data.value?.length > 0) {
         return data.value?.map(item => {
-          const parsedImage = item.image ? JSON.parse(item?.image.replace(/'/g, '"')) : []
+          let parsedImage ;
+          if(item.image){
+            try {
+              parsedImage = JSON.parse(item.image.replace(/'/g, '"'));
+            } catch {
+              parsedImage = item.image;
+            }
+          }
+          else{
+            parsedImage = [];
+          }
           return {
             id: item.id,
             ext_id: item.ext_id,
@@ -39,7 +49,17 @@ export default defineComponent({
       }
       else if ((pluginItemsConfig.value) && (Array.isArray(pluginItemsConfig.value))) {
         return pluginItemsConfig.value.map(item => {
-          const parsedImage = item.image ? JSON.parse(item?.image.replace(/'/g, '"')) : []
+          let parsedImage ;
+          if(item.image){
+            try {
+              parsedImage = JSON.parse(item.image.replace(/'/g, '"'));
+            } catch {
+              parsedImage = item.image;
+            }
+          }
+          else{
+            parsedImage = [];
+          }
           return {
             id: item.id,
             ext_id: item.ext_id,

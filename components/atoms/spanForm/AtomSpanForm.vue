@@ -36,6 +36,17 @@
                  <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected" />
             </div>
           </div>
+
+          <div v-if="!isForResearch" >
+            <div v-if="pluginSelected">
+              <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5"  v-if="nodesCount === 2">
+                <b  class="pt-2 text-right "> Nombre de mots supprimés   </b>
+                <InputNumber v-model="deletedNum" placeholder="Entrez le nombre de mots manquants" class="w-[250px]"/>
+              </div>
+              <label v-else class="block text-center text-red-500" >{{suppWarning}}</label>
+            </div>
+          </div>
+
           <div class="grid grid-cols-[100px_auto] gap-3 gap-y-5">
                   <b class="pt-2 text-right" > Label </b>
                   <InputText
@@ -45,15 +56,6 @@
                       />
           </div>
         </main-plugins-wrapper>
-        <div v-if="!isForResearch">
-            <div v-if="pluginSelected">
-                <div class="flex flex-col gap-2"  v-if="nodesCount === 2">
-                    <label > Nombre de mots supprimés   </label>
-                    <InputNumber v-model="deletedNum" />
-                </div>
-                <label v-else class="text-red-500">{{suppWarning}}</label>
-            </div>
-        </div>
 
       </plugin-wrapper>
 
