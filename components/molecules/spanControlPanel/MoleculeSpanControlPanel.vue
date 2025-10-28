@@ -112,6 +112,7 @@
                 src="../../../public/icons/icons-svg/icons-svg/trash-icon.svg"
                 alt="Trash Icon">
             </span>
+          </group-wrapper>
 
             <!-- DELETE GROUP DIALOG  -->
             <Dialog
@@ -173,7 +174,7 @@
             </div>
             </Dialog>
 
-          </group-wrapper>
+
       </div>
     </div>
   </div>
