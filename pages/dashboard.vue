@@ -84,19 +84,17 @@ const { $application } = useService();
 const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_CREATE));
 
 
-const translations = {
-  draft: 'Brouillon',
-  pending: 'En attente',
-  ended: 'Terminé'
-}
-const translatedProjectStatus = computed(() => {
-  return Object.values(ProjectStatus).map(status => ({
-    label: translations[status],
-    value: status,
-  }));
-})
+
+
 const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
-const statusOptions = translatedProjectStatus;
+const statusOptions = [
+  { value: "draft", label: "Brouillon", colorText: "#FFF", colorBg:"#757575"},
+  { value: "pending", label: "En attente", colorText: "#000", colorBg:"#FFC107" },
+  { value: "in-progress", label: "En cours", colorText: "#000", colorBg:"#F9D621" },
+  { value: "done", label: "Terminé", colorText: "#000", colorBg:"#9ADC82" },
+  { value: "skipped", label: "Abondonné", colorText: "#FFF", colorBg:"#EF4444" },
+  { value: "archived", label: "Archivé", colorText: "#000", colorBg:"#B3DDF4" },
+];
 
 const sortDataById = computed(() => {
     return [...data.value].sort((a, b) => a.id - b.id)
