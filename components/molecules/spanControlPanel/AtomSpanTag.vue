@@ -1,5 +1,5 @@
 <template>
-  <div class="expand-type min-w-0  ">
+  <div class="expand-type min-w-0 flex items-center  ">
         <span
         :style="{
           backgroundColor : createSpanColorPalette(pluginId ,pluginValue),

@@ -41,7 +41,7 @@ mockNuxtImport('useSpanService', async()=>{
       spanArray : ref([
         {
           id: 0,
-          nodes: [],
+          plugins: [],
           label: "",
         },
         {
@@ -130,15 +130,17 @@ describe('MoleculeSpanControlPanel', ()=>{
   it('should display the list of spans and be able to filter it', async ()=>{
     // ---- SHOW SPAN LIST ----
     const spanWrappers = wrapper.findAll('span-content-wrapper')
-    expect(spanWrappers.length).toBe(2 + 1 ) // 2 real spans and span None"
+    const spanNoneWrapper = wrapper.findAll('span-none-content')
+    expect(spanWrappers.length).toBe(2) // 2 real spans
+    expect(spanNoneWrapper.length).toBe(1) // span "None"
     expect(wrapper.findAllComponents(AtomSpanTag).length).toBe(3)
-    expect(wrapper.findAll('span-wrapper > span-content-wrapper').length).toBe(3)
+    expect(wrapper.findAll('span-wrapper  span-content-wrapper').length).toBe(2)
     expect(spanWrappers.at(0).text().includes('1')).toBeTruthy()
     expect(spanWrappers.at(1).text().includes('2')).toBeTruthy()
-    expect(spanWrappers.at(2).text().includes('3')).toBeTruthy()
+    expect(spanNoneWrapper.at(0).text()).toContain('None')
 
     // --- FILTER SPAN LIST ----
-    expect(wrapper.vm.spanOnlyArray.length).toBe(3)
+    expect(wrapper.vm.spanOnlyArray.length).toBe(2)
     await wrapper.findComponent(Select).trigger('click')
     await wrapper.find('.p-select-list-container li').trigger('mousedown')
     await wrapper.vm.$nextTick()
@@ -184,14 +186,16 @@ describe('MoleculeSpanControlPanel', ()=>{
     await groupWrapper.trigger('click')
     const dropzone = wrapper.find('role-dropzone')
     const prevChildCount =dropzone.element.childElementCount
-    await dropzone.trigger('dragenter')
+    const dataTransfer = new DataTransfer()
+    dataTransfer.setData('span',"2")
+    await dropzone.trigger('dragenter',{dataTransfer})
     const newChildCount = dropzone.element.childElementCount
 
     expect(prevChildCount).toBeLessThan(newChildCount)
     expect([...dropzone.element.children].map((child)=>child.localName)).include('preview')
     expect(dropzone.element.lastChild?.textContent).include('+')
 
-    await dropzone.trigger('dragleave')
+    await dropzone.trigger('dragleave',{dataTransfer})
     expect([...dropzone.element.children].map((child)=>child.localName)).not.include('preview')
 
   })

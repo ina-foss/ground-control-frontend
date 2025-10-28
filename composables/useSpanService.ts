@@ -4,6 +4,8 @@ import {useOptions} from '~/stores/annotation-options'
 import {usePluginStore} from "~/stores/plugins";
 
 
+let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
+
 function createSpanService (){
 
 
@@ -545,12 +547,11 @@ function createSpanService (){
   }
 }
 
-let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
 
 /**
  * @param initialization True for forcing the creation of a new instance
   **/
-export default function (initialization?: boolean){
+export default function (initialization?: boolean): SpanService {
   if(!spanServiceInstance || initialization) spanServiceInstance = createSpanService()
   return spanServiceInstance
 }

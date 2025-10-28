@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white max-w-full w-full h-fit p-6" >
-    <div>
+    <div class="flex flex-col gap-2">
       <panel-span-header class="flex justify-between items-center">
         <b class="text-xl">Spans</b>
         <span-filter v-if="mainPluginId" class="flex items-center gap-2">
@@ -10,35 +10,43 @@
             :options="pluginOptionsList?.find(p=>p.id==mainPluginId)?.data" option-label="label"  />
         </span-filter>
       </panel-span-header>
-      <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
-      <ScrollPanel :style="{ maxHeight: '340px', height: spanOnlyArray.length < 8 ? 'auto' : '340px' }"
-                   class="overflow-auto"
-                   :dt="{
-    bar: { background: 'var(--primary-color)', size: '5px' },
-    barY: { style: 'right: -5px;' }
-  }"
-      >
-        <TabPanels class="overflow-x-hidden p-0 h-fit">
-          <TabPanel value="span" class="p-0 h-fit" >
-            <span-wrapper class="block">
-        <span-content-wrapper
-            v-for="(span,index) in spanOnlyArray"
-            :key="span.id" draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type' ] "
-          @dragstart="event=>{
-            event.dataTransfer.setData('span', span.id)
-            event.dataTransfer.setDragImage([...event.target.children][1],10,10)
+      <span-wrapper class="">
+        <span-none-content draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type' ] "
+            @dragstart="event=>{
+              event.dataTransfer.setData('span', spanNone.id)
+              event.dataTransfer.setDragImage([...event.target.children][1],10,10)
           }">
-          <span-number class="font-bold self-center px-2">  {{index+1}} </span-number>
-          <AtomSpanTag :plugin-id="mainPluginId" :plugin-value="span?.plugins?.[mainPluginIndex]" :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"  expandable />
-          <span class="self-center font-semibold flex-1 truncate">{{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}</span>
-          <span v-if="span?.label" class="text-subtitle text-end italic truncate  grow max-w-[40%] "  >
-            {{extractTextFromSpanNodes(span?.nodes)}}
-          </span>
-        </span-content-wrapper>
+            <span-number class="font-bold self-center px-3">  </span-number>
+            <AtomSpanTag :plugin-id="mainPluginId" :plugin-value="spanNone?.plugins?.[mainPluginIndex]" :text="spanNone?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"  expandable />
+            <span class="self-center font-semibold flex-1 truncate">{{spanNone?.label || extractTextFromSpanNodes(spanNone?.nodes) || 'Aucun' }} </span>
+            <span v-if="spanNone?.label" class="text-subtitle text-end italic truncate  grow max-w-[40%] "  >
+              {{extractTextFromSpanNodes(spanNone?.nodes)}}
+            </span>
+        </span-none-content>
+        <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
+        <ScrollPanel :style="{ maxHeight: '333px', height: spanOnlyArray.length < 8 ? 'auto' : '340px' }"
+                    class="overflow-auto"
+                    :dt="{
+                          bar: { background: 'var(--primary-color)', size: '5px' },
+                          barY: { style: 'right: -5px;' }
+                    }"
+          >
+          <span-content-wrapper
+              v-for="(span,index) in spanOnlyArray"
+              :key="span.id" draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type' ] "
+            @dragstart="event=>{
+              event.dataTransfer.setData('span', span.id)
+              event.dataTransfer.setDragImage([...event.target.children][1],10,10)
+            }">
+            <span-number class="font-bold self-center px-2">  {{index+1}} </span-number>
+            <AtomSpanTag :plugin-id="mainPluginId" :plugin-value="span?.plugins?.[mainPluginIndex]" :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"  expandable />
+            <span class="self-center font-semibold flex-1 truncate">{{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}</span>
+            <span v-if="span?.label" class="text-subtitle text-end italic truncate  grow max-w-[40%] "  >
+              {{extractTextFromSpanNodes(span?.nodes)}}
+            </span>
+          </span-content-wrapper>
+        </ScrollPanel>
       </span-wrapper>
-          </TabPanel>
-        </TabPanels>
-      </ScrollPanel>
     </div>
     <div v-if="isForResearch && mainGroupPluginId" class="py-2">
       <div class="flex justify-between items-center  h-7">

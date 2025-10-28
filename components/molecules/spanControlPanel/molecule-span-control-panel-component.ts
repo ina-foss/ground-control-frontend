@@ -37,12 +37,16 @@ export default defineNuxtComponent({
 
     const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
 
-const spanOnlyArray = computed(()=>{
-  return spanArray.value
-    .filter(span=> (span && span.nodes) || span?.id == 0)
-    .filter(span => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
-    .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
-})
+    const spanOnlyArray = computed(()=>{
+      return spanArray.value
+        .filter(span=> (span && span.nodes))
+        .filter(span => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
+        .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
+    })
+
+    const spanNone = computed(()=>
+        spanArray.value.filter(span=>span && span.id == 0).pop()
+      )
 
     const groupArray = computed(()=>
       spanArray.value
@@ -73,7 +77,8 @@ const spanOnlyArray = computed(()=>{
 
     function previewSpanDrop (event : DragEvent) {
       const currentTarget : HTMLDivElement = event.currentTarget
-      if (currentTarget.tagName.toLowerCase() == 'role-dropzone') {
+
+      if (currentTarget.tagName.toLowerCase() == 'role-dropzone' && event.dataTransfer.getData('span') ) {
         const previewElement = document.createElement('preview')
         previewElement.textContent = '+'
         previewElement.classList.add( 'px-2', 'py-1' , 'font-bold', 'truncate' ,'w-[80px]','border',  'rounded', 'text-center', 'border-grey-400', 'leading-4')
@@ -110,7 +115,7 @@ const spanOnlyArray = computed(()=>{
 
     function unpreviewSpanDrop (event: DragEvent)  {
       const currentTarget : HTMLDivElement = event.currentTarget
-      if (currentTarget.tagName.toLowerCase() == 'role-dropzone') {
+      if (currentTarget.tagName.toLowerCase() == 'role-dropzone' && event.dataTransfer.getData('span') ) {
         currentTarget.lastElementChild?.remove()
       }
     }
@@ -120,13 +125,15 @@ const spanOnlyArray = computed(()=>{
       const target : HTMLDivElement = event.currentTarget
       target.querySelector('preview')?.remove()
       const spanId = event.dataTransfer.getData('span')
-      if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
-        group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
+      if (spanId){
+        if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
+          group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
+        }
+        if(category.options?.trigger_rename && !group.label ){ // renommer le groupe
+          group.label = spanArray.value[parseInt(spanId)].label
+        }
+        decolorSpan(group)
       }
-      if(category.options?.trigger_rename && !group.label ){ // renommer le groupe
-        group.label = spanArray.value[parseInt(spanId)].label
-      }
-      decolorSpan(group)
     }
 
     function unlinkSpan (span:{spanId : number | string, role: {value : string, label: string } }, group: SpanGroup,){
@@ -173,7 +180,8 @@ const spanOnlyArray = computed(()=>{
       layout,
       dialogVirtualSpan,
       virtualSpanLabel,
-      createVirtualSpan : handleCreateVirtualSpan
+      createVirtualSpan : handleCreateVirtualSpan,
+      spanNone
     }
   }
 })

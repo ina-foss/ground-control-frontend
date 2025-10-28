@@ -20,7 +20,6 @@
         filter
         option-label="label"
         show-clear
-        @change="onClearSelect"
     />
   </div>
 </template>
