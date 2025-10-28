@@ -13,20 +13,12 @@ export default defineComponent({
     groupDisplay: {}
   },
   emits:['update:pluginValue'],
-  computed: {
-    visibleOptions() {
-      if(!this.isForResearch) return this.allOptions
-      return this.allOptions.slice(0, this.plugin?.display_config?.max_items ?? 4);
-
-    },
-    dropdownOptions() {
-      return  _.difference(this.allOptions, this.visibleOptions)
-    },
-  },
   setup(props, {emit}) {
-    const {isForResearch } = useSpanService()
+    const { isForResearch } = useSpanService()
 
     const {groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
+
+    const { data } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
 
     const all_entities_plugin =  {
       id: "",
@@ -44,13 +36,22 @@ export default defineComponent({
       }
     ))
 
+    const visibleOptions  = computed(() => {
+      if(!isForResearch.value) return allOptions.value
+      return allOptions.value.slice(0, plugin.value?.display_config?.max_items ?? 4)
+    })
 
-    const { data } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
+    const dropdownOptions = computed( () => {
+      return  _.difference(allOptions.value, visibleOptions.value)
+    })
+
+
 
     const pluginValue = computed({
         get: () => Array.isArray(props.pluginValue) ? props.pluginValue[0] : props.pluginValue,
         set : newValue => Array.isArray(newValue) ? emit('update:pluginValue',newValue) : emit('update:pluginValue',[newValue])
     })
+
     onMounted(() => {
       if(props.plugin.available_plugins) {
         const foundPlugin = (props.plugin.available_plugins as Record<string, any>)['']
@@ -60,20 +61,15 @@ export default defineComponent({
       }
     })
 
-    const onClearSelect = async (event: any) => {
-      if (event.value === null) {
-        await nextTick()
-        pluginValue.value = all_entities_plugin
-      }
-    }
     return {
       isEqual: _.isEqual,
       pluginValue,
       groupDisplay,
       allOptions,
       isForResearch,
+      visibleOptions,
+      dropdownOptions,
       all_entities_plugin,
-      onClearSelect
     }
   },
 })
