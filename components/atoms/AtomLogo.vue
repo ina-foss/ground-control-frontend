@@ -1,6 +1,6 @@
   <!-- The size of the logo will be determined by the sizeInPx computed property -->
 <template>
-  <div class="w-[--size]" :style="`--size:${sizeInPx}`">
+  <div class="w-(--size)" :style="`--size:${sizeInPx}`">
         <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 40 40">
             <g>
                 <g>

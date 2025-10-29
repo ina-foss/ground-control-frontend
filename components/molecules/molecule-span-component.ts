@@ -76,6 +76,12 @@ watch(() => options.value.timecode_bloc,async (timecode : boolean ) => {
   })
   },)
 
+    function handleWordClick (event: {tcin: number | string, event: MouseEvent}){
+      if (event.event.ctrlKey){
+        emit('on-segment-click', event)
+      }
+    }
+
 
 const removeTimecodeDiv = (blocEl: ChildNode) => {
   if (blocEl.nodeType == 1) {
@@ -135,7 +141,8 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
       op,
       mainPluginId,
       pluginList,
-      isReadMode
+      isReadMode,
+      handleWordClick
     }
 
   }

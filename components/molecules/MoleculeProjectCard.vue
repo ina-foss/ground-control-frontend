@@ -105,7 +105,7 @@
                 >{{ project.steps.length }} </span
               ><i class="pi pi-list-check"
             /></span>
-            <Tag class="mb-1 scale-90" 
+            <Tag class="mb-1 scale-90"
               :class="`tag-${project.status}`"
               :style="{
                 color: status_map[project.status]?.colorText || '#000',
@@ -123,8 +123,7 @@
           }}
         </div>
       </div>
-      <hr />
-
+      <Divider :pt="{ root:{ style: 'margin-top : 0px; margin-bottom: 0px' } }" />
       <div
         class="bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400"
         style="font-size: 12px"
@@ -342,7 +341,7 @@ const unarchiveProject = async () => {
   } catch (err) {
     console.error("Error archiving project:", err);
     $handleApiError(err);
-  } 
+  }
 };
 
 const { data: progressedTasks, status: statusProgressed } = useAsyncData(

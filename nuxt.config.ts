@@ -1,5 +1,6 @@
 import Lara from '@primevue/themes/lara'
 import {definePreset} from '@primevue/themes'
+import tailwindcss from '@tailwindcss/vite'
 
 const DSINAPreset = definePreset(Lara, {
   semantic: {
@@ -124,6 +125,7 @@ export default defineNuxtConfig({
   css: [
     '~/node_modules/@ina/kit-ui/src/css/base.css',
     '~/assets/css/fonts.css',
+    '~/assets/css/main.css'
   ],
   plugins: [
     '~/directives/v-safe-html.ts',
@@ -132,7 +134,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {}
   },
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint'],
+  vite:{
+    plugins: [tailwindcss()],
+  },
+  modules: [ '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint'],
   colorMode: {
     classSuffix: '',
   },
@@ -155,12 +160,6 @@ export default defineNuxtConfig({
     components: {
       include: '*',
       exclude: ['Chart', 'Editor', 'Form', 'FormField']
-    }
-  },
-  postcss: {
-    plugins: {
-      tailwindcss: {},
-      autoprefixer: {},
     }
   },
   eslint: {

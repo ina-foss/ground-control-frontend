@@ -1,4 +1,5 @@
-import { expect, describe, test, vi } from 'vitest';
+import { expect, describe, test, vi, beforeAll } from 'vitest';
+import { mockNuxtImport } from '@nuxt/test-utils/runtime';
 
 // Mock global window properties
 global.window = {
@@ -11,6 +12,45 @@ global.window = {
     stop: vi.fn(),
   }),
 };
+
+// Mock Nuxt composables before imports
+beforeAll(() => {
+  mockNuxtImport('useService', () => {
+    return () => ({
+      $application: {
+        hasRole: vi.fn().mockReturnValue(true)
+      }
+    });
+  });
+
+  mockNuxtImport('useNuxtApp', () => {
+    return () => ({
+      $handleApiError: vi.fn()
+    });
+  });
+
+  mockNuxtImport('useToast', () => {
+    return () => ({
+      add: vi.fn()
+    });
+  });
+
+  mockNuxtImport('useRefreshStore', () => {
+    return () => ({
+      fetchProject: vi.fn()
+    });
+  });
+
+  mockNuxtImport('useAsyncData', () => {
+    return vi.fn();
+  });
+
+  mockNuxtImport('useAuth', () => {
+    return () => ({
+      userEmail: 'test@example.com'
+    });
+  });
+});
 
 describe('Dashboard.vue Tests', () => {
 

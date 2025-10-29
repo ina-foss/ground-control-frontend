@@ -2,13 +2,13 @@
   <div
     v-if="isAnnotationEditable"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
-    <Button  v-if="allow_skip" class="mr-4 text-xs" label="Abondonner"  
+    <Button  v-if="allow_skip" class="mr-4 text-xs" label="Abondonner"
       :disabled="isReadMode"
       variant="text"
       :style="{ textDecoration: 'underline' }"
       @click="handleSkip({})"
       />
-    <Button  class="mr-4" outlined label="Enregistrer"  
+    <Button  class="mr-4" outlined label="Enregistrer"
     :disabled="isReadMode"
     @click="handleSubmit({})"/>
     <Button class="button-overwrite"
@@ -53,7 +53,7 @@
     </div>
   <div v-else class="h-full">
     <AtomSearch class=" right-10 absolute flex items-center top-[72px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
-    <div class="grid grid-cols-10 xs:flex xs:flex-col h-full gap-5">
+    <div class="xs:grid xs:grid-cols-10 flex flex-col h-full gap-5">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :panel-size="panelSize" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))" @scroll-to-segment="handleVideoTimelineClick">
         <MoleculeTabs ref="tabsRef" v-bind="tabsProps" />
       </MoleculeAnnotationLeftPanel>

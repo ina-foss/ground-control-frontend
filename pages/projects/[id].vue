@@ -36,16 +36,16 @@
             </div>
             <transition name="fade" style="min-width: 0px; min-height: 0px" class="overflow-hidden ">
               <div
-                class="flex items-center gap-x-6 text-[10px] text-gray-600  "
+                class="flex items-center gap-x-6 text-[10px] text-grey-600  "
               >
-                <div v-if="statusParameters === 'pending'" class="text-gray-400">
+                <div v-if="statusParameters === 'pending'" class="text-grey-400">
                   Chargement...
                 </div>
 
                 <div v-else-if="projectParameters" class="flex items-center gap-x-6 line-clamp-1 ">
                   <div class="flex gap-1 items-center truncate">
                     <span class="font-medium">Redondance</span>
-                    <span class="px-1 border border-gray-900 rounded-sm">
+                    <span class="px-1 border border-grey-900 rounded-sm">
                       {{ projectParameters.redundancy }}
                     </span>
                   </div>
@@ -177,7 +177,7 @@
               <template #body="{ data: nestedData }">
                   <p
                     class="cursor-text"
-                    v-tooltip="nestedData.status === 'draft' 
+                    v-tooltip="nestedData.status === 'draft'
                       ? `Soit sûr d'avoir la permission et activer la tâche pour la commencer`
                       : null"
                   >
@@ -240,8 +240,8 @@
               <template #header>
                 <span class="flex justify-center items-center gap-1 text-sm font-bold">
                   Création
-                  <i 
-                    class="pi pi-info-circle text-gray-500 cursor-help pt-1" 
+                  <i
+                    class="pi pi-info-circle text-gray-500 cursor-help pt-1"
                     v-tooltip="'Date de création'"
                   ></i>
                 </span>
@@ -262,8 +262,8 @@
               <template #header>
                 <span class="flex justify-center items-center gap-1 text-sm font-bold">
                   Début
-                  <i 
-                    class="pi pi-info-circle text-gray-500 cursor-help pt-1" 
+                  <i
+                    class="pi pi-info-circle text-gray-500 cursor-help pt-1"
                     v-tooltip="'Date début de traitement'"
                   ></i>
                 </span>
@@ -284,22 +284,22 @@
               <template #header>
                 <span class="flex justify-center items-center gap-1 text-sm font-bold">
                   Fin
-                  <i 
-                    class="pi pi-info-circle text-gray-500 cursor-help pt-1" 
+                  <i
+                    class="pi pi-info-circle text-gray-500 cursor-help pt-1"
                     v-tooltip="'Date de fin de traitement'"
                   ></i>
                 </span>
               </template>
               <template #body="{ data }">
                 <Calendar
-                  :modelValue="data.expiration_date && new Date(data.expiration_date)"          
+                  :modelValue="data.expiration_date && new Date(data.expiration_date)"
                   dateFormat="dd/mm/yy"
-                  showIcon   
+                  showIcon
                   :disabled="!roleUpdateExpirationDate || data.status == TaskStatus.ARCHIVED"
                   class="w-full"
-                  :invalid="data.expiration_date && new Date(data.expiration_date) < new Date()" 
+                  :invalid="data.expiration_date && new Date(data.expiration_date) < new Date()"
                   @update:modelValue="(value) => onExpirationDateChange(value, data)"
-                  :minDate="new Date()"     
+                  :minDate="new Date()"
                 />
               </template>
               <template #filter="{ filterModel, filterCallback }">
@@ -323,7 +323,7 @@
               <template #body="{ data: nestedData }">
                 <AtomMarkdown :content="getFirstLine(nestedData.instruction) "/>
               </template>
-            </Column>            
+            </Column>
             <Column class="txt" body-class="text-sm" field="actions" header="Actions">
               <template #body="{ data: nestedData }">
                 <div class="flex items-center gap-2 ">
@@ -345,13 +345,13 @@
                   </Button>
                   </div>
                   <div>
-                  <Button 
-                    v-if="roleActivateTask && nestedData.status === 'draft' || nestedData.status === 'skipped'"  
-                    label="Activer" 
-                    severity="primary" 
-                    outlined 
+                  <Button
+                    v-if="roleActivateTask && nestedData.status === 'draft' || nestedData.status === 'skipped'"
+                    label="Activer"
+                    severity="primary"
+                    outlined
                     :disabled="nestedData.status == TaskStatus.ARCHIVED"
-                    @click="activateTask(nestedData.id)" 
+                    @click="activateTask(nestedData.id)"
                   />
                   </div>
                   <div>
@@ -409,7 +409,7 @@ import { FilterMatchMode, FilterService } from '@primevue/core/api';
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
 
 FilterService.register('expirationFilter', (value, filter) => {
-  if (!filter) return true; 
+  if (!filter) return true;
 
   const today = new Date();
   if (filter === 'active') {
@@ -439,7 +439,7 @@ const formStepClick = ref()
 const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
-const selectedStatus = ref(null); 
+const selectedStatus = ref(null);
 const showStrategy = ref(false)
 const { $handleApiError } = useNuxtApp()
 
@@ -646,7 +646,7 @@ const onExpirationDateChange = async (value: Date, row: any) => {
     console.error("❌ Error updating expiration date:", err)
     $handleApiError(err)
     row.expiration_date = oldValue
-  } 
+  }
 }
 
 const consultTask = (annotation_id: number) => {

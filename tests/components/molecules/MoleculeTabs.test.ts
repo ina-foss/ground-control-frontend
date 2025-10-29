@@ -16,6 +16,7 @@ const mockJumpToTopic = vi.fn()
 describe('Molecule Tabs', ()=>{
   let wrapper : VueWrapper
   beforeEach(async()=>{
+    vi.useFakeTimers()
     wrapper = await mountSuspended(MoleculeTabs,{
       global:{
         stubs: {
@@ -39,6 +40,14 @@ describe('Molecule Tabs', ()=>{
         },
       })
 
+  })
+
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount()
+    }
+    vi.clearAllTimers()
+    vi.useRealTimers()
   })
 
   it('should Mount and display tabs', async ()=>{

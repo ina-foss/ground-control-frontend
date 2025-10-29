@@ -56,7 +56,7 @@ export default defineComponent({
     const refresh = useRefreshStore()
     const { getParameters } = storeToRefs(refresh)
     const allow_skip = computed(() => getParameters.value.allow_skip)
-    
+
     const tabsRef = ref()
 
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
@@ -203,8 +203,8 @@ export default defineComponent({
   })
 
     const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
-      if(!event.index){
-        event.index = _.findIndex(locals.value,tr=>tr.tcin == event.tcin)
+      if(event.index == undefined ){
+        event.index = _.findIndex(locals.value,tr=>tr.tcin == event.tcin || (tr.tcin <= event.tcin && tr.tcout >= event.tcin) )
       }
       bestIndex = event.index
       scrollToSegment({bestIndex: event.index})
@@ -318,7 +318,7 @@ export default defineComponent({
   }
 
   const handleSkip = () => emit('skip-annotation', { locals: {}, options: { showToast: true } })
-  
+
   onMounted(()=>{
     window.addEventListener("keydown", globalKeydown);
 

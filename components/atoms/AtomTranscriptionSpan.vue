@@ -1,6 +1,6 @@
 <template>
   <span-transcription-wrapper class=" bg-white rounded-md scroll-m-12 inline-flex flex-wrap gap-y-6 customText w-[75ch] border-l-inherit py-6 px-2 " >
-    <div v-for="word in local.sublocalisations?.localisation" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev"  :data-tc="word.tcin" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  px-[2px] hover:bg-surface-200 `">
+    <div v-for="word in local.sublocalisations?.localisation" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev" @click="$emit('handleWordClick',{tcin: word.tcin, event: $event})"  :data-tc="word.tcin" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  px-[2px] hover:bg-surface-200 `">
       {{ word.data.text[0] }}
     </div>
   </span-transcription-wrapper>
@@ -11,6 +11,8 @@ import _ from 'lodash'
 import { useService } from '#imports';
 
 const { handleDrop, dragData } = useSpanService()
+
+defineEmits(['handleWordClick'])
 
 const addSpanPrewiev = (event : DragEvent) =>{
   event.preventDefault()
