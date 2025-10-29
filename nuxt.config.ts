@@ -84,6 +84,24 @@ const DSINAPreset = definePreset(Lara, {
         }
       }
     },
+    togglebutton: {
+      borderRadius: '4px',
+      width: '60px',
+      height: '32px',
+      fontSize: '14px',
+      fontFamily: 'Lato, sans-serif',
+      fontWeight: '700',
+      wordWrap: 'break-word',
+      colorScheme: {
+        light: {
+          checkedBackground: '{primary.color}',
+          checkedColor: 'white',
+          uncheckedBackground: '{surface.200}',
+          uncheckedColor: '{text}',
+          hoverBackground: '{primary.400}'
+        }
+      }
+    },
     datatable: {
       headerCellPadding: '12px',
       headerCellColor: 'var(--title)',
