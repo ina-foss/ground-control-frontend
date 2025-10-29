@@ -98,6 +98,7 @@ defineExpose({addLeft: addLeftText, addRight: addRightText, focus: focus, text: 
 </script>
 
 <style >
+@reference "tailwindcss";
 
 .focus {
   @apply border-2 border-gray-500
