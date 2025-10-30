@@ -155,7 +155,7 @@
               @after-hide="()=> virtualSpanLabel = ''"
             >
             <div class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
-              <b class=" text-right ">Role</b>
+              <b class=" text-right ">Rôle</b>
               <div class="flex flex-wrap gap-4  ">
                 <div class=" w-full flex gap-3 items-center " >
                   <Button
@@ -173,7 +173,6 @@
                   v-model="virtualSpanLabel"
                   placeholder="Entrez le nom du span virtuel"
                   class="w-[215px]"
-                  :invalid="!virtualSpanLabel"
                   />
             </div>
             <div class="flex flex-row justify-end gap-2">
