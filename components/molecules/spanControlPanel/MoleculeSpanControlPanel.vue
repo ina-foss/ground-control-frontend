@@ -7,7 +7,7 @@
           {{ mainPluginName?.charAt(0).toUpperCase() + mainPluginName?.slice(1) }}
           <Select
             v-model="spanFilter"  placeholder="Tous" :show-clear="true"
-            :options="pluginOptionsList?.find(p=>p.id==mainPluginId)?.data" option-label="label"  />
+            :options="createdPluginOptionsList" option-label="label" emptyMessage="Tous" />
         </span-filter>
       </panel-span-header>
       <span-wrapper class="">

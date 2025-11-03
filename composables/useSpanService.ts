@@ -20,6 +20,7 @@ function createSpanService (){
   const pluginStore = usePluginStore()
   const { pluginList } = storeToRefs(pluginStore)
   const pluginOptionsList = computed(()=>pluginStore.pluginOptionsList)
+  const createdPluginOptionsList = ref([])
 
   const spanClicked = ref(false)
   const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([{id:0,label:"", plugins: []}])
@@ -95,8 +96,76 @@ function createSpanService (){
        isForResearch.value=!disable_group
    }
 
+   function countByPlugin(data:any){
+     const groupedByPlugin = {}
+     data.value.forEach(item => {
+       if(item != undefined && item.plugins.length != 0){
+       const plugins = item.plugins
+         if (!plugins) return
+
+         Object.keys(plugins).forEach(pluginKey => {
+           if (!groupedByPlugin[pluginKey]) {
+             groupedByPlugin[pluginKey] = []
+           }
+
+           const pluginArray = plugins[pluginKey]
+           if (!Array.isArray(pluginArray) || pluginArray.length === 0) return
+
+           pluginArray.forEach(pluginItem => {
+             // Cherche si ce plugin existe déjà
+             const existing = groupedByPlugin[pluginKey].find(
+                 entry => entry[0]?.id === pluginItem.id
+             )
+
+             if (existing) {
+               // Incrémente le compteur existant
+               existing[1].count++
+             } else {
+               // Crée une nouvelle entrée
+               groupedByPlugin[pluginKey].push([pluginItem, { count: 1 }])
+             }
+           })
+         })
+     }
+     })
+     return groupedByPlugin
+   }
+
   function removeSpanFromDOM(spanId: number){
     const span = spanArray.value[spanId]
+
+    if (span.plugins !== undefined) {
+      const countedData = countByPlugin(spanArray)
+      const currentPluginArray = span?.plugins[mainPluginIndex.value]
+      const currentPlugin = currentPluginArray?.[0]
+
+      if (currentPlugin) {
+        // Trouver la clé du plugin dans countedData qui contient ce plugin
+        const pluginKey = Object.keys(countedData).find(key =>
+            countedData[key].some(entry => entry[0].id === currentPlugin.id)
+        )
+
+        if (pluginKey) {
+          // Récupèrer l'entrée correspondante dans countedData
+          const entryInCountedData = countedData[pluginKey].find(
+              entry => entry[0].id === currentPlugin.id
+          )
+
+          // Trouver l'index dans pluginOptionsListTest
+          const existingIndex = createdPluginOptionsList.value.findIndex(
+              p => p.id === currentPlugin.id
+          )
+
+          if (existingIndex !== -1) {
+            if (entryInCountedData[1].count === 1) {
+              createdPluginOptionsList.value.splice(existingIndex, 1)
+            }
+            entryInCountedData[1].count--
+          }
+        }
+      }
+    }
+
     let tag = document.querySelector(`tag[spanid="${spanId}"]`)
     if( tag ) tag.remove()
     if(span.nodes){
@@ -232,6 +301,11 @@ function createSpanService (){
     })()
     deletedNum.value = null
     const color = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value])
+
+    if (span?.plugins[mainPluginIndex.value] && (span?.plugins[mainPluginIndex.value]?.[0]) !== undefined && !createdPluginOptionsList.value.some(p=>p.id === ((span?.plugins[mainPluginIndex.value]?.[0]).id))) {
+      createdPluginOptionsList.value.push((span?.plugins[mainPluginIndex.value])?.[0])
+    }
+
     const borderColor = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value],1)
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
       const bgElement = document.createElement(`bg${spanId}`)
@@ -543,7 +617,7 @@ function createSpanService (){
 
   return{
  recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex
+ affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList
   }
 }
 

@@ -14,7 +14,7 @@ export default defineNuxtComponent({
   },
   setup(props, {emit}){
 
-    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId} = useSpanService()
+    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
     const { pluginList } = storeToRefs(usePluginStore())
@@ -181,7 +181,8 @@ export default defineNuxtComponent({
       dialogVirtualSpan,
       virtualSpanLabel,
       createVirtualSpan : handleCreateVirtualSpan,
-      spanNone
+      spanNone,
+      createdPluginOptionsList
     }
   }
 })
