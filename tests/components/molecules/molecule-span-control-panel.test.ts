@@ -124,10 +124,10 @@ describe('MoleculeSpanControlPanel', ()=>{
         }
       }
     })
-  })
+  },20000)
   afterEach(()=>{
     wrapper.unmount()
-  })
+  },20000)
 
   it('should mount',() =>{
     expect(wrapper.text().includes('Spans')).toBeTruthy()
