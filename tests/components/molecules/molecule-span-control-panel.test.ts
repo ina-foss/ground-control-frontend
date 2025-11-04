@@ -13,6 +13,7 @@ vi.mock('~/stores/plugins', async () => {
       // State properties (what storeToRefs extracts)
       pluginList: ref(configMock),
       pluginOptionsList: ref(pluginItemsMock),
+      createdPluginOptionsList: ref(pluginItemsMock),
 
       // Getters (optional, only if you use them elsewhere)
       getPluginList: computed(() => configMock),
@@ -145,8 +146,8 @@ describe('MoleculeSpanControlPanel', ()=>{
     expect(spanNoneWrapper.at(0).text()).toContain('None')
 
     // --- FILTER SPAN LIST ON PLUGIN VALUE ----
-    /*expect(wrapper.vm.spanOnlyArray.length).toBe(2)
-    await wrapper.findAllComponents(Select)[1].trigger('click')
+    expect(wrapper.vm.spanOnlyArray.length).toBe(2)
+    /*await wrapper.findAllComponents(Select)[1].trigger('click')
     await wrapper.find('.p-select-list-container li').trigger('mousedown')
     await wrapper.vm.$nextTick()
 
