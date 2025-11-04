@@ -39,11 +39,13 @@ mockNuxtImport('useSpanService', async()=>{
   return ()=>({
     ...actual.default(),
       spanArray : ref([
+        // SPAN NONE
         {
           id: 0,
           plugins: [],
           label: "",
         },
+        // SPAN GROUPE AVEC 1 SPAN LIE
         {
           id: 1,
           spans:[{spanId: 2,role: {label:"role 1"}}],
@@ -58,6 +60,7 @@ mockNuxtImport('useSpanService', async()=>{
             ]
           }
         },
+        // SPAN LIE AU GROUPE AU DESSUS
         {
           id:2,
           tcin: 0.10009765625,
@@ -71,6 +74,7 @@ mockNuxtImport('useSpanService', async()=>{
             ]
           }
         },
+        // SPAN SANS GROUPE
         {
           id:3,
           tcin: 0.780029296875,
@@ -84,6 +88,7 @@ mockNuxtImport('useSpanService', async()=>{
             ]
           }
         },
+        // GROUPE AVEC AUCUN SPANS
         {
           id:4,
           spans:[],
@@ -139,9 +144,9 @@ describe('MoleculeSpanControlPanel', ()=>{
     expect(spanWrappers.at(1).text().includes('2')).toBeTruthy()
     expect(spanNoneWrapper.at(0).text()).toContain('None')
 
-    // --- FILTER SPAN LIST ----
+    // --- FILTER SPAN LIST ON PLUGIN VALUE ----
     expect(wrapper.vm.spanOnlyArray.length).toBe(2)
-    await wrapper.findComponent(Select).trigger('click')
+    await wrapper.findAllComponents(Select)[1].trigger('click')
     await wrapper.find('.p-select-list-container li').trigger('mousedown')
     await wrapper.vm.$nextTick()
 
@@ -151,6 +156,63 @@ describe('MoleculeSpanControlPanel', ()=>{
     // expect(wrapper.findAll('span-wrapper > span-content-wrapper').length).toBe(1)
   })
 
+  it('should filter the spans if they are in a span group or not', async ()=>{
+    await  wrapper.findAllComponents(Select)[0].trigger('click')
+    const options = wrapper.findAll('.p-select-list-container li')
+
+    expect(wrapper.vm.spanOnlyArray.length).toBe(2)
+
+    // ---- TEST THE UNLINKED VALUE ----
+    await options[0].trigger('mousedown')
+
+    // check whether spanLinkFilter or spanLinkFilter.value depending on the vitest unwrapping
+    expect(wrapper.vm.spanLinkFilter.value.value ?? wrapper.vm.spanLinkFilter.value).toEqual('unlinked')
+
+    expect(wrapper.vm.spanOnlyArray.length).toBe(1)
+    expect(wrapper.vm.spanOnlyArray[0]).toEqual(
+        {
+          id:3,
+          tcin: 0.780029296875,
+          tcout: 0.97998046875,
+          nodes:[],
+          plugins:{
+            "plugin-4": [
+              {
+                id: 1, ext_id: 'a', label: 'Option 1'
+              }
+            ]
+          }
+        },
+    )
+
+    // ---- TEST THE LINKED VALUE ----
+    await  wrapper.findAllComponents(Select)[0].trigger('click')
+    await options[1].trigger('mousedown')
+
+    expect(wrapper.vm.spanLinkFilter.value.value ?? wrapper.vm.spanLinkFilter.value).toEqual('linked')
+
+    expect(wrapper.vm.spanOnlyArray.length).toBe(1)
+    expect(wrapper.vm.spanOnlyArray[0]).toEqual(
+        {
+          id:2,
+          tcin: 0.10009765625,
+          tcout: 0.94677734375,
+          nodes:[],
+          plugins:{
+            "plugin-4": [
+              {
+                id:2,ext_id:'2', label:'Option 2'
+              }
+            ]
+          }
+        },
+    )
+
+
+
+
+  })
+
   it('should display the list of group and filter it',async ()=>{
     // ---- SHOW GROUP LIST ----
     const groupWrapper1 = wrapper.findAll('group-wrapper')[0]
@@ -158,11 +220,15 @@ describe('MoleculeSpanControlPanel', ()=>{
     expect(groupWrapper1.text()).toContain('1Citation1')
     expect(groupWrapper2.text()).toContain('2Co Ref')
 
+    expect(wrapper.vm.groupArray.length).toBe(2)
+
+
     // ---- FILTER GROUP LIST ----
-    await wrapper.findAllComponents(Select)[1].trigger('click')
+    await wrapper.findAllComponents(Select)[2].trigger('click')
     await wrapper.find('.p-select-list-container li').trigger('mousedown')
 
 
+    expect(wrapper.vm.groupArray.length).toBe(1)
     expect(wrapper.findAll('group-wrapper').length).toBe(1)
 
   })
@@ -226,6 +292,31 @@ describe('MoleculeSpanControlPanel', ()=>{
 
     expect(wrapper.vm.selectedGroup.spans).not.toContainEqual({spanId: 3, role: 'role 2'})
 
+
+  })
+
+  it('should be able to change the group categories layout',async ()=>{
+    const groupWrapper = wrapper.find('group-wrapper')
+    await groupWrapper.trigger('click')
+
+    const buttons = wrapper.findAll('layout-button-wrapper span')
+
+    //  DEFAULT VALUE CHECK
+    expect(wrapper.vm.layout.value ?? wrapper.vm.layout).toBe('grid')
+    expect(wrapper.find('role-wrapper').element.style.getPropertyValue('grid-template-columns')).toContain("repeat(auto-fit,minmax(150px,1fr))")
+
+    //  SWITCHING LAYOUT CHECK
+    await buttons[1].trigger('click')
+
+    expect(wrapper.vm.layout.value ?? wrapper.vm.layout).toBe('list')
+    expect(wrapper.find('role-wrapper').element.style.getPropertyValue('grid-template-columns')).toContain("repeat(1fr)")
+
+    //  SWITCHING BACK LAYOUT CHECK
+    await buttons[0].trigger('click')
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.layout.value ?? wrapper.vm.layout).toBe('grid')
+    expect(wrapper.find('role-wrapper').element.style.getPropertyValue('grid-template-columns')).toContain("repeat(auto-fit,minmax(150px,1fr))")
 
   })
 

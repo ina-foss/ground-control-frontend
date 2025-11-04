@@ -3,12 +3,21 @@
     <div class="flex flex-col gap-2">
       <panel-span-header class="flex justify-between items-center">
         <b class="text-xl">Spans</b>
-        <span-filter v-if="mainPluginId" class="flex items-center gap-2">
-          {{ mainPluginName?.charAt(0).toUpperCase() + mainPluginName?.slice(1) }}
-          <Select
-            v-model="spanFilter"  placeholder="Tous" :show-clear="true"
-            :options="pluginOptionsList?.find(p=>p.id==mainPluginId)?.data" option-label="label"  />
-        </span-filter>
+        <span-filter-wrapper class="flex justify-between w-[50%]">
+          <span-link-filter class="flex items-center gap-2">
+            <span>Assignation</span>
+            <Select
+              v-model="spanLinkFilter" placeholder="Tous" :show-clear="true" option-label="label"
+              :options="[{label:'Aucun',value:'unlinked'},{label:'Groupe',value:'linked'}]"
+              />
+          </span-link-filter>
+          <span-filter v-if="mainPluginId" class="flex items-center gap-2">
+            {{ mainPluginName?.charAt(0).toUpperCase() + mainPluginName?.slice(1) }}
+            <Select
+              v-model="spanFilter"  placeholder="Tous" :show-clear="true"
+              :options="pluginOptionsList?.find(p=>p.id==mainPluginId)?.data" option-label="label"  />
+          </span-filter>
+        </span-filter-wrapper>
       </panel-span-header>
       <span-wrapper class="">
         <span-none-content draggable="true" :class="[' flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type' ] "
@@ -60,15 +69,15 @@
           />
         </group-title-wrapper>
         <layout-button-wrapper v-if="groupIsSelected" class="flex gap-sm">
-          <span :class="['pi pi-th-large text-2xl cursor-pointer ', layout == 'grid' ? 'opacity-100' : 'opacity-50']" @click="()=>layout = 'grid' " > </span>
-          <span :class="['pi pi-list text-2xl cursor-pointer ', layout == 'list' ? 'opacity-100' : 'opacity-50' ] "  @click="()=>layout = 'list' " > </span>
+          <span :class="['pi pi-th-large text-2xl cursor-pointer ', layout == 'grid' ? 'opacity-100' : 'opacity-50']" @click="switchGroupLayout('grid') " > </span>
+          <span :class="['pi pi-list text-2xl cursor-pointer ', layout == 'list' ? 'opacity-100' : 'opacity-50' ] "  @click="switchGroupLayout('list') " > </span>
           <div @click="dialogVirtualSpan = true" class="flex items-center gap-1 cursor-pointer"> <span class="pi pi-plus-circle text-xl"></span>Span virtuel</div>
         </layout-button-wrapper>
       </div>
       <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
       <div :class="{' grid  transition-all duration-300 overflow-hidden': true}" :style="{'grid-template-rows' : groupIsSelected ? '1fr': '0fr'}" >
         <selected-group-content v-show="selectedGroup" :style="{'min-height' : 0}"  >
-          <role-wrapper class="grid" :style="`grid-template-columns: repeat(auto-fit,minmax(${ layout == 'grid' ? '150px' : '1fr'}, 1fr));`">
+          <role-wrapper class="grid" :style="`grid-template-columns: ${groupLayoutSytle};`">
             <div v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories" :key="category" class="p-2  border-surface-200 text-center min-w-0 flex flex-col gap-3">
               <role-title-wrapper class="flex  justify-center relative ">
                 <role-span-title class="text-center font-bold  ">{{ category.label }}</role-span-title>
