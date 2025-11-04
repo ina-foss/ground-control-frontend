@@ -13,7 +13,7 @@ vi.mock('~/stores/plugins', async () => {
       // State properties (what storeToRefs extracts)
       pluginList: ref(configMock),
       pluginOptionsList: ref(pluginItemsMock),
-      createdPluginOptionsList: ref([]),
+      createdPluginOptionsList: ref(createdPluginOptionsListMock),
 
       // Getters (optional, only if you use them elsewhere)
       getPluginList: computed(() => configMock),
@@ -26,8 +26,38 @@ vi.mock('~/stores/plugins', async () => {
 const pluginItemsMock = [
   { id: 4, data: [{ id: 1, ext_id: 'a', label: 'Option 1' },{id:2,ext_id:'2', label:'Option 2' }] },  // id: 4 to match mainPluginId
   { id: 2, data: [{ id: 2, ext_id: 'b', label: 'Citation',categories: [{label:"role 1"},{label: "role 2"}] },{id:4,ext_id:'4',label:'Co Ref', categories: [{label:"ref1"},{label:"ref2"}]}] }
-
 ]
+const createdPluginOptionsListMock = [
+  {
+    "plugin-34": [
+      [
+        {
+          "id": "",
+          "ext_id": "",
+          "label": "Chercher",
+          "description": null,
+          "image": null,
+          "categories": null
+        },
+        {
+          "count": 1
+        }
+      ],
+      [
+        {
+          "id": "1",
+          "ext_id": "1",
+          "label": "Verbe",
+          "image": null,
+          "description": null,
+          "categories": null
+        },
+        {
+          "count": 2
+        }
+      ]
+    ]
+  }]
 
 const configMock = [
   { id: 4, name: 'plugin-4' },
