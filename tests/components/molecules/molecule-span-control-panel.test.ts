@@ -13,7 +13,6 @@ vi.mock('~/stores/plugins', async () => {
       // State properties (what storeToRefs extracts)
       pluginList: ref(configMock),
       pluginOptionsList: ref(pluginItemsMock),
-      createdPluginOptionsList: ref(createdPluginOptionsListMock),
 
       // Getters (optional, only if you use them elsewhere)
       getPluginList: computed(() => configMock),
@@ -137,8 +136,9 @@ mockNuxtImport('useSpanService', async()=>{
       mainPluginIndex: computed(()=>'plugin-4'),
       newFocus: ref(),
       createSpanColorPalette: vi.fn(),
-      extractTextFromSpanNodes : vi.fn().mockReturnValue('text in the span')
-    })
+      extractTextFromSpanNodes : vi.fn().mockReturnValue('text in the span'),
+      createdPluginOptionsList: ref(createdPluginOptionsListMock),
+  })
   })
 
 
