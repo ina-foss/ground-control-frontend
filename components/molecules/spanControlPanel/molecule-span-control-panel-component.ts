@@ -1,8 +1,8 @@
-import _ from 'lodash'
+import _, { every } from 'lodash'
 import AtomSpanTag from './AtomSpanTag.vue'
 import { DisplayZone } from '~/api/generate'
 
-export default defineNuxtComponent({
+export default defineComponent({
   name:"MoleculeSpanControlPanel",
   emits: ['handleNewGroup'],
   components: {AtomSpanTag},
@@ -24,6 +24,7 @@ export default defineNuxtComponent({
     const groupDeleted = ref<SpanGroup | null>(null)
     const spanFilter = ref()
     const groupFilter = ref()
+    const spanLinkFilter = ref()
     const dialogVirtualSpan = ref()
     const virtualSpanLabel = ref()
 
@@ -39,8 +40,14 @@ export default defineNuxtComponent({
 
     const spanOnlyArray = computed(()=>{
       return spanArray.value
-        .filter(span=> (span && span.nodes))
-        .filter(span => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
+        .filter((span: Span) => (span && span.nodes))
+        .filter((span: Span) => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
+        .filter((span: Span) => !spanLinkFilter.value ||
+          (spanLinkFilter.value.value == 'linked' &&  _.some(groupArray.value.map(group=>group.spans),spanGroupArray=>{
+            return _.some(spanGroupArray,spanGroup => spanGroup.spanId == span.id)  } ) ) ||
+          (spanLinkFilter.value.value == 'unlinked' && groupArray.value.map(group=>group.spans).every(spanGroupArray =>{
+            return every(spanGroupArray ,spanGroup=> spanGroup.spanId != span.id) } ) )
+        )
         .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
     })
 
@@ -48,11 +55,11 @@ export default defineNuxtComponent({
         spanArray.value.filter(span=>span && span.id == 0).pop()
       )
 
-    const groupArray = computed(()=>
-      spanArray.value
+    const groupArray = computed(()=>{
+      return spanArray.value
       .filter(span=> span && span.spans)
-      .filter(span=> !groupFilter.value || _.some(span.plugins?.[mainGroupPluginIndex.value], item=> _.isEqual(item,groupFilter.value))
-    ))
+      .filter(span=> !groupFilter.value || _.some(span.plugins?.[mainGroupPluginIndex.value], item=> item.id == groupFilter.value.id)
+    )})
 
     const selectedGroup = computed((oldValue)=>{
       const group =  _.find(groupArray.value,group => group?.id == newFocus.value)
@@ -90,6 +97,14 @@ export default defineNuxtComponent({
     function handleCancelRemoveGroup(){
       groupDeleted.value = null
     }
+
+    function switchGroupLayout(newLayout: string){
+      if(layout.value != newLayout) layout.value = newLayout
+    }
+
+    const groupLayoutSytle= computed(()=>
+      layout.value == 'grid' ? 'repeat(auto-fit,minmax(150px,1fr))' : 'repeat(1fr)'
+    )
 
     function handleCreateVirtualSpan(){
       const id = spanArray.value.length
@@ -182,6 +197,9 @@ export default defineNuxtComponent({
       virtualSpanLabel,
       createVirtualSpan : handleCreateVirtualSpan,
       spanNone,
+      spanLinkFilter,
+      switchGroupLayout,
+      groupLayoutSytle,
       createdPluginOptionsList
     }
   }

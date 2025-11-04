@@ -2,6 +2,7 @@ import _ from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
 import { toRaw } from "vue"
+import {DisplayZone} from '~/api/generate'
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
@@ -15,7 +16,7 @@ export default defineNuxtComponent({
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]
-    const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum  } = useSpanService()
+    const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex } = useSpanService()
     const {$application} = useService()
       const childPluginMap = ref<Record<string, any[]>>({})
     const tidiedPluginList = computed(()=>{
@@ -26,6 +27,7 @@ export default defineNuxtComponent({
        filteredPlugins = listPlugin.filter(plugin => !childIds.has(plugin.id));
       return Object.groupBy( filteredPlugins,({display_zone})=>display_zone)
     })
+    const showErrorMessage = ref(false)
 
     const isGroup = ref<boolean>(false)
     const {computeColor} = $application
@@ -45,6 +47,11 @@ export default defineNuxtComponent({
 
     function onLastSelected(value:any) {
         defaultLabel.value = value ??  textSpan.value
+    }
+
+    function pluginChangeValue(plugin: PluginWithIdDto,event){
+      if( (plugin.display_config.main_plugin || groupDisplay.value ) && event.length != 0 && event[0]?.id != ""   ) showErrorMessage.value = false
+      else if( (plugin.display_config.main_plugin || groupDisplay.value) && ( event.length == 0 || event[0]?.id == "")) showErrorMessage.value = true
     }
 
     let nodes = ref<Nodes[]>([])
@@ -135,10 +142,22 @@ export default defineNuxtComponent({
     }
 
     function handleConfirmationButton (){
-      if(deleteLayout.value) handleDeleteSpan()
-      else if (isGroup.value)  createGroup()
-      else createSpan()
-      close()
+      if (
+        // validation for span case (with mainPlugin only)
+        !groupDisplay.value && (pluginValues[mainPluginIndex.value].length == 0 || pluginValues[mainPluginIndex.value][0]?.id == "") ||
+        // validation for group case (check every plugin in the form)
+        groupDisplay.value && tidiedPluginList.value[DisplayZone.GROUP_MODAL]?.every( groupPlugin =>
+          pluginValues[readPluginValues(groupPlugin)].length == 0 ||
+          pluginValues[readPluginValues(groupPlugin)][0]?.id == ''
+        )
+      ) showErrorMessage.value = true
+      else{
+        showErrorMessage.value = false
+        if(deleteLayout.value) handleDeleteSpan()
+        else if (isGroup.value)  createGroup()
+        else createSpan()
+        close()
+      }
     }
 
     function open(args:{spanId?: number, group?: boolean, suppression?: boolean, virtual?: boolean, role: {value: string, label:string}} ){
@@ -170,6 +189,7 @@ export default defineNuxtComponent({
 
     function onClose(){
       if(!spanArray.value[spanArray.value.length-1]?.plugins ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value))
+      showErrorMessage.value = false
       deleteLayout.value = false
       spanMenuSelected.value = undefined
       defaultLabel.value = undefined
@@ -214,7 +234,9 @@ export default defineNuxtComponent({
       childPluginMap,
       textSpan,
       readPluginValues,
-      onLastSelected
+      onLastSelected,
+      showErrorMessage,
+      pluginChangeValue
     }
   },
 })

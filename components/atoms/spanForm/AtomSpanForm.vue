@@ -26,11 +26,14 @@
         </div>
     </context-wrapper>
 
-      <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-5">
-        <main-plugins-wrapper class="flex flex-col gap-5">
+      <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-5  ">
+        <main-plugins-wrapper class="flex flex-col gap-5  ">
+          <message-wrapper v-if="showErrorMessage" class="flex justify-center">
+            <Message class="w-fit" severity="error" icon="pi pi-exclamation-triangle" >Veuillez selectionner une valeur</Message>
+          </message-wrapper>
           <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5" v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]"  >
-          <b class="pt-2 text-right ">{{ plugin?.display_config?.label ?? plugin?.name.charAt(0).toUpperCase() + plugin?.name.slice(1)  }}</b>
-          <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected" />
+            <b :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config.main_plugin || groupDisplay) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </b>
+            <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected" @update:plugin-value="pluginChangeValue(plugin,$event)" />
             <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5" v-if="childPluginMap[plugin.data_property] != undefined " v-for="(child,childIndex) in childPluginMap[plugin.data_property]" :key="child.id">
                  <b class="pt-2 text-right ">{{  child?.display_config?.label || child?.name.charAt(0).toUpperCase() + child?.name.slice(1)  }}</b>
                  <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(child)]" @last-selected="onLastSelected" />
