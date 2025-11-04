@@ -13,7 +13,7 @@ vi.mock('~/stores/plugins', async () => {
       // State properties (what storeToRefs extracts)
       pluginList: ref(configMock),
       pluginOptionsList: ref(pluginItemsMock),
-      createdPluginOptionsList: ref(pluginItemsMock),
+      createdPluginOptionsList: ref([]),
 
       // Getters (optional, only if you use them elsewhere)
       getPluginList: computed(() => configMock),
@@ -124,10 +124,10 @@ describe('MoleculeSpanControlPanel', ()=>{
         }
       }
     })
-  },30000)
+  })
   afterEach(()=>{
     wrapper.unmount()
-  },30000)
+  })
 
   it('should mount',() =>{
     expect(wrapper.text().includes('Spans')).toBeTruthy()
