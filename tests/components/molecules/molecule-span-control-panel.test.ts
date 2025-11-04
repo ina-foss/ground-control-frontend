@@ -26,7 +26,7 @@ const pluginItemsMock = [
   { id: 4, data: [{ id: 1, ext_id: 'a', label: 'Option 1' },{id:2,ext_id:'2', label:'Option 2' }] },  // id: 4 to match mainPluginId
   { id: 2, data: [{ id: 2, ext_id: 'b', label: 'Citation',categories: [{label:"role 1"},{label: "role 2"}] },{id:4,ext_id:'4',label:'Co Ref', categories: [{label:"ref1"},{label:"ref2"}]}] }
 ]
-const createdPluginOptionsListMock = [
+const createdPluginOptionsListMock =
   {
     "plugin-34": [
       [
@@ -56,7 +56,7 @@ const createdPluginOptionsListMock = [
         }
       ]
     ]
-  }]
+  }
 
 const configMock = [
   { id: 4, name: 'plugin-4' },
