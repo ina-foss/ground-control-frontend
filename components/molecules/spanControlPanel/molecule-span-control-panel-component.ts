@@ -34,9 +34,11 @@ export default defineComponent({
       return pluginList.value.find(plugin=>plugin.display_zone==DisplayZone.GROUP_MODAL)?.id
     })
     const mainGroupPluginIndex = computed(()=> readPluginValues(pluginList.value.find(p=>p.id == mainGroupPluginId.value)))
-
-
     const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
+
+    const groupLayoutSytle= computed(()=>
+      layout.value == 'grid' ? 'repeat(auto-fit,minmax(150px,1fr))' : 'repeat(1fr)'
+    )
 
     const spanOnlyArray = computed(()=>{
       return spanArray.value
@@ -102,9 +104,12 @@ export default defineComponent({
       if(layout.value != newLayout) layout.value = newLayout
     }
 
-    const groupLayoutSytle= computed(()=>
-      layout.value == 'grid' ? 'repeat(auto-fit,minmax(150px,1fr))' : 'repeat(1fr)'
-    )
+
+    function whichCategoryTriggerRename(group ){
+      if (group){
+        return  group.plugins?.[mainGroupPluginIndex.value]?.[0].categories.find(el=>el.options?.trigger_rename)?.label
+      }
+    }
 
     function handleCreateVirtualSpan(){
       const id = spanArray.value.length
@@ -143,9 +148,6 @@ export default defineComponent({
       if (spanId){
         if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
           group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
-        }
-        if(category.options?.trigger_rename && !group.label ){ // renommer le groupe
-          group.label = spanArray.value[parseInt(spanId)].label
         }
         decolorSpan(group)
       }
@@ -200,7 +202,8 @@ export default defineComponent({
       spanLinkFilter,
       switchGroupLayout,
       groupLayoutSytle,
-      createdPluginOptionsList
+      createdPluginOptionsList,
+      whichCategoryTriggerRename
     }
   }
 })

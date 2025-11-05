@@ -1,6 +1,7 @@
 import {expect, describe, it }  from 'vitest'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import type { VueWrapper } from '@vue/test-utils';
+import { flushPromises } from '@vue/test-utils';
 import MoleculeSpanControlPanel  from '../../../components/molecules/spanControlPanel/MoleculeSpanControlPanel.vue'
 import AtomSpanTag from '../../../components/molecules/spanControlPanel/AtomSpanTag.vue'
 import {Select} from 'primevue'
@@ -24,7 +25,7 @@ vi.mock('~/stores/plugins', async () => {
 
 const pluginItemsMock = [
   { id: 4, data: [{ id: 1, ext_id: 'a', label: 'Option 1' },{id:2,ext_id:'2', label:'Option 2' }] },  // id: 4 to match mainPluginId
-  { id: 2, data: [{ id: 2, ext_id: 'b', label: 'Citation',categories: [{label:"role 1"},{label: "role 2"}] },{id:4,ext_id:'4',label:'Co Ref', categories: [{label:"ref1"},{label:"ref2"}]}] }
+  { id: 2, data: [{ id: 2, ext_id: 'b', label: 'Citation',categories: [{label:"role 1"},{label: "role 2"}] },{id:4,ext_id:'4',label:'Co Ref', categories: [{label:"ref1",options:{trigger_rename:true}},{label:"ref2"}]}] }
 ]
 const createdPluginOptionsListMock = [
   {
@@ -45,6 +46,7 @@ const createdPluginOptionsListMock = [
     "ext_id": "2",
     "label": "Option 2"
   }
+
 ]
 
 const configMock = [
@@ -84,6 +86,7 @@ mockNuxtImport('useSpanService', async()=>{
           id:2,
           tcin: 0.10009765625,
           tcout: 0.94677734375,
+          label: 'span id 2',
           nodes:[],
           plugins:{
             "plugin-4": [
@@ -99,6 +102,7 @@ mockNuxtImport('useSpanService', async()=>{
           tcin: 0.780029296875,
           tcout: 0.97998046875,
           nodes:[],
+          label: 'span id 3',
           plugins:{
             "plugin-4": [
               {
@@ -114,7 +118,7 @@ mockNuxtImport('useSpanService', async()=>{
           plugins:{
             "plugin-2": [
               {
-                id:4,ext_id:'4',label:'Co Ref', categories: [{label:"ref1"},{label:"ref2"}]
+                id:4,ext_id:'4',label:'Co Ref', categories: [{label:"ref1",options:{trigger_rename:true}},{label:"ref2"}]
               }
             ]
           }
@@ -195,6 +199,7 @@ describe('MoleculeSpanControlPanel', ()=>{
           tcin: 0.780029296875,
           tcout: 0.97998046875,
           nodes:[],
+          label: 'span id 3',
           plugins:{
             "plugin-4": [
               {
@@ -217,6 +222,7 @@ describe('MoleculeSpanControlPanel', ()=>{
           id:2,
           tcin: 0.10009765625,
           tcout: 0.94677734375,
+          label: 'span id 2',
           nodes:[],
           plugins:{
             "plugin-4": [
@@ -338,6 +344,36 @@ describe('MoleculeSpanControlPanel', ()=>{
     expect(wrapper.vm.layout.value ?? wrapper.vm.layout).toBe('grid')
     expect(wrapper.find('role-wrapper').element.style.getPropertyValue('grid-template-columns')).toContain("repeat(auto-fit,minmax(150px,1fr))")
 
+  })
+
+  it('should rename the group with the span appended in it',async()=>{
+      const emptyGroupWrapper = wrapper.findAll('group-wrapper')[1]
+      await emptyGroupWrapper.trigger('click')
+
+      // TEST DEFAULT NAME
+      expect(emptyGroupWrapper.text()).toContain('Co Ref0')
+
+      // TEST RENAMING THE GROUP
+      const firstDropzone = wrapper.findAll('role-dropzone').at(0)
+      const dataTransfer = new DataTransfer()
+      dataTransfer.setData('span',"3")
+      await firstDropzone.trigger('drop',{
+        dataTransfer: dataTransfer
+      })
+      await wrapper.vm.$nextTick()
+      await flushPromises()
+
+      expect(wrapper.findAll('group-wrapper')[1].text()).toContain('span id 3')
+
+      // TEST RENAMING THE GROUP WITH A SMALLER TIMECODE
+      dataTransfer.setData('span',"2")
+      await firstDropzone.trigger('drop',{
+        dataTransfer: dataTransfer
+      })
+      await wrapper.vm.$nextTick()
+      await flushPromises()
+
+      expect(wrapper.findAll('group-wrapper')[1].text()).toContain('span id 2')
   })
 
 
