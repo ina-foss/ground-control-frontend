@@ -17,13 +17,13 @@ export class ProjectService {
      * Retrieve a list of projects with pagination support.
      * @param skip
      * @param limit
-     * @returns ProjectDetailDto Successful Response
+     * @returns ProjectListDto Successful Response
      * @throws ApiError
      */
     public static readProjectsProjectsGet(
         skip?: number,
         limit: number = 100,
-    ): CancelablePromise<Array<ProjectDetailDto>> {
+    ): CancelablePromise<Array<ProjectListDto>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/projects',
@@ -61,8 +61,31 @@ export class ProjectService {
         });
     }
     /**
+     * Read Project Basic
+     * Get a project without user-based filtering.
+     * @param projectId
+     * @returns ProjectListDto Successful Response
+     * @throws ApiError
+     */
+    public static readProjectBasicProjectProjectIdBasicGet(
+        projectId: number,
+    ): CancelablePromise<ProjectListDto> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/project/{project_id}/basic',
+            path: {
+                'project_id': projectId,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
      * Read Project
-     * Get details of a single project by ID.
+     * Get a project filtered according to the user's role.
      * @param projectId
      * @returns ProjectListDto Successful Response
      * @throws ApiError

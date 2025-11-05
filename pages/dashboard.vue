@@ -13,7 +13,7 @@
       />
     </div>
     <div class="grow">
-    <div ref="dashboardRef" class="p-3 grid gap-6   max-h-full " style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr))">
+    <div ref="dashboardRef" class="p-3 grid gap-6 w-full" style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr))">
       <div v-if="status === 'pending' && data?.length == 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-40 mx-auto max-w-8xl px-4 xl:px-28 py-6">
         <Skeleton width="20rem" height="4rem" />
       </div>

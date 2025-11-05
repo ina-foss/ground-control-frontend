@@ -27,7 +27,6 @@ export type { JsonValue } from './models/JsonValue';
 export type { MediaCreate } from './models/MediaCreate';
 export type { MediaDto } from './models/MediaDto';
 export { MediaType } from './models/MediaType';
-export type { PaginatedTasksDTO } from './models/PaginatedTasksDTO';
 export { Permission } from './models/Permission';
 export type { PlayerParameters } from './models/PlayerParameters';
 export type { PluginAutocompleteValueDTO } from './models/PluginAutocompleteValueDTO';

@@ -100,6 +100,7 @@ export enum Permission {
     GROUND_CONTROL_PROJECT_READ_ALL = 'ground-control:project:read_all',
     GROUND_CONTROL_PROJECT_READ = 'ground-control:project:read',
     GROUND_CONTROL_PROJECT_DELETE = 'ground-control:project:delete',
+    GROUND_CONTROL_PROJECT_UPDATE = 'ground-control:project:update',
     GROUND_CONTROL_PROJECT_FINISH = 'ground-control:project:finish',
     GROUND_CONTROL_PROJECT_ARCHIVE = 'ground-control:project:archive',
     GROUND_CONTROL_PROJECT_UNARCHIVE = 'ground-control:project:unarchive',

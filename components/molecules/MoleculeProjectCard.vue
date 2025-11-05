@@ -1,9 +1,13 @@
 <template>
   <div
-    class="w-full bg-surface-color max-w-screen max-h-[190px] px-3 py-1 cursor-pointer rounded-md hover:scale-105 transition-all hover:shadow-xl"
-    style="background-color: #ffffff"
+    class="w-full max-w-screen max-h-[190px] px-3 py-1 rounded-md transition-all"
+    :class="{
+      'cursor-pointer hover:shadow-xl hover:scale-105 bg-white': isClickable,
+      'cursor-not-allowed bg-[#A6A6A640]': !isClickable
+     }"
+    @click="handleCardClick"
   >
-    <NuxtLink :to="{ name: 'projects-id', params: { id: project.id } }">
+    <div>
       <div class="min-h-[75%] max-h-full">
         <div class="flex justify-between align-middle pl-2">
           <p class="font-bold text-3xl self-center">
@@ -122,6 +126,13 @@
             project.description.slice(1)
           }}
         </div>
+        <div v-if="(!project.tasks_to_annotate || project.tasks_to_annotate.length === 0) && !isAdmin" class="no-task-message pl-2 bg-white">
+          <span class="status-circle"></span>
+          <div>
+            <p class="font-bold">Aucune tâche en attente</p>
+            <p>De nouvelles tâches vous seront bientôt attribuées.</p>
+          </div>
+      </div>
       </div>
       <Divider :pt="{ root:{ style: 'margin-top : 0px; margin-bottom: 0px' } }" />
       <div
@@ -143,12 +154,12 @@
             background-color: #0057ff;
             color: white;
             font-weight: 500;
-            height: 24px;
-            width: 24px;
+            height: 22px;
+            width: 22px;
           "
         />
       </div>
-    </NuxtLink>
+    </div>
     <Dialog
       v-model:visible="finishDialog"
       modal
@@ -256,7 +267,7 @@ const visible = ref(false);
 const deleteDialog = ref(false);
 const finishDialog = ref(false);
 const archiveDialog = ref(false);
-
+const { setMode } = useOptions();
 const { project } = defineProps({
   project: { type: Object, default: () => {} },
 });
@@ -277,6 +288,38 @@ const roleArchiveProject = computed(() =>
 const roleUnarchiveProject = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_PROJECT_UNARCHIVE),
 );
+const roleUpdateProject = computed(() =>
+  $application.hasRole(Permission.GROUND_CONTROL_PROJECT),
+);
+const isAdmin = computed(() => $application.hasRole("GC_ADMIN"));
+const linkTarget = computed(() => {
+  if (isAdmin.value) {
+    return { name: 'projects-id', params: { id: project.id } }
+  } else if (project.tasks_to_annotate?.length && !isAdmin.value) {
+    return { name: 'tasks-id', params: { id: project?.tasks_to_annotate[0].id } }
+  }
+  return null
+})
+const isClickable = computed(() => !!linkTarget.value)
+const handleCardClick = () => {
+  if (!linkTarget.value) return
+
+  if (isAdmin.value) {
+    navigateTo({
+      name: linkTarget.value.name,
+      params: linkTarget.value.params
+    })
+  } else {
+    navigateTo({
+      name: linkTarget.value.name,
+      params: linkTarget.value.params,
+      query: {
+        project_id: project.id
+      }
+    })
+    setMode('edit')
+  }
+}
 
 const { $handleApiError } = useNuxtApp();
 
@@ -344,7 +387,7 @@ const unarchiveProject = async () => {
   }
 };
 
-const { data: progressedTasks, status: statusProgressed } = useAsyncData(
+const { data: progressedTasks } = useAsyncData(
   `project_${project.id}_progressed_tasks`,
   async () =>
     await ProjectService.getProgressedTasksForProjectProjectIdProgressedTasksPost(
@@ -356,11 +399,10 @@ const toggleMenu = (event) => {
   menu.value.toggle(event);
 };
 
-const visibleActions = computed(() => actions.value.filter((a) => a.condition));
 const actions = computed(() => [
   {
     label: "Modifier",
-    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED,
+    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && roleUpdateProject.value,
     handler: () => {
       visible.value = true;
       menu.value.hide();
@@ -368,7 +410,7 @@ const actions = computed(() => [
   },
   {
     label: "Archiver",
-    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && roleArchiveProject  ,
+    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && roleArchiveProject.value  ,
     handler: () => {
       archiveDialog.value = true;
       menu.value.hide();
@@ -376,7 +418,7 @@ const actions = computed(() => [
   },
   {
     label: "Terminer",
-    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && rolefinishProject,
+    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && rolefinishProject.value,
     handler: () => {
       finishDialog.value = true;
       menu.value.hide();
@@ -384,16 +426,36 @@ const actions = computed(() => [
   },
     {
     label: "Désarchiver",
-    condition: project.status == ProjectStatus.ARCHIVED && roleUnarchiveProject,
+    condition: project.status == ProjectStatus.ARCHIVED && roleUnarchiveProject.value,
     handler: async() => {
       await unarchiveProject()
       menu.value.hide();
     },
   }
 ]);
+const visibleActions = computed(() => actions.value.filter((a) => a.condition));
 </script>
 <style>
 .custom-icon-color .pi {
   color: #212529;
 }
+
+.status-circle {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 100px;
+  border: 3px solid rgba(255, 119, 102, 0.5);
+  background: rgba(255, 119, 102, 0.3);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.no-task-message {
+  color: #333;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
 </style>

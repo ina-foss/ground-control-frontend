@@ -17,18 +17,35 @@
 </template>
 
 <script setup>
+const { $application } = useService();
 const home = { label: 'Projets', route: '/dashboard' }
+const isAdmin = computed(() => $application.hasRole("GC_ADMIN"));
 const refresh = useRefreshStore()
 const { getData } = storeToRefs(refresh)
 
 const newBreadCrumbs = computed(()=>{
   let bd = [home]
   if (getData.value?.step){
-    bd.push({label:getData.value.step.project.title,route:`/projects/${getData.value.step.project.id}`})
-    bd.push({label:("( "+getData.value?.step_id+" ) "+getData.value?.name ),route:`/tasks/${getData.value?.id}`})
+    bd.push({
+      label: getData.value.step.project.title,
+      route: isAdmin.value
+        ? `/projects/${getData.value.step.project.id}`
+        : '/dashboard'
+    })
+    bd.push({
+      label:("( "+getData.value?.step_id+" ) "+getData.value?.name ),
+      route: isAdmin.value
+       ?`/tasks/${getData.value?.id}`
+       : '/dashboard'
+       })
   }
   else{
-    bd.push({label:getData.value?.title,route:`/projects/${getData.value?.id}`})
+    bd.push({
+      label:getData.value?.title,
+      route: isAdmin.value
+        ? `/projects/${getData.value?.id}`
+        : '/dashboard'
+      })
   }
 
   return bd

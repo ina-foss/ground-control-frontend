@@ -5,6 +5,7 @@
 import type { MediaCreate } from './MediaCreate';
 import type { ProjectStatus } from './ProjectStatus';
 import type { StepDetailDto } from './StepDetailDto';
+import type { TaskWithIdDto } from './TaskWithIdDto';
 /**
  * DTO for listing projects, including a list of tasks.
  *
@@ -23,7 +24,8 @@ export type ProjectListDto = {
     id: number;
     created_at: (string | null);
     updated_at: (string | null);
-    steps: Array<StepDetailDto>;
     medias: Array<MediaCreate>;
+    steps?: (Array<StepDetailDto> | null);
+    tasks_to_annotate?: (Array<TaskWithIdDto> | null);
 };
 
