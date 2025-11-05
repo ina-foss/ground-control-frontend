@@ -141,9 +141,8 @@ export default defineNuxtConfig({
     }
   },
   css: [
-    '~/node_modules/@ina/kit-ui/src/css/base.css',
     '~/assets/css/fonts.css',
-    '~/assets/css/main.css'
+    '~/assets/css/app.css'
   ],
   plugins: [
     '~/directives/v-safe-html.ts',

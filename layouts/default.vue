@@ -21,7 +21,9 @@ import AtomBreadcrumbs from "~/components/atoms/AtomBreadcrumbs.vue";
 
 </script>
 
-<style lang="postcss">
+<style >
+  @reference "../assets/css/app.css";
+
   html {
     font-size: 14px;
   }

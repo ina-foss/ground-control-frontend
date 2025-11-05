@@ -1,3 +1,0 @@
-[submodule "shared"]
-	path = shared
-	url = git@git.infra.sas.ina:ia/code/ihmia/common-components.git
