@@ -367,25 +367,42 @@
                 <div class="flex-1 text-center">{{}}</div>
               </template>
             </Column>
-            <Column header="Statut" class="txt" style="width: 100px">
+            <Column
+              header="Statut"
+              class="txt"
+              style="width: 100px"
+              field="status"
+              filterField="status"
+              :showFilterMenu="false"
+            >
               <template #body="{ data: nestedData }">
                 <Tag
                   class="mb-1 scale-90"
                   style="font-weight: 500"
                   :style="{
                     color:
-                      status_map.find((s) => s.value === nestedData.status)
-                        ?.colorText || '#000',
+                      status_map.find((s) => s.value === nestedData.status)?.colorText || '#000',
                     backgroundColor:
-                      status_map.find((s) => s.value === nestedData.status)
-                        ?.colorBg || '#ccc',
+                      status_map.find((s) => s.value === nestedData.status)?.colorBg || '#ccc',
                   }"
                 >
                   {{
-                    status_map.find((s) => s.value === nestedData.status)
-                      ?.label || nestedData.status
+                    status_map.find((s) => s.value === nestedData.status)?.label ||
+                    nestedData.status
                   }}
                 </Tag>
+              </template>
+              <template #filter="{ filterModel, filterCallback }">
+                <Dropdown
+                  v-model="filterModel.value"
+                  :options="status_map.filter(status => slotProps.data.tasks.some(task => task.status === status.value))"
+                  optionLabel="label"
+                  optionValue="value"
+                  placeholder="Toutes"
+                  showClear
+                  class="w-full"
+                  @change="filterCallback()"
+                />
               </template>
             </Column>
             <Column
@@ -483,6 +500,7 @@
               field="expiration_date"
               dataType="date"
               style="width: 10rem"
+              :showFilterMenu="false"
             >
               <template #header>
                 <span
@@ -511,13 +529,13 @@
                 <Dropdown
                   v-model="filterModel.value"
                   :options="[
-                    { label: 'Toutes', value: null },
-                    { label: 'Non expirées', value: 'active' },
-                    { label: 'Expirées', value: 'expired' },
+                    { label: 'Expirée', value: 'expired' },
+                    { label: 'Non expirée', value: 'active' },
                   ]"
-                  placeholder="Filtrer"
+                  placeholder="Toutes"
                   optionLabel="label"
                   optionValue="value"
+                  showClear
                   @change="filterCallback()"
                   class="w-full"
                 />
@@ -702,6 +720,7 @@ const filters = ref<DataTableFilterMeta>({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   name: { value: null, matchMode: FilterMatchMode.CONTAINS },
   expiration_date: { value: null, matchMode: "expirationFilter" },
+  status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
 const isAdmin = computed(() => $application.hasRole("GC_ADMIN"));
@@ -769,7 +788,7 @@ const status_map = [
     value: "pending",
     label: "En attente",
     colorText: "#000",
-    colorBg: "#FFC107",
+    colorBg: "#FFE4B1",
   },
   {
     value: "in-progress",
