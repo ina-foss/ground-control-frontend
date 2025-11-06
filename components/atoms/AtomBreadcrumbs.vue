@@ -17,9 +17,11 @@
 </template>
 
 <script setup>
+import { Permission } from '~/api/generate';
+
 const { $application } = useService();
 const home = { label: 'Projets', route: '/dashboard' }
-const isAdmin = computed(() => $application.hasRole("GC_ADMIN"));
+const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
 const refresh = useRefreshStore()
 const { getData } = storeToRefs(refresh)
 

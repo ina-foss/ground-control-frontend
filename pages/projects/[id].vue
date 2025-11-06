@@ -723,7 +723,7 @@ const filters = ref<DataTableFilterMeta>({
   status: { value: null, matchMode: FilterMatchMode.EQUALS },
 });
 
-const isAdmin = computed(() => $application.hasRole("GC_ADMIN"));
+const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
 const roleDeleteTask = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE),
 );
@@ -744,7 +744,7 @@ const { data, refresh, status } = useAsyncData(
   `task_${route.params.id}`,
   async () => await fetchTasks(route.params.id),
 );
-console.log({ data });
+
 const { data: projectParameters, status: statusParameters } = useAsyncData(
   `project_${route.params.id}_parameters`,
   async () =>

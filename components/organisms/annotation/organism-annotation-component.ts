@@ -4,7 +4,7 @@ import MoleculeSpan from "~/components/molecules/MoleculeSpan.vue";
 import MoleculeSegmentation from "~/components/molecules/MoleculeSegmentation.vue";
 import MoleculeTranscription from "~/components/molecules/MoleculeTranscription.vue";
 import _,{sortBy} from 'lodash';
-import {AnnotationStatus} from '~/api/generate';
+import {AnnotationStatus, Permission} from '~/api/generate';
 import { useService } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
@@ -70,7 +70,7 @@ export default defineComponent({
         return _.uniq(moleculeAnnotationRef.value?.listRefs)
     });
 
-    const isAdmin = computed(() => $application.hasRole('GC_ADMIN'));
+    const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
     const colors = ref(['#BEBEBE'])
     const topics = ref([])
     const videoSrc = ref(annotationsIn.value?.[0]?.result.asset.url)
@@ -121,7 +121,7 @@ export default defineComponent({
 
     const locals = computed(() => {
       if(allFetched.value){
-      return (annotationInfo.value == null || data.value?.step.annotation_type == 'auto-summary')
+      return (annotationInfo.value == null || data.value?.step?.annotation_type == 'auto-summary')
         ? _.sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
         : _.sortBy(annotationsOut.value[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
       }

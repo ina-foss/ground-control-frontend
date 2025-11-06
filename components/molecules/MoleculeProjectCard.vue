@@ -291,7 +291,7 @@ const roleUnarchiveProject = computed(() =>
 const roleUpdateProject = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_PROJECT),
 );
-const isAdmin = computed(() => $application.hasRole("GC_ADMIN"));
+const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
 const linkTarget = computed(() => {
   if (isAdmin.value) {
     return { name: 'projects-id', params: { id: project.id } }
