@@ -1,0 +1,17 @@
+node_modules
+.nuxt
+.output
+.git
+.gitignore
+*.md
+README.md
+test-results
+tests
+.idea
+.docs
+dist
+coverage
+.dev/app.yml
+test-results
+*.log
+.DS_Store

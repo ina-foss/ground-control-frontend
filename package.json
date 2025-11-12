@@ -18,7 +18,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@ina/amalia": "^2.1.11-develop",
+    "@ina/amalia": "file:libs/amalia-2.1.11-develop.tgz",
     "@nuxtjs/color-mode": "^3.4.1",
     "@pinia/nuxt": "^0.5.1",
     "@primeuix/themes": "^1.0.0",
