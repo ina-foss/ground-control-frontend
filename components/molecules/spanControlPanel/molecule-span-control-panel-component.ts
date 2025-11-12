@@ -28,6 +28,8 @@ export default defineComponent({
     const dialogVirtualSpan = ref()
     const virtualSpanLabel = ref()
 
+    const groupFilledFilter = ref()
+
     const layout = ref('grid')
 
     const mainGroupPluginId = computed(()=>{
@@ -60,6 +62,13 @@ export default defineComponent({
     const groupArray = computed(()=>{
       return spanArray.value
       .filter(span=> span && span.spans)
+      .filter(group=>{
+          return !groupFilledFilter.value ||
+          (groupFilledFilter.value.value == 'filled' && group.plugins[mainGroupPluginIndex.value][0].categories.every(role =>
+            group.spans.some(span => _.isEqual(span?.role ,role) ) ) ) ||
+          (groupFilledFilter.value.value == 'unfilled' && group.plugins[mainGroupPluginIndex.value][0].categories.some(role =>
+           group.spans.every(span => !_.isEqual(span?.role, role) ) ) )
+        })
       .filter(span=> !groupFilter.value || _.some(span.plugins?.[mainGroupPluginIndex.value], item=> item.id == groupFilter.value.id)
     )})
 
@@ -203,7 +212,8 @@ export default defineComponent({
       switchGroupLayout,
       groupLayoutSytle,
       createdPluginOptionsList,
-      whichCategoryTriggerRename
+      whichCategoryTriggerRename,
+      groupFilledFilter
     }
   }
 })

@@ -250,7 +250,7 @@ describe('MoleculeSpanControlPanel', ()=>{
 
 
     // ---- FILTER GROUP LIST ----
-    await wrapper.findAllComponents(Select)[2].trigger('click')
+    await wrapper.findAllComponents(Select)[3].trigger('click')
     await wrapper.find('.p-select-list-container li').trigger('mousedown')
 
 

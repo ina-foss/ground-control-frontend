@@ -104,7 +104,13 @@
     <div v-if="isForResearch && mainGroupPluginId" class="flex flex-col">
       <category-header class="flex flex-row justify-between items-center">
         <b class="text-xl">Liste des groupes</b>
-        <div class="flex items-center gap-4">
+        <group-filter-wrapper class="flex items-center gap-xl">
+          <group-filled-filter class="flex items-center gap-sm">
+            <span>Rôle</span>
+            <Select
+              v-model="groupFilledFilter" placeholder="Tous" :show-clear="true"
+              :options="[{label:'Complet',value:'filled'},{label:'Incomplet',value:'unfilled'}]" option-label="label" />
+          </group-filled-filter>
           <group-filter v-if="mainGroupPluginId" class="flex items-center gap-2">
             {{ mainGroupPluginName?.charAt(0).toUpperCase() + mainGroupPluginName?.slice(1) }}
             <Select
@@ -112,7 +118,7 @@
               :options="pluginOptionsList?.find(p=>p.id==mainGroupPluginId)?.data" option-label="label"  />
           </group-filter>
           <Button icon="pi pi-plus" icon-pos="right" :disabled="isReadMode" label="Ajouter" rounded outlined size="small" class="self-end " @click="emit('handleNewGroup',$event)" />
-        </div>
+        </group-filter-wrapper>
       </category-header>
       <Divider :pt="{ root:{ style: 'margin-top : 10px; margin-bottom: 10px' } }" />
       <div class="flex flex-col gap-3">
