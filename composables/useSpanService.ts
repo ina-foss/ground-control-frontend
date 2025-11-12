@@ -99,7 +99,7 @@ function createSpanService (){
    function countByPlugin(data:any){
      const groupedByPlugin = {}
      data.value.forEach(item => {
-       if(item != undefined && item.plugins.length != 0){
+       if(item != undefined && item.plugins?.length != 0){
        const plugins = item.plugins
          if (!plugins) return
 

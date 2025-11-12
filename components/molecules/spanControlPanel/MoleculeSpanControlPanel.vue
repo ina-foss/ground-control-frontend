@@ -190,6 +190,28 @@
             </div>
             </Dialog>
 
+            <!-- UNAUTHORIZED SPAN DROPPED  -->
+            <Dialog
+            :visible="!!unauthorizedSpanDropped"
+            header="L'élément que vous essayé d’insérer n’est pas autorisé
+                car son type est inadéquat."
+            @update:visible="(value) => { if (!value) unauthorizedSpanDropped = null }"
+        >
+              <div class="flex items-start gap-2 text-gray-800">
+                <span
+                    class="pi pi-exclamation-triangle text-red-500 text-2xl mt-1"
+                ></span>
+                <div>
+                  <b>Vous pouvez uniquement insérer des éléments de type :</b>
+                  <div class="mt-1 ml-6 space-y-1">
+                    <div v-for="(item, index) in authorizedGroupList" :key="index" class="flex items-start">
+                      <span class="mr-2">•</span>
+                      <span>{{ item }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </Dialog>
 
       </div>
     </div>

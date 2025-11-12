@@ -22,6 +22,8 @@ export default defineComponent({
 
 
     const groupDeleted = ref<SpanGroup | null>(null)
+    const unauthorizedSpanDropped = ref(false);
+    const authorizedGroupList = ref("");
     const spanFilter = ref()
     const groupFilter = ref()
     const spanLinkFilter = ref()
@@ -146,10 +148,21 @@ export default defineComponent({
       target.querySelector('preview')?.remove()
       const spanId = event.dataTransfer.getData('span')
       if (spanId){
-        if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
-          group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
+        const span = spanArray.value.find(span=>span?.id == parseInt(spanId))
+        if(span?.plugins?.research_entity_type?.[0].label || span?.label ==""){
+          const isAuthorized = category?.authorized_types?.includes(span?.plugins?.research_entity_type?.[0].label);
+
+          if(isAuthorized || span?.label =="" || category?.authorized_types == undefined){
+            if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
+              group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
+            }
+            decolorSpan(group)
+          }
+          else{
+            authorizedGroupList.value=category?.authorized_types
+            unauthorizedSpanDropped.value=!isAuthorized
+          }
         }
-        decolorSpan(group)
       }
     }
 
@@ -203,7 +216,9 @@ export default defineComponent({
       switchGroupLayout,
       groupLayoutSytle,
       createdPluginOptionsList,
-      whichCategoryTriggerRename
+      whichCategoryTriggerRename,
+      unauthorizedSpanDropped,
+      authorizedGroupList
     }
   }
 })
