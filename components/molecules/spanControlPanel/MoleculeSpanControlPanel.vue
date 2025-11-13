@@ -165,7 +165,7 @@
            <!-- ADD VIRTUAL SPAN DIALOG -->
             <Dialog
               :visible="!!dialogVirtualSpan"
-              header="Span: creation virtuelle"
+              header="Span : création d’un span virtuel"
               @update:visible="()=>dialogVirtualSpan = false"
               @after-hide="()=> virtualSpanLabel = ''"
             >
