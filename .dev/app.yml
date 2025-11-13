@@ -1,0 +1,18 @@
+# Ground Control API - Docker Compose Configuration
+# This configuration builds the FastAPI application and all required services
+name: ground-control
+version: '3.8'
+networks:
+  ground-control-network:
+    driver: bridge
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: .dev/Dockerfile
+    volumes:
+      - ../videos:/usr/share/nginx/html/videos/
+    ports:
+      - "80:80"
+    container_name: ground-control-frontend

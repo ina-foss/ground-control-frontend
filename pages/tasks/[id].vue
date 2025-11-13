@@ -17,6 +17,7 @@ import { ref } from "vue";
 import {
   AnnotationService,
   AnnotationStatus,
+  Permission,
   ProjectService,
   TaskStatus,
 } from "~/api/generate";
@@ -32,14 +33,12 @@ const authStore = useAuth();
 const { mode } = useOptions();
 const { $application } = useService();
 const { $handleApiError } = useNuxtApp();
-const { getData, fetchTasks } = storeToRefs(refresh);
+const { getData,  } = storeToRefs(refresh);
 const { userEmail } = storeToRefs(authStore);
 const { fetchAnnotations } = refresh;
-
 let timeAnnotationStart;
-
 const data = ref(getData);
-const isAdmin = computed(() => $application.hasRole("GC_ADMIN"));
+const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
 
 watchEffect(() => {
   useHead({

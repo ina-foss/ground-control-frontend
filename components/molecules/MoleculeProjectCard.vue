@@ -291,7 +291,7 @@ const roleUnarchiveProject = computed(() =>
 const roleUpdateProject = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_PROJECT),
 );
-const isAdmin = computed(() => $application.hasRole("GC_ADMIN"));
+const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
 const linkTarget = computed(() => {
   if (isAdmin.value) {
     return { name: 'projects-id', params: { id: project.id } }
@@ -325,7 +325,7 @@ const { $handleApiError } = useNuxtApp();
 
 const status_map = {
   draft:       { label: "Brouillon", colorText: "#FFF", colorBg:"#757575" },
-  pending:     { label: "En attente", colorText: "#000", colorBg:"#FFC107"  },
+  pending:     { label: "En attente", colorText: "#000", colorBg:"#FFE4B1"  },
   "in-progress": { label: "En cours", colorText: "#000", colorBg:"#F9D621"  },
   done:        { label: "Terminé", colorText: "#000", colorBg:"#9ADC82"  },
   skipped:     { label: "Abondonné", colorText: "#FFF", colorBg:"#EF4444"  },

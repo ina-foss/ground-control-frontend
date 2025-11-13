@@ -96,6 +96,7 @@
  * :type GET_USER_BY_EMAIL: str
  */
 export enum Permission {
+    GROUND_CONTROL_PROJECT_ADMIN = 'ground-control:project:admin',
     GROUND_CONTROL_PROJECT_CREATE = 'ground-control:project:create',
     GROUND_CONTROL_PROJECT_READ_ALL = 'ground-control:project:read_all',
     GROUND_CONTROL_PROJECT_READ = 'ground-control:project:read',
