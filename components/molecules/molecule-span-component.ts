@@ -50,7 +50,7 @@ export default defineComponent({
     })
 
     const filteredLocal = computed(() => {
-      return _.filter(locals.value, (local) => local?.sublocalisations)
+      return _.filter(locals.value, (local) => local?.sublocalisations).sort((a,b)=> unixToTimestamp(a?.tcin) - unixToTimestamp(b?.tcin) )
     })
 
     interface State {
