@@ -52,15 +52,6 @@ export default defineComponent({
         set : newValue => Array.isArray(newValue) ? emit('update:pluginValue',newValue) : emit('update:pluginValue',[newValue])
     })
 
-    onMounted(() => {
-      if(props.plugin.available_plugins) {
-        const foundPlugin = (props.plugin.available_plugins as Record<string, any>)['']
-        if (foundPlugin) {
-          emit('update:pluginValue', [all_entities_plugin])
-        }
-      }
-    })
-
     return {
       isEqual: _.isEqual,
       pluginValue,

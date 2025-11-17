@@ -18,7 +18,6 @@ export default defineNuxtComponent({
     let filteredPlugins=[]
     const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex } = useSpanService()
     const {$application} = useService()
-      const childPluginMap = ref<Record<string, any[]>>({})
     const tidiedPluginList = computed(()=>{
       const listPlugin= getPluginList.value
       const childIds = new Set(
@@ -50,8 +49,8 @@ export default defineNuxtComponent({
     }
 
     function pluginChangeValue(plugin: PluginWithIdDto,event){
-      if( (plugin.display_config.main_plugin || groupDisplay.value ) && event.length != 0 && event[0]?.id != ""   ) showErrorMessage.value = false
-      else if( (plugin.display_config.main_plugin || groupDisplay.value) && ( event.length == 0 || event[0]?.id == "")) showErrorMessage.value = true
+      if( (plugin.display_config.main_plugin || groupDisplay.value ) && event.length != 0 && event[0] != null   ) showErrorMessage.value = false
+      else if( (plugin.display_config.main_plugin || groupDisplay.value) && ( event.length == 0 || event[0] == null)) showErrorMessage.value = true
     }
 
     let nodes = ref<Nodes[]>([])
@@ -61,45 +60,68 @@ export default defineNuxtComponent({
     const deleteLayout = ref(false)
     let roleSelected = null
     let pluginSelected=ref('');
-    watch(pluginValues, (newVal) => {
-      pluginSelected.value = "";
-
-      const rawVal = toRaw(newVal);
-      const firstObj = Array.isArray(rawVal) ? rawVal[0] ?? {} : rawVal ?? {};
-
-      const extIdMap = Object.entries(firstObj).reduce<Record<string, string>>((acc, [dataProperty, value]) => {
+    const extIdMap = computed(()=>{
+      const newVal = pluginValues
+      const firstObj = Array.isArray(newVal) ? newVal[0] ?? {} : newVal ?? {};
+      return Object.entries(firstObj).reduce<Record<string, string>>((acc, [dataProperty, value]) => {
         const val = Array.isArray(value) ? value[0] : value;
         if (val && typeof val === "object" && "ext_id" in val) {
           acc[dataProperty] = val.ext_id;
         }
         return acc;
-      }, {});
+      }, {})
+    })
 
-      if (extIdMap) {
-        childPluginMap.value = {};
+    const childPluginMap = computed(()=>{
+      if(_.isEqual(extIdMap.value,{})){
+        let adultPlugin = getPluginList.value.find(plugin=>plugin.available_plugins)
+        return {
+          [readPluginValues(adultPlugin)] : [getPluginList.value.find(plugin=> plugin.name == adultPlugin.available_plugins[""])]
+        }
+      }
+      else{
+        let result = {}
+          Object.entries(extIdMap.value).forEach(([dataProperty, extId]) => {
+            const usedPlugin = getPluginList.value?.find(
+                plugin =>{
+                return readPluginValues(plugin) === dataProperty
+              }
+            );
 
-        Object.entries(extIdMap).forEach(([dataProperty, extId]) => {
-          const usedPlugin = getPluginList.value?.find(
-              plugin => plugin.data_property === dataProperty
-          );
-
-          if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
-            const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
-            if (pName) {
-              const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
-              if (childrenPlugin) {
-                if (!childPluginMap.value[dataProperty]) {
-                  childPluginMap.value[dataProperty] = [];
+            if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
+              const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
+              if (pName) {
+                const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
+                if (childrenPlugin) {
+                  if (!result[dataProperty]) {
+                    result[dataProperty] = [];
+                  }
+                  result[dataProperty].push(childrenPlugin);
+                } else {
+                  pluginSelected.value = pName;
                 }
-                childPluginMap.value[dataProperty].push(childrenPlugin);
-              } else {
-                pluginSelected.value = pName;
               }
             }
-          }
-        });
+          });
+        return result
       }
-    }, { deep: true });
+    })
+
+
+    // watch(pluginValues, (newVal) => {
+    //   pluginSelected.value = "";
+    //
+    //   const rawVal = toRaw(newVal);
+    //   const firstObj = Array.isArray(rawVal) ? rawVal[0] ?? {} : rawVal ?? {};
+    //
+    //   const extIdMap =
+    //   if (extIdMap) {
+    //     childPluginMap.value = {};
+    //
+    //     console.log({extIdMap})
+    //
+    //   }
+    // }, { deep: true });
 
     function expandContext() {
       expandedContext.value = true
@@ -144,7 +166,7 @@ export default defineNuxtComponent({
     function handleConfirmationButton (){
       if (
         // validation for span case (with mainPlugin only)
-        !groupDisplay.value && (pluginValues[mainPluginIndex.value].length == 0 || pluginValues[mainPluginIndex.value][0]?.id == "") ||
+        ( mainPluginIndex.value && !groupDisplay.value && (pluginValues[mainPluginIndex.value].length == 0 || !pluginValues[mainPluginIndex.value][0] ) ) ||
         // validation for group case (check every plugin in the form)
         groupDisplay.value && tidiedPluginList.value[DisplayZone.GROUP_MODAL]?.every( groupPlugin =>
           pluginValues[readPluginValues(groupPlugin)].length == 0 ||

@@ -12,7 +12,7 @@
           :label="option.label"
           :onLabel="option.label"
           :offLabel="option.label"
-          @click="() => pluginValue = isEqual(pluginValue, option) ? all_entities_plugin : option"
+          @click="() => pluginValue = isEqual(pluginValue, option) ? null : option"
       />
     </div>
     <Select
