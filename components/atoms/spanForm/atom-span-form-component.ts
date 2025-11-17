@@ -45,7 +45,7 @@ export default defineNuxtComponent({
     })
 
     function onLastSelected(value:any) {
-        defaultLabel.value = value ??  textSpan.value
+        defaultLabel.value = value ??  textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
     }
 
     function pluginChangeValue(plugin: PluginWithIdDto,event){
@@ -195,7 +195,7 @@ export default defineNuxtComponent({
       labelSelected.value = spanArray.value[spanId]?.type ?? []
       nodes.value = spanArray.value[spanId]?.nodes ?? []
       textSpan.value=extractTextFromSpanNodes(nodes.value)
-      defaultLabel.value =  (spanArray.value[spanId]?.label ?? textSpan.value)?.trim().replace(/[.,;\s]+/g, " ")
+      defaultLabel.value =  (spanArray.value[spanId]?.label ?? textSpan.value)?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
       nodesCount.value = nodes.value.length
       if(!group && !virtual){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )

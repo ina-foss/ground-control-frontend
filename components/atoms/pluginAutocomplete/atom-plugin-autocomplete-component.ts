@@ -20,7 +20,12 @@ export default defineComponent({
   emits: ['update:pluginValue', 'last-selected'],
   setup(props, { emit }) {
     const value = ref([]);
-    const { pluginItemsConfig, plugin, index, source, textSpan } = toRefs(props)
+    const { pluginItemsConfig, plugin, index, source, textSpan} = toRefs(props)
+    const pluginValue = computed({
+      get: () => props.pluginValue,
+      set: newValue => emit('update:pluginValue', newValue)
+    })
+
     const indexPlugin = index.value;
     let debounceTimer: NodeJS.Timeout
     const options = computed(() => {
@@ -77,19 +82,15 @@ export default defineComponent({
     const pluginName = computed(() => {
       return plugin.value?.display_config?.label || plugin.value.name || "";
     });
-    const multiSelectRef = ref(null);
+    const autoCompleteRef = ref(null);
     const keepDropdownOpen = () => {
-      multiSelectRef.value.overlayVisible = true;
+      autoCompleteRef.value.overlayVisible = true;
     }
 
     const showValue = computed(() => {
       return plugin.value.display_zone != DisplayZone.BLOC
     })
 
-    const pluginValue = computed({
-      get: () => props.pluginValue,
-      set: newValue => emit('update:pluginValue', newValue)
-    })
 
     watch(pluginValue, (newValues, oldValues) => {
       emit('last-selected', newValues?.find(v => !oldValues?.includes(v))?.label)
@@ -98,7 +99,7 @@ export default defineComponent({
     function handleFilter(event) {
       clearTimeout(debounceTimer)
       debounceTimer = setTimeout(() => {
-        filterString.value = event.value
+        filterString.value = event.query
       }, 300)
 
     }
@@ -123,20 +124,24 @@ export default defineComponent({
       }
     })
 
-    function onDropdownOpen() {
+    async function onDropdownOpen()   {
       if (textSpan.value !== "") {
-        filterString.value = textSpan.value?.trim().replace(/[.,;\s]+/g, " ") ?? '';
-        if (multiSelectRef.value) {
-          (multiSelectRef.value as any).filterValue = filterString.value;
+        filterString.value = textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
+        if (autoCompleteRef.value) {
+          (autoCompleteRef.value as any).filterValue = filterString.value;
         }
       }
     }
 
     onMounted(() => {
+      if(document.getElementById('autocomplete-input') && textSpan.value ){
+        // Add span text if nothing has already been selected
+        if(pluginValue.value?.length == 0) document.getElementById('autocomplete-input').value = textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
+      }
       if (source.value) {
-        if (multiSelectRef.value) {
+        if (autoCompleteRef.value) {
           setTimeout(() => {
-            multiSelectRef.value.overlayVisible = true;
+            autoCompleteRef.value.overlayVisible = true;
           }, 200)
         }
       }
@@ -153,7 +158,7 @@ export default defineComponent({
       isAnnotationEditable,
       keepDropdownOpen,
       sortedOptionsByFilter,
-      multiSelectRef,
+      autoCompleteRef,
       onDropdownOpen,
       textSpan,
       showValue,

@@ -1,12 +1,13 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class="flex grow min-w-fit ">
-    <MultiSelect  ref="multiSelectRef" :disabled="!isAnnotationEditable" v-model="pluginValue" :options="sortedOptionsByFilter"
-                 emptyMessage="Rechercher un label" :emptyFilterMessage="' '" optionLabel="label" filter
-                  class="w-[215px]"
+  <div v-if="indexPlugin<3 && !source" class="w-full">
+    <AutoComplete ref="autoCompleteRef" :disabled="!isAnnotationEditable" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
+                  :emptyFilterMessage="' '" optionLabel="label" multiple
+                  dropdown dropdown-mode="current"
+                  input-id="autocomplete-input"
                   :max-selected-labels="0"
-      scrollHeight="500px"
-                 @filter="handleFilter" :placeholder="pluginName" :loading="showSkeleton"
-                 :selectedItemsLabel="pluginName" fluid  @show="onDropdownOpen">
+                  scrollHeight="500px"
+                 @complete="handleFilter" :placeholder="'Taper pour rechercher'" :loading="showSkeleton"
+                 :selectedItemsLabel="pluginName"   @dropdown-click="onDropdownOpen">
       <template #option="slotProps">
         <div class="flex items-center space-x-2 w-[250px] ">
           <img
@@ -26,37 +27,92 @@
           </div>
         </div>
       </template>
-      <template #value="slotProps" >
-        <div v-if="pluginValue?.length && showValue" class="h-full">
-          {{pluginValue.map(value => value.label).join(', ')  }}
-        </div>
+
+      <template #chip="slotProps">
+        <chip-wrapper class="flex items-center rounded-full bg-surface-100 p-1 justify-around gap-2 px-4">
+          <chip-content class="flex items-center gap-2">
+            <img
+                v-if="!slotProps.value.image?.includes('icons')"
+                :src="slotProps.value.image"
+                alt="icon"
+                class="h-10 object-contain"
+            />
+            <chip-text class="flex flex-col max-w-[150px]">
+              <span class="font-medium text-gray-900 truncate">
+                {{ slotProps.value.label }}
+              </span>
+              <span class="font-medium text-gray-500 truncate text-[10px] ">
+                {{ slotProps.value.description }}
+              </span>
+            </chip-text>
+          </chip-content>
+          <span class="pi pi-times-circle cursor-pointer" @click="slotProps.removeCallback" />
+        </chip-wrapper>
       </template>
-    </MultiSelect>
+
+    </AutoComplete>
   </div>
   <div v-if="source" class="  h-[300px] ">
     <div class="w-full flex justify-center" @click.self="$emit('closeModal')">
       <div class="relative custom-multiselect">
-        <MultiSelect
-            ref="multiSelectRef"
-            v-model="selectedItems"
-            :options="options"
+        <AutoComplete
+            ref="autoCompleteRef"
+            v-model="pluginValue"
+            multiple
+            dropdown
+            dropdown-mode="current"
+            :suggestions="options"
             optionLabel="label"
-            display="chip"
-            filter
             :placeholder="pluginName"
             :maxSelectedLabels="0"
             :selectedItemsLabel="pluginName"
-            class="w-[280px] pointer-events-none always-open"
+            class="w-[280px] always-open"
             :panelClass="' w-[280px] min-w-[280px] '"
-            aria-labelledby="custom-multiselect-label"
-            @hide=" keepDropdownOpen();"
+            @complete="handleFilter"
         >
           <template #option="slotProps">
-            <div class="flex items-center">
-              <div>{{ slotProps.option.label }}</div>
+            <div class="flex items-center space-x-2 w-[250px] ">
+              <img
+                  v-if="slotProps.option.image"
+                  :src="slotProps.option.image"
+                  alt="icon"
+                  class="w-14 h-14 object-contain"
+              />
+
+              <div class="flex flex-col">
+                <span class="font-medium text-gray-900">
+                  {{ slotProps.option.label }}
+                </span>
+                <span v-if="slotProps.option.description" class="text-xs text-gray-400">
+                  {{ slotProps.option.description }}
+                </span>
+              </div>
             </div>
           </template>
-        </MultiSelect>
+
+          <template #chip="slotProps">
+            <chip-wrapper class="flex items-center rounded-full bg-surface-100 p-1 justify-around gap-2 px-4">
+              <chip-content class="flex items-center gap-2">
+                <img
+                    v-if="!slotProps.value.image?.includes('icons')"
+                    :src="slotProps.value.image"
+                    alt="icon"
+                    class="h-10 object-contain"
+                />
+                <chip-text class="flex flex-col max-w-[150px]">
+                  <span class="font-medium text-gray-900 truncate">
+                    {{ slotProps.value.label }}
+                  </span>
+                  <span class="font-medium text-gray-500 truncate text-[10px] ">
+                    {{ slotProps.value.description }}
+                  </span>
+                </chip-text>
+              </chip-content>
+              <span class="pi pi-times-circle cursor-pointer" @click="slotProps.removeCallback" />
+            </chip-wrapper>
+          </template>
+
+        </AutoComplete>
       </div>
     </div>
 

@@ -2,7 +2,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import AtomPluginAutocomplete from '@/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
 import PrimeVue from 'primevue/config'
-import MultiSelect from 'primevue/multiselect'
+import { AutoComplete } from 'primevue'
 import { nextTick, ref } from 'vue'
 
 // Mock du composable useTopicList
@@ -51,7 +51,7 @@ describe('AtomPluginAutocomplete.vue', () => {
         mocks: {
           useTopicList: () => ({ topicList })
         },
-        components: { MultiSelect }
+        components: { AutoComplete }
       },
       props: {
         topicIndex: 0,
@@ -64,22 +64,22 @@ describe('AtomPluginAutocomplete.vue', () => {
     })
   }
 
-  it('affiche le MultiSelect si index < 3 et source est false', () => {
+  it("affiche l'AutoComplete si index < 3 et source est false", () => {
     const wrapper = createWrapper()
-    expect(wrapper.findComponent(MultiSelect).exists()).toBe(true)
+    expect(wrapper.findComponent(AutoComplete).exists()).toBe(true)
   })
 
-  it('rend le multiselect source quand source est true', async () => {
+  it('rend le AutoComplete source quand source est true', async () => {
     const pluginNullMock = ref({ id: 2, name: '' })
     const wrapper = createWrapper({plugin:pluginNullMock.value, source: true })
     await flushPromises()
-    expect(wrapper.findComponent(MultiSelect).exists()).toBe(true)
+    expect(wrapper.findComponent(AutoComplete).exists()).toBe(true)
     wrapper.vm.keepDropdownOpen()
   })
 
-  it('ne rend pas le MultiSelect principal si index >= 3', () => {
+  it('ne rend pas le AutoComplete principal si index >= 3', () => {
     const wrapper = createWrapper({ index: 3 })
-    expect(wrapper.findComponent(MultiSelect).exists()).toBe(false)
+    expect(wrapper.findComponent(AutoComplete).exists()).toBe(false)
   })
 
   it('charge les options depuis pluginItemsConfig', async () => {
@@ -120,7 +120,7 @@ describe('AtomPluginAutocomplete.vue', () => {
         mocks: {
           useTopicList: () => ({ topicList })
         },
-        components: { MultiSelect }
+        components: { AutoComplete }
       },
       props: {
         topicIndex: 1,
@@ -151,7 +151,7 @@ describe('AtomPluginAutocomplete.vue', () => {
         mocks: {
           useTopicList: () => ({ topicList })
         },
-        components: { MultiSelect }
+        components: { AutoComplete }
       },
       props: {
         topicIndex: 1,
@@ -165,7 +165,7 @@ describe('AtomPluginAutocomplete.vue', () => {
 
     await flushPromises()
     await nextTick()
-    const multiselect = wrapper.findComponent(MultiSelect)
+    const multiselect = wrapper.findComponent(AutoComplete)
     expect(wrapper.emitted('update:pluginValue')).toBeFalsy()
     await multiselect.vm.$emit('update:modelValue', [])
     expect(wrapper.emitted('update:pluginValue')).toBeTruthy()
