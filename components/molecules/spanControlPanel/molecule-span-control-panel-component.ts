@@ -1,11 +1,12 @@
 import _, { every } from 'lodash'
 import AtomSpanTag from './AtomSpanTag.vue'
 import { DisplayZone } from '~/api/generate'
+import draggable from 'vuedraggable';
 
 export default defineComponent({
   name:"MoleculeSpanControlPanel",
   emits: ['handleNewGroup'],
-  components: {AtomSpanTag},
+  components: {AtomSpanTag,draggable},
     props: {
     isReadMode: {
       type: Boolean,
@@ -20,7 +21,11 @@ export default defineComponent({
     const { pluginList } = storeToRefs(usePluginStore())
     const { getPluginList, getAllPluginOptionList } = usePluginStore()
 
-
+    const blocks = ref([
+      { id: 'span', key: 'span' },
+      { id: 'currentGroup', key: 'currentGroup' },
+      { id: 'groupsList', key: 'groupsList' }
+    ]);
     const groupDeleted = ref<SpanGroup | null>(null)
     const unauthorizedSpanDropped = ref(false);
     const authorizedGroupList = ref("");
@@ -181,6 +186,20 @@ export default defineComponent({
       }
     }
 
+    onMounted(() => {
+      debugger
+      const saved = localStorage.getItem('blocks-order')
+      if (saved != "undefined" && saved != null) {
+        blocks.value = JSON.parse(saved)
+      } else {
+        blocks.value =blocks.value
+      }
+    })
+
+    watch(blocks, (newValue) => {
+     if (newValue){ localStorage.setItem('blocks-order', JSON.stringify(newValue))}
+    }, { deep: true })
+
     return {
       spanForm,
       groupArray,
@@ -228,7 +247,8 @@ export default defineComponent({
       whichCategoryTriggerRename,
       unauthorizedSpanDropped,
       authorizedGroupList,
-      groupFilledFilter
+      groupFilledFilter,
+      blocks
     }
   }
 })
