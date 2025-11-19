@@ -20,6 +20,7 @@ export default defineComponent({
   emits: ['update:pluginValue', 'last-selected'],
   setup(props, { emit }) {
     const value = ref([]);
+    const max_length = 1
     const { pluginItemsConfig, plugin, index, source, textSpan} = toRefs(props)
     const pluginValue = computed({
       get: () => props.pluginValue,
@@ -97,11 +98,7 @@ export default defineComponent({
     })
 
     function handleFilter(event) {
-      clearTimeout(debounceTimer)
-      debounceTimer = setTimeout(() => {
         filterString.value = event.query
-      }, 300)
-
     }
 
     const { data, status, execute: executeSearch } = useAsyncData(
@@ -114,12 +111,12 @@ export default defineComponent({
 
     // Sort the options array by the ascending position of the filter string in each option's label
     const sortedOptionsByFilter = computed(() => {
-      return options.value?.sort((a, b) => a.label.indexOf(filterString.value.toLowerCase()) - b.label.indexOf(filterString.value.toLowerCase()))
+      return options.value?.sort((a, b) => a.label.indexOf(filterString.value?.toLowerCase()) - b.label.indexOf(filterString.value?.toLowerCase()))
     })
 
 
     watch(() => filterString.value, async (newFilter) => {
-      if (newFilter.trim().length != 0 && plugin.value?.id) {
+      if (newFilter?.trim().length != 0 && plugin.value?.id) {
         await executeSearch()
       }
     })
@@ -132,6 +129,13 @@ export default defineComponent({
         }
       }
     }
+
+    watch(()=>pluginValue.value,(value)=>{
+      const input = document.getElementById('autocomplete-input')
+      if(!input || !value ) return
+      if (value.length >= max_length) input.style.display = 'none'
+      if (value.length < max_length) input.style.display = 'block'
+    },{deep:true})
 
     onMounted(() => {
       if(document.getElementById('autocomplete-input') && textSpan.value ){
@@ -162,6 +166,7 @@ export default defineComponent({
       onDropdownOpen,
       textSpan,
       showValue,
+      max_length,
     }
   }
 })

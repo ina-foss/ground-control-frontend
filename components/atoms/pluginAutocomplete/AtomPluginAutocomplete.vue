@@ -1,13 +1,16 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class="w-full">
-    <AutoComplete ref="autoCompleteRef" :disabled="!isAnnotationEditable" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
-                  :emptyFilterMessage="' '" optionLabel="label" multiple
-                  dropdown dropdown-mode="current"
+   <div v-if="indexPlugin<3 && !source" class="w-full">
+    <AutoComplete ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
+                  optionLabel="label" multiple
+                  :delay="300"
+                  :disabled="!isAnnotationEditable"
+                  :dropdown="pluginValue?.length < max_length" dropdown-mode="current"
                   input-id="autocomplete-input"
-                  :max-selected-labels="0"
                   scrollHeight="500px"
-                 @complete="handleFilter" :placeholder="'Taper pour rechercher'" :loading="showSkeleton"
-                 :selectedItemsLabel="pluginName"   @dropdown-click="onDropdownOpen">
+                  :placeholder="pluginValue?.length < max_length ? 'Taper pour rechercher' : ''"
+                  :loading="showSkeleton"
+                  @complete="handleFilter"
+                  @dropdown-click="onDropdownOpen">
       <template #option="slotProps">
         <div class="flex items-center space-x-2 w-[250px] ">
           <img

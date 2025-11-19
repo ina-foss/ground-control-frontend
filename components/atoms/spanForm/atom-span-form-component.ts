@@ -60,68 +60,47 @@ export default defineNuxtComponent({
     const deleteLayout = ref(false)
     let roleSelected = null
     let pluginSelected=ref('');
+
     const extIdMap = computed(()=>{
       const newVal = pluginValues
       const firstObj = Array.isArray(newVal) ? newVal[0] ?? {} : newVal ?? {};
-      return Object.entries(firstObj).reduce<Record<string, string>>((acc, [dataProperty, value]) => {
+      const result = Object.entries(firstObj).reduce<Record<string, string>>((acc, [dataProperty, value]) => {
         const val = Array.isArray(value) ? value[0] : value;
+        acc[dataProperty] = "";
         if (val && typeof val === "object" && "ext_id" in val) {
           acc[dataProperty] = val.ext_id;
         }
         return acc;
       }, {})
+      return result
     })
+
 
     const childPluginMap = computed(()=>{
-      if(_.isEqual(extIdMap.value,{})){
-        let adultPlugin = getPluginList.value.find(plugin=>plugin.available_plugins)
-        return {
-          [readPluginValues(adultPlugin)] : [getPluginList.value.find(plugin=> plugin.name == adultPlugin.available_plugins[""])]
-        }
-      }
-      else{
-        let result = {}
-          Object.entries(extIdMap.value).forEach(([dataProperty, extId]) => {
-            const usedPlugin = getPluginList.value?.find(
-                plugin =>{
-                return readPluginValues(plugin) === dataProperty
-              }
-            );
-
-            if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
-              const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
-              if (pName) {
-                const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
-                if (childrenPlugin) {
-                  if (!result[dataProperty]) {
-                    result[dataProperty] = [];
-                  }
-                  result[dataProperty].push(childrenPlugin);
-                } else {
-                  pluginSelected.value = pName;
+        const result = {}
+        Object.entries(extIdMap.value).forEach(([dataProperty, extId]) => {
+          const usedPlugin = getPluginList.value?.find(
+              plugin =>{
+              return readPluginValues(plugin) === dataProperty
+            }
+          );
+          if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
+            const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
+            if (pName) {
+              const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
+              if (childrenPlugin) {
+                if (!result[dataProperty]) {
+                  result[dataProperty] = [];
                 }
+                result[dataProperty].push(childrenPlugin);
+              } else {
+                pluginSelected.value = pName;
               }
             }
-          });
+          }
+        });
         return result
-      }
-    })
-
-
-    // watch(pluginValues, (newVal) => {
-    //   pluginSelected.value = "";
-    //
-    //   const rawVal = toRaw(newVal);
-    //   const firstObj = Array.isArray(rawVal) ? rawVal[0] ?? {} : rawVal ?? {};
-    //
-    //   const extIdMap =
-    //   if (extIdMap) {
-    //     childPluginMap.value = {};
-    //
-    //     console.log({extIdMap})
-    //
-    //   }
-    // }, { deep: true });
+      })
 
     function expandContext() {
       expandedContext.value = true
