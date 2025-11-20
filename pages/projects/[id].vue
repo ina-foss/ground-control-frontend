@@ -396,6 +396,7 @@
                 <Dropdown
                   v-model="filterModel.value"
                   :options="status_map.filter(status => slotProps.data.tasks.some(task => task.status === status.value))"
+                  :emptyMessage="'Aucune option disponible'"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Toutes"

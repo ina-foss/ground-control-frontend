@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full max-w-screen max-h-[190px] px-3 py-1 rounded-md transition-all"
+    class="w-full max-w-screen max-h-[220px] px-3 py-1 rounded-md transition-all"
     :class="{
       'cursor-pointer hover:shadow-xl hover:scale-105 bg-white': isClickable,
       'cursor-not-allowed bg-[#A6A6A640]': !isClickable
@@ -118,7 +118,7 @@
           </div>
         </div>
         <div
-          class="text-sm px-2 py-3 text-slate-500"
+          class="text-sm px-2 py-3 text-slate-500 line-clamp-2 overflow-y-auto"
           style="color: #757575; font-size: 12px"
         >
           {{
@@ -134,9 +134,10 @@
           </div>
       </div>
       </div>
-      <Divider :pt="{ root:{ style: 'margin-top : 0px; margin-bottom: 0px' } }" />
+      
+      <Divider class="bottom-0" :pt="{ root:{ style: 'margin-top : 0px; margin-bottom: 0px' } }" />
       <div
-        class="bottom-0 w-full flex justify-between pl-2 py-2 text-gray-400"
+        class=" w-full flex justify-between pl-2 py-2 text-gray-400"
         style="font-size: 12px"
       >
         <p
@@ -457,5 +458,17 @@ const visibleActions = computed(() => actions.value.filter((a) => a.condition));
   display: flex;
   align-items: center;
 }
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: #c2c2c2;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
 
 </style>
