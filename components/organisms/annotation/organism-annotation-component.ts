@@ -91,8 +91,14 @@ export default defineComponent({
         return info;
       }, null);
     });
-
-    const isAnnotationEditable = computed(()=> annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE && (isAdmin.value && !useRoute().query.email || !isAdmin.value))
+    
+    const forbiddenStatuses = [
+      AnnotationStatus.DONE,
+      AnnotationStatus.ARCHIVED,
+      AnnotationStatus.SKIPPED
+    ]
+    const isAnnotationEditable = computed(()=> !forbiddenStatuses.includes(annotationsOut.value?.[0]?.annotation_status) &&
+     (isAdmin.value && !useRoute().query.email || !isAdmin.value))
 
     const annotation_type = data.value.step.annotation_type
 

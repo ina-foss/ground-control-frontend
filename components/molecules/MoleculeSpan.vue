@@ -13,13 +13,13 @@
           },
         }">
           <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col" >
-            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="!isReadMode && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
+            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="!isReadMode && isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="isAnnotationEditable && handleWordClick({...$event,index})"  />
           </div>
           <div v-else>
             <div
               v-for="word in aggregatedLocals" :key="word.tcin"  :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)"
               :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
-              @mouseup="!isReadMode && handleSelectionV2">
+              @mouseup="!isReadMode && isAnnotationEditable && handleSelectionV2">
                 {{ word.data.text[0] }}
             </div>
           </div>
