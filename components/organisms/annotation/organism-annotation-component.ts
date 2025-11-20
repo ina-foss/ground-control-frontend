@@ -55,7 +55,6 @@ export default defineComponent({
     const{setTcOffset}= useTcOffset()
     const refresh = useRefreshStore()
     const { getParameters } = storeToRefs(refresh)
-    const allow_skip = computed(() => getParameters.value.allow_skip)
 
     const tabsRef = ref()
 
@@ -97,6 +96,7 @@ export default defineComponent({
       AnnotationStatus.ARCHIVED,
       AnnotationStatus.SKIPPED
     ]
+    const allow_skip = computed(() => getParameters.value.allow_skip && !forbiddenStatuses.includes(annotationsOut.value?.[0]?.annotation_status))
     const isAnnotationEditable = computed(()=> !forbiddenStatuses.includes(annotationsOut.value?.[0]?.annotation_status) &&
      (isAdmin.value && !useRoute().query.email || !isAdmin.value))
 
