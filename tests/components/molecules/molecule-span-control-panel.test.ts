@@ -4,7 +4,7 @@ import type { VueWrapper } from '@vue/test-utils';
 import { flushPromises } from '@vue/test-utils';
 import MoleculeSpanControlPanel  from '../../../components/molecules/spanControlPanel/MoleculeSpanControlPanel.vue'
 import AtomSpanTag from '../../../components/molecules/spanControlPanel/AtomSpanTag.vue'
-import {Select} from 'primevue'
+import draggable from "vuedraggable";
 
 let mock =vi.fn()
 
@@ -143,7 +143,8 @@ describe('MoleculeSpanControlPanel', ()=>{
       attachTo: document.body,
       global:{
         stubs:{
-          teleport: true
+          teleport: true,
+          Draggable: true
         }
       }
     })
@@ -153,7 +154,7 @@ describe('MoleculeSpanControlPanel', ()=>{
   })
 
   it('should mount',() =>{
-    expect(wrapper.text().includes('Spans')).toBeTruthy()
+    expect(wrapper.findAllComponents(draggable).length).toBe(1)
   })
 
   it('should display the list of spans and be able to filter it', async ()=>{
