@@ -208,9 +208,11 @@ const submitExistantAnnotation = (locals, action, timeSpent, options) => {
             life: 5000,
           });
         }
-        setTimeout(() => {
+        isAdmin.value ? setTimeout(() => {
           window.location.reload();
-        }, 1000);
+        }, 1000): navigateTo({
+          path: "/dashboard",
+        }) ;
       }
     })
     .then(() => {
@@ -282,9 +284,11 @@ const submitNewAnnotation = (locals, action, timeSpent, options) => {
             life: 5000,
           });
         }
-        setTimeout(() => {
+        isAdmin.value ? setTimeout(() => {
           window.location.reload();
-        }, 1000);
+        }, 1000): navigateTo({
+          path: "/dashboard",
+        }) ;
       }
     });
 };
@@ -314,9 +318,11 @@ const handleSubmit = async (event, action) => {
           life: 4000,
         });
       }
-      navigateTo({
+      isAdmin.value ? navigateTo({
         path: `/projects/${route.query.project_id}`,
-      });
+      }) : navigateTo({
+        path: "/dashboard",
+      }) 
     } catch (error) {
       console.error("Failed to skip annotation:", error);
       $handleApiError(error);
