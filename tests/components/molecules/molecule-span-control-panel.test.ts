@@ -77,6 +77,11 @@ mockNuxtImport('useSpanService', async()=>{
                 id: 2,
                 ext_id: 'b',
                 categories: [{label:"role 1"},{label:"role 2"}]
+              },{
+                label: "Citation2",
+                id: 3,
+                ext_id: 'c',
+                categories: [{label:"role 1"},{label:"role 2"}]
               }
             ]
           }
@@ -125,8 +130,10 @@ mockNuxtImport('useSpanService', async()=>{
         },
       ]),
       dropSpan: mock,
+    mainGroupPluginIndex: computed(()=>0),
       mainPluginId: computed(()=>4),
-      mainPluginIndex: computed(()=>'plugin-4'),
+      mainPluginIndex: computed(()=>0),
+    mainPluginName: computed(()=>'plugin-4'),
       newFocus: ref(),
       createSpanColorPalette: vi.fn(),
       extractTextFromSpanNodes : vi.fn().mockReturnValue('text in the span'),
@@ -271,7 +278,7 @@ describe('MoleculeSpanControlPanel', ()=>{
 
 
     expect(wrapper.vm.groupArray.length).toBe(1)
-    expect(wrapper.findAll('group-wrapper').length).toBe(1)
+    expect(wrapper.findAll('group-wrapper').length).toBe(2)
 
   })
 
@@ -282,9 +289,7 @@ describe('MoleculeSpanControlPanel', ()=>{
     expect(selectedGroupWrapper.isVisible()).toBeFalsy()
 
     await groupWrapper.trigger('click')
-    await wrapper.vm.$nextTick()
-    selectedGroupWrapper = wrapper.find('selected-group-content')
-
+    await flushPromises()
 
     expect(selectedGroupWrapper.isVisible()).toBeTruthy()
   })
@@ -347,9 +352,8 @@ describe('MoleculeSpanControlPanel', ()=>{
     //  DEFAULT VALUE CHECK
     expect(wrapper.vm.layout.value ?? wrapper.vm.layout).toBe('grid')
     expect(wrapper.find('role-wrapper').element.style.getPropertyValue('grid-template-columns')).toContain("repeat(auto-fit,minmax(150px,1fr))")
-
     //  SWITCHING LAYOUT CHECK
-    await buttons[1].trigger('click')
+    await buttons[0].trigger('click')
 
     expect(wrapper.vm.layout.value ?? wrapper.vm.layout).toBe('list')
     expect(wrapper.find('role-wrapper').element.style.getPropertyValue('grid-template-columns')).toContain("repeat(1fr)")
