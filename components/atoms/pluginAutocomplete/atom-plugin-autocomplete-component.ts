@@ -14,7 +14,7 @@ export default defineComponent({
     pluginItemsConfig: {},
     index: {},
     source: { required: false, default: () => false },
-    pluginValue: { type: Array },
+    pluginValue: { type: Array<any> },
     textSpan: { type: String }
   },
   emits: ['update:pluginValue', 'last-selected'],
@@ -23,7 +23,7 @@ export default defineComponent({
     const max_length = 1
     const { pluginItemsConfig, plugin, index, source, textSpan} = toRefs(props)
     const pluginValue = computed({
-      get: () => props.pluginValue,
+      get: () => props.pluginValue ?? [],
       set: newValue => emit('update:pluginValue', newValue)
     })
 
@@ -130,18 +130,26 @@ export default defineComponent({
       }
     }
 
-    watch(()=>pluginValue.value,(value)=>{
+    function changeInputStyle(pluginValue : Array<any>){
+      // show or hide the input in the plugin
       const input = document.getElementById('autocomplete-input')
-      if(!input || !value ) return
-      if (value.length >= max_length) input.style.display = 'none'
-      if (value.length < max_length) input.style.display = 'block'
+      if(!input || !pluginValue ) return
+      if (pluginValue.length >= max_length) input.style.display = 'none'
+      if (pluginValue.length < max_length) input.style.display = 'block'
+    }
+
+
+    watch(()=>pluginValue.value,(value: Array<any>)=>{
+      changeInputStyle(value)
     },{deep:true})
+
 
     onMounted(() => {
       if(document.getElementById('autocomplete-input') && textSpan.value ){
         // Add span text if nothing has already been selected
         if(pluginValue.value?.length == 0) document.getElementById('autocomplete-input').value = textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
       }
+      changeInputStyle(pluginValue.value)
       if (source.value) {
         if (autoCompleteRef.value) {
           setTimeout(() => {
