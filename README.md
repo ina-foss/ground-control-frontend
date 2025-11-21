@@ -1,3 +1,12 @@
+# Ground Control
+
+Ground Control is an audio/video corpus annotation application developed by [INA](http://www.ina.fr) and distributed under an MIT license.
+It is partially funded by BPI as part of the France 2030 [ArGiMi project](https://www.ina.fr/institut-national-audiovisuel/research/argimi-project).
+
+Ground Control allows users to manage corpora, annotators, and task allocation strategies for annotators. There are several types of tasks, each with a dedicated screen. One of the main objectives of this application is to annotate audio transcripts while having synchronized access to the relevant media. The first screen currently in operation allows transcripts to be segmented and categorized. Others are under development, notably for the creation and fine annotation of spans within transcripts.
+
+The application consists of a frontend, this project, and a backend API [available here](https://github.com/ina-foss/ground-control-backend). The [amalia.js video player](https://ina-foss.github.io/amalia.js/) is integrated.
+
 # Ground Control Frontend
 
 Ground Control frontend application designed for ground truth data management and secure client interaction with the Ground Control API backend.
