@@ -1,6 +1,7 @@
 <template>
   <draggable
-      v-model="blocks"
+      :modelValue="blocks"
+      @update:modelValue="blocks = $event"
       handle=".drag-handle"
       item-key="id"
       animation="200"

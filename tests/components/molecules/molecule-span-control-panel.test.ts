@@ -143,7 +143,23 @@ describe('MoleculeSpanControlPanel', ()=>{
       attachTo: document.body,
       global:{
         stubs:{
-          teleport: true
+          teleport: true,
+          draggable: {
+            template: `
+              <div>
+                <template v-for="(element, index) in unwrappedModelValue" :key="element[itemKey]">
+                  <slot name="item" :element="element" :index="index"></slot>
+                </template>
+              </div>
+            `,
+            props: ['modelValue', 'handle', 'itemKey', 'animation'],
+            computed: {
+              unwrappedModelValue() {
+                // Unwrap the ref if it's a ref, otherwise use it directly
+                return this.modelValue && this.modelValue.value !== undefined ? this.modelValue.value : this.modelValue;
+              }
+            }
+          }
         }
       }
     })

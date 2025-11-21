@@ -10,6 +10,13 @@ export default defineVitestConfig({
     ],
     globals: true,
     setupFiles: 'tests/setup.ts',
+    deps: {
+      optimizer: {
+        ssr: {
+          include: ['vuedraggable']
+        }
+      }
+    },
     onConsoleLog(log: string, type: 'stdout' | 'stderr'): false | undefined {
       if (log === 'message from third party library' && type === 'stdout') {
         return false;
