@@ -1,6 +1,6 @@
 <template>
   <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose" >
-    <div class="w-[650px] flex flex-col gap-6  " >
+    <div class=" w-[700px] flex flex-col gap-6 " >
       <context-wrapper v-if="!showContext" class="flex flex-col border-dashed border-2 rounded border-subtitle p-5 transition-all duration-300 gap-2 bg-grey-50 ">
         <context-header class="inline-flex w-full items-center justify-between pb-3">
           <span class="font-semibold  ">Contexte</span>
@@ -32,9 +32,10 @@
             <Message class="w-fit" severity="error" icon="pi pi-exclamation-triangle" >Veuillez selectionner une valeur</Message>
           </message-wrapper>
           <plugin-iterator v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
-            <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5"   >
-              <b :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config.main_plugin || groupDisplay) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </b>
-              <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected" @update:plugin-value="pluginChangeValue(plugin,$event)" />
+            <div class=""   >
+              <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected" @update:plugin-value="pluginChangeValue(plugin,$event)" >
+                <b :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config?.main_plugin || groupDisplay) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </b>
+              </component>
             </div>
             <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5" v-if="childPluginMap[readPluginValues(plugin)] != undefined " v-for="(child,childIndex) in childPluginMap[readPluginValues(plugin)]" :key="child.id">
                 <b class="pt-2 text-right ">{{  child?.display_config?.label || child?.name.charAt(0).toUpperCase() + child?.name.slice(1)  }}</b>

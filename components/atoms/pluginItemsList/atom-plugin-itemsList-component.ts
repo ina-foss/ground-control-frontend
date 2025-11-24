@@ -18,7 +18,7 @@ export default defineComponent({
 
     const {groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
 
-    const { data } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value),{immediate: false})
+    const { data } = useAsyncData(async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id,""),{immediate: false})
 
     const all_entities_plugin =  {
       id: "",
@@ -36,6 +36,10 @@ export default defineComponent({
       }
     ))
 
+    onMounted(()=>{
+      console.log({'pluginValue':pluginValue.value})
+    })
+
     const visibleOptions  = computed(() => {
       if(!isForResearch.value) return allOptions.value
       return allOptions.value.slice(0, plugin.value?.display_config?.max_items ?? 4)
@@ -45,7 +49,11 @@ export default defineComponent({
       return  _.difference(allOptions.value, visibleOptions.value)
     })
 
+    const groupButtonLayout = computed(()=>{
+      return allOptions.value.some(option=>option.group)
+    })
 
+    const groupByOptions =  computed(()=>_.groupBy(allOptions.value,"group"))
 
     const pluginValue = computed({
         get: () => Array.isArray(props.pluginValue) ? props.pluginValue[0] : props.pluginValue,
@@ -61,6 +69,8 @@ export default defineComponent({
       visibleOptions,
       dropdownOptions,
       all_entities_plugin,
+      groupButtonLayout,
+      groupByOptions
     }
   },
 })

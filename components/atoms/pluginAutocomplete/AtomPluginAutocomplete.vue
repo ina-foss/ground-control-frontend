@@ -1,5 +1,7 @@
 <template>
-   <div v-if="indexPlugin<3 && !source" class="w-full">
+  <div v-if="indexPlugin<3 && !source" class=" grid grid-cols-[100px_auto] gap-3 gap-y-5 " >
+    <slot />
+    <div class="w-full">
     <AutoComplete ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
                   optionLabel="label" multiple
                   :delay="300"
@@ -54,6 +56,7 @@
       </template>
 
     </AutoComplete>
+    </div>
   </div>
   <div v-if="source" class="  h-[300px] ">
     <div class="w-full flex justify-center" @click.self="$emit('closeModal')">

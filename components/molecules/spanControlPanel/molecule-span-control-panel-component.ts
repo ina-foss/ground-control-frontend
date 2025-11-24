@@ -187,7 +187,6 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      debugger
       const saved = localStorage.getItem('blocks-order')
       if (saved != "undefined" && saved != null) {
         blocks.value = JSON.parse(saved)
