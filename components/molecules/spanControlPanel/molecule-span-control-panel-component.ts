@@ -7,7 +7,7 @@ export default defineComponent({
   name:"MoleculeSpanControlPanel",
   emits: ['handleNewGroup'],
   components: {AtomSpanTag,draggable},
-    props: {
+  props: {
     isReadMode: {
       type: Boolean,
       default: false,
@@ -46,38 +46,38 @@ export default defineComponent({
     const groupIsSelected = computed(()=> newFocus?.value != null && !spanArray?.value[newFocus?.value]?.tcin)
 
     const groupLayoutSytle= computed(()=>
-      layout.value == 'grid' ? 'repeat(auto-fit,minmax(150px,1fr))' : 'repeat(1fr)'
+        layout.value == 'grid' ? 'repeat(auto-fit,minmax(150px,1fr))' : 'repeat(1fr)'
     )
 
     const spanOnlyArray = computed(()=>{
       return spanArray.value
-        .filter((span: Span) => (span && span.nodes))
-        .filter((span: Span) => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
-        .filter((span: Span) => !spanLinkFilter.value ||
-          (spanLinkFilter.value.value == 'linked' &&  _.some(groupArray.value.map(group=>group.spans),spanGroupArray=>{
-            return _.some(spanGroupArray,spanGroup => spanGroup.spanId == span.id)  } ) ) ||
-          (spanLinkFilter.value.value == 'unlinked' && groupArray.value.map(group=>group.spans).every(spanGroupArray =>{
-            return every(spanGroupArray ,spanGroup=> spanGroup.spanId != span.id) } ) )
-        )
-        .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
+          .filter((span: Span) => (span && span.nodes))
+          .filter((span: Span) => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
+          .filter((span: Span) => !spanLinkFilter.value ||
+              (spanLinkFilter.value.value == 'linked' &&  _.some(groupArray.value.map(group=>group.spans),spanGroupArray=>{
+                return _.some(spanGroupArray,spanGroup => spanGroup.spanId == span.id)  } ) ) ||
+              (spanLinkFilter.value.value == 'unlinked' && groupArray.value.map(group=>group.spans).every(spanGroupArray =>{
+                return every(spanGroupArray ,spanGroup=> spanGroup.spanId != span.id) } ) )
+          )
+          .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
     })
 
     const spanNone = computed(()=>
         spanArray.value.filter(span=>span && span.id == 0).pop()
-      )
+    )
 
     const groupArray = computed(()=>{
       return spanArray.value
-      .filter(span=> span && span.spans)
-      .filter(group=>{
-          return !groupFilledFilter.value ||
-          (groupFilledFilter.value.value == 'filled' && group.plugins[mainGroupPluginIndex.value][0].categories.every(role =>
-            group.spans.some(span => _.isEqual(span?.role ,role) ) ) ) ||
-          (groupFilledFilter.value.value == 'unfilled' && group.plugins[mainGroupPluginIndex.value][0].categories.some(role =>
-           group.spans.every(span => !_.isEqual(span?.role, role) ) ) )
-        })
-      .filter(span=> !groupFilter.value || _.some(span.plugins?.[mainGroupPluginIndex.value], item=> item.id == groupFilter.value.id)
-    )})
+          .filter(span=> span && span.spans)
+          .filter(group=>{
+            return !groupFilledFilter.value ||
+                (groupFilledFilter.value.value == 'filled' && group.plugins[mainGroupPluginIndex.value][0].categories.every(role =>
+                    group.spans.some(span => _.isEqual(span?.role ,role) ) ) ) ||
+                (groupFilledFilter.value.value == 'unfilled' && group.plugins[mainGroupPluginIndex.value][0].categories.some(role =>
+                    group.spans.every(span => !_.isEqual(span?.role, role) ) ) )
+          })
+          .filter(span=> !groupFilter.value || _.some(span.plugins?.[mainGroupPluginIndex.value], item=> item.id == groupFilter.value.id)
+          )})
 
     const selectedGroup = computed((oldValue)=>{
       const group =  _.find(groupArray.value,group => group?.id == newFocus.value)
@@ -88,6 +88,10 @@ export default defineComponent({
     const mainPluginName = computed(() => {
       const plugin = pluginList.value.find(plugin => plugin.id == mainPluginId.value)
       return plugin?.display_config?.label || plugin?.name
+    })
+    const mainPluginData_property = computed(() => {
+      const plugin = pluginList.value.find(plugin => plugin.id == mainPluginId.value)
+      return plugin?.data_property
     })
     const mainGroupPluginName = computed(() => {
       const plugin = pluginList.value.find(plugin => plugin.id == mainGroupPluginId.value)
@@ -157,14 +161,15 @@ export default defineComponent({
     }
 
     const dropSpan = (event : DragEvent, group, category)=>{
+
       recolorSpan(group)
       const target : HTMLDivElement = event.currentTarget
       target.querySelector('preview')?.remove()
       const spanId = event.dataTransfer.getData('span')
       if (spanId){
         const span = spanArray.value.find(span=>span?.id == parseInt(spanId))
-        if(span?.plugins?.research_entity_type?.[0].label || span?.label ==""){
-          const isAuthorized = category?.authorized_types?.includes(span?.plugins?.research_entity_type?.[0].label);
+        if(span?.plugins[mainPluginData_property.value]?.[0].label || span?.label ==""){
+          const isAuthorized = category?.authorized_types?.includes(span?.plugins[mainPluginData_property.value]?.[0].label);
 
           if(isAuthorized || span?.label =="" || category?.authorized_types == undefined){
             if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
@@ -196,7 +201,7 @@ export default defineComponent({
     })
 
     watch(blocks, (newValue) => {
-     if (newValue){ localStorage.setItem('blocks-order', JSON.stringify(newValue))}
+      if (newValue){ localStorage.setItem('blocks-order', JSON.stringify(newValue))}
     }, { deep: true })
 
     return {
