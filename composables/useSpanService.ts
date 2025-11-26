@@ -14,6 +14,7 @@ function createSpanService (){
   const { $application } = useService()
   const { hexToRgba,computeColorByLabel,computeColor} = $application
   const spanMenu = ref()
+  const spanControlPanelMenu = ref()
   const op = ref()
   const isForResearch= ref(true)
   // ----- Plugin Store ------
@@ -38,6 +39,7 @@ function createSpanService (){
     spanid : undefined,
   })
   const contextMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:()=>showDragPin()},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
+  const contextControlPanelMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
   let pluginValues = reactive<pluginValues>({})
@@ -617,7 +619,7 @@ function createSpanService (){
 
   return{
  recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList
+ affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu
   }
 }
 

@@ -116,7 +116,7 @@
                           {{extractTextFromSpanNodes(span?.nodes)}}
                         </span>
                       </span-content-wrapper>
-                      <ContextMenu ref="spanMenu" :model="contextMenuOptions"  />
+                      <ContextMenu ref="spanControlPanelMenu" :model="contextControlPanelMenuOptions"  />
                     </ScrollPanel>
                   </span-wrapper>
                 </AccordionContent>
