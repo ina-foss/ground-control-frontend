@@ -29,7 +29,7 @@
                             :options="[{label:'Aucun',value:'unlinked'},{label:'Groupe',value:'linked'}]"
                         />
                       </span-link-filter>
-                      <span-filter v-if="mainPluginId" class="flex items-center gap-2" @click.stop>
+                      <span-filter v-if="mainPluginId" class="flex items-center gap-2 pr-3" @click.stop>
                         {{ mainPluginName?.charAt(0).toUpperCase() + mainPluginName?.slice(1) }}
                         <Select
                             v-model="spanFilter"
@@ -132,9 +132,9 @@
               <AccordionPanel>
                 <AccordionHeader class="!bg-white hover:!bg-white rounded !border-t-transparent !border-l-transparent !border-r-transparent ">
                   <div class="flex items-center w-full h-7">
-                    <group-title-wrapper class="flex items-center gap-3">
+                    <group-title-wrapper class="flex items-center">
                       <div class="drag-handle pr-3">:::</div>
-                      <b class="text-xl">Groupe Courant</b>
+                      <b class="text-xl pr-3">Groupe Courant</b>
                       <AtomSpanTag
                           class="text-xl justify-content-end ml-auto"
                           v-if="groupIsSelected"
@@ -143,7 +143,7 @@
                           :text="selectedGroup?.plugins[mainGroupPluginIndex]?.[0]?.label"
                       />
                     </group-title-wrapper>
-                    <layout-button-wrapper v-if="groupIsSelected" class="flex gap-sm ml-auto">
+                    <layout-button-wrapper v-if="groupIsSelected" class="flex gap-sm ml-auto pr-3">
                       <span
                           :class="['pi pi-th-large text-2xl cursor-pointer ', layout == 'grid' ? 'opacity-100' : 'opacity-50']"
                           @click.stop="switchGroupLayout('grid')"
@@ -210,7 +210,7 @@
                   <category-header class="flex flex-row items-center w-full">
                     <div class="drag-handle pr-3">:::</div>
                     <b class="text-xl">Liste des groupes</b>
-                    <group-filter-wrapper class="flex items-center gap-xl ml-auto">
+                    <group-filter-wrapper class="flex items-center gap-xl ml-auto pr-3">
                       <group-filled-filter class="flex items-center gap-sm" @click.stop>
                         <span>Rôle</span>
                         <Select
@@ -404,5 +404,4 @@ virtual-span-preview:hover{
 .drag-handle:active {
   cursor: grabbing;
 }
-
 </style>
