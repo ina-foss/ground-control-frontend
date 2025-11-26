@@ -60,7 +60,10 @@
                           :text="spanNone?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"
                           expandable
                       />
-                      <span class="self-center font-semibold flex-1 truncate">
+                      <span class="self-center font-semibold flex-1 truncate"
+                            v-tooltip.left="{
+    value: spanNone?.label || extractTextFromSpanNodes(spanNone?.nodes) || 'Aucun'
+  , showDelay: 300}">
                         {{spanNone?.label || extractTextFromSpanNodes(spanNone?.nodes) || 'Aucun'}}
                       </span>
                       <span
@@ -97,17 +100,23 @@
                             :plugin-value="span?.plugins?.[mainPluginIndex]"
                             :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"
                             expandable
+                            @contextmenu="openSpanMenu($event, span)"
                         />
-                        <span class="self-center font-semibold flex-1 truncate">
+                        <span class="self-center font-semibold flex-1 truncate" v-tooltip.top="{
+                              value: span?.label ?? extractTextFromSpanNodes(span?.nodes)
+                        , showDelay: 300}">
                           {{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}
                         </span>
                         <span
                             v-if="span?.label"
                             class="text-subtitle text-end italic truncate grow max-w-[40%]"
-                        >
+                            v-tooltip.top="{
+                              value: extractTextFromSpanNodes(span?.nodes)
+                        , showDelay: 300}">
                           {{extractTextFromSpanNodes(span?.nodes)}}
                         </span>
                       </span-content-wrapper>
+                      <ContextMenu ref="spanMenu" :model="contextMenuOptions"  />
                     </ScrollPanel>
                   </span-wrapper>
                 </AccordionContent>
@@ -173,6 +182,9 @@
                                 <AtomSpanTag
                                     :plugin-id="mainPluginId"
                                     :plugin-value="spanArray[span.spanId]?.plugins?.[mainPluginIndex]"
+                                    v-tooltip.top="{
+                              value: spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value=>value.label).join(', ')
+                        , showDelay: 300}"
                                     :text="spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value=>value.label).join(', ')"
                                 />
                                 <span class="pi pi-trash hover:bg-disabled rounded-full p-1" @click="unlinkSpan(span,selectedGroup)" />

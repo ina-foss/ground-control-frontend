@@ -15,7 +15,7 @@ export default defineComponent({
   },
   setup(props, {emit}){
 
-    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList} = useSpanService()
+    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextMenuOptions,spanMenu,spanMenuSelected} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
     const { pluginList } = storeToRefs(usePluginStore())
@@ -39,6 +39,16 @@ export default defineComponent({
 
     const layout = ref('grid')
 
+    const spanMenu1 = ref()
+    function openSpanMenu(event: MouseEvent, span: any) {
+      debugger
+      event.preventDefault()
+      event.stopPropagation()
+
+      spanMenuSelected.value = span.id
+
+      spanMenu.value.show(event)
+    }
     const mainGroupPluginId = computed(()=>{
       return pluginList.value.find(plugin=>plugin.display_zone==DisplayZone.GROUP_MODAL)?.id
     })
@@ -252,7 +262,11 @@ export default defineComponent({
       unauthorizedSpanDropped,
       authorizedGroupList,
       groupFilledFilter,
-      blocks
+      blocks,
+      contextMenuOptions,
+      spanMenu,
+      spanMenuSelected,
+      openSpanMenu
     }
   }
 })
