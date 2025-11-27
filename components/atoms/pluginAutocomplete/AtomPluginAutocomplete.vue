@@ -1,5 +1,5 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class=" grid grid-cols-[100px_auto] gap-3 gap-y-5 " >
+  <div v-if="indexPlugin<3 && !source" class=" grid grid-cols-[100px_auto] gap-3 gap-y-5 items-center " >
     <slot />
     <div class="w-full">
     <AutoComplete ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
