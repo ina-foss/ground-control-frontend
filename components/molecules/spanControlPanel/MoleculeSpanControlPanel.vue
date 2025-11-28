@@ -103,18 +103,24 @@
                             expandable
                             @contextmenu="openSpanMenu($event, span)"
                         />
-                        <span class="self-center font-semibold flex-1 truncate" v-tooltip.top="{
-                              value: span?.label ?? extractTextFromSpanNodes(span?.nodes)
-                        , showDelay: 300}">
+                        <span class="self-center font-semibold flex-1 overflow-hidden truncate">
+                        <span class="inline-block max-w-full truncate"
+                              v-tooltip.right="{
+                              value: span?.label ?? extractTextFromSpanNodes(span?.nodes),
+                              showDelay: 300,
+                              appendTo: 'body'}">
                           {{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}
                         </span>
+                        </span>
+                        <span class="text-subtitle text-end italic truncate grow max-w-[40%] overflow-hidden">
                         <span
                             v-if="span?.label"
-                            class="text-subtitle text-end italic truncate grow max-w-[40%]"
-                            v-tooltip.top="{
+                            v-tooltip.left="{
                               value: extractTextFromSpanNodes(span?.nodes)
-                        , showDelay: 300}">
+                              , showDelay: 300,
+                               appendTo: 'body'}">
                           {{extractTextFromSpanNodes(span?.nodes)}}
+                        </span>
                         </span>
                       </span-content-wrapper>
                       <ContextMenu ref="spanControlPanelMenu" :model="contextControlPanelMenuOptions"  />
