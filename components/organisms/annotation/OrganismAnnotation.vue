@@ -68,4 +68,16 @@
   background-color: #0C7DA2 !important;
   border-color: #0C7DA2 !important;
 }
+
+.p-tooltip,.p-tooltip .p-tooltip-text {
+  padding: 6px 8px !important;
+}
+
+.p-tooltip-right .p-tooltip-arrow {
+  padding: 0px 2.5px !important;
+}
+.p-tooltip-top .p-tooltip-arrow {
+  padding: 1.5px 0px !important;
+}
+
 </style>
