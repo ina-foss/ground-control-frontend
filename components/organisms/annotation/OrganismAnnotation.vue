@@ -73,7 +73,7 @@
   padding: 6px 8px !important;
 }
 
-.p-tooltip-right .p-tooltip-arrow {
+.p-tooltip-right .p-tooltip-arrow,.p-tooltip-left .p-tooltip-arrow {
   padding: 0px 2.5px !important;
 }
 .p-tooltip-top .p-tooltip-arrow {
