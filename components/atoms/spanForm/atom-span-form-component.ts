@@ -237,7 +237,8 @@ export default defineNuxtComponent({
       readPluginValues,
       onLastSelected,
       showErrorMessage,
-      pluginChangeValue
+      pluginChangeValue,
+      extractTextFromSpanNodes
     }
   },
 })

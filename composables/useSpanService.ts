@@ -426,9 +426,33 @@ function createSpanService (){
     })
   }
 
-  function extractTextFromSpanNodes (nodesArray: Array<Node>){
-    if(!nodesArray) return null
-    return nodesArray.map(node=>document.evaluate('text()', node, null, XPathResult.STRING_TYPE).stringValue).join(' ')
+  function extractTextFromSpanNodes(
+      nodesArray: Array<Node> | null,
+      ignoreSelectors: string[] = ['tag', 'bg1']
+  ): string | null {
+    if (!nodesArray) return null;
+
+    const removeSelector = ignoreSelectors.join(',');
+
+    function extractVisibleText(node: Node): string {
+      const clone = node.cloneNode(true) as Element;
+
+      if (clone && typeof (clone as Element).querySelectorAll === 'function') {
+        (clone as Element).querySelectorAll(removeSelector).forEach(el => el.remove());
+      }
+      const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
+      let text = '';
+      let current: Node | null;
+
+      while ((current = walker.nextNode())) {
+        const t = current.nodeValue?.trim();
+        if (t) text += (text ? ' ' : '') + t;
+      }
+
+      return text.trim();
+    }
+
+    return nodesArray.map(node => extractVisibleText(node)).join(' ');
   }
 
   watch(()=>newFocus.value,(newValue, oldValue)=>{
