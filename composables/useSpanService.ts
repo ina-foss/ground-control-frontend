@@ -316,7 +316,6 @@ function createSpanService (){
       bgElement.style.backgroundColor = color
       bgElement.classList.add('border-y-2',)
       bgElement.style.borderColor = borderColor
-        element.addEventListener('click', (event) => focusSpan(spanId,event))
         element.style.lineHeight = '14px'
         element.style.userSelect = 'text'
         element.classList.add('relative')
@@ -340,7 +339,6 @@ function createSpanService (){
           tag.addEventListener('dragstart',event=> {
             event.dataTransfer.setData('span',spanId)
           })
-          tag.addEventListener('click', (event) => focusSpan(spanId,event) )
           tag.addEventListener('contextmenu', (event )=>{
             spanMenuSelected.value = spanId
             spanMenu.value.show(event)
@@ -439,51 +437,11 @@ function createSpanService (){
       if(!oldElementArray){ // on deselectionne un groupe
         recolorSpan(spanArray.value[oldValue])
       }
-      else{ // on deselectionne un span
-        oldElementArray.forEach((span: HTMLDivElement) =>{
-          if(!span) return
-          span.style.border = 'none'
-          span.querySelectorAll('border').forEach(border=>border.remove())
-          span.querySelectorAll('pinWrapper').forEach(pin=>pin.remove())
-        })
-      }
-
     }
     if(newValue != undefined){
       const elementArray = spanArray.value[newValue]?.nodes
       if(!elementArray) { // On a selectionne un groupe
           decolorSpan(spanArray.value[newValue])
-      }
-      else {
-      elementArray.forEach((span: HTMLDivElement, index: number)=>{
-        const tagBorder = document.createElement('border')
-        tagBorder.textContent = ' '
-        tagBorder.style.border = `2px black dashed`
-        tagBorder.style.borderBottom = 'none'
-        tagBorder.style.position = 'absolute'
-        tagBorder.style.left = '0px'
-        tagBorder.style.pointerEvents = 'none'
-        tagBorder.style.minWidth = '100%'
-        tagBorder.style.minHeight = '100%'
-        const spanBorder = document.createElement('border')
-        spanBorder.textContent = ' '
-        spanBorder.style.borderTop = `2px black dashed`
-        spanBorder.style.borderBottom = `2px black dashed`
-        if( elementArray.length-1 ==  index){
-          spanBorder.style.borderRight = `2px black dashed`
-        }
-        if(index == 0){
-          spanBorder.style.borderLeft = `2px black dashed`
-        }
-        spanBorder.style.position = 'absolute'
-        spanBorder.style.padding= '2px'
-        spanBorder.style.left = '0px'
-        spanBorder.style.pointerEvents = 'none'
-        spanBorder.style.minWidth = '100%'
-        spanBorder.style.minHeight = '100%'
-        span.firstChild.before(spanBorder)
-        span.querySelector(`tag[spanid="${newValue}"]`)?.firstChild.before(tagBorder)
-      })
       }
     }
   })
