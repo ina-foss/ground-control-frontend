@@ -532,7 +532,7 @@ function createSpanService (){
   }
 
   const saveSpan = (local) => {
-    local = [...local.filter(el=>el.sublocalisations),...spanArray.value.map(span=> span ? formatSpan(span) : undefined)]
+    local = [...local.filter(el=>el?.sublocalisations),...spanArray.value.map(span=> span ? formatSpan(span) : undefined)]
     return local
   }
 
