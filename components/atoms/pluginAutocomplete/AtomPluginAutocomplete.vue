@@ -1,8 +1,9 @@
 <template>
   <div v-if="indexPlugin<3 && !source" class=" grid grid-cols-[100px_auto] gap-3 gap-y-5 items-center " >
     <slot />
-    <div class="w-full">
+    <div class="w-[calc(100%-110px)] flex">
     <AutoComplete ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
+                  class="grow"
                   optionLabel="label" multiple
                   :delay="300"
                   :disabled="!isAnnotationEditable"
@@ -14,15 +15,14 @@
                   @complete="handleFilter"
                   @dropdown-click="onDropdownOpen">
       <template #option="slotProps">
-        <div class="flex items-center space-x-2 w-[250px] ">
+        <div class="flex items-start space-x-2 w-[450px] overflow-auto ">
           <img
               v-if="slotProps.option.image"
               :src="slotProps.option.image"
               alt="icon"
               class="w-14 h-14 object-contain"
-          />
-
-          <div class="flex flex-col">
+        />
+        <div class="flex flex-col pt-2">
             <span class="font-medium text-gray-900">
               {{ slotProps.option.label }}
             </span>
