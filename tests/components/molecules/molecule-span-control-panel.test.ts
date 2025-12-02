@@ -148,9 +148,13 @@ describe('MoleculeSpanControlPanel', ()=>{
   beforeEach(async ()=>{
     wrapper = await mountSuspended(MoleculeSpanControlPanel,{
       attachTo: document.body,
+      props:{
+        isAnnotationEditable : true
+      },
       global:{
         stubs:{
           teleport: true,
+          transition: false,
           draggable: {
             template: `
               <div>
@@ -177,6 +181,7 @@ describe('MoleculeSpanControlPanel', ()=>{
 
   it('should mount',() =>{
     expect(wrapper.text().includes('Spans')).toBeTruthy()
+    expect(wrapper.html()).not.toContain('delete-group-wrapper')
   })
 
   it('should display the list of spans and be able to filter it', async ()=>{
@@ -419,6 +424,9 @@ describe('MoleculeSpanControlPanel', ()=>{
 
   it('should delete the group',async()=>{
 
+    expect(wrapper.html()).not.toContain('delete-group-wrapper')
+    expect(wrapper.find('delete-group-wrapper')).toBeFalsy
+
     // Check that group with id 1 exists
     const spanArray = wrapper.vm.spanArray?.value || wrapper.vm.spanArray
     const initialGroup = spanArray.find(span => span.id === 1)
@@ -431,11 +439,20 @@ describe('MoleculeSpanControlPanel', ()=>{
     await deleteGroupButton.trigger('click')
     await wrapper.vm.$nextTick()
 
+    expect(wrapper.html()).toContain('delete-group-wrapper')
+    expect(wrapper.find('delete-group-wrapper')).toBeTruthy()
 
     // Cancel suppression
-    const cancelGroupModalButton = wrapper.findAll('delete-group-wrapper button')[0]
+    const cancelGroupModalButton = wrapper.find('delete-group-footer button')
     await cancelGroupModalButton.trigger('click')
     await wrapper.vm.$nextTick()
+
+    // await new Promise(resolve=>setTimeout(resolve,350))
+
+    expect(wrapper.vm.groupDeleted).toBe(null)
+
+    expect(wrapper.html()).not.toContain('delete-group-wrapper')
+    expect(wrapper.find('delete-group-wrapper')).toBeFalsy
 
     // Check that group still exists
     const spanArrayAfterCancel = wrapper.vm.spanArray?.value || wrapper.vm.spanArray
@@ -449,10 +466,14 @@ describe('MoleculeSpanControlPanel', ()=>{
     await deleteGroupButton.trigger('click')
     await wrapper.vm.$nextTick()
 
+    expect(wrapper.html()).toContain('delete-group-wrapper')
+
     // Confirm suppression
     const deleteGroupModalButton = wrapper.findAll('delete-group-wrapper button')[1]
     await deleteGroupModalButton.trigger('click')
     await wrapper.vm.$nextTick()
+
+    expect(wrapper.html()).not.toContain('delete-group-wrapper')
 
     // Check that group no longer exists
     const spanArrayAfterDelete = wrapper.vm.spanArray?.value || wrapper.vm.spanArray

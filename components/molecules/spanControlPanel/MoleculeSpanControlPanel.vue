@@ -277,24 +277,24 @@
                     <!-- Dialogs ici, inchangés -->
                     <!-- DELETE GROUP DIALOG -->
                     <Dialog
-                        :visible="!!groupDeleted"
+                        v-model:visible="deleteDialogVisible"
                         header="Confirmation de suppression"
                         @update:visible="(value) => { if (!value) groupDeleted = null }"
                     >
                       <delete-group-wrapper class="flex flex-col gap-6">
                         <delete-group-content class="flex items-center gap-4">
                           <delete-group-icon>
-                    <span
-                        style="filter: brightness(0) saturate(100%) invert(48%) sepia(72%) saturate(4640%) hue-rotate(337deg) brightness(98%) contrast(91%);"
-                        class="pi pi-exclamation-triangle text-6xl"/>
+                            <span
+                              style="filter: brightness(0) saturate(100%) invert(48%) sepia(72%) saturate(4640%) hue-rotate(337deg) brightness(98%) contrast(91%);"
+                              class="pi pi-exclamation-triangle text-6xl"/>
                           </delete-group-icon>
                           <delete-group-text class="flex flex-col w-[440px]">
                             <b>Etes-vous sûr de vouloir supprimer ce groupe ?</b>
-                            <span class="text-error_state">{{groupDeleted.label }}</span>
+                            <span class="text-error_state">{{groupDeleted?.label }}</span>
                           </delete-group-text>
                         </delete-group-content>
                         <delete-group-footer class="flex flex-row justify-end gap-2">
-                          <Button outlined severity="primary" icon="pi pi-times" :disabled="isReadMode" el="Annuler" @click="handleCancelRemoveGroup()" />
+                          <Button outlined severity="primary" icon="pi pi-times" :disabled="!isAnnotationEditable" label="Annuler" @click="handleCancelRemoveGroup()" />
                           <Button label="Confirmer" icon="pi pi-check" @click=" handleRemoveGroup() " />
                         </delete-group-footer>
                       </delete-group-wrapper>

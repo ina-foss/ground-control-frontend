@@ -8,7 +8,7 @@ export default defineComponent({
   emits: ['handleNewGroup'],
   components: {AtomSpanTag,draggable},
   props: {
-    isReadMode: {
+    isAnnotationEditable: {
       type: Boolean,
       default: false,
     },
@@ -34,6 +34,13 @@ export default defineComponent({
     const spanLinkFilter = ref()
     const dialogVirtualSpan = ref()
     const virtualSpanLabel = ref()
+
+
+    const deleteDialogVisible = ref(false)
+    watchEffect(()=>{
+        if(groupDeleted.value && !deleteDialogVisible.value) deleteDialogVisible.value = true
+        else if( !groupDeleted.value && deleteDialogVisible.value ) deleteDialogVisible.value = false
+    })
 
     const groupFilledFilter = ref()
 
@@ -265,6 +272,7 @@ export default defineComponent({
       spanControlPanelMenu,
       spanMenuSelected,
       openSpanMenu,
+      deleteDialogVisible
     }
   }
 })
