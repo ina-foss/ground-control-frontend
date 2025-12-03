@@ -12,7 +12,7 @@ function createSpanService (){
   const {options} = useOptions()
 
   const { $application } = useService()
-  const { hexToRgba,computeColorByLabel,computeColor} = $application
+  const { hexToRgba,computeColorByLabel,computeColor,extractTextFromSpan} = $application
   const spanMenu = ref()
   const spanControlPanelMenu = ref()
   const op = ref()
@@ -426,33 +426,9 @@ function createSpanService (){
     })
   }
 
-  function extractTextFromSpanNodes(
-      nodesArray: Array<Node> | null,
-      ignoreSelectors: string[] = ['tag', 'bg1']
-  ): string | null {
+  function extractTextFromSpanNodes(nodesArray: Array<Node> | null): string | null {
     if (!nodesArray) return null;
-
-    const removeSelector = ignoreSelectors.join(',');
-
-    function extractVisibleText(node: Node): string {
-      const clone = node.cloneNode(true) as Element;
-
-      if (clone && typeof (clone as Element).querySelectorAll === 'function') {
-        (clone as Element).querySelectorAll(removeSelector).forEach(el => el.remove());
-      }
-      const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
-      let text = '';
-      let current: Node | null;
-
-      while ((current = walker.nextNode())) {
-        const t = current.nodeValue?.trim();
-        if (t) text += (text ? ' ' : '') + t;
-      }
-
-      return text.trim();
-    }
-
-    return nodesArray.map(node => extractVisibleText(node)).join(' ');
+    return nodesArray.map(node => extractTextFromSpan(node)).join(' ');
   }
 
   watch(()=>newFocus.value,(newValue, oldValue)=>{

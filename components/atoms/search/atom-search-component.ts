@@ -10,7 +10,8 @@ export default defineComponent({
     list: {type: Array, default: () => []}// props
   },
   setup(props, {emit}) {
-
+    const { $application } = useService()
+    const { extractTextFromSpan} = $application
     const searchInterface: Ref<boolean> = ref(false)
     const selectedSearch = ref()
     const selectedSpan: Ref<Array<any>> = ref([])
@@ -34,7 +35,6 @@ export default defineComponent({
       }
     }
 
-
     const correspondingSpan = (searchIndex: number): any => {
       const tcin = selectedSpan.value[searchIndex]?.getAttribute('tcin')
       const spanRef = _.find(spans.value, (span: any) => span.tcin == tcin)
@@ -44,28 +44,6 @@ export default defineComponent({
     function invertInterface() {
       //afficher la zone de text a chercher
       searchInterface.value = !searchInterface.value
-    }
-
-    function extractSearchableText(node: Element | Node |null): string {
-      if (node !== null) {
-
-        const clone = node.cloneNode(true) as Element;
-
-        if (clone && typeof (clone as Element).querySelectorAll === 'function') {
-          (clone as Element).querySelectorAll("tag, bg1").forEach(el => el.remove());
-        }
-        // TreeWalker : récupère uniquement les textes
-        const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
-        let text = "";
-        let current: Node | null;
-
-        while ((current = walker.nextNode())) {
-          const t = current.nodeValue?.trim();
-          if (t) text += t;
-        }
-
-        return text.trim().toLowerCase();
-      }
     }
 
     watch(() => selectedSpan.value, (array) => {
@@ -134,7 +112,7 @@ export default defineComponent({
           } else {
             const words = span?.querySelectorAll('.inline-block');
             words.forEach((wordDiv) => {
-              const text = extractSearchableText(wordDiv);
+              const text = extractTextFromSpan(wordDiv).toLowerCase();
               if (text?.match(regex)) {
                 const splittedText = text.split(regex)
                 const textNode = [...wordDiv.childNodes].filter(node=>node.nodeType == 3).pop()
@@ -170,7 +148,7 @@ export default defineComponent({
           spans.value.forEach(span => {
 
             const spanDom: HTMLElement | null = document.querySelector(`[tcin="${span.tcin}"]`)
-            const text = extractSearchableText(spanDom);
+            const text = extractTextFromSpan(spanDom).toLowerCase();
             if (text.includes(selectedSearch.value.toLowerCase())) {
               selectedSpan.value.push(spanDom)
             }
@@ -185,7 +163,7 @@ export default defineComponent({
         } else {
           selectedSpan.value = [];
           selectedSpan.value = list.value.filter((el: HTMLDivElement) =>
-              extractSearchableText(el).includes(value.toLowerCase())
+              extractTextFromSpan(el).toLowerCase().includes(value.toLowerCase())
           );
           searchIndex.value = 0;
           highlightResults();
