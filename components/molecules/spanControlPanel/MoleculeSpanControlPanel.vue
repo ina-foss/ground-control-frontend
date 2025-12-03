@@ -123,7 +123,7 @@
                         </span>
                         </span>
                       </span-content-wrapper>
-                      <ContextMenu ref="spanControlPanelMenu" :model="contextControlPanelMenuOptions"  />
+                      <ContextMenu v-if="isAnnotationEditable" ref="spanControlPanelMenu" :model="contextControlPanelMenuOptions"  />
                     </ScrollPanel>
                   </span-wrapper>
                 </AccordionContent>
@@ -243,7 +243,7 @@
                       <Button
                           icon="pi pi-plus"
                           icon-pos="right"
-                          :disabled="isReadMode"
+                          :disabled="!isAnnotationEditable"
                           label="Ajouter"
                           rounded
                           outlined
@@ -294,7 +294,7 @@
                           </delete-group-text>
                         </delete-group-content>
                         <delete-group-footer class="flex flex-row justify-end gap-2">
-                          <Button outlined severity="primary" icon="pi pi-times" :disabled="!isAnnotationEditable" label="Annuler" @click="handleCancelRemoveGroup()" />
+                          <Button outlined severity="primary" icon="pi pi-times" :disabled="!isAnnotationEditable" el="Annuler" @click="handleCancelRemoveGroup()" />
                           <Button label="Confirmer" icon="pi pi-check" @click=" handleRemoveGroup() " />
                         </delete-group-footer>
                       </delete-group-wrapper>

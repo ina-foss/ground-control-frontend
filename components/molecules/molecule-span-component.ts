@@ -21,6 +21,7 @@ export default defineComponent({
   emits: ['on-segment-click'],
   props: {
     state: {type: String as PropType<AnnotationStatus>},
+    isAnnotationEditable: { type: Boolean, default: true } 
   },
   setup(props, { emit, expose }) {
 
@@ -53,28 +54,15 @@ export default defineComponent({
       return _.filter(locals.value, (local) => local?.sublocalisations).sort((a,b)=> unixToTimestamp(a?.tcin) - unixToTimestamp(b?.tcin) )
     })
 
-    interface State {
-      selection: Selection | null,
-      range: Range | null
-    }
-
-    const state: State = reactive({
-      selection: null,
-      range: null
-    })
-
-    const isReadMode = computed(() => props.state === AnnotationStatus.ARCHIVED)
-
-
-watch(() => options.value.timecode_bloc,async (timecode : boolean ) => {
-  await nextTick()
-  blockArray.value?.childNodes.forEach((blocEl)   => {
-    removeTimecodeDiv(blocEl)
-    if (timecode) {
-      addTimecodeDiv(blocEl)
-    }
-  })
-  },)
+    watch(() => options.value.timecode_bloc,async (timecode : boolean ) => {
+      await nextTick()
+      blockArray.value?.childNodes.forEach((blocEl)   => {
+        removeTimecodeDiv(blocEl)
+        if (timecode) {
+          addTimecodeDiv(blocEl)
+        }
+      })
+      },)
 
     function handleWordClick (event: {tcin: number | string, event: MouseEvent}){
       if (event.event.ctrlKey){
@@ -141,7 +129,6 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
       op,
       mainPluginId,
       pluginList,
-      isReadMode,
       handleWordClick
     }
 

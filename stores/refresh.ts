@@ -16,6 +16,7 @@ export const useRefreshStore = defineStore('refresh', {
     return {
       data: [] as Record<string,any>,
       project: [] as Record<string,any>,
+      tasks: [],
       project_number: 0 as number,
       last_index: 0 as number,
       strategy_parameters: {
@@ -61,14 +62,18 @@ export const useRefreshStore = defineStore('refresh', {
       if(skip != undefined) this.last_index = skip
       const data =  res
       this.data = data;
-
+      
       return data
     },
     async fetchTasks(projectid: number) {
       const res = await ProjectService.readProjectProjectProjectIdGet(projectid)
       const data =  res
-      this.data = data;
+      const tasks = (data.steps || [])
+        .flatMap((step: any) => step.tasks || [])
 
+      this.tasks = tasks
+      this.data = data;
+       
       return data
     },
     async fetchAnnotations(taskid: number){
@@ -88,5 +93,6 @@ export const useRefreshStore = defineStore('refresh', {
       return state.project_number
     },
     getParameters: (state) => state.strategy_parameters,
+    getTasks: (state) => state.tasks
   }
 })

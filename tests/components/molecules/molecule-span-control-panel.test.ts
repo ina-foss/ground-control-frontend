@@ -447,8 +447,6 @@ describe('MoleculeSpanControlPanel', ()=>{
     await cancelGroupModalButton.trigger('click')
     await wrapper.vm.$nextTick()
 
-    // await new Promise(resolve=>setTimeout(resolve,350))
-
     expect(wrapper.vm.groupDeleted).toBe(null)
 
     expect(wrapper.html()).not.toContain('delete-group-wrapper')
@@ -479,7 +477,6 @@ describe('MoleculeSpanControlPanel', ()=>{
     const spanArrayAfterDelete = wrapper.vm.spanArray?.value || wrapper.vm.spanArray
     const groupAfterDelete = spanArrayAfterDelete?.find(span => span && span.id === 1)
     expect(groupAfterDelete).toBeUndefined()
-
   })
 
 })
