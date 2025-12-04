@@ -77,30 +77,34 @@ export default defineNuxtComponent({
 
 
     const childPluginMap = computed(()=>{
-        const result = {}
-        Object.entries(extIdMap.value).forEach(([dataProperty, extId]) => {
-          const usedPlugin = getPluginList.value?.find(
-              plugin =>{
-              return readPluginValues(plugin) === dataProperty
-            }
-          );
-          if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
-            const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
-            if (pName) {
-              const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
-              if (childrenPlugin) {
-                if (!result[dataProperty]) {
-                  result[dataProperty] = [];
-                }
-                result[dataProperty].push(childrenPlugin);
-              } else {
-                pluginSelected.value = pName;
+      const result = {}
+      Object.entries(extIdMap.value).forEach(([dataProperty, extId]) => {
+        const usedPlugin = getPluginList.value?.find(
+          plugin =>{
+            return readPluginValues(plugin) === dataProperty
+          }
+        );
+        if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
+          const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
+          if (pName) {
+            const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
+            if (childrenPlugin) {
+              if (!result[dataProperty]) {
+                result[dataProperty] = [];
+                pluginSelected.value = "";
               }
+              result[dataProperty].push(childrenPlugin);
+            } else {
+              pluginSelected.value = pName;
             }
           }
-        });
-        return result
-      })
+          else{
+            pluginSelected.value = "";
+          }
+        }
+      });
+      return result
+    })
 
     function expandContext() {
       expandedContext.value = true
