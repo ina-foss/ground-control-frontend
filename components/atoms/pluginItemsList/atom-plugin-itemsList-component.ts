@@ -60,6 +60,15 @@ export default defineComponent({
         set : newValue => Array.isArray(newValue) ? emit('update:pluginValue',newValue) : emit('update:pluginValue',[newValue])
     })
 
+    function customizedLabel(object:any) {
+      const group = object.group.toLowerCase().replace(/s$/, "");
+      if (object.label.toLowerCase().includes(group)) {
+        const newLabel= object.label.replace(new RegExp(group, "i"), "").replace(/\s+/g, " ").trim();
+        return newLabel.charAt(0).toUpperCase() + newLabel.slice(1);
+      }
+      return object.label
+    }
+
     return {
       isEqual: _.isEqual,
       pluginValue,
@@ -70,7 +79,8 @@ export default defineComponent({
       dropdownOptions,
       all_entities_plugin,
       groupButtonLayout,
-      groupByOptions
+      groupByOptions,
+      customizedLabel
     }
   },
 })

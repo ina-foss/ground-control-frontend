@@ -9,5 +9,6 @@ export type PluginAutocompleteValueDTO = {
     image?: (string | null);
     description?: (string | null);
     categories?: (string | null);
+    group?: (string | null);
 };
 

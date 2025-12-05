@@ -46,9 +46,9 @@
               class="h-[33px] w-fit rounded-[6px] "
               :class="{ 'selected': isEqual(pluginValue, option) }"
               :outlined="!isEqual(pluginValue,option)"
-              :label="option.label"
-              :onLabel="option.label"
-              :offLabel="option.label"
+              :label="customizedLabel(option)"
+              :onLabel="customizedLabel(option)"
+              :offLabel="customizedLabel(option)"
               @click="() => pluginValue = isEqual(pluginValue, option) ? null : option"
           />
         </group-options-wrapper>

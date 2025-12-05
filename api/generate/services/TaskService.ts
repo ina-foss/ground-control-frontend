@@ -137,27 +137,32 @@ export class TaskService {
     }
     /**
      * Task Inject
-     * Use to create a media, a task and an annotation in one request
+     * Create a media, a task, and an annotation in one atomic transaction.
      *
-     * List of parameters overwritten by the request
-     * which can be equal to 0:
+     * Parameters overwritten:
      * - `task.media_id`
      * - `annotation.association.task_id`
      * - `annotation.association.annotation_id`
+     * - `activate`: optional flag to activate the task (default: False)
      * @param stepId
      * @param requestBody
+     * @param activate Whether to activate the task
      * @returns TaskWithIdDto Successful Response
      * @throws ApiError
      */
     public static taskInjectStepStepIdPost(
         stepId: number,
         requestBody: Body_task_inject_step__step_id__post,
+        activate: boolean = false,
     ): CancelablePromise<TaskWithIdDto> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/step/{step_id}',
             path: {
                 'step_id': stepId,
+            },
+            query: {
+                'activate': activate,
             },
             body: requestBody,
             mediaType: 'application/json',
