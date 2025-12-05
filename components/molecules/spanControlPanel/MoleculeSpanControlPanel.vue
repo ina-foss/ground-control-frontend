@@ -46,41 +46,41 @@
                   </panel-span-header>
                 </template>
                 <span-wrapper>
-                  <ScrollPanel
-                      :style="{ maxHeight: '333px', height: spanOnlyArray.length < 8 ? 'auto' : '340px' }"
-                      class="overflow-auto"
-                      :dt="{
-                      bar: { background: 'var(--primary-color)', size: '5px' },
-                      barY: { style: 'right: -5px;' }
-                    }"
-                  >
-                    <span-content-wrapper
-                        v-for="(span,index) in spanOnlyArray"
-                        :key="span.id"
-                        draggable="true"
-                        class="flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type"
-                        @dragstart="event=>{
-                        event.dataTransfer.setData('span', span.id)
-                        event.dataTransfer.setDragImage([...event.target.children][1],10,10)
+                    <ScrollPanel
+                        :style="{ maxHeight: '333px', height: spanOnlyArray.length < 8 ? 'auto' : '340px' }"
+                        class="overflow-auto"
+                        :dt="{
+                        bar: { background: 'var(--primary-color)', size: '5px' },
+                        barY: { style: 'right: -5px;' }
                       }"
                     >
-                      <span-number class="font-bold self-center px-2">{{index+1}}</span-number>
-                      <AtomSpanTag
-                          :plugin-id="mainPluginId"
-                          :plugin-value="span?.plugins?.[mainPluginIndex]"
-                          :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"
-                          expandable
-                          @contextmenu="openSpanMenu($event, span)"
-                      />
-                      <span class="self-center font-semibold flex-1 overflow-hidden truncate">
-                      <span class="inline-block max-w-full truncate"
-                            v-tooltip.right="{
-                            value: span?.label ?? extractTextFromSpanNodes(span?.nodes),
-                            showDelay: 300,
-                            appendTo: 'body'}">
-                        {{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}
-                      </span>
-                      </span>
+                      <span-content-wrapper
+                          v-for="(span,index) in visibleSpanOnlyArray"
+                          :key="span.id"
+                          draggable="true"
+                          class="flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type"
+                          @dragstart="event=>{
+                          event.dataTransfer.setData('span', span.id)
+                          event.dataTransfer.setDragImage([...event.target.children][1],10,10)
+                        }"
+                      >
+                        <span-number class="font-bold self-center px-2">{{index+1}}</span-number>
+                        <AtomSpanTag
+                            :plugin-id="mainPluginId"
+                            :plugin-value="span?.plugins?.[mainPluginIndex]"
+                            :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"
+                            expandable
+                            @contextmenu="openSpanMenu($event, span)"
+                        />
+                        <span class="self-center font-semibold flex-1 overflow-hidden truncate">
+                        <span class="inline-block max-w-full truncate"
+                              v-tooltip.right="{
+                              value: span?.label ?? extractTextFromSpanNodes(span?.nodes),
+                              showDelay: 300,
+                              appendTo: 'body'}">
+                          {{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}
+                        </span>
+                        </span>
                         <span class="text-subtitle text-end italic truncate grow max-w-[40%] overflow-hidden">
                         <span
                             v-if="span?.label"

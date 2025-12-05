@@ -86,9 +86,14 @@ export default defineComponent({
         layout.value == 'grid' ? 'repeat(auto-fit,minmax(150px,1fr))' : 'repeat(1fr)'
     )
 
-    const spanOnlyArray = computed(()=>{
-      return spanArray.value
+    const spanOnlyArray = computed(()=>
+      spanArray.value
           .filter((span: Span) => (span && span.nodes))
+          .sort((a : Span,b : Span)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
+    )
+
+    const visibleSpanOnlyArray = computed<Span[]>(()=>
+       spanOnlyArray.value
           .filter((span: Span) => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
           .filter((span: Span) => !spanLinkFilter.value ||
               (spanLinkFilter.value.value == 'linked' &&  _.some(groupArray.value.map(group=>group.spans),spanGroupArray=>{
@@ -96,16 +101,19 @@ export default defineComponent({
               (spanLinkFilter.value.value == 'unlinked' && groupArray.value.map(group=>group.spans).every(spanGroupArray =>{
                 return every(spanGroupArray ,spanGroup=> spanGroup.spanId != span.id) } ) )
           )
-          .sort((a,b)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
-    })
-
-    const spanNone = computed(()=>
-        spanArray.value.filter(span=>span && span.id == 0).pop()
     )
 
-    const groupArray = computed(()=>{
-      return spanArray.value
+    const spanNone = computed(()=>
+      spanArray.value.filter(span=>span && span.id == 0).pop()
+    )
+
+    const groupArray = computed<SpanGroup[]>(()=>
+      spanArray.value
           .filter(span=> span && span.spans)
+    )
+
+    const visibleGroupArray =computed(()=>
+      groupArray.value
           .filter(group=>{
             return !groupFilledFilter.value ||
                 (groupFilledFilter.value.value == 'filled' && group.plugins[mainGroupPluginIndex.value][0].categories.every(role =>
@@ -114,7 +122,8 @@ export default defineComponent({
                     group.spans.every(span => !_.isEqual(span?.role, role) ) ) )
           })
           .filter(span=> !groupFilter.value || _.some(span.plugins?.[mainGroupPluginIndex.value], item=> item.id == groupFilter.value.id)
-          )})
+          )
+    )
 
     const selectedGroup = computed((oldValue)=>{
       const group =  _.find(groupArray.value,group => group?.id == newFocus.value)
@@ -297,7 +306,9 @@ export default defineComponent({
       spanMenuSelected,
       openSpanMenu,
       deleteDialogVisible,
-      panelCollapseController
+      panelCollapseController,
+      visibleSpanOnlyArray,
+      visibleGroupArray
     }
   }
 })
