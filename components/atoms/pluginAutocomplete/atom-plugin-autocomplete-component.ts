@@ -94,6 +94,7 @@ export default defineComponent({
 
 
     watch(pluginValue, (newValues, oldValues) => {
+      if(newValues?.length == 0) document.getElementById('autocomplete-input').value = textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
       emit('last-selected', newValues?.find(v => !oldValues?.includes(v))?.label)
     })
 
@@ -143,9 +144,21 @@ export default defineComponent({
       changeInputStyle(value)
     },{deep:true})
 
+    const keydownHandler = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.code === 'Space') {
+        e.stopImmediatePropagation();
+      }
+    };
 
     onMounted(() => {
+
+      if (!document.getElementById('autocomplete-input') && autoCompleteRef.value) {
+        const el = (autoCompleteRef.value as any).$el;
+        document.getElementById('autocomplete-input').value = el?.querySelector('input') || null;
+      }
+
       if(document.getElementById('autocomplete-input') && textSpan.value ){
+        document.getElementById('autocomplete-input').addEventListener('keydown', keydownHandler, { capture: true });
         // Add span text if nothing has already been selected
         if(pluginValue.value?.length == 0) document.getElementById('autocomplete-input').value = textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
       }
@@ -156,6 +169,11 @@ export default defineComponent({
             autoCompleteRef.value.overlayVisible = true;
           }, 200)
         }
+      }
+    });
+    onBeforeUnmount(() => {
+      if (document.getElementById('autocomplete-input')) {
+        document.getElementById('autocomplete-input').removeEventListener('keydown', keydownHandler, { capture: true });
       }
     });
     return {
