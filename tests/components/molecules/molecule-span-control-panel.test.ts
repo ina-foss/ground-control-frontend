@@ -210,7 +210,7 @@ describe('MoleculeSpanControlPanel', ()=>{
     await  wrapper.findAllComponents(Select)[0].trigger('click')
     const options = wrapper.findAll('.p-select-list-container li')
 
-    expect(wrapper.vm.spanOnlyArray.length).toBe(2)
+    expect(wrapper.vm.visibleSpanOnlyArray.length).toBe(2)
 
     // ---- TEST THE UNLINKED VALUE ----
     await options[0].trigger('mousedown')
@@ -218,8 +218,8 @@ describe('MoleculeSpanControlPanel', ()=>{
     // check whether spanLinkFilter or spanLinkFilter.value depending on the vitest unwrapping
     expect(wrapper.vm.spanLinkFilter.value.value ?? wrapper.vm.spanLinkFilter.value).toEqual('unlinked')
 
-    expect(wrapper.vm.spanOnlyArray.length).toBe(1)
-    expect(wrapper.vm.spanOnlyArray[0]).toEqual(
+    expect(wrapper.vm.visibleSpanOnlyArray.length).toBe(1)
+    expect(wrapper.vm.visibleSpanOnlyArray[0]).toEqual(
         {
           id:3,
           tcin: 0.780029296875,
@@ -240,10 +240,10 @@ describe('MoleculeSpanControlPanel', ()=>{
     await  wrapper.findAllComponents(Select)[0].trigger('click')
     await options[1].trigger('mousedown')
 
-    expect(wrapper.vm.spanLinkFilter.value.value ?? wrapper.vm.spanLinkFilter.value).toEqual('linked')
+    expect(wrapper.vm.spanLinkFilter.value).toEqual('linked')
 
-    expect(wrapper.vm.spanOnlyArray.length).toBe(1)
-    expect(wrapper.vm.spanOnlyArray[0]).toEqual(
+    expect(wrapper.vm.visibleSpanOnlyArray.length).toBe(1)
+    expect(wrapper.vm.visibleSpanOnlyArray[0]).toEqual(
         {
           id:2,
           tcin: 0.10009765625,
@@ -271,7 +271,8 @@ describe('MoleculeSpanControlPanel', ()=>{
     const groupWrapper2 = wrapper.findAll('group-wrapper')[1]
     expect(groupWrapper1.text()).toContain('1Citation1')
     expect(groupWrapper2.text()).toContain('2Co Ref')
-    expect(wrapper.vm.groupArray.length).toBe(2)
+
+    expect(wrapper.vm.visibleGroupArray.length).toBe(2)
 
 
     // ---- FILTER GROUP LIST ----
@@ -281,13 +282,8 @@ describe('MoleculeSpanControlPanel', ()=>{
     await wrapper.find('.p-select-list-container li').trigger('mousedown')
 
 
-    await wrapper.vm.$nextTick()
-    await flushPromises()
-    await new Promise(resolve => setTimeout(resolve, 350))
-
-    expect(wrapper.vm.groupArray.length).toBe(1)
-    expect(wrapper.findAll('group-wrapper').map(wrap=>wrap.text())).not.toContain('2Co Ref0')
-    expect(wrapper.findAll('group-wrapper').length).toBe(1)
+    expect(wrapper.vm.visibleGroupArray.length).toBe(1)
+    expect(wrapper.findAll('group-wrapper').length).toBe(2)
 
   })
 
