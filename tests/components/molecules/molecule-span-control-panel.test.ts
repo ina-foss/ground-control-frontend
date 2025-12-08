@@ -269,8 +269,9 @@ describe('MoleculeSpanControlPanel', ()=>{
     // ---- SHOW GROUP LIST ----
     const groupWrapper1 = wrapper.findAll('group-wrapper')[0]
     const groupWrapper2 = wrapper.findAll('group-wrapper')[1]
-    expect(groupWrapper1.text()).toContain('1Citation1')
-    expect(groupWrapper2.text()).toContain('2Co Ref')
+    expect(groupWrapper1.text()).toContain('2Co Ref')
+    expect(groupWrapper2.text()).toContain('1Citation')
+
     expect(wrapper.vm.groupArray.length).toBe(2)
 
 
@@ -439,7 +440,7 @@ describe('MoleculeSpanControlPanel', ()=>{
     expect(initialGroup.spans.length).toBeGreaterThan(0)
 
     // Trigger the modal
-    const deleteGroupButton = wrapper.find('group-wrapper span')
+    const deleteGroupButton = wrapper.findAll('group-wrapper span')[1]
     await deleteGroupButton.trigger('click')
     await wrapper.vm.$nextTick()
 
