@@ -60,6 +60,22 @@ export default defineComponent({
         set : newValue => Array.isArray(newValue) ? emit('update:pluginValue',newValue) : emit('update:pluginValue',[newValue])
     })
 
+    /**
+      Generates a customized label by removing the object's group name from its label.
+
+      The function:
+      - Normalizes the group's name to lowercase and removes a trailing "s" (plural form).
+      - Checks whether the label contains the group name (case-insensitive).
+      - If it does, removes the group name from the label, cleans extra spaces,
+        and returns the result with an uppercase first letter.
+      - If not, returns the original label unchanged.
+
+      Param :
+        object: An object containing at least a `group` and a `label` property.
+      Returns :
+        A cleaned and formatted label string.
+     */
+
     function customizedLabel(object:any) {
       const group = object.group.toLowerCase().replace(/s$/, "");
       if (object.label.toLowerCase().includes(group)) {
