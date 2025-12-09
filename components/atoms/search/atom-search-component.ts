@@ -10,7 +10,8 @@ export default defineComponent({
     list: {type: Array, default: () => []}// props
   },
   setup(props, {emit}) {
-
+    const { $application } = useService()
+    const { extractTextFromSpan} = $application
     const searchInterface: Ref<boolean> = ref(false)
     const selectedSearch = ref()
     const selectedSpan: Ref<Array<any>> = ref([])
@@ -33,7 +34,6 @@ export default defineComponent({
         searchIndex.value--
       }
     }
-
 
     const correspondingSpan = (searchIndex: number): any => {
       const tcin = selectedSpan.value[searchIndex]?.getAttribute('tcin')
@@ -112,7 +112,7 @@ export default defineComponent({
           } else {
             const words = span?.querySelectorAll('.inline-block');
             words.forEach((wordDiv) => {
-              const text = wordDiv.textContent;
+              const text = extractTextFromSpan(wordDiv).toLowerCase();
               if (text?.match(regex)) {
                 const splittedText = text.split(regex)
                 const textNode = [...wordDiv.childNodes].filter(node=>node.nodeType == 3).pop()
@@ -148,7 +148,8 @@ export default defineComponent({
           spans.value.forEach(span => {
 
             const spanDom: HTMLElement | null = document.querySelector(`[tcin="${span.tcin}"]`)
-            if (spanDom?.innerText.includes(selectedSearch.value)) {
+            const text = extractTextFromSpan(spanDom).toLowerCase();
+            if (text.includes(selectedSearch.value.toLowerCase())) {
               selectedSpan.value.push(spanDom)
             }
           });
@@ -162,7 +163,7 @@ export default defineComponent({
         } else {
           selectedSpan.value = [];
           selectedSpan.value = list.value.filter((el: HTMLDivElement) =>
-            el.innerText.toLowerCase().includes(value.toLowerCase())
+              extractTextFromSpan(el).toLowerCase().includes(value.toLowerCase())
           );
           searchIndex.value = 0;
           highlightResults();

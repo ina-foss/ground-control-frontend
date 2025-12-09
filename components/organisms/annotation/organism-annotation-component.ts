@@ -4,7 +4,7 @@ import MoleculeSpan from "~/components/molecules/MoleculeSpan.vue";
 import MoleculeSegmentation from "~/components/molecules/MoleculeSegmentation.vue";
 import MoleculeTranscription from "~/components/molecules/MoleculeTranscription.vue";
 import _,{sortBy} from 'lodash';
-import {AnnotationStatus, Permission} from '~/api/generate';
+import {AnnotationStatus, Permission, TaskStatus} from '~/api/generate';
 import { useService } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
@@ -37,10 +37,6 @@ export default defineComponent({
       type: Boolean,
 
     },
-    isReadMode: {
-      type: Boolean,
-      default: false,
-    }
   },
   emits: [ 'submit-annotation', 'finish-annotation', 'skip-annotation' ],
   setup(props, {emit}) {
@@ -79,12 +75,13 @@ export default defineComponent({
     const { options } = storeToRefs(optionStore)
     const annotationStatus = AnnotationStatus.DONE
     const config = ref(null)
+    const route = useRoute();
     const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
     let bestIndex = 0
     const annotationInfo = computed< {index: number, id: number} | null>(() => {
       if (!allFetched) return null;
       return annotationsOut.value.reduce<{index: number, id: number} | null>((info, annotation, index) => {
-        if (annotation.user_email == userEmail.value || annotation.user_email == useRoute().query.email) {
+        if (annotation.user_email == userEmail.value || annotation.user_email == route.query.email) {
           return { index, id: annotation.id };
         }
         return info;
@@ -92,13 +89,13 @@ export default defineComponent({
     });
 
     const forbiddenStatuses = [
-      AnnotationStatus.DONE,
-      AnnotationStatus.ARCHIVED,
-      AnnotationStatus.SKIPPED
+      TaskStatus.ARCHIVED,
+      TaskStatus.SKIPPED
     ]
-    const allow_skip = computed(() => getParameters.value.allow_skip && !forbiddenStatuses.includes(annotationsOut.value?.[0]?.annotation_status))
-    const isAnnotationEditable = computed(()=> !forbiddenStatuses.includes(annotationsOut.value?.[0]?.annotation_status) &&
-     (isAdmin.value && !useRoute().query.email || !isAdmin.value))
+
+    const allow_skip = computed(() => getParameters.value.allow_skip && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE)
+    const isAnnotationEditable = computed(()=> route.query.mode !='read' && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE &&
+     (isAdmin.value && !route.query.email || !isAdmin.value))
 
     const annotation_type = data.value.step.annotation_type
 
@@ -288,7 +285,7 @@ export default defineComponent({
 
       case 'span':
           return { component :MoleculeSpan,
-            props: {},
+            props: { isAnnotationEditable: isAnnotationEditable},
             events:{ 'on-segment-click': handleSegmentClick }
     }
 

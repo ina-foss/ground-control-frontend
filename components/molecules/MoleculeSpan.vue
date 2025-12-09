@@ -13,18 +13,18 @@
           },
         }">
           <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col" >
-            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="!isReadMode && isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="isAnnotationEditable && handleWordClick({...$event,index})"  />
+            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
           </div>
           <div v-else>
             <div
               v-for="word in aggregatedLocals" :key="word.tcin"  :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)"
               :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  ${find(['.', ','], (char) => char == word.data.text[0]) ? 'pl-0' : 'pl-1'} hover:bg-surface-200`"
-              @mouseup="!isReadMode && isAnnotationEditable && handleSelectionV2">
+              @mouseup="isAnnotationEditable && handleSelectionV2">
                 {{ word.data.text[0] }}
             </div>
           </div>
-          <AtomSpanForm ref="spanForm"/>
-          <ContextMenu ref="spanMenu" :model="contextMenuOptions"  />
+          <AtomSpanForm ref="spanForm" @new-group="focusGroup($event) & moleculeSpanControlPanelRef.showPanel(['currentGroup','groupList']) "/>
+          <ContextMenu v-if="isAnnotationEditable" ref="spanMenu" :model="contextMenuOptions"  />
         </ScrollPanel>
       </div>
     </div>
@@ -46,8 +46,9 @@
                 <TabPanels class="!bg-secondary  w-full !pl-0 !pb-2 flex-1">
                   <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3">
                     <MoleculeSpanControlPanel
-                    :is-read-mode="isReadMode"
-                    @handle-new-group="!isReadMode && spanForm?.open({group:true})"/>
+                    :is-annotation-editable="isAnnotationEditable"
+                    ref="moleculeSpanControlPanelRef"
+                    @handle-new-group="isAnnotationEditable && spanForm?.open({group:true})"/>
                   </TabPanel>
           <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
                       <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">

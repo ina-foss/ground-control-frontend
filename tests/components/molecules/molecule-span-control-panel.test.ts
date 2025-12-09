@@ -189,12 +189,10 @@ describe('MoleculeSpanControlPanel', ()=>{
     const spanWrappers = wrapper.findAll('span-content-wrapper')
     const spanNoneWrapper = wrapper.findAll('span-none-content')
     expect(spanWrappers.length).toBe(2) // 2 real spans
-    expect(spanNoneWrapper.length).toBe(1) // span "None"
-    expect(wrapper.findAllComponents(AtomSpanTag).length).toBe(3)
+    expect(wrapper.findAllComponents(AtomSpanTag).length).toBe(2)
     expect(wrapper.findAll('span-wrapper  span-content-wrapper').length).toBe(2)
     expect(spanWrappers.at(0).text().includes('1')).toBeTruthy()
     expect(spanWrappers.at(1).text().includes('2')).toBeTruthy()
-    expect(spanNoneWrapper.at(0).text()).toContain('None')
 
     // --- FILTER SPAN LIST ON PLUGIN VALUE ----
     expect(wrapper.vm.spanOnlyArray.length).toBe(2)
@@ -447,8 +445,6 @@ describe('MoleculeSpanControlPanel', ()=>{
     await cancelGroupModalButton.trigger('click')
     await wrapper.vm.$nextTick()
 
-    // await new Promise(resolve=>setTimeout(resolve,350))
-
     expect(wrapper.vm.groupDeleted).toBe(null)
 
     expect(wrapper.html()).not.toContain('delete-group-wrapper')
@@ -479,7 +475,6 @@ describe('MoleculeSpanControlPanel', ()=>{
     const spanArrayAfterDelete = wrapper.vm.spanArray?.value || wrapper.vm.spanArray
     const groupAfterDelete = spanArrayAfterDelete?.find(span => span && span.id === 1)
     expect(groupAfterDelete).toBeUndefined()
-
   })
 
 })

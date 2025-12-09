@@ -3,17 +3,14 @@
     v-if="isAnnotationEditable"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
     <Button  v-if="allow_skip" class="mr-4 text-xs" label="Abondonner et quitter"
-      :disabled="isReadMode"
       variant="text"
       icon="pi pi-ban"
       @click="handleSkip({})"
       />
     <Button  class="mr-4" outlined label="Enregistrer"
-    :disabled="isReadMode||!isAnnotationEditable"
     @click="handleSubmit({})"/>
     <Button class="button-overwrite"
             label="Terminer"
-      :disabled="isReadMode||!isAnnotationEditable"
       @click="handleFinish()"
     />
   </div>
@@ -55,6 +52,7 @@
     <AtomSearch class=" right-10 absolute flex items-center top-[72px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
     <div class="xs:grid xs:grid-cols-10 flex flex-col h-full gap-5">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :panel-size="panelSize" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))" @scroll-to-segment="handleVideoTimelineClick">
+      
       </MoleculeAnnotationLeftPanel>
       <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  :state="annotationsOut[annotationInfo?.index]?.annotation_status" v-on="annotationComponent.events" />
     </div>

@@ -6,8 +6,9 @@ import {DisplayZone} from '~/api/generate'
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
+  emits:['new-group'],
   components: {AtomPluginItemslist},
-  setup(props,{expose}) {
+  setup(props,{emit,expose}) {
     let currentSpanId = undefined
     const textSpan=ref()
     const visible = ref()
@@ -77,30 +78,34 @@ export default defineNuxtComponent({
 
 
     const childPluginMap = computed(()=>{
-        const result = {}
-        Object.entries(extIdMap.value).forEach(([dataProperty, extId]) => {
-          const usedPlugin = getPluginList.value?.find(
-              plugin =>{
-              return readPluginValues(plugin) === dataProperty
-            }
-          );
-          if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
-            const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
-            if (pName) {
-              const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
-              if (childrenPlugin) {
-                if (!result[dataProperty]) {
-                  result[dataProperty] = [];
-                }
-                result[dataProperty].push(childrenPlugin);
-              } else {
-                pluginSelected.value = pName;
+      const result = {}
+      Object.entries(extIdMap.value).forEach(([dataProperty, extId]) => {
+        const usedPlugin = getPluginList.value?.find(
+          plugin =>{
+            return readPluginValues(plugin) === dataProperty
+          }
+        );
+        if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
+          const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
+          if (pName) {
+            const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
+            if (childrenPlugin) {
+              if (!result[dataProperty]) {
+                result[dataProperty] = [];
+                pluginSelected.value = "";
               }
+              result[dataProperty].push(childrenPlugin);
+            } else {
+              pluginSelected.value = pName;
             }
           }
-        });
-        return result
-      })
+          else{
+            pluginSelected.value = "";
+          }
+        }
+      });
+      return result
+    })
 
     function expandContext() {
       expandedContext.value = true
@@ -120,6 +125,7 @@ export default defineNuxtComponent({
       }
       spanArray.value[spanId]=spanGroup
       defaultLabel.value = null
+      emit('new-group',{groupId: spanId})
     }
 
     function createSpan () {
@@ -237,7 +243,8 @@ export default defineNuxtComponent({
       readPluginValues,
       onLastSelected,
       showErrorMessage,
-      pluginChangeValue
+      pluginChangeValue,
+      extractTextFromSpanNodes
     }
   },
 })

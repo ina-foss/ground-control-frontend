@@ -192,4 +192,25 @@ export default class ApplicationService {
     return date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'long', year: 'numeric'});
   }
 
+  public extractTextFromSpan(node: Element | Node |null): string {
+    if (node !== null) {
+
+      const clone = node.cloneNode(true) as Element;
+
+      if (clone && typeof (clone as Element).querySelectorAll === 'function') {
+        (clone as Element).querySelectorAll("tag, bg1").forEach(el => el.remove());
+      }
+      // TreeWalker : récupère uniquement les textes
+      const walker = document.createTreeWalker(clone, NodeFilter.SHOW_TEXT);
+      let text = "";
+      let current: Node | null;
+
+      while ((current = walker.nextNode())) {
+        const t = current.nodeValue?.trim();
+        if (t) text += t;
+      }
+
+      return text.trim();
+    }
+  }
 }
