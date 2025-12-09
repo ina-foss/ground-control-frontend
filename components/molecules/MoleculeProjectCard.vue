@@ -109,12 +109,16 @@
                 >{{ project.steps.length }} </span
               ><i class="pi pi-list-check"
             /></span>
-            <Tag class="mb-1 scale-90"
+            <Tag
+              class="mb-1 scale-90"
               :class="`tag-${project.status}`"
               :style="{
-                color: status_map[project.status]?.colorText || '#000',
-                backgroundColor: status_map[project.status]?.colorBg || '#ccc'
-              }">{{status_map[project.status]?.label || project.status}}</Tag>
+                color: (status_map.find(s => s.value === project.status)?.colorText) || '#000',
+                backgroundColor: (status_map.find(s => s.value === project.status)?.colorBg) || '#ccc'
+              }"
+            >
+              {{ status_map.find(s => s.value === project.status)?.label || project.status }}
+            </Tag>
           </div>
         </div>
         <div
@@ -262,6 +266,7 @@ import MoleculeFormProject from "./MoleculeFormProject.vue";
 import { useService } from "#imports";
 import { ProjectService } from "../api/generate";
 import { Permission, ProjectStatus } from "~/api/generate";
+import { status_map } from "~/helpers/statusMap";
 
 const menu = ref();
 const visible = ref(false);
@@ -318,20 +323,10 @@ const handleCardClick = () => {
         project_id: project.id
       }
     })
-    setMode('edit')
   }
 }
 
 const { $handleApiError } = useNuxtApp();
-
-const status_map = {
-  draft:       { label: "Brouillon", colorText: "#FFF", colorBg:"#757575" },
-  pending:     { label: "En attente", colorText: "#000", colorBg:"#FFE4B1"  },
-  "in-progress": { label: "En cours", colorText: "#000", colorBg:"#F9D621"  },
-  done:        { label: "Terminé", colorText: "#000", colorBg:"#9ADC82"  },
-  skipped:     { label: "Abondonné", colorText: "#FFF", colorBg:"#EF4444"  },
-  archived:    { label: "Archivé", colorText: "#000", colorBg:"#B3DDF4"  },
-};
 
 const formatTitle = (title) => {
   if (title) {

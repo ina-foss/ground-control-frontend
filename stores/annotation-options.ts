@@ -62,15 +62,7 @@ export const useOptions = defineStore("annotation-options",() => {
       unlabelled_span: true,
     })
 
-    const mode = ref<AnnotationMode>('read')
-
-    function setMode(newMode: AnnotationMode) {
-      mode.value = newMode
-    }
-
     return {
       options,
-      mode,
-      setMode,
   }
 })

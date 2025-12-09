@@ -392,10 +392,10 @@
                   }}
                 </Tag>
               </template>
-              <template #filter="{ filterModel, filterCallback }">
+              <template #filter="{ filterModel, filterCallback, data }">
                 <Dropdown
                   v-model="filterModel.value"
-                  :options="status_map.filter(status => slotProps.data.tasks.some(task => task.status === status.value))"
+                  :options="statusOptions"
                   :emptyMessage="'Aucune option disponible'"
                   optionLabel="label"
                   optionValue="value"
@@ -680,6 +680,7 @@ import {
 import MoleculeFormTask from "~/components/molecules/MoleculeFormTask.vue";
 import { FilterMatchMode, FilterService } from "@primevue/core/api";
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
+import { status_map, type StatusOption } from "~/helpers/statusMap";
 
 FilterService.register('expirationFilter', (value, filter) => {
   if (!filter) return true;
@@ -698,10 +699,10 @@ FilterService.register('expirationFilter', (value, filter) => {
 
 const route = useRoute();
 const refreshStore = useRefreshStore();
-const { setMode } = useOptions();
 const toast = useToast();
 const { $application } = useService();
 const { fetchTasks } = refreshStore;
+const { getTasks } = storeToRefs(refreshStore) 
 const dialogVisible = ref(false)
 const deleteModal = reactive({visible: false, data: {},loading:false})
 const clickedRowData = ref(null)
@@ -712,7 +713,7 @@ const selectedRow = ref()
 const selectedStatus = ref(null);
 const showStrategy = ref(false)
 const { $handleApiError } = useNuxtApp()
-
+const statusOptions = ref<StatusOption[]>([])
 const toggleStrategy = () => {
   showStrategy.value = !showStrategy.value;
 };
@@ -759,6 +760,15 @@ watch(projectParameters, (newVal) => {
   }
 });
 
+watch(getTasks, (newTasks) => {
+  if (!newTasks) return
+  const taskStatuses = newTasks.map(t => t.status)
+  const uniqueStatuses = status_map.filter(status =>
+    taskStatuses.some(taskStatus => taskStatus == status.value)
+  )
+  statusOptions.value = uniqueStatuses
+}, { immediate: true })
+
 const buttonItems = [
   {
     label: "Un seul fichier",
@@ -780,35 +790,6 @@ const buttonItems = [
       exportOut(selectedRow.value, "all");
     },
     tooltip: "Exporter chaque annotations dans un fichier dédié",
-  },
-];
-
-const status_map = [
-  { value: "draft", label: "Brouillon", colorText: "#FFF", colorBg: "#757575" },
-  {
-    value: "pending",
-    label: "En attente",
-    colorText: "#000",
-    colorBg: "#FFE4B1",
-  },
-  {
-    value: "in-progress",
-    label: "En cours",
-    colorText: "#000",
-    colorBg: "#F9D621",
-  },
-  { value: "done", label: "Terminé", colorText: "#000", colorBg: "#9ADC82" },
-  {
-    value: "skipped",
-    label: "Abondonné",
-    colorText: "#FFF",
-    colorBg: "#EF4444",
-  },
-  {
-    value: "archived",
-    label: "Archivé",
-    colorText: "#000",
-    colorBg: "#B3DDF4",
   },
 ];
 
@@ -919,15 +900,18 @@ function triggerDownload(data, name) {
   window.URL.revokeObjectURL(url);
 }
 
-const navigateToTask = (id: number, email?: string) => {
+const navigateToTask = (id: number, email?: string, mode: 'edit' | 'read' = 'edit') => {
+
   navigateTo({
     path: `/tasks/${id}`,
     query: {
       email: email,
       project_id: route.params.id,
+      mode:mode
     },
   });
 };
+
 
 const stepCreate = (stepId) => {
   formStepClick.value = _.find(data.value.steps, ["id", stepId], 0);
@@ -937,16 +921,15 @@ const stepCreate = (stepId) => {
 
 let email_clicked: string | undefined;
 const handleRowClick = (event) => {
-  setMode(
-    [TaskStatus.ARCHIVED, TaskStatus.SKIPPED].includes(event.data?.status)
-      ? "read"
-      : "edit",
-  );
   if (event.data.status === "draft") return;
   if (typeof event == "string" && isAdmin.value) email_clicked = event;
   clickedRowData.value = event.data;
   if (editMode.value === false)
-    navigateToTask(clickedRowData.value.id, email_clicked);
+    navigateToTask(clickedRowData.value.id, email_clicked, 
+    (clickedRowData.value.status === TaskStatus.DONE || 
+    clickedRowData.value.status === TaskStatus.SKIPPED || 
+    clickedRowData.value.status === TaskStatus.ARCHIVED) 
+    ? 'read' : 'edit');
 };
 
 const onCellEditComplete = () => {
@@ -968,14 +951,9 @@ const onExpirationDateChange = async (value: Date, row: any) => {
 }
 
 const consultTask = (annotation_id: number) => {
-  setMode("read");
-  navigateToTask(annotation_id, email_clicked);
+  navigateToTask(annotation_id, email_clicked, 'read');
 };
 
-const annotateTask = (task_id: number) => {
-  setMode("edit");
-  navigateToTask(task_id);
-};
 </script>
 <style scoped>
 .table-border-left {
