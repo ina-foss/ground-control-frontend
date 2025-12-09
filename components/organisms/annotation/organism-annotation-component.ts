@@ -330,7 +330,6 @@ export default defineComponent({
           videoSrc.value = annotationsIn.value[0]?.result.asset.url
           const tcOffset = data.value.media?.player_parameters?.tc_offset ?? 0;
           setTcOffset(tcOffset);
-          spanService.setDisableGroup(data.value.media?.player_parameters?.disable_group);
         }
     })
 

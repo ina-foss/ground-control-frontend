@@ -16,7 +16,6 @@ function createSpanService (){
   const spanMenu = ref()
   const spanControlPanelMenu = ref()
   const op = ref()
-  const isForResearch= ref(true)
   // ----- Plugin Store ------
   const pluginStore = usePluginStore()
   const { pluginList } = storeToRefs(pluginStore)
@@ -92,10 +91,9 @@ function createSpanService (){
     }
   }
 
-
-   const setDisableGroup = (disable_group:boolean|false) => {
-       isForResearch.value=!disable_group
-   }
+  const isForResearch = computed(()=>{
+    return !!(pluginList?.value?.find(plugin => plugin.display_zone === "group_modal")?.id)
+  })
 
    function countByPlugin(data:any){
      const groupedByPlugin = {}
@@ -575,7 +573,7 @@ function createSpanService (){
 
   return{
  recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu
+ affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu
   }
 }
 
