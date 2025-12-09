@@ -36,10 +36,6 @@ export default defineComponent({
       }
     ))
 
-    onMounted(()=>{
-      console.log({'pluginValue':pluginValue.value})
-    })
-
     const visibleOptions  = computed(() => {
       if(!isForResearch.value) return allOptions.value
       return allOptions.value.slice(0, plugin.value?.display_config?.max_items ?? 4)

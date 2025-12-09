@@ -23,7 +23,7 @@
                 {{ word.data.text[0] }}
             </div>
           </div>
-          <AtomSpanForm ref="spanForm"/>
+          <AtomSpanForm ref="spanForm" @new-group="focusGroup($event) & moleculeSpanControlPanelRef.showPanel(['currentGroup','groupList']) "/>
           <ContextMenu v-if="isAnnotationEditable" ref="spanMenu" :model="contextMenuOptions"  />
         </ScrollPanel>
       </div>
@@ -47,6 +47,7 @@
                   <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3">
                     <MoleculeSpanControlPanel
                     :is-annotation-editable="isAnnotationEditable"
+                    ref="moleculeSpanControlPanelRef"
                     @handle-new-group="isAnnotationEditable && spanForm?.open({group:true})"/>
                   </TabPanel>
           <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >

@@ -6,8 +6,9 @@ import {DisplayZone} from '~/api/generate'
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
+  emits:['new-group'],
   components: {AtomPluginItemslist},
-  setup(props,{expose}) {
+  setup(props,{emit,expose}) {
     let currentSpanId = undefined
     const textSpan=ref()
     const visible = ref()
@@ -124,6 +125,7 @@ export default defineNuxtComponent({
       }
       spanArray.value[spanId]=spanGroup
       defaultLabel.value = null
+      emit('new-group',{groupId: spanId})
     }
 
     function createSpan () {
