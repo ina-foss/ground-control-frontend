@@ -21,7 +21,7 @@ export default defineComponent({
   emits: ['on-segment-click'],
   props: {
     state: {type: String as PropType<AnnotationStatus>},
-    isAnnotationEditable: { type: Boolean, default: true } 
+    isAnnotationEditable: { type: Boolean, default: true }
   },
   setup(props, { emit, expose }) {
 
@@ -30,8 +30,14 @@ export default defineComponent({
     const { options } = storeToRefs(useOptions())
 
 
-    const {spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions, mainPluginId} = useSpanService()
+    const {newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions, mainPluginId} = useSpanService()
     const {pluginList } = storeToRefs(usePluginStore())
+
+    const moleculeSpanControlPanelRef = ref()
+
+    function focusGroup({groupId}: {groupId: number}) {
+      newFocus.value = groupId
+    }
 
 
     const blockArray = ref<HTMLDivElement|null>(null)
@@ -129,6 +135,8 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
       op,
       mainPluginId,
       pluginList,
+      moleculeSpanControlPanelRef,
+      focusGroup,
       handleWordClick
     }
 

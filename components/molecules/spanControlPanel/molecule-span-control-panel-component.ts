@@ -13,9 +13,9 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props, {emit}){
+  setup(props,{emit,expose}){
 
-    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch ,contextMenuOptions, createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanMenu,spanControlPanelMenu,spanMenuSelected} = useSpanService()
+    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
     const { pluginList } = storeToRefs(usePluginStore())
@@ -35,6 +35,28 @@ export default defineComponent({
     const dialogVirtualSpan = ref()
     const virtualSpanLabel = ref()
 
+    const panelCollapseController = reactive({
+      spanList: true,
+      currentGroup: true,
+      groupList: true,
+    })
+
+    function showPanel(panel : Array<string> | string | undefined){
+      if(!panel){
+        throw new Error('panel is not defined')
+      }
+      if(Array.isArray(panel)){
+        panel.forEach(pan=>{
+          if(Object.keys(panelCollapseController).includes(pan)){
+            panelCollapseController[pan] = false
+          }
+          else throw new Error('incorrect panel name')
+        })
+      }
+      else(
+       panelCollapseController[panel] = false
+      )
+    }
 
     const deleteDialogVisible = ref(false)
     watchEffect(()=>{
@@ -219,6 +241,8 @@ export default defineComponent({
       if (newValue){ localStorage.setItem('blocks-order', JSON.stringify(newValue))}
     }, { deep: true })
 
+    expose({showPanel})
+
     return {
       spanForm,
       groupArray,
@@ -272,7 +296,8 @@ export default defineComponent({
       spanControlPanelMenu,
       spanMenuSelected,
       openSpanMenu,
-      deleteDialogVisible
+      deleteDialogVisible,
+      panelCollapseController
     }
   }
 })
