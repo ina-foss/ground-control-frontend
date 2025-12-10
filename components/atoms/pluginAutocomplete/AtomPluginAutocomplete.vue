@@ -4,12 +4,12 @@
     <div class="w-[calc(100%-110px)] flex">
     <AutoComplete ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
                   class="grow"
-                  optionLabel="label" multiple
+                  option-label="label" multiple
                   :delay="300"
                   :disabled="!isAnnotationEditable"
                   :dropdown="pluginValue?.length < max_length" dropdown-mode="current"
                   input-id="autocomplete-input"
-                  scrollHeight="500px"
+                  :scroll-height="maximumScrollHeight + 'px'"
                   :placeholder="pluginValue?.length < max_length ? 'Taper pour rechercher' : ''"
                   :loading="showSkeleton"
                   @complete="handleFilter"
@@ -42,7 +42,7 @@
                 alt="icon"
                 class="h-10 object-contain"
             />
-            <chip-text class="flex flex-col max-w-[150px]">
+            <chip-text class="flex flex-col ">
               <span class="font-medium text-gray-900 truncate">
                 {{ slotProps.value.label }}
               </span>
@@ -68,12 +68,12 @@
             dropdown
             dropdown-mode="current"
             :suggestions="options"
-            optionLabel="label"
+            option-label="label"
             :placeholder="pluginName"
-            :maxSelectedLabels="0"
-            :selectedItemsLabel="pluginName"
+            :max-selected-labels="0"
+            :selected-items-label="pluginName"
             class="w-[280px] always-open"
-            :panelClass="' w-[280px] min-w-[280px] '"
+            :panel-class="' w-[280px] min-w-[280px] '"
             @complete="handleFilter"
         >
           <template #option="slotProps">

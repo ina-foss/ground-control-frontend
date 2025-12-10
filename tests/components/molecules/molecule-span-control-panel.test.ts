@@ -271,17 +271,23 @@ describe('MoleculeSpanControlPanel', ()=>{
     const groupWrapper2 = wrapper.findAll('group-wrapper')[1]
     expect(groupWrapper1.text()).toContain('1Citation1')
     expect(groupWrapper2.text()).toContain('2Co Ref')
-
     expect(wrapper.vm.groupArray.length).toBe(2)
 
 
     // ---- FILTER GROUP LIST ----
     await wrapper.findAllComponents(Select)[3].trigger('click')
+    expect(wrapper.vm.groupArray.length).toBe(2)
+    expect(wrapper.find('.p-select-list-container li').text()).toBe('Citation')
     await wrapper.find('.p-select-list-container li').trigger('mousedown')
 
 
+    await wrapper.vm.$nextTick()
+    await flushPromises()
+    await new Promise(resolve => setTimeout(resolve, 350))
+
     expect(wrapper.vm.groupArray.length).toBe(1)
-    expect(wrapper.findAll('group-wrapper').length).toBe(2)
+    expect(wrapper.findAll('group-wrapper').map(wrap=>wrap.text())).not.toContain('2Co Ref0')
+    expect(wrapper.findAll('group-wrapper').length).toBe(1)
 
   })
 

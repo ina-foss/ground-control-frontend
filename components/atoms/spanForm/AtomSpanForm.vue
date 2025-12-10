@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose" >
+  <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose"  >
     <div class=" w-[700px] flex flex-col gap-6 " >
       <context-wrapper v-if="!showContext" class="flex flex-col border-dashed border-2 rounded border-subtitle p-5 transition-all duration-300 gap-2 bg-grey-50 ">
         <context-header class="inline-flex w-full items-center justify-between pb-3">
@@ -59,7 +59,7 @@
                   <InputText
                       v-model="defaultLabel"
                       placeholder="Entrez un label personalisé"
-                      class="w-[215px]"
+                      class="w-[calc(100%-110px)]"
                       />
           </div>
         </main-plugins-wrapper>
