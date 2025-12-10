@@ -38,6 +38,9 @@ describe('AtomPluginAutocomplete.vue', () => {
       { id: 1, ext_id: 'ext1', label: 'Option A' },
       { id: 2, ext_id: 'ext2', label: 'Option B' }
     ])
+    const input = document.createElement('input')
+    input.id = 'autocomplete-input'
+    document.body.appendChild(input)
   })
 
   function createWrapper(propsOverride = {}) {
