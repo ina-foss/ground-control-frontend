@@ -115,6 +115,15 @@ export default defineComponent({
       return options.value?.sort((a, b) => a.label.indexOf(filterString.value?.toLowerCase()) - b.label.indexOf(filterString.value?.toLowerCase()))
     })
 
+    const maximumScrollHeight = computed(()=>{
+      if(autoCompleteRef.value){
+        const autocompletePositionY = autoCompleteRef.value.$el.getBoundingClientRect().y
+        const viewportHeight = window.innerHeight
+        const maxheight  = Math.max(autocompletePositionY, viewportHeight - autocompletePositionY)
+        return Math.min(maxheight, 500)
+      }
+    })
+
 
     watch(() => filterString.value, async (newFilter) => {
       if (newFilter?.trim().length != 0 && plugin.value?.id) {
@@ -193,6 +202,7 @@ export default defineComponent({
       textSpan,
       showValue,
       max_length,
+      maximumScrollHeight
     }
   }
 })

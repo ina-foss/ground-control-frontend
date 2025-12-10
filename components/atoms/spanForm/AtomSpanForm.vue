@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose" >
+  <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose"  >
     <div class=" w-[700px] flex flex-col gap-6 " >
       <context-wrapper v-if="!showContext" class="flex flex-col border-dashed border-2 rounded border-subtitle p-5 transition-all duration-300 gap-2 bg-grey-50 ">
         <context-header class="inline-flex w-full items-center justify-between pb-3">
@@ -20,7 +20,7 @@
         <div v-if="!groupDisplay" :class="['w-full  items-center  gap-1 text-sm/6 ', expandedContext ? 'inline'  : 'flex']"  >
             <span :class="[!expandedContext ?  '  truncate  ' : '  text-justify']" :style="{'direction': expandedContext ? 'ltr' : 'rtl'}"> {{ prevNodes.map(n=>n.firstChild.nodeValue).join(' ') + " " }}</span>
             <span :class="[ ' max-w-full text-justify rounded px-2 border-2 !border-[--extra-1]  ', expandedContext ? '' : 'truncate' ]" style="flex: 1 0 min-content; background-color: #86d4ff40 ;" >
-              {{ nodes?.map(node=>Array.from(node.childNodes).filter(child=>child.nodeType == 3 )[0].nodeValue).join(' ')}}
+            {{extractTextFromSpanNodes(nodes)}}
             </span>
           <span :class="[!expandedContext ?  '  truncate ' : 'text-justify ']"> {{ " " + nextNodes.map(n=>n.firstChild.nodeValue).join(' ') }}</span>
         </div>
@@ -59,7 +59,7 @@
                   <InputText
                       v-model="defaultLabel"
                       placeholder="Entrez un label personalisé"
-                      class="w-[215px]"
+                      class="w-[calc(100%-110px)]"
                       />
           </div>
         </main-plugins-wrapper>

@@ -12,11 +12,10 @@ function createSpanService (){
   const {options} = useOptions()
 
   const { $application } = useService()
-  const { hexToRgba,computeColorByLabel,computeColor} = $application
+  const { hexToRgba,computeColorByLabel,computeColor,extractTextFromSpan} = $application
   const spanMenu = ref()
   const spanControlPanelMenu = ref()
   const op = ref()
-  const isForResearch= ref(true)
   // ----- Plugin Store ------
   const pluginStore = usePluginStore()
   const { pluginList } = storeToRefs(pluginStore)
@@ -26,7 +25,6 @@ function createSpanService (){
   const spanClicked = ref(false)
   const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([{id:0,label:"", plugins: []}])
   const linkMode = ref(false)
-  const currentFocus = ref<number | undefined>(undefined)
   const spanCount = computed<number>(()=>spanArray.value.length)
   const newFocus = ref<number | undefined>()
   const spanMenuSelected = ref<number | undefined>(undefined)
@@ -93,10 +91,9 @@ function createSpanService (){
     }
   }
 
-
-   const setDisableGroup = (disable_group:boolean|false) => {
-       isForResearch.value=!disable_group
-   }
+  const isForResearch = computed(()=>{
+    return !!(pluginList?.value?.find(plugin => plugin.display_zone === "group_modal")?.id)
+  })
 
    function countByPlugin(data:any){
      const groupedByPlugin = {}
@@ -426,9 +423,9 @@ function createSpanService (){
     })
   }
 
-  function extractTextFromSpanNodes (nodesArray: Array<Node>){
-    if(!nodesArray) return null
-    return nodesArray.map(node=>document.evaluate('text()', node, null, XPathResult.STRING_TYPE).stringValue).join(' ')
+  function extractTextFromSpanNodes(nodesArray: Array<Node> | null): string | null {
+    if (!nodesArray) return null;
+    return nodesArray.map(node => extractTextFromSpan(node)).join(' ');
   }
 
   watch(()=>newFocus.value,(newValue, oldValue)=>{
@@ -571,13 +568,12 @@ function createSpanService (){
   const onDeleteSpan = ({ index }: { index: number }) => {
     removeSpanFromDOM(index)
     spanArray.value[index] = null
-    currentFocus.value = undefined
 
   }
 
   return{
- recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode,currentFocus, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,setDisableGroup,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu
+ recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
+ affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu
   }
 }
 

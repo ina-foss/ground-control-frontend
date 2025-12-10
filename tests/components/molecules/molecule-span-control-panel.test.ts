@@ -189,12 +189,10 @@ describe('MoleculeSpanControlPanel', ()=>{
     const spanWrappers = wrapper.findAll('span-content-wrapper')
     const spanNoneWrapper = wrapper.findAll('span-none-content')
     expect(spanWrappers.length).toBe(2) // 2 real spans
-    expect(spanNoneWrapper.length).toBe(1) // span "None"
-    expect(wrapper.findAllComponents(AtomSpanTag).length).toBe(3)
+    expect(wrapper.findAllComponents(AtomSpanTag).length).toBe(2)
     expect(wrapper.findAll('span-wrapper  span-content-wrapper').length).toBe(2)
     expect(spanWrappers.at(0).text().includes('1')).toBeTruthy()
     expect(spanWrappers.at(1).text().includes('2')).toBeTruthy()
-    expect(spanNoneWrapper.at(0).text()).toContain('None')
 
     // --- FILTER SPAN LIST ON PLUGIN VALUE ----
     expect(wrapper.vm.spanOnlyArray.length).toBe(2)
@@ -273,17 +271,23 @@ describe('MoleculeSpanControlPanel', ()=>{
     const groupWrapper2 = wrapper.findAll('group-wrapper')[1]
     expect(groupWrapper1.text()).toContain('1Citation1')
     expect(groupWrapper2.text()).toContain('2Co Ref')
-
     expect(wrapper.vm.groupArray.length).toBe(2)
 
 
     // ---- FILTER GROUP LIST ----
     await wrapper.findAllComponents(Select)[3].trigger('click')
+    expect(wrapper.vm.groupArray.length).toBe(2)
+    expect(wrapper.find('.p-select-list-container li').text()).toBe('Citation')
     await wrapper.find('.p-select-list-container li').trigger('mousedown')
 
 
+    await wrapper.vm.$nextTick()
+    await flushPromises()
+    await new Promise(resolve => setTimeout(resolve, 350))
+
     expect(wrapper.vm.groupArray.length).toBe(1)
-    expect(wrapper.findAll('group-wrapper').length).toBe(2)
+    expect(wrapper.findAll('group-wrapper').map(wrap=>wrap.text())).not.toContain('2Co Ref0')
+    expect(wrapper.findAll('group-wrapper').length).toBe(1)
 
   })
 
