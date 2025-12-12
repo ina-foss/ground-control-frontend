@@ -336,6 +336,7 @@ export default defineComponent({
     })
 
     watch(()=>moleculeAnnotationRef.value,(value)=>{
+        console.log("SAVE")
         if (value && annotationsOut.value.length < 1){
           handleSubmit({showToast: false})
         }

@@ -68,11 +68,6 @@ export default defineComponent({
       }
     }
 
-    watch(()=>options.value.bloc,async ()=> {
-      await nextTick()
-      loadSpanv2(locals)
-    })
-
     onMounted(async () => {
       await nextTick()
       appendAllSpansToDOM()
