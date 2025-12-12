@@ -21,7 +21,7 @@
                     <div class="drag-handle pr-3">:::</div>
                     <b class="text-xl">Spans</b>
                     <span-filter-wrapper class="flex items-center ml-auto gap-4">
-                      <span-link-filter class="flex items-center gap-2" @click.stop>
+                      <span-link-filter v-if="isForResearch" class="flex items-center gap-2" @click.stop>
                         <span>Assignation</span>
                         <Select
                             v-model="spanLinkFilter"
