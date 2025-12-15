@@ -295,7 +295,6 @@ function createSpanService (){
       spanId = span.id
     }
 
-    console.log({span,spanId})
     removeSpanFromDOM(spanId)
     if (!span) return
     span.plugins = _.cloneDeep(pluginValues)
