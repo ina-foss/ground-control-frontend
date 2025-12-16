@@ -31,6 +31,24 @@
           <message-wrapper v-if="showErrorMessage" class="flex justify-center">
             <Message class="w-fit" severity="error" icon="pi pi-exclamation-triangle" >Veuillez selectionner une valeur</Message>
           </message-wrapper>
+          <!--virtual span role-->
+          <div v-if="isVirtualSpan" class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
+            <b class=" text-right ">Rôle</b>
+            <div class="flex flex-wrap gap-4  ">
+              <div class=" w-full flex gap-3 items-center " >
+                <Button
+                    v-for="category in selectedGroupValue?.plugins[mainGroupPluginIndexValue][0].categories"
+                    :key="category.label"
+                    class="h-[33px] rounded-[6px] "
+                    :outlined="!isEqual(category,virtualSpanCategory)"
+                    :label="category.label"
+                    @click="()=>virtualSpanCategory = category"
+                />
+              </div>
+            </div>
+
+          </div>
+          <!--virtual span role-->
           <plugin-iterator v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
             <div class=""   >
               <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected" @update:plugin-value="pluginChangeValue(plugin,$event)" >
@@ -58,7 +76,7 @@
                   <b class="pt-2 text-right" > Label </b>
                   <InputText
                       v-model="defaultLabel"
-                      placeholder="Entrez un label personalisé"
+                      :placeholder="isVirtualSpan ? 'Entrez le nom du span virtuel' : 'Entrez le nom du span'"
                       class="w-[calc(100%-110px)]"
                       />
           </div>
@@ -72,7 +90,7 @@
 
         <div class="flex flex-row justify-end gap-2">
           <Button outlined severity="primary" icon="pi pi-times" label="Annuler" @click=" close()" />
-          <Button   :disabled="!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === 0)"
+          <Button   :disabled="isVirtualSpan && !virtualSpanCategory.label || isVirtualSpan && !defaultLabel ||!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === 0)"
                     label="Confirmer" icon="pi pi-check" @click=" handleConfirmationButton() " />
         </div>
 

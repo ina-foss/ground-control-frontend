@@ -140,7 +140,7 @@
                     <span
                       :class="['pi pi-list text-2xl cursor-pointer pt-1', layout == 'list' ? 'opacity-100' : 'opacity-50']"
                       @click.stop="switchGroupLayout('list')"></span>
-                    <div @click.stop="dialogVirtualSpan = true" class="flex items-center gap-1 cursor-pointer">
+                    <div @click.stop="openVirtualSpanForm" class="flex items-center gap-1 cursor-pointer">
                       <span class="pi pi-plus-circle text-xl"></span>Span virtuel
                     </div>
                   </layout-button-wrapper>
@@ -275,40 +275,8 @@
                     </delete-group-wrapper>
                   </Dialog>
 
-                  <!-- ADD VIRTUAL SPAN DIALOG -->
-                  <Dialog
-                      :visible="!!dialogVirtualSpan"
-                      header="Span : création d’un span virtuel"
-                      @update:visible="()=>dialogVirtualSpan = false"
-                      @after-hide="()=> virtualSpanLabel = ''"
-                  >
-                    <div class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
-                      <b class=" text-right ">Rôle</b>
-                      <div class="flex flex-wrap gap-4  ">
-                        <div class=" w-full flex gap-3 items-center " >
-                          <Button
-                              v-for="category in selectedGroup?.plugins[mainGroupPluginIndex][0].categories"
-                              :key="category.label"
-                              class="h-[33px] rounded-[6px] "
-                              :outlined="!isEqual(category,dialogVirtualSpan)"
-                              :label="category.label"
-                              @click="()=>dialogVirtualSpan = category"
-                          />
-                        </div>
-                      </div>
-                      <b class="text-right" > Label </b>
-                      <InputText
-                          v-model="virtualSpanLabel"
-                          placeholder="Entrez le nom du span virtuel"
-                          class="w-[215px]"
-                      />
-                    </div>
-                    <div class="flex flex-row justify-end gap-2">
-                      <Button outlined severity="contrast" icon="pi pi-times" label="Annuler" @click="()=>dialogVirtualSpan = false" />
-                      <Button :disabled="!dialogVirtualSpan.label || !virtualSpanLabel"  label="Confirmer" icon="pi pi-check" @click="createVirtualSpan()" />
-                    </div>
-                  </Dialog>
-
+                  <!-- ADD VIRTUAL SPAN DIALOG-->
+                  <AtomSpanForm ref="spanFormRef" />
                   <!-- UNAUTHORIZED SPAN DIALOG -->
                   <Dialog
                       :visible="!!unauthorizedSpanDropped"

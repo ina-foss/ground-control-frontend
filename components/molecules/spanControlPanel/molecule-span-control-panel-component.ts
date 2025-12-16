@@ -2,11 +2,12 @@ import _, { every } from 'lodash'
 import AtomSpanTag from './AtomSpanTag.vue'
 import { DisplayZone } from '~/api/generate'
 import draggable from 'vuedraggable';
+import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
 
 export default defineComponent({
   name:"MoleculeSpanControlPanel",
   emits: ['handleNewGroup'],
-  components: {AtomSpanTag,draggable},
+  components: {AtomSpanForm, AtomSpanTag,draggable},
   props: {
     isAnnotationEditable: {
       type: Boolean,
@@ -32,8 +33,7 @@ export default defineComponent({
     const spanFilter = ref()
     const groupFilter = ref()
     const spanLinkFilter = ref()
-    const dialogVirtualSpan = ref()
-    const virtualSpanLabel = ref()
+    const spanFormRef = ref<InstanceType<typeof AtomSpanForm> | null>(null)
 
     const panelCollapseController = reactive({
       spanList: true,
@@ -168,16 +168,6 @@ export default defineComponent({
       }
     }
 
-    function handleCreateVirtualSpan(){
-      const id = spanArray.value.length
-      spanArray.value[id] = {
-        id: id,
-        label: virtualSpanLabel.value
-      }
-      selectedGroup.value.spans = [...selectedGroup.value.spans,{spanId: id, role: dialogVirtualSpan.value}]
-      dialogVirtualSpan.value = false
-    }
-
     function handleRemoveGroup (targetGroup? : SpanGroup){
       if(!groupDeleted.value){
         groupDeleted.value = targetGroup
@@ -241,6 +231,16 @@ export default defineComponent({
       if (newValue){ localStorage.setItem('blocks-order', JSON.stringify(newValue))}
     }, { deep: true })
 
+    function openVirtualSpanForm() {
+      const id = spanArray.value.length
+      spanFormRef.value?.open({
+        id: id,
+        virtual: true,
+        selectedGroup:selectedGroup,
+        mainGroupPluginIndex:mainGroupPluginIndex,
+      })
+    }
+
     expose({showPanel})
 
     return {
@@ -279,9 +279,6 @@ export default defineComponent({
       unlinkSpan,
       handleCancelRemoveGroup,
       layout,
-      dialogVirtualSpan,
-      virtualSpanLabel,
-      createVirtualSpan : handleCreateVirtualSpan,
       spanNone,
       spanLinkFilter,
       switchGroupLayout,
@@ -297,7 +294,9 @@ export default defineComponent({
       spanMenuSelected,
       openSpanMenu,
       deleteDialogVisible,
-      panelCollapseController
+      panelCollapseController,
+      spanFormRef,
+      openVirtualSpanForm
     }
   }
 })

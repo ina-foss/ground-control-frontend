@@ -34,9 +34,14 @@ export default defineNuxtComponent({
     const showContext = computed(()=>nodes.value.length == 0)
     const groupDisplay = computed(()=>isGroup.value)
     const expandedContext = ref(false)
+    const isVirtualSpan = ref(false)
+    const selectedGroupValue = ref()
+    const mainGroupPluginIndexValue = ref()
+    const virtualSpanCategory = ref('')
 
     const modalHeader= computed(()=>{
       if(deleteLayout.value) return 'Confirmation de suppresion'
+      if(isVirtualSpan.value) return "Span : création d’un span virtuel"
       return groupDisplay.value ? "Groupe : propriétés" : "Span : propriétés"
     })
 
@@ -134,16 +139,13 @@ export default defineNuxtComponent({
       }
       else{ // virtual spans
         const spanId =spanArray.value.length
-        const span = {
+        spanArray.value[spanId] = {
           id: spanId,
-          plugins: _.cloneDeep(pluginValues),
-          deletedItems: deletedNum.value,
           label: defaultLabel.value
         }
-        spanArray.value[spanId] = span
-        const group = spanArray.value[newFocus.value]
-        defaultLabel.value = null
-        group.spans = [...group.spans, {spanId : spanId.toString(),  role: roleSelected}]
+        selectedGroupValue.value.spans = [...selectedGroupValue.value.spans,{spanId: spanId, role: virtualSpanCategory.value}]
+        virtualSpanCategory.value = false
+        defaultLabel.value=null
       }
 
     }
@@ -167,9 +169,9 @@ export default defineNuxtComponent({
       }
     }
 
-    function open(args:{spanId?: number, group?: boolean, suppression?: boolean, virtual?: boolean, role: {value: string, label:string}} ){
+    function open(args:{spanId?: number, group?: boolean, suppression?: boolean, virtual?: boolean, role: {value: string, label:string},selectedGroup?:any,mainGroupPluginIndex?:number} ){
       if (!args) return
-      const {spanId,group,suppression, virtual, role} = args
+      const {spanId,group,suppression, virtual, role,selectedGroup,mainGroupPluginIndex} = args
       if(group) isGroup.value=group
       else isGroup.value=false
       if(role) roleSelected = role
@@ -185,6 +187,11 @@ export default defineNuxtComponent({
       if(!group && !virtual){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )
         nextNodes.value = reccursiveSibling(nodes.value[nodes.value.length-1], 20 )
+      }
+      if(virtual){
+        isVirtualSpan.value=virtual ?? false
+        selectedGroupValue.value=selectedGroup?.value
+        mainGroupPluginIndexValue.value=mainGroupPluginIndex?.value
       }
       if(suppression) deleteLayout.value = suppression
       visible.value = true
@@ -244,7 +251,11 @@ export default defineNuxtComponent({
       onLastSelected,
       showErrorMessage,
       pluginChangeValue,
-      extractTextFromSpanNodes
+      extractTextFromSpanNodes,
+      selectedGroupValue,
+      mainGroupPluginIndexValue,
+      virtualSpanCategory,
+      isVirtualSpan
     }
   },
 })
