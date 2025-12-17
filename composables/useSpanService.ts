@@ -24,7 +24,7 @@ function createSpanService (){
   const createdPluginOptionsList = ref([])
 
   const spanClicked = ref(false)
-  const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([{id:0,label:"", plugins: []}])
+  const spanArray = ref<Array<AnySpan | null>>([{id:0,label:"", plugins: []}])
   const linkMode = ref(false)
   const spanCount = computed<number>(()=>spanArray.value.length)
   const newFocus = ref<number | undefined>()

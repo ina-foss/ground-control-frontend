@@ -9,8 +9,8 @@ export default defineNuxtComponent({
   emits:['new-group'],
   components: {AtomPluginItemslist},
   setup(props,{emit,expose}) {
-    let currentSpanId = undefined
-    let currentSpan : Span | SpanGroup | VirtualSpan
+
+    let currentSpan : AnySpan
     const textSpan=ref()
     const visible = ref()
     const nodesCount=ref<number>()
@@ -150,6 +150,9 @@ export default defineNuxtComponent({
 
     }
 
+    /**
+     * Callback after clicking on the "Confirmed" button
+     */
     function handleConfirmationButton (){
       if (
         // validation for span case (with mainPlugin only)
@@ -169,10 +172,12 @@ export default defineNuxtComponent({
       }
     }
 
-
-
-    function open(args:{span?: Span, suppression?: boolean,  role: {value: string, label:string}} ){
-      console.log(args)
+    /**
+      * Open the span form in a Primevue Dialog
+      * @param span Object whose parameters will be dispay in the form.
+      * @param suppression If true, the form will ask whether or not you want to delete the {span}
+      */
+    function open(args:{span: Span, suppression?: boolean,  role: {value: string, label:string}} ){
       if (!args || !args.span) return
       const {span, suppression, role} = args
       currentSpan = span
@@ -200,7 +205,6 @@ export default defineNuxtComponent({
     }
 
     function onClose(){
-      // if(!spanArray.value[spanArray.value.length-1]?.plugins ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value)) // FIX: Si deux spans on le meme `nodes` ca supprime les 2
       showErrorMessage.value = false
       deleteLayout.value = false
       spanMenuSelected.value = undefined
@@ -212,7 +216,6 @@ export default defineNuxtComponent({
     }
 
     expose({open})
-
 
     return {
       computeColorByLabel,

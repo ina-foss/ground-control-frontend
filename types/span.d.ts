@@ -46,3 +46,7 @@ declare interface VirtualSpan extends Base {
     deletedItems?: number,
     plugins: Array
 }
+
+declare type AnySpan = Span | SpanGroup | VirtualSpan
+
+

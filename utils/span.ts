@@ -1,7 +1,7 @@
 /**
   * Type predicate for Span in text
   */
-export function isSpan(span: Span | SpanGroup | VirtualSpan | null): span is Span {
+export function isSpan(span: AnySpan | null): span is Span {
   return span !== null &&
     !('spans' in span) &&
     'tcin' in span
@@ -10,7 +10,7 @@ export function isSpan(span: Span | SpanGroup | VirtualSpan | null): span is Spa
 /**
   * Type predicate for SpanGroup
   */
-export function isSpanGroup(span: Span | SpanGroup | VirtualSpan | null): span is SpanGroup {
+export function isSpanGroup(span: AnySpan | null): span is SpanGroup {
   return span !== null &&
         ('spans' in span)
 }
@@ -18,7 +18,7 @@ export function isSpanGroup(span: Span | SpanGroup | VirtualSpan | null): span i
 /**
   * Type predicate for VirtualSpan
   */
-export function isVirtualSpan(span: Span | SpanGroup | VirtualSpan | null): span is VirtualSpan {
+export function isVirtualSpan(span: AnySpan | null): span is VirtualSpan {
   return span !== null &&
         !('tcin' in span) &&
         !('spans' in span)
