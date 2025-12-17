@@ -184,7 +184,6 @@ export default defineNuxtComponent({
       isGroup.value= isSpanGroup(span)
       if(role) roleSelected = role
       pluginSelected.value=''
-      currentSpanId = span.id
       affectPluginValues(span.plugins)
       deletedNum.value =  span.deletedItems
       // labelSelected.value = spanArray.value[spanId]?.type ?? []
@@ -211,7 +210,6 @@ export default defineNuxtComponent({
       defaultLabel.value = undefined
       initPluginValues(getPluginList.value)
       deletedNum.value = undefined
-      currentSpanId = undefined
       nodes.value = []
     }
 
