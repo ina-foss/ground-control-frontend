@@ -2,7 +2,6 @@ import _ from 'lodash'
 import {TypePlugin} from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
 import {usePluginStore} from "~/stores/plugins";
-import {isSpan, isSpanGroup} from '~/utils/span';
 
 
 let spanServiceInstance : ReturnType<typeof createSpanService> | null = null

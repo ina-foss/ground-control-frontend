@@ -2,7 +2,6 @@ import _ from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
 import {DisplayZone} from '~/api/generate'
-import {isSpan, isSpanGroup}  from '~/utils/span';
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
