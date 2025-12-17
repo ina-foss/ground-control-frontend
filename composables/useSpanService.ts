@@ -66,7 +66,9 @@ function createSpanService (){
     {immediate: false}
   )
 
-  function initPluginValues (iterator :Array<PluginWithIdDto>){
+  function initPluginValues (iterator? :Array<PluginWithIdDto>){
+    if (!Array.isArray(iterator)) return
+
     iterator.forEach(plugin=>{
       if(plugin.data_property) pluginValues[plugin.data_property] = [] // Creation des variables utilisee en tant qu'input
       else pluginValues[`plugin-${plugin.id}`] = [] // Creation des variables utilisee en tant qu'input
