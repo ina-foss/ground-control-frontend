@@ -2,6 +2,7 @@ import _ from 'lodash'
 import {TypePlugin} from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
 import {usePluginStore} from "~/stores/plugins";
+import {isSpan, isSpanGroup} from '~/utils/span';
 
 
 let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
@@ -36,8 +37,8 @@ function createSpanService (){
     pin_position : undefined,
     spanid : undefined,
   })
-  const contextMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:1, label:'Editer les bornes', command:()=>showDragPin()},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
-  const contextControlPanelMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
+  const contextMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:'Editer les bornes', command:()=>showDragPin()},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
+  const contextControlPanelMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
   let pluginValues = reactive<pluginValues>({})
@@ -130,9 +131,7 @@ function createSpanService (){
      return groupedByPlugin
    }
 
-  function removeSpanFromDOM(spanId: number){
-    const span = spanArray.value[spanId]
-
+  function removeSpanFromDOM(span: Span){
     if (span.plugins !== undefined) {
       const countedData = countByPlugin(spanArray)
       const currentPluginArray = span?.plugins[mainPluginIndex.value]
@@ -165,12 +164,12 @@ function createSpanService (){
       }
     }
 
-    let tag = document.querySelector(`tag[spanid="${spanId}"]`)
+    let tag = document.querySelector(`tag[spanid="${span.id}"]`)
     if( tag ) tag.remove()
     if(span.nodes){
       span.nodes.forEach((node: HTMLDivElement)=>{
         node.querySelectorAll('border').forEach(border=>border.remove())
-        node.querySelectorAll(`bg${spanId}`).forEach(border=>border.remove())
+        node.querySelectorAll(`bg${span.id}`).forEach(border=>border.remove())
         node.querySelectorAll('pinWrapper').forEach(pin=>pin.remove())
       })
     }
@@ -217,9 +216,9 @@ function createSpanService (){
     if(event.dataTransfer.getData('pin_position')) dropPin()
   }
 
-  function handleDeleteSpan() {
-    removeSpanFromDOM(spanMenuSelected.value)
-    spanArray.value.filter(el=>el && el.spans).forEach(spanArrayElement => {
+  function deleteSpan(span: Span | SpanGroup | VirtualSpan) {
+    if (isSpan(span)) removeSpanFromDOM(span)
+    spanArray.value.filter(el=>el &&  isSpanGroup(el) ).forEach(spanArrayElement => {
       // Retire les assignations de role du span que l'on supprime
       _.remove(spanArrayElement.spans,span=>span.spanId == spanMenuSelected.value)
     })
@@ -283,8 +282,8 @@ function createSpanService (){
 
   function applySpan(spanOrId : number | Span){
 
-    let span
-    let spanId
+    let span : Span
+    let spanId : number
 
     if(typeof spanOrId  == "number" ){
       spanId = spanOrId
@@ -295,9 +294,10 @@ function createSpanService (){
       spanId = span.id
     }
 
-    removeSpanFromDOM(spanId)
     if (!span) return
     span.plugins = _.cloneDeep(pluginValues)
+    console.log({span,spanId})
+    removeSpanFromDOM(span)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
     span.label = (()=>{
       if (!defaultLabel.value) return span.label
@@ -466,24 +466,19 @@ function createSpanService (){
    * Callback invoked after text has been highlighted in dedicated area
    * Allow the creation of span
    */
-  const handleSelectionV2 = ( event: Event ) =>{
+  const handleSelectionV2 = ( event: Event ) : {span: Span} =>{
     const currentSelection = window.getSelection()
     if (currentSelection && currentSelection.toString() !== '' ) {
       event?.stopPropagation()
-      if( options.unlabelled_span || labelSelected.value.length != 0 || spanArg?.tcin ) {
-        const selectedNodes = ExtractNodesFromCurrentSelection() as Element[]
-        if(selectedNodes.length == 0) console.error("the span you atempt to create is empty")
+      if( options.unlabelled_span || labelSelected.value.length != 0 ) {
+        const nodes = ExtractNodesFromCurrentSelection() as Element[]
+        if(nodes.length == 0) console.error("the span you atempt to create is empty")
 
-        const spanTcin = selectedNodes[0].getAttribute('tcin')
-        const spanTcout = selectedNodes[selectedNodes.length-1].getAttribute('tcout')
-        const id = markRaw(spanCount.value)
-        spanArray.value[id] ={
-          id,
-          nodes : selectedNodes,
-          tcin : spanTcin,
-          tcout : spanTcout,
-        }
-        return {spanId: id}
+        const tcin = nodes[0].getAttribute('tcin')
+        const tcout = nodes[nodes.length-1].getAttribute('tcout')
+        const id = unref(spanCount.value)
+
+        return {span: {id, nodes,tcin,tcout, label: "", deletedItems:0, plugins: [] } }
       }
     }
   }
@@ -572,14 +567,7 @@ function createSpanService (){
   }
 
 
-  /**
-   * Type predicate for Span in text
-   */
-  function isSpan(span: Span | SpanGroup | VirtualSpan | null): span is Span {
-    return span !== null &&
-          !('spans' in span) &&
-          'tcin' in span
-  }
+
 
   /**
    * Parse `spanArray` and append each span into the transcription
@@ -636,8 +624,8 @@ function createSpanService (){
   }
 
   return{
- recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpan, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM
+ recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling, deleteSpan, loadSpan, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
+ affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan
   }
 }
 

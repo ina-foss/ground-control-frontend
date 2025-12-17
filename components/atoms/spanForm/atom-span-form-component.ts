@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
-import { toRaw } from "vue"
 import {DisplayZone} from '~/api/generate'
+import {isSpan, isSpanGroup}  from '~/utils/span';
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
@@ -10,6 +10,7 @@ export default defineNuxtComponent({
   components: {AtomPluginItemslist},
   setup(props,{emit,expose}) {
     let currentSpanId = undefined
+    let currentSpan : Span | SpanGroup | VirtualSpan
     const textSpan=ref()
     const visible = ref()
     const nodesCount=ref<number>()
@@ -17,7 +18,7 @@ export default defineNuxtComponent({
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]
-    const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, handleDeleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex } = useSpanService()
+    const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, deleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex } = useSpanService()
     const {$application} = useService()
     const tidiedPluginList = computed(()=>{
       const listPlugin= getPluginList.value
@@ -130,7 +131,8 @@ export default defineNuxtComponent({
 
     function createSpan () {
       if(nodes.value.length > 0){ // real spans
-        applySpan(currentSpanId)
+        applySpan(currentSpan)
+        spanArray.value[currentSpan.id] = currentSpan
       }
       else{ // virtual spans
         const spanId =spanArray.value.length
@@ -160,29 +162,32 @@ export default defineNuxtComponent({
       ) showErrorMessage.value = true
       else{
         showErrorMessage.value = false
-        if(deleteLayout.value) handleDeleteSpan()
+        if(deleteLayout.value) deleteSpan(currentSpan)
         else if (isGroup.value)  createGroup()
         else createSpan()
         close()
       }
     }
 
-    function open(args:{spanId?: number, group?: boolean, suppression?: boolean, virtual?: boolean, role: {value: string, label:string}} ){
-      if (!args) return
-      const {spanId,group,suppression, virtual, role} = args
-      if(group) isGroup.value=group
-      else isGroup.value=false
+
+
+    function open(args:{span?: Span, suppression?: boolean,  role: {value: string, label:string}} ){
+      console.log(args)
+      if (!args || !args.span) return
+      const {span, suppression, role} = args
+      currentSpan = span
+      isGroup.value= isSpanGroup(span)
       if(role) roleSelected = role
       pluginSelected.value=''
-      currentSpanId = spanId
-      affectPluginValues(spanArray.value[spanId]?.plugins)
-      deletedNum.value =  spanArray.value[spanId]?.deletedItems
-      labelSelected.value = spanArray.value[spanId]?.type ?? []
-      nodes.value = spanArray.value[spanId]?.nodes ?? []
+      currentSpanId = span.id
+      affectPluginValues(span.plugins)
+      deletedNum.value =  span.deletedItems
+      // labelSelected.value = spanArray.value[spanId]?.type ?? []
+      nodes.value = span.nodes ?? []
       textSpan.value=extractTextFromSpanNodes(nodes.value)
-      defaultLabel.value =  (spanArray.value[spanId]?.label ?? textSpan.value)?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
+      defaultLabel.value =  (span.label == "" ? textSpan.value : span.label )?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
       nodesCount.value = nodes.value.length
-      if(!group && !virtual){
+      if(isSpan(span)){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )
         nextNodes.value = reccursiveSibling(nodes.value[nodes.value.length-1], 20 )
       }
@@ -195,7 +200,7 @@ export default defineNuxtComponent({
     }
 
     function onClose(){
-      if(!spanArray.value[spanArray.value.length-1]?.plugins ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value))
+      // if(!spanArray.value[spanArray.value.length-1]?.plugins ) _.remove(spanArray.value,span => _.isEqual(span?.nodes, nodes.value)) // FIX: Si deux spans on le meme `nodes` ca supprime les 2
       showErrorMessage.value = false
       deleteLayout.value = false
       spanMenuSelected.value = undefined
@@ -227,7 +232,7 @@ export default defineNuxtComponent({
       expandedContext,
       expandContext,
       shrinkContext,
-      handleDeleteSpan,
+      deleteSpan,
       deleteLayout,
       modalHeader,
       isForResearch,
