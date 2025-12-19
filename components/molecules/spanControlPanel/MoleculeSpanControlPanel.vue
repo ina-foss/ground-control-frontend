@@ -387,3 +387,9 @@ virtual-span-preview:hover{
   cursor: grabbing;
 }
 </style>
+
+<style >
+.p-panel-content-wrapper {
+   min-width: 0; /* prevent panel content to overflow */
+}
+</style>
