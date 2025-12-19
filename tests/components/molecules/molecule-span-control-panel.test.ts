@@ -435,7 +435,7 @@ describe('MoleculeSpanControlPanel', ()=>{
     expect(initialGroup.spans.length).toBeGreaterThan(0)
 
     // Trigger the modal
-    const deleteGroupButton = wrapper.find('group-wrapper span')
+    const deleteGroupButton = wrapper.findAll('group-wrapper span')[1]
     await deleteGroupButton.trigger('click')
     await wrapper.vm.$nextTick()
 
