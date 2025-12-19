@@ -47,8 +47,7 @@
                   <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3">
                     <MoleculeSpanControlPanel
                     :is-annotation-editable="isAnnotationEditable"
-                    ref="moleculeSpanControlPanelRef"
-                    @handle-new-group="isAnnotationEditable && spanForm?.open({group:true})"/>
+                    ref="moleculeSpanControlPanelRef"/>
                   </TabPanel>
           <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
                       <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">

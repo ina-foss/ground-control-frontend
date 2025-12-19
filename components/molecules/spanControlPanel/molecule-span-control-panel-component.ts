@@ -6,7 +6,6 @@ import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
 
 export default defineComponent({
   name:"MoleculeSpanControlPanel",
-  emits: ['handleNewGroup'],
   components: {AtomSpanForm, AtomSpanTag,draggable},
   props: {
     isAnnotationEditable: {
@@ -241,6 +240,11 @@ export default defineComponent({
       })
     }
 
+    function openGroupForm() {
+      spanFormRef.value?.open({
+        group: true
+      })
+    }
     expose({showPanel})
 
     return {
@@ -296,7 +300,8 @@ export default defineComponent({
       deleteDialogVisible,
       panelCollapseController,
       spanFormRef,
-      openVirtualSpanForm
+      openVirtualSpanForm,
+      openGroupForm
     }
   }
 })

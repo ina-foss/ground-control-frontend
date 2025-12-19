@@ -225,7 +225,7 @@
                           outlined
                           size="small"
                           class="self-end"
-                          @click.stop="emit('handleNewGroup',$event)"
+                          @click.stop="openGroupForm"
                       />
                     </group-filter-wrapper>
                   </category-header>
