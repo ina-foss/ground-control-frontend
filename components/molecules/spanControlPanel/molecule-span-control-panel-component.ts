@@ -125,6 +125,10 @@ export default defineComponent({
           )
     )
 
+    const sortedVisibleGroupArray = computed(() =>
+      [...visibleGroupArray.value].sort((a, b) => b.id - a.id)
+    )
+
     const selectedGroup = computed((oldValue)=>{
       const group =  _.find(groupArray.value,group => group?.id == newFocus.value)
       if(group) return group
@@ -308,7 +312,8 @@ export default defineComponent({
       deleteDialogVisible,
       panelCollapseController,
       visibleSpanOnlyArray,
-      visibleGroupArray
+      visibleGroupArray,
+      sortedVisibleGroupArray
     }
   }
 })

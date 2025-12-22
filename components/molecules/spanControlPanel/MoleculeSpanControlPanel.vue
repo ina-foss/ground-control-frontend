@@ -195,7 +195,7 @@
                   <category-header class="flex flex-row items-center w-full">
                     <div class="drag-handle pr-3">:::</div>
                     <b class="text-xl">Liste des groupes</b>
-                    <group-filter-wrapper class="flex items-center gap-xl ml-auto pr-3">
+                    <group-filtergroup-filter-wrapper class="flex items-center gap-xl ml-auto pr-3">
                       <group-filled-filter class="flex items-center gap-sm" @click.stop>
                         <span>Rôle</span>
                         <Select
@@ -227,17 +227,17 @@
                           class="self-end"
                           @click.stop="emit('handleNewGroup',$event)"
                       />
-                    </group-filter-wrapper>
+                    </group-filtergroup-filter-wrapper>
                   </category-header>
                 </template>
                 <div class="flex flex-col gap-3">
                   <group-wrapper
                       :key="group.id"
-                      v-for="(group,index) in groupArray.sort((a,b)=>b.id - a.id)"
+                      v-for="(group,index) in sortedVisibleGroupArray"
                       :class="{'hover:bg-primary-100 cursor-pointer p-2 rounded-md flex items-center gap-2': true, 'border-2 bg-surface-100 border-title font-semibold': newFocus== group.id}"
                       @click="handleGroupClick(group.id)"
                   >
-                    <group-number class="font-bold self-center px-2 h-fit">{{groupArray.length - index}}</group-number>
+                    <group-number class="font-bold self-center px-2 h-fit">{{sortedVisibleGroupArray.length - index}}</group-number>
                     <group-label class="grow line-clamp-1">{{ group?.label || group.spans.filter(o=>o?.role?.label == whichCategoryTriggerRename(group)).map(o=>spanOnlyArray.find(span=>span.id == o.spanId)).sort((a,b) => a.tcin - b.tcin)[0]?.label || group?.plugins[mainGroupPluginIndex]?.[0]?.label }}</group-label>
                     <group-span-count class="text-center rounded-full p-0 text-xl leading-10 h-10 w-10 bg-surface-100 shrink-0">{{ group.spans.length }}</group-span-count>
                     <span class="shrink-0" @click.stop="handleRemoveGroup(group)">
