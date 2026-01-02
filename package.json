@@ -20,6 +20,7 @@
   "dependencies": {
     "@ina/amalia": "file:libs/amalia-2.1.11-develop.tgz",
     "@nuxtjs/color-mode": "^3.4.1",
+    "@nuxtjs/i18n": "^8.5.6",
     "@pinia/nuxt": "^0.5.1",
     "@primeuix/themes": "^1.0.0",
     "@primevue/themes": "^4.3.1",

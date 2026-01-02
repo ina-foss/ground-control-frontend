@@ -1,0 +1,10 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "annotation": {
+    "title": "Annotation",
+    "edit": "Modifier"
+  }
+}

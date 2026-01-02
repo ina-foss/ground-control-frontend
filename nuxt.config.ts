@@ -154,7 +154,7 @@ export default defineNuxtConfig({
   vite:{
     plugins: [tailwindcss()],
   },
-  modules: [ '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint'],
+  modules: [ '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint', '@nuxtjs/i18n'],
   colorMode: {
     classSuffix: '',
   },
@@ -182,5 +182,17 @@ export default defineNuxtConfig({
   eslint: {
     stylistic: true,
     files: './**/*.{ts,js,vue}'
+  },
+  i18n: {
+    defaultLocale: 'fr',
+    lazy: true,
+    langDir: "locales/",
+    locales: [
+      { code: 'fr', iso: 'fr-FR', name: 'Français (France)',file: 'fr.json'},
+      { code: 'en', iso: 'en-US', name: 'English',file: 'en.json'}
+    ],
+
+    vueI18n: './i18n.config.ts'
   }
+
 })
