@@ -1,0 +1,9 @@
+{
+  "menu": {
+    "options": "Options",
+    "switchToLight": "Switch to light mode",
+    "switchToDark": "Switch to dark mode",
+    "refreshToken": "Refresh token",
+    "logout": "Logout"
+  }
+}

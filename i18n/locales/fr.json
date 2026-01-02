@@ -1,0 +1,9 @@
+{
+  "menu": {
+    "options": "Options",
+    "switchToLight": "Passer en mode clair",
+    "switchToDark": "Passer en mode sombre",
+    "refreshToken": "Rafraîchir le token",
+    "logout": "Déconnexion"
+  }
+}

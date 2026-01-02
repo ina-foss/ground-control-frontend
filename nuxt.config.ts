@@ -130,6 +130,9 @@ export default defineNuxtConfig({
     },
   },
   ssr: false,
+  nitro: {
+    compatibilityDate: '2026-01-02'
+  },
   app: {
     pageTransition: {name: 'page', mode: 'in-out'},
   },
@@ -146,7 +149,7 @@ export default defineNuxtConfig({
   ],
   plugins: [
     '~/directives/v-safe-html.ts',
-    '~/plugins/error-handler.ts',
+    '~/plugins/error-handler.ts'
   ],
   runtimeConfig: {
     public: {}
