@@ -1,10 +1,9 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class=" grid grid-cols-[100px_auto] gap-3 gap-y-5 items-center " >
+  <div v-if="indexPlugin<3 && !source" class=" grid grid-cols-[100px_calc(100%-220px)] gap-3 gap-y-5 items-center " >
     <slot />
-    <div class="w-[calc(100%-110px)] flex">
     <AutoComplete ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
-                  class="grow"
                   option-label="label" multiple
+                  class="w-full"
                   :delay="300"
                   :disabled="!isAnnotationEditable"
                   :dropdown="pluginValue?.length < max_length" dropdown-mode="current"
@@ -34,29 +33,26 @@
       </template>
 
       <template #chip="slotProps">
-        <chip-wrapper class="flex items-center rounded-full bg-surface-100 p-1 justify-around gap-2 px-4">
-          <chip-content class="flex items-center gap-2">
+        <chip-wrapper class="flex items-center rounded-full bg-surface-100 max-w-full p-1 justify-around gap-2 px-4 ">
             <img
                 v-if="!slotProps.value.image?.includes('icons')"
                 :src="slotProps.value.image"
                 alt="icon"
                 class="h-10 object-contain"
             />
-            <chip-text class="flex flex-col ">
+          <chip-content class="flex flex-col justify-center min-w-0 flex-1 ">
               <span class="font-medium text-gray-900 truncate">
                 {{ slotProps.value.label }}
               </span>
-              <span class="font-medium text-gray-500 truncate text-[10px] ">
+              <span class="font-medium text-gray-500 truncate flex-none text-[10px] ">
                 {{ slotProps.value.description }}
               </span>
-            </chip-text>
           </chip-content>
-          <span class="pi pi-times-circle cursor-pointer" @click="slotProps.removeCallback" />
+          <span class="pi pi-times-circle cursor-pointer shrink-0 " @click="slotProps.removeCallback" />
         </chip-wrapper>
       </template>
 
     </AutoComplete>
-    </div>
   </div>
   <div v-if="source" class="  h-[300px] ">
     <div class="w-full flex justify-center" @click.self="$emit('closeModal')">
@@ -97,8 +93,8 @@
           </template>
 
           <template #chip="slotProps">
-            <chip-wrapper class="flex items-center rounded-full bg-surface-100 p-1 justify-around gap-2 px-4">
-              <chip-content class="flex items-center gap-2">
+            <chip-wrapper class="flex items-center rounded-full bg-surface-100 p-1 justify-around gap-2 px-4 ">
+              <chip-content class="flex items-center gap-2  ">
                 <img
                     v-if="!slotProps.value.image?.includes('icons')"
                     :src="slotProps.value.image"
@@ -128,13 +124,20 @@
 <script lang="ts" src="./atom-plugin-autocomplete-component">
 
 </script>
-<style scoped>
-/* Forcer l'affichage de la liste */
-.custom-multiselect .p-multiselect-panel {
-  display: block !important;
-  position: static !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-}
+<style scoped >
 
+  /* Forcer l'affichage de la liste */
+  .custom-multiselect .p-multiselect-panel {
+    display: block !important;
+    position: static !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+</style>
+
+<style>
+
+  .p-autocomplete-chip-item {
+    max-width: 100% ;
+  }
 </style>

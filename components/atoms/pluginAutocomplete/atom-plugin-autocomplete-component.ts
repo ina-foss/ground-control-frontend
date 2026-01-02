@@ -142,10 +142,10 @@ export default defineComponent({
 
     function changeInputStyle(pluginValue : Array<any>){
       // show or hide the input in the plugin
-      const input = document.getElementById('autocomplete-input')
+      const input = document.querySelector('[data-pc-section="inputchip"]')
       if(!input || !pluginValue ) return
       if (pluginValue.length >= max_length) input.style.display = 'none'
-      if (pluginValue.length < max_length) input.style.display = 'block'
+      if (pluginValue.length < max_length) input.style.display = 'inline-flex'
     }
 
 

@@ -46,41 +46,41 @@
                   </panel-span-header>
                 </template>
                 <span-wrapper>
-                  <ScrollPanel
-                      :style="{ maxHeight: '333px', height: spanOnlyArray.length < 8 ? 'auto' : '340px' }"
-                      class="overflow-auto"
-                      :dt="{
-                      bar: { background: 'var(--primary-color)', size: '5px' },
-                      barY: { style: 'right: -5px;' }
-                    }"
-                  >
-                    <span-content-wrapper
-                        v-for="(span,index) in spanOnlyArray"
-                        :key="span.id"
-                        draggable="true"
-                        class="flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type"
-                        @dragstart="event=>{
-                        event.dataTransfer.setData('span', span.id)
-                        event.dataTransfer.setDragImage([...event.target.children][1],10,10)
+                    <ScrollPanel
+                        :style="{ maxHeight: '333px', height: spanOnlyArray.length < 8 ? 'auto' : '340px' }"
+                        class="overflow-auto"
+                        :dt="{
+                        bar: { background: 'var(--primary-color)', size: '5px' },
+                        barY: { style: 'right: -5px;' }
                       }"
                     >
-                      <span-number class="font-bold self-center px-2">{{index+1}}</span-number>
-                      <AtomSpanTag
-                          :plugin-id="mainPluginId"
-                          :plugin-value="span?.plugins?.[mainPluginIndex]"
-                          :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"
-                          expandable
-                          @contextmenu="openSpanMenu($event, span)"
-                      />
-                      <span class="self-center font-semibold flex-1 overflow-hidden truncate">
-                      <span class="inline-block max-w-full truncate"
-                            v-tooltip.right="{
-                            value: span?.label ?? extractTextFromSpanNodes(span?.nodes),
-                            showDelay: 300,
-                            appendTo: 'body'}">
-                        {{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}
-                      </span>
-                      </span>
+                      <span-content-wrapper
+                          v-for="(span,index) in visibleSpanOnlyArray"
+                          :key="span.id"
+                          draggable="true"
+                          class="flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type"
+                          @dragstart="event=>{
+                          event.dataTransfer.setData('span', span.id)
+                          event.dataTransfer.setDragImage([...event.target.children][1],10,10)
+                        }"
+                      >
+                        <span-number class="font-bold self-center px-2">{{index+1}}</span-number>
+                        <AtomSpanTag
+                            :plugin-id="mainPluginId"
+                            :plugin-value="span?.plugins?.[mainPluginIndex]"
+                            :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"
+                            expandable
+                            @contextmenu="openSpanMenu($event, span)"
+                        />
+                        <span class="self-center font-semibold flex-1 overflow-hidden truncate">
+                        <span class="inline-block max-w-full truncate"
+                              v-tooltip.right="{
+                              value: span?.label ?? extractTextFromSpanNodes(span?.nodes),
+                              showDelay: 300,
+                              appendTo: 'body'}">
+                          {{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}
+                        </span>
+                        </span>
                         <span class="text-subtitle text-end italic truncate grow max-w-[40%] overflow-hidden">
                         <span
                             v-if="span?.label"
@@ -195,7 +195,7 @@
                   <category-header class="flex flex-row items-center w-full">
                     <div class="drag-handle pr-3">:::</div>
                     <b class="text-xl">Liste des groupes</b>
-                    <group-filter-wrapper class="flex items-center gap-xl ml-auto pr-3">
+                    <group-filtergroup-filter-wrapper class="flex items-center gap-xl ml-auto pr-3">
                       <group-filled-filter class="flex items-center gap-sm" @click.stop>
                         <span>Rôle</span>
                         <Select
@@ -227,17 +227,17 @@
                           class="self-end"
                           @click.stop="openGroupForm"
                       />
-                    </group-filter-wrapper>
+                    </group-filtergroup-filter-wrapper>
                   </category-header>
                 </template>
                 <div class="flex flex-col gap-3">
                   <group-wrapper
                       :key="group.id"
-                      v-for="(group,index) in groupArray"
+                      v-for="(group,index) in sortedVisibleGroupArray"
                       :class="{'hover:bg-primary-100 cursor-pointer p-2 rounded-md flex items-center gap-2': true, 'border-2 bg-surface-100 border-title font-semibold': newFocus== group.id}"
                       @click="handleGroupClick(group.id)"
                   >
-                    <group-number class="font-bold self-center px-2 h-fit">{{index+1}}</group-number>
+                    <group-number class="font-bold self-center px-2 h-fit">{{sortedVisibleGroupArray.length - index}}</group-number>
                     <group-label class="grow line-clamp-1">{{ group?.label || group.spans.filter(o=>o?.role?.label == whichCategoryTriggerRename(group)).map(o=>spanOnlyArray.find(span=>span.id == o.spanId)).sort((a,b) => a.tcin - b.tcin)[0]?.label || group?.plugins[mainGroupPluginIndex]?.[0]?.label }}</group-label>
                     <group-span-count class="text-center rounded-full p-0 text-xl leading-10 h-10 w-10 bg-surface-100 shrink-0">{{ group.spans.length }}</group-span-count>
                     <span class="shrink-0" @click.stop="handleRemoveGroup(group)">
@@ -353,5 +353,11 @@ virtual-span-preview:hover{
 }
 .drag-handle:active {
   cursor: grabbing;
+}
+</style>
+
+<style >
+.p-panel-content-wrapper {
+   min-width: 0; /* prevent panel content to overflow */
 }
 </style>
