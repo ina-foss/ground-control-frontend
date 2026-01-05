@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import AtomAvatarHeader from '@/components/atoms/AtomAvatarHeader.vue'
-
+import { createI18n } from 'vue-i18n'
 // Mocks
 vi.mock('vue-router', () => ({
   useRouter: () => ({
@@ -33,13 +33,22 @@ vi.mock('#imports', () => ({
     userEmail: store.userEmail
   })
 }))
-
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr',
+  messages: {
+    fr: {
+      common: { save: 'Enregistrer' }
+    }
+  }
+})
 describe('AtomAvatarHeader', () => {
   let wrapper: ReturnType<typeof mount>
 
   beforeEach(() => {
     wrapper = mount(AtomAvatarHeader, {
       global: {
+        plugins: [i18n],
         stubs: {
           Avatar: {
             template: '<div ref="avatar"><slot /></div>'
@@ -61,6 +70,7 @@ describe('AtomAvatarHeader', () => {
     const toggleMock = vi.fn()
     const wrapper = mount(AtomAvatarHeader, {
       global: {
+        plugins: [i18n],
         stubs: {
           Menu: true,
           Tooltip: true
@@ -80,9 +90,9 @@ describe('AtomAvatarHeader', () => {
      expect(items).toHaveLength(1)
      expect(items[0].items).toEqual(
        expect.arrayContaining([
-         expect.objectContaining({ label: expect.stringContaining('Changer en mode') }),
-         expect.objectContaining({ label: 'Rafraichir token' }),
-         expect.objectContaining({ label: 'Déconnexion' }),
+         expect.objectContaining({ label: 'menu.switchToLight' }),
+         expect.objectContaining({ label: 'menu.refreshToken' }),
+         expect.objectContaining({ label: 'menu.logout' }),
        ])
      )
    })
@@ -92,7 +102,7 @@ describe('AtomAvatarHeader', () => {
      ;(wrapper.vm as any).authService.$auth.logout = logoutSpy
 
      const logoutItem = (wrapper.vm as any).items[0].items.find((i: any) =>
-       i.label === 'Déconnexion'
+       i.label === 'menu.logout'
      )
      logoutItem.command()
 
@@ -112,7 +122,7 @@ describe('AtomAvatarHeader', () => {
   it('exécute le changement de mode', () => {
     const toggleDarkMode = vi.fn()
     const toggleItem = (wrapper.vm as any).items[0].items.find((i: any) =>
-      i.label.includes('Changer en mode')
+      i.label.includes('menu.switchToLight')
     )
 
     expect(toggleItem).toBeDefined()
