@@ -1,9 +1,24 @@
 {
   "menu": {
     "options": "Options",
+    "language": "Langue",
+    "english": "Anglais (En)",
+    "french":"Français (Fr)",
     "switchToLight": "Passer en mode clair",
     "switchToDark": "Passer en mode sombre",
     "refreshToken": "Rafraîchir le token",
     "logout": "Déconnexion"
+  },
+  "project": {
+    "title": "Projets",
+    "statusPlaceholder": "Statut",
+    "status": {
+      "draft": "Brouillon",
+      "pending": "En attente",
+      "inProgress": "En cours",
+      "done": "Terminé",
+      "skipped": "Abandonné",
+      "archived": "Archivé"
+    }
   }
 }

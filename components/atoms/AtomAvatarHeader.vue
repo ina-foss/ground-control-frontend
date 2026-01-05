@@ -14,9 +14,9 @@
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
+import { useI18n } from '#imports'
 
-const { t } = useI18n()
+const { locale, setLocale, t } = useI18n()
 const router = useRouter()
 const authStore = useAuth()
 const authService = useService()
@@ -48,6 +48,13 @@ const items = computed(() => {
                     }
                 },
                 {
+                  label: locale.value === 'fr' ? t('menu.english') :  t('menu.french'),
+                  icon: 'pi pi-globe',
+                  command: () => {
+                    switchToLocal()
+                  }
+                },
+                {
                     label: t('menu.logout'),
                     icon: 'pi pi-sign-out',
                     command: () => {
@@ -63,6 +70,9 @@ const toggle = (event) => {
     menu.value.toggle(event);
 };
 
+const switchToLocal = async () => {
+  await setLocale(locale.value === 'fr' ? 'en' : 'fr')
+}
 
 
 const toggleDarkMode = () => {

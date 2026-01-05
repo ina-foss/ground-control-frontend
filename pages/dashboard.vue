@@ -2,19 +2,19 @@
   <div class="overflow-y-auto h-0 min-h-full flex flex-col   ">
     <div
       :class="['  w-fit h-[70px] grow ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', roleCreateProject ? 'right-[145px]' : 'right-[5px]']">
-      <label class="text-primary font-semibold p-2">Projets</label>
+      <label class="text-primary font-semibold p-2">{{ t('project.title') }}</label>
       <Select
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
         class="w-fit items-center h-[33px]"
-        placeholder="Statut"
+        :placeholder="t('project.statusPlaceholder')"
         show-clear
       />
     </div>
     <div class="grow">
     <div ref="dashboardRef" class="p-3 grid gap-6 w-full" style="grid-template-columns: repeat(auto-fill,minmax(300px,1fr))">
-      <div v-if="status === 'pending' && data?.length == 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-40 mx-auto max-w-8xl px-4 xl:px-28 py-6">
+      <div v-if="status === 'pending' && data?.length === 0" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-x-4 md:gap-y-40 mx-auto max-w-8xl px-4 xl:px-28 py-6">
         <Skeleton width="20rem" height="4rem" />
       </div>
       <Message v-if="status === 'error'" severity="error" icon="pi pi-exclamation-triangle">
@@ -66,14 +66,14 @@ import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
 import {ProjectStatus,Permission} from "../api/generate";
 import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
-
+import { useI18n } from '#imports'
 
 const refreshStore = useRefreshStore()
 const {fetchProject} = refreshStore
 const {getProjectNumber} = storeToRefs(refreshStore)
 const first = ref(0)
 const paginatorSize = computed(()=> window.innerWidth > 1600 ? 20 : 16)
-
+const { t } = useI18n()
 // On renomme error pour eviter un conflit avec @nuxt/test-utils/runtime
 const {data:data,refresh, status, error: projectError} = await useAsyncData('projects',async ()=> await fetchProject(first.value, paginatorSize.value),{server:false})
 
@@ -88,12 +88,12 @@ const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_
 
 const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
 const statusOptions = [
-  { value: "draft", label: "Brouillon", colorText: "#FFF", colorBg:"#757575"},
-  { value: "pending", label: "En attente", colorText: "#000", colorBg:"#FFC107" },
-  { value: "in-progress", label: "En cours", colorText: "#000", colorBg:"#F9D621" },
-  { value: "done", label: "Terminé", colorText: "#000", colorBg:"#9ADC82" },
-  { value: "skipped", label: "Abondonné", colorText: "#FFF", colorBg:"#EF4444" },
-  { value: "archived", label: "Archivé", colorText: "#000", colorBg:"#B3DDF4" },
+  { value: "draft", label: t('project.status.draft'), colorText: "#FFF", colorBg:"#757575"},
+  { value: "pending", label: t('project.status.pending'), colorText: "#000", colorBg:"#FFC107" },
+  { value: "in-progress", label: t('project.status.inProgress'), colorText: "#000", colorBg:"#F9D621" },
+  { value: "done", label: t('project.status.done'), colorText: "#000", colorBg:"#9ADC82" },
+  { value: "skipped", label: t('project.status.skipped'), colorText: "#FFF", colorBg:"#EF4444" },
+  { value: "archived", label: t('project.status.archived'), colorText: "#000", colorBg:"#B3DDF4" },
 ];
 
 const sortDataById = computed(() => {
