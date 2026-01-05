@@ -35,12 +35,7 @@ vi.mock('#imports', () => ({
 }))
 const i18n = createI18n({
   legacy: false,
-  locale: 'fr',
-  messages: {
-    fr: {
-      common: { save: 'Enregistrer' }
-    }
-  }
+  locale: 'fr'
 })
 describe('AtomAvatarHeader', () => {
   let wrapper: ReturnType<typeof mount>
