@@ -189,7 +189,7 @@
       </template>
       <div class="m-2 text-sm">
         <Message severity="warn" :icon="false" class="mt-2">
-          {{ progressedTasks.length }} tâches<span
+          {{ progressedTasks.length }} tâche<span
             v-if="progressedTasks.length > 1"
             >s</span
           >
@@ -235,7 +235,7 @@
       </template>
       <div class="m-2 text-sm">
         <Message severity="warn" :icon="false" class="mt-2">
-          {{ progressedTasks.length }} tâches<span
+          {{ progressedTasks.length }} tâche<span
             v-if="progressedTasks.length > 1"
             >s</span
           >
