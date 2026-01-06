@@ -261,6 +261,8 @@ import { Permission, ProjectStatus } from "~/api/generate";
 import { status_map } from "~/helpers/statusMap";
 
 const { t } = useI18n()
+const localeRoute = useLocaleRoute()
+
 const menu = ref();
 const visible = ref(false);
 const deleteDialog = ref(false);
@@ -300,23 +302,19 @@ const linkTarget = computed(() => {
   return null
 })
 const isClickable = computed(() => !!linkTarget.value)
+
 const handleCardClick = () => {
   if (!linkTarget.value) return
 
-  if (isAdmin.value) {
-    navigateTo({
-      name: linkTarget.value.name,
-      params: linkTarget.value.params
-    })
-  } else {
-    navigateTo({
-      name: linkTarget.value.name,
-      params: linkTarget.value.params,
-      query: {
-        project_id: project.id
-      }
-    })
-  }
+  const route = localeRoute({
+    name: linkTarget.value.name,
+    params: linkTarget.value.params,
+    query: !isAdmin.value
+      ? { project_id: project.id }
+      : undefined
+  })
+
+  if (route) navigateTo(route)
 }
 
 const { $handleApiError } = useNuxtApp();

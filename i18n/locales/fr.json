@@ -12,6 +12,7 @@
   "project": {
     "title": "Projets",
     "statusPlaceholder": "Statut",
+    "newProject": "Nouveau projet",
     "status": {
       "draft": "Brouillon",
       "pending": "En attente",

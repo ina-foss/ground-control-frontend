@@ -12,6 +12,7 @@
   "project": {
     "title": "Projects",
     "statusPlaceholder": "Status",
+    "newProject": "New project",
     "status": {
       "draft": "Draft",
       "pending": "Pending",
