@@ -253,7 +253,7 @@
 </template>
 
 <script setup>
-import { defineEmits} from "vue";
+import { defineEmits } from "vue";
 import MoleculeFormProject from "./MoleculeFormProject.vue";
 import { useService ,useI18n} from "#imports";
 import { ProjectService } from "../api/generate";

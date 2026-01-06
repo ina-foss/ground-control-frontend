@@ -2,7 +2,7 @@
   <div
     v-if="isAnnotationEditable"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
-    <Button  v-if="allow_skip" class="mr-4 text-xs" label="Abondonner et quitter"
+    <Button  v-if="allow_skip" class="mr-4 text-xs" label="Abandonner et quitter"
       variant="text"
       icon="pi pi-ban"
       @click="handleSkip({})"
