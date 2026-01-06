@@ -90,7 +90,7 @@ const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
 const statusOptions = [
   { value: "draft", label: t('project.status.draft'), colorText: "#FFF", colorBg:"#757575"},
   { value: "pending", label: t('project.status.pending'), colorText: "#000", colorBg:"#FFC107" },
-  { value: "in-progress", label: t('project.status.inProgress'), colorText: "#000", colorBg:"#F9D621" },
+  { value: "in-progress", label: t('project.status.in-progress'), colorText: "#000", colorBg:"#F9D621" },
   { value: "done", label: t('project.status.done'), colorText: "#000", colorBg:"#9ADC82" },
   { value: "skipped", label: t('project.status.skipped'), colorText: "#FFF", colorBg:"#EF4444" },
   { value: "archived", label: t('project.status.archived'), colorText: "#000", colorBg:"#B3DDF4" },

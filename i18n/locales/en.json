@@ -15,10 +15,26 @@
     "status": {
       "draft": "Draft",
       "pending": "Pending",
-      "inProgress": "In progress",
+      "in-progress": "In progress",
       "done": "Done",
       "skipped": "Abandoned",
       "archived": "Archived"
-    }
+    },
+    "deleteConfirmTitle": "Are you sure you want to delete this project?",
+    "noPendingTasks": "No pending tasks",
+    "assignedTasksSoon": "New tasks will be assigned to you soon.",
+    "finishConfirmTitle": "Are you sure you want to finish this project?",
+    "archiveConfirmTitle": "Are you sure you want to archive this project?",
+    "tasksInProgress": "{count} task | {count} tasks in progress"
+  },
+  "common":{
+    "no": "No",
+    "yes": "Yes"
+  },
+  "actions": {
+    "edit": "Edit",
+    "archive":"Archive",
+    "finish":"Finish",
+    "unarchive":"Unarchive"
   }
 }
