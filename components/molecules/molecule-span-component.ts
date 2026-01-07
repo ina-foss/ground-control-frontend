@@ -23,14 +23,15 @@ export default defineComponent({
     state: {type: String as PropType<AnnotationStatus>},
     isAnnotationEditable: { type: Boolean, default: true }
   },
-  setup(props, { emit, expose }) {
+  async setup(props, { emit, expose }) {
 
     const { $application } = useService()
     const { timestampToUnix, unixToTimestamp } = $application
     const { options } = storeToRefs(useOptions())
 
 
-    const {newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions, mainPluginId} = useSpanService()
+
+    const {newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
     const {pluginList } = storeToRefs(usePluginStore())
 
     const moleculeSpanControlPanelRef = ref()
@@ -101,15 +102,18 @@ const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
 
   watch(()=>options.value.bloc,async ()=> {
     await nextTick()
-    loadSpanv2(locals)
-
+    appendAllSpansToDOM()
 })
+
+
     onMounted(async () => {
       await nextTick()
-      loadSpanv2(locals)
+      appendAllSpansToDOM()
     })
 
-      expose({annotationFunction: saveSpan, listRefs: listSegment })
+    expose({annotationFunction: saveSpan, listRefs: listSegment })
+
+    await loadSpan(locals)
 
     return{
       aggregatedLocals,

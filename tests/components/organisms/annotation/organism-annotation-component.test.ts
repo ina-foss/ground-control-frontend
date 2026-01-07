@@ -1,6 +1,6 @@
 import OrganismAnnotationComponent from "../../../../components/organisms/annotation/OrganismAnnotation.vue";
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, mount } from '@vue/test-utils'
 import { computed,nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 
@@ -91,7 +91,7 @@ describe('OrganismAnnotationComponent', () => {
   const factory = (props = {}) => {
     const pinia = createPinia()
     setActivePinia(pinia)
-    return shallowMount(OrganismAnnotationComponent, {
+    return mount(OrganismAnnotationComponent, {
       global: {
         plugins: [pinia],
         stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
