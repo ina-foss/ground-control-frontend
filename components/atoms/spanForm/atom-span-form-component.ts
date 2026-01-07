@@ -45,9 +45,6 @@ export default defineNuxtComponent({
       initPluginValues(getPluginList.value)
     })
 
-    function onLastSelected(value:any) {
-        defaultLabel.value = value ??  textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
-    }
 
     function pluginChangeValue(plugin: PluginWithIdDto,event){
       if( (plugin.display_config.main_plugin || groupDisplay.value ) && event.length != 0 && event[0] != null   ) showErrorMessage.value = false
@@ -105,6 +102,16 @@ export default defineNuxtComponent({
         }
       });
       return result
+    })
+
+    const showLabelInput = computed(() => {
+      if(!isForResearch.value) {
+        if (!mainPluginIndex.value) return true
+        const selected = pluginValues[mainPluginIndex.value]?.[0]
+        if (!selected) return false
+        return selected.editable === 'true'
+      }
+      return true
     })
 
     function expandContext() {
@@ -241,10 +248,10 @@ export default defineNuxtComponent({
       childPluginMap,
       textSpan,
       readPluginValues,
-      onLastSelected,
       showErrorMessage,
       pluginChangeValue,
-      extractTextFromSpanNodes
+      extractTextFromSpanNodes,
+      showLabelInput
     }
   },
 })

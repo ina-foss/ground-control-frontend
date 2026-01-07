@@ -10,5 +10,6 @@ export type PluginAutocompleteValueDTO = {
     description?: (string | null);
     categories?: (string | null);
     group?: (string | null);
+    editable?: (string | null);
 };
 

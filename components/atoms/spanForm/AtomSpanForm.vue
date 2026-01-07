@@ -33,12 +33,12 @@
           </message-wrapper>
           <plugin-iterator v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
             <div class=""   >
-              <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @last-selected="onLastSelected" @update:plugin-value="pluginChangeValue(plugin,$event)" >
+              <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @update:plugin-value="pluginChangeValue(plugin,$event)" >
                 <b :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config?.main_plugin || groupDisplay) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </b>
               </component>
             </div>
             <div class="" v-if="childPluginMap[readPluginValues(plugin)] != undefined " v-for="(child,childIndex) in childPluginMap[readPluginValues(plugin)]" :key="child.id">
-                <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(child)]" @last-selected="onLastSelected">
+                <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(child)]">
                   <b class="text-right ">{{  child?.display_config?.label || child?.name.charAt(0).toUpperCase() + child?.name.slice(1)  }}</b>
                 </component>
             </div>
@@ -47,20 +47,29 @@
           <div v-if="!isForResearch" >
             <div v-if="pluginSelected">
               <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5"  v-if="nodesCount === 2">
-                <b  class="pt-2 text-right "> Nombre de mots supprimés   </b>
+                <b  class="pt-2 text-right "> Nombre de mots manquants   </b>
                 <InputNumber v-model="deletedNum" placeholder="Entrez le nombre de mots manquants" class="w-[250px]"/>
               </div>
               <label v-else class="block text-center text-red-500" >{{suppWarning}}</label>
             </div>
           </div>
 
-          <div class="grid grid-cols-[100px_auto] gap-3 gap-y-5">
-                  <b class="pt-2 text-right" > Label </b>
-                  <InputText
-                      v-model="defaultLabel"
-                      placeholder="Entrez un label personalisé"
-                      class="w-[calc(100%-110px)]"
-                      />
+          <div
+            v-if="showLabelInput"
+            class="grid grid-cols-[100px_auto] gap-3 gap-y-5"
+          >
+            <b v-if="isForResearch" class="pt-2 text-right">
+              Terme corrigé
+            </b>
+            <b v-else class="pt-2 text-right">
+              Terme de la transcription
+            </b>
+
+            <InputText
+              v-model="defaultLabel"
+              placeholder="Entrez le terme corrigé"
+              class="w-[calc(100%-110px)]"
+            />
           </div>
         </main-plugins-wrapper>
 
