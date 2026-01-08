@@ -4,6 +4,7 @@
       :class="['  w-fit h-[70px] grow ml-auto items-center fixed mr-12 flex top-[0px] z-[1]', roleCreateProject ? 'right-[145px]' : 'right-[5px]']">
       <label class="text-primary font-semibold p-2">{{ t('project.title') }}</label>
       <Select
+        appendTo="body"
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
