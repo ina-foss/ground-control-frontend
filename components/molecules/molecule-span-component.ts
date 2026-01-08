@@ -61,50 +61,17 @@ export default defineComponent({
       return _.filter(locals.value, (local) => local?.sublocalisations).sort((a,b)=> unixToTimestamp(a?.tcin) - unixToTimestamp(b?.tcin) )
     })
 
-    watch(() => options.value.timecode_bloc,async (timecode : boolean ) => {
-      await nextTick()
-      blockArray.value?.childNodes.forEach((blocEl)   => {
-        removeTimecodeDiv(blocEl)
-        if (timecode) {
-          addTimecodeDiv(blocEl)
-        }
-      })
-      },)
 
     function handleWordClick (event: {tcin: number | string, event: MouseEvent}){
-      if (event.event.ctrlKey){
+      if (event.event.ctrlKey || (event.event.target as Element).getAttribute('tcin') == undefined ){
         emit('on-segment-click', event)
       }
     }
 
-
-const removeTimecodeDiv = (blocEl: ChildNode) => {
-  if (blocEl.nodeType == 1) {
-    if (blocEl.firstElementChild?.classList.contains('timecode')) blocEl.removeChild(blocEl.firstElementChild)
-  }
-}
-const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
-    if (blocEl.nodeType == 1) {
-      const divTag : HTMLDivElement = document.createElement('div')
-      divTag.addEventListener('click', ()=> emit('on-segment-click', {tcin: blocEl.firstElementChild.nextSibling.getAttribute('tcin'),tcout: blocEl.lastElementChild?.getAttribute('tcout'), index: computeDivPositionInList(blocEl) }))
-      divTag.classList.add("timecode")
-      divTag.classList.add("cursor-pointer")
-      const tag : VNode = h(createVNode(Tag, { value: timestampToUnix(blocEl.firstElementChild.getAttribute('tcin')), severity: 'secondary' }))
-      render(tag, divTag)
-      if (target) target.insertBefore(divTag, target.firstElementChild )
-      else blocEl.insertBefore(divTag, blocEl.firstElementChild)
-
-    }
-}
-    function computeDivPositionInList(el: HTMLDivElement) {
-      return Array.prototype.indexOf.call(el.parentElement.children, el)
-    }
-
-  watch(()=>options.value.bloc,async ()=> {
-    await nextTick()
-    appendAllSpansToDOM()
-})
-
+    watch(()=>options.value.bloc,async ()=> {
+      await nextTick()
+      loadSpanv2(locals)
+    })
 
     onMounted(async () => {
       await nextTick()
