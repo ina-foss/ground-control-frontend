@@ -27,7 +27,7 @@ export default defineComponent({
   },
   setup(props, { emit, expose }) {
 
-    const { loadSpanv2, handleSelectionV2, spanMenu, contextMenuOptions, spanForm} = useSpanService()
+    const { loadSpan, handleSelectionV2, spanMenu, contextMenuOptions, spanForm} = useSpanService()
     const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData, copyTopicData } = useTopicList(true)
     const { computeColor } = $application
@@ -208,7 +208,7 @@ export default defineComponent({
 
     onMounted(() => {
       loadTopics()
-      loadSpanv2(spans)
+      loadSpan(spans)
     })
 
 

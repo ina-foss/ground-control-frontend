@@ -302,7 +302,6 @@ const linkTarget = computed(() => {
   return null
 })
 const isClickable = computed(() => !!linkTarget.value)
-
 const handleCardClick = () => {
   if (!linkTarget.value) return
 
@@ -422,7 +421,7 @@ const actions = computed(() => [
 ]);
 const visibleActions = computed(() => actions.value.filter((a) => a.condition));
 </script>
-<style>
+<style scoped >
 .custom-icon-color .pi {
   color: #212529;
 }

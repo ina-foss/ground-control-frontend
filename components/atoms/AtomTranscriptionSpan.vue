@@ -1,16 +1,39 @@
 <template>
-  <span-transcription-wrapper class=" bg-white rounded-md scroll-m-12 inline-flex flex-wrap gap-y-6 customText w-[75ch] border-l-inherit py-6 px-2 " >
-    <div v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev" @click="$emit('handleWordClick',{tcin: word.tcin, event: $event})"  :data-tc="word.tcin" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)" :class="`inline-block  px-[2px] hover:bg-surface-200 `">
-      {{ word.data.text[0] }}
-    </div>
-  </span-transcription-wrapper>
+  <transcription-container class="flex flex-col gap-2 ">
+    <Tag
+      v-if="options.timecode_bloc"
+      severity="secondary"
+      :value="timestampToUnix(local.tcin)"
+      class="w-fit bg-surface-200 cursor-pointer"
+      @click="$emit('handleWordClick',{tcin: local.tcin, tcout:local.tcout, event: $event})"
+    />
+    <span-transcription-wrapper class=" bg-white rounded-md scroll-m-12 inline-flex flex-wrap gap-y-6 customText w-[75ch] border-l-inherit py-6 px-2" >
+      <div
+        v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))" :key="word.tcin" class="px-0.5 hover:bg-surface-200 " :tcout="unixToTimestamp(word.tcout)" :data-tc="word.tcin"
+        :tcin="unixToTimestamp(word.tcin)" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev" @click="$emit('handleWordClick',{tcin: word.tcin, event: $event})">
+        {{ word.data.text[0] }}
+      </div>
+    </span-transcription-wrapper>
+  </transcription-container>
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash'
 import { useService } from '#imports';
 
+const { local } = defineProps({
+  local: {
+    type: Object,
+    default : () => {}
+  },
+})
+
 const { handleDrop, dragData } = useSpanService()
+
+const {options} = useOptions()
+
+const { $application } = useService()
+const { timestampToUnix, unixToTimestamp } = $application
 
 defineEmits(['handleWordClick'])
 
@@ -100,18 +123,6 @@ const removeSpanPreview = (event) => {
   }
 
 }
-
-
-
-const { $application } = useService()
-const { unixToTimestamp } = $application
-
-const { local, } = defineProps({
-  local: {
-    type: Object,
-    default : () => {}
-  },
-})
 
 
 

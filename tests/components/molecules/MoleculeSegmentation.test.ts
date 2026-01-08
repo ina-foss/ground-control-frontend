@@ -14,7 +14,7 @@ import AtomVideoOption from '@/components/atoms/atom-video-option.vue';
 
   vi.mock('~/composables/useSpanService', () => ({
     default: () => ({
-      loadSpanv2: vi.fn()
+      loadSpan: vi.fn()
     })
   }))
 
