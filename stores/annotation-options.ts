@@ -6,7 +6,7 @@ export type Options =  {
   player: boolean
 
   /** If the click on the transcription update video time
-   * @defaultValue `false`
+   * @defaultValue `true`
    */
   transcription: boolean
 
@@ -21,7 +21,7 @@ export type Options =  {
   span : boolean
 
   /** if the timecode are showed for each bloc
-   * @defaultValue `false`
+   * @defaultValue `true`
    */
   timecode_bloc: boolean
 
@@ -52,10 +52,10 @@ export const useOptions = defineStore("annotation-options",() => {
 
     const options = reactive<Options>({
       span: true,
-      timecode_bloc: false,
+      timecode_bloc: true,
       timecode_segment:false,
       bloc: true,
-      player: true,
+      player: false,
       transcription: true,
       loop_bloc: false,
       number_segment:false,
