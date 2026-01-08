@@ -26,7 +26,7 @@
     "assignedTasksSoon": "New tasks will be assigned to you soon.",
     "finishConfirmTitle": "Are you sure you want to finish this project?",
     "archiveConfirmTitle": "Are you sure you want to archive this project?",
-    "tasksInProgress": "{count} task | {count} tasks in progress"
+    "tasksInProgress": "{count} task in progress| {count} tasks in progress"
   },
   "common":{
     "no": "No",
