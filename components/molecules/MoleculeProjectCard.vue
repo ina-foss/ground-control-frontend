@@ -138,7 +138,7 @@
           </div>
       </div>
       </div>
-      
+
       <Divider class="bottom-0" :pt="{ root:{ style: 'margin-top : 0px; margin-bottom: 0px' } }" />
       <div
         class=" w-full flex justify-between pl-2 py-2 text-gray-400"
@@ -431,7 +431,7 @@ const actions = computed(() => [
 ]);
 const visibleActions = computed(() => actions.value.filter((a) => a.condition));
 </script>
-<style>
+<style scoped >
 .custom-icon-color .pi {
   color: #212529;
 }
