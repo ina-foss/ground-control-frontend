@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
-import { toRaw } from "vue"
 import {DisplayZone} from '~/api/generate'
+import { useI18n } from '#imports'
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
@@ -10,10 +10,14 @@ export default defineNuxtComponent({
   components: {AtomPluginItemslist},
   setup(props,{emit,expose}) {
     let currentSpanId = undefined
+    const { t } = useI18n()
     const textSpan=ref()
     const visible = ref()
+    const labelTitle = ref()
     const nodesCount=ref<number>()
-    const suppWarning=ref("Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés.")
+    const suppWarning = computed(() =>
+      t('spanForm.suppressionWarning')
+    )
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]
@@ -36,8 +40,8 @@ export default defineNuxtComponent({
     const expandedContext = ref(false)
 
     const modalHeader= computed(()=>{
-      if(deleteLayout.value) return 'Confirmation de suppresion'
-      return groupDisplay.value ? "Groupe : propriétés" : "Span : propriétés"
+      if(deleteLayout.value) return t('spanForm.deleteHeader')
+      return groupDisplay.value ? t('spanForm.groupHeader') : t('spanForm.spanHeader')
     })
 
 
@@ -108,8 +112,10 @@ export default defineNuxtComponent({
       if(!isForResearch.value) {
         if (!mainPluginIndex.value) return true
         const selected = pluginValues[mainPluginIndex.value]?.[0]
-        if (!selected) return false
-        return selected.editable === 'true'
+        if (!selected || selected.editable ==="") return false
+        labelTitle.value=selected.editable
+        if(selected && selected.copyable ==='false') defaultLabel.value=""
+
       }
       return true
     })
@@ -221,7 +227,6 @@ export default defineNuxtComponent({
       visible,
       labelSelected,
       handleConfirmationButton,
-      createSpan,
       nodes,
       prevNodes,
       nextNodes,
@@ -251,7 +256,9 @@ export default defineNuxtComponent({
       showErrorMessage,
       pluginChangeValue,
       extractTextFromSpanNodes,
-      showLabelInput
+      showLabelInput,
+      labelTitle,
+      t
     }
   },
 })
