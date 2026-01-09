@@ -1,0 +1,41 @@
+{
+  "menu": {
+    "options": "Options",
+    "language": "Langue",
+    "english": "Anglais (En)",
+    "french":"Français (Fr)",
+    "switchToLight": "Passer en mode clair",
+    "switchToDark": "Passer en mode sombre",
+    "refreshToken": "Rafraîchir le token",
+    "logout": "Déconnexion"
+  },
+  "project": {
+    "title": "Projets",
+    "statusPlaceholder": "Statut",
+    "newProject": "Nouveau projet",
+    "status": {
+      "draft": "Brouillon",
+      "pending": "En attente",
+      "in-progress": "En cours",
+      "done": "Terminé",
+      "skipped": "Abandonné",
+      "archived": "Archivé"
+    },
+    "deleteConfirmTitle": "Êtes-vous sûr de vouloir supprimer ce projet ?",
+    "noPendingTasks": "Aucune tâche en attente",
+    "assignedTasksSoon": "De nouvelles tâches vous seront bientôt attribuées.",
+    "finishConfirmTitle": "Êtes-vous sûr de vouloir terminer ce projet ?",
+    "archiveConfirmTitle": "Êtes-vous sûr de vouloir archiver ce projet ?",
+    "tasksInProgress": "{count} tâche en cours| {count} tâches en cours"
+  },
+  "common":{
+    "no": "Non",
+    "yes": "Oui"
+  },
+  "actions": {
+    "edit": "Modifier",
+    "archive":"Archiver",
+    "finish":"Terminer",
+    "unarchive":"Désarchiver"
+  }
+}

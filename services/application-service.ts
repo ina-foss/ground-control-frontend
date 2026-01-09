@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import { UserService } from "../api/generate/services/UserService";
 import { floor, padStart, padEnd } from "lodash";
 import {useTcOffset} from "~/composables/useTcOffset";
+import { useI18n } from '#imports'
 
 /**
  * Services used throught the application
@@ -188,8 +189,15 @@ export default class ApplicationService {
     }
 
   public formatDate (dateString)  {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', {day: '2-digit', month: 'long', year: 'numeric'});
+    const { locale } = useI18n()
+     return new Date(dateString).toLocaleDateString(
+      locale.value === 'en' ? 'en-US' : 'fr-FR',
+      {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      }
+    )
   }
 
   public extractTextFromSpan(node: Element | Node |null): string {

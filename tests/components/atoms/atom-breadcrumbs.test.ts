@@ -5,6 +5,7 @@ import BreadcrumbComponent from '@/components/atoms/AtomBreadcrumbs.vue'
 import PrimeVue from 'primevue/config'
 import Breadcrumb from 'primevue/breadcrumb'
 import { createRouter, createWebHistory } from 'vue-router'
+import {createI18n} from "vue-i18n";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,7 +15,10 @@ const router = createRouter({
     { path: '/tasks/:id', name: 'task' },
   ],
 })
-
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 describe('BreadcrumbComponent.vue', () => {
   beforeEach(async () => {
     router.push('/')
@@ -36,14 +40,14 @@ describe('BreadcrumbComponent.vue', () => {
         },
       },
       global: {
-        plugins: [router, PrimeVue],
+        plugins: [router, PrimeVue,i18n],
         components: { Breadcrumb },
       },
     })
 
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.text()).toContain('Projets')
+    expect(wrapper.text()).toContain('project.title  /')
 
 
   })
@@ -64,7 +68,7 @@ describe('BreadcrumbComponent.vue', () => {
         },
       },
       global: {
-        plugins: [router, PrimeVue],
+        plugins: [router, PrimeVue,i18n],
         components: { Breadcrumb },
       },
     })

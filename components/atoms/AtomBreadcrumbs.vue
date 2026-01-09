@@ -18,15 +18,20 @@
 
 <script setup>
 import { Permission } from '~/api/generate';
+import { useI18n } from '#imports'
 
+const { t } = useI18n()
 const { $application } = useService();
-const home = { label: 'Projets', route: '/dashboard' }
+const home = computed(() => ({
+  label: t('project.title'),
+  route: '/dashboard'
+}))
 const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
 const refresh = useRefreshStore()
 const { getData } = storeToRefs(refresh)
 
 const newBreadCrumbs = computed(()=>{
-  let bd = [home]
+  let bd = [home.value]
   if (getData.value?.step){
     bd.push({
       label: getData.value.step.project.title,

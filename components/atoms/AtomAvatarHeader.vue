@@ -14,7 +14,9 @@
 </template>
 
 <script setup>
+import { useI18n } from '#imports'
 
+const { locale, setLocale, t } = useI18n()
 const router = useRouter()
 const authStore = useAuth()
 const authService = useService()
@@ -23,28 +25,37 @@ const colorMode = useColorMode()
 const menu = ref();
 defineExpose({ menu })
 const items = computed(() => {
-    const nextColorMode = colorMode.preference === "light" ? 'dark' : 'light'
+    const isLight = colorMode.preference === 'light'
 
     return [
         {
-            label: 'Options',
-            items: [
+          label: t('menu.options'),
+          items: [
                 {
-                    label: `Changer en mode ${nextColorMode} `,
+                  label: isLight
+                    ? t('menu.switchToDark')
+                    : t('menu.switchToLight'),
                     icon: 'pi toggle-icon',
                     command: () => {
                         toggleDarkMode()
                     }
                 },
                 {
-                    label: 'Rafraichir token',
+                    label: t('menu.refreshToken'),
                     icon: 'pi pi-refresh',
                     command: () => {
                         router.push("/silent-refresh")
                     }
                 },
                 {
-                    label: 'Déconnexion',
+                  label: locale.value === 'fr' ? t('menu.english') :  t('menu.french'),
+                  icon: 'pi pi-globe',
+                  command: () => {
+                    switchToLocal()
+                  }
+                },
+                {
+                    label: t('menu.logout'),
                     icon: 'pi pi-sign-out',
                     command: () => {
                         handleLogout()
@@ -59,6 +70,9 @@ const toggle = (event) => {
     menu.value.toggle(event);
 };
 
+const switchToLocal = async () => {
+  await setLocale(locale.value === 'fr' ? 'en' : 'fr')
+}
 
 
 const toggleDarkMode = () => {

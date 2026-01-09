@@ -4,7 +4,7 @@ export interface StatusOption {
   colorText: string
   colorBg: string
 }
-
+// TODO :supprimer les labels: avec l'utilisation de i18n , elles servent a rien
 export const status_map: StatusOption[] = [
   { value: "draft", label: "Brouillon", colorText: "#FFF", colorBg: "#757575" },
   { value: "pending", label: "En attente", colorText: "#000", colorBg: "#FFE4B1" },
