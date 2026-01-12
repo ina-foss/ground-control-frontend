@@ -37,7 +37,7 @@
     "transcriptionTerm": "Transcription term",
     "correctedTermPlaceholder": "Entrez le terme corrigé",
     "deleteConfirm": "Do you really want to delete this span?",
-    "suppressionWarning": "To create a deletion span, only 2 words must be selected.",
+    "suppressionWarning": "To create a deletion span, only 1 word must be selected.",
     "deleteHeader": "Delete confirmation",
     "groupHeader": "Group: properties",
     "spanHeader": "Span: properties",

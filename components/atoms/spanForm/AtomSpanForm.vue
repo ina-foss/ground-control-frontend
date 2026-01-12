@@ -46,7 +46,7 @@
 
           <div v-if="!isForResearch" >
             <div v-if="pluginSelected">
-              <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5"  v-if="nodesCount === 2">
+              <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5"  v-if="nodesCount === 1">
                 <b  class="pt-2 text-right "> {{t('spanForm.missingWordsLabel')}} </b>
                 <InputNumber v-model="deletedNum" :placeholder="t('spanForm.missingWordsPlaceholder')" class="w-[250px]"/>
               </div>

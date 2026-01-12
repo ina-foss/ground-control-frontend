@@ -37,7 +37,7 @@
     "transcriptionTerm": "Terme de la transcription",
     "correctedTermPlaceholder": "Entrez le terme corrigé",
     "deleteConfirm": "Souhaitez-vous vraiment supprimer ce span ?",
-    "suppressionWarning": "Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés.",
+    "suppressionWarning": "Pour créer un span de type “suppression”, seul 1 mot doit être sélectionné.",
     "deleteHeader": "Confirmation de suppression",
     "groupHeader": "Groupe : propriétés",
     "spanHeader": "Span : propriétés",
