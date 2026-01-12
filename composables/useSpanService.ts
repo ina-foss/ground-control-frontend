@@ -295,7 +295,6 @@ function createSpanService (){
 
     if (!span) return
     span.plugins = _.cloneDeep(pluginValues)
-    console.log({span,spanId})
     removeSpanFromDOM(span)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
     span.label = (()=>{
