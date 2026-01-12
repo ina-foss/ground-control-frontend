@@ -135,6 +135,11 @@ export default defineNuxtConfig({
   },
   app: {
     pageTransition: {name: 'page', mode: 'in-out'},
+    head: {
+      meta: [
+        { name: 'build-version', content: new Date().toISOString() }
+      ]
+    }
   },
   devtools: {
     enabled: true,
