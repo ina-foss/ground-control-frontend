@@ -65,7 +65,7 @@
             />
           </div>
           <div
-            v-if="showLabelInput && !isForResearch"
+            v-if="showLabelInput && !isForResearch && getPluginList.length !==0"
             class="grid grid-cols-[100px_auto] gap-3 gap-y-5"
           >
             <b class="pt-2 text-right">

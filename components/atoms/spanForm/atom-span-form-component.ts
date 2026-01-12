@@ -258,6 +258,7 @@ export default defineNuxtComponent({
       extractTextFromSpanNodes,
       showLabelInput,
       labelTitle,
+      getPluginList,
       t
     }
   },
