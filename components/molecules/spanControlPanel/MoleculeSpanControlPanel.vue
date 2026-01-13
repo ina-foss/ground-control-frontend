@@ -290,12 +290,11 @@
               ></span>
                       <div>
                         <b>Vous pouvez uniquement insérer des éléments de type :</b>
-                        <div class="mt-1 ml-6 space-y-1">
-                          <div v-for="(item, index) in authorizedGroupList" :key="index" class="flex items-start">
-                            <span class="mr-2">•</span>
-                            <span>{{ item }}</span>
-                          </div>
-                        </div>
+                        <ul class="mt-2 ml-6 list-disc">
+                          <li v-for="type in authorizedGroupList" :key="type">
+                            {{ type }}
+                          </li>
+                        </ul>
                       </div>
                     </div>
                   </Dialog>

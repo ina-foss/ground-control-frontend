@@ -90,12 +90,36 @@
 
         <div class="flex flex-row justify-end gap-2">
           <Button outlined severity="primary" icon="pi pi-times" label="Annuler" @click=" close()" />
-          <Button   :disabled="isVirtualSpan && !virtualSpanCategory.label || isVirtualSpan && !defaultLabel ||!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 2 || deletedNum === null || deletedNum === undefined || deletedNum === 0)"
+          <Button   :disabled="isVirtualSpan && (!virtualSpanCategory ||  !defaultLabel) ||!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 1 || deletedNum === null || deletedNum === undefined || deletedNum === 0)"
                     label="Confirmer" icon="pi pi-check" @click=" handleConfirmationButton() " />
         </div>
 
     </div>
+    <!-- MODALE D'ERREUR SUPERPOSÉE -->
 
+    <Dialog
+      :visible="unauthorizedVirtualSpan"
+      header="L'élément que vous essayé d’insérer n’est pas autorisé
+              car son type est inadéquat."
+      :baseZIndex="1100"
+      :closable="true"
+      :dismissableMask="false"
+      @update:visible="v => unauthorizedVirtualSpan = false"
+    >
+      <div class="flex items-start gap-2 text-gray-800">
+              <span
+                class="pi pi-exclamation-triangle text-red-500 text-2xl mt-1"
+              ></span>
+        <div>
+          <b>Vous pouvez uniquement insérer des éléments de type :</b>
+          <ul class="mt-2 ml-6 list-disc">
+            <li v-for="type in authorizedTypeList" :key="type">
+              {{ type }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </Dialog>
   </Dialog>
 </template>
 

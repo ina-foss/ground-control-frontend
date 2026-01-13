@@ -38,6 +38,9 @@ export default defineNuxtComponent({
     const mainGroupPluginIndexValue = ref()
     const virtualSpanCategory = ref('')
 
+    const unauthorizedVirtualSpan = ref(false)
+    const authorizedTypeList = ref<string[]>([])
+
     const modalHeader= computed(()=>{
       if(deleteLayout.value) return 'Confirmation de suppresion'
       if(isVirtualSpan.value) return "Span : création d’un span virtuel"
@@ -136,6 +139,19 @@ export default defineNuxtComponent({
         applySpan(currentSpanId)
       }
       else{ // virtual spans
+        const category = virtualSpanCategory.value
+        const mainDataProperty = Object.keys(pluginValues)[0]
+        const spanType =pluginValues[mainDataProperty]?.[0]?.label
+
+        const authorizedTypes = category?.authorized_types
+
+        const isAuthorized = !authorizedTypes || authorizedTypes.includes(spanType)
+
+        if (!isAuthorized) {
+          authorizedTypeList.value = authorizedTypes
+          unauthorizedVirtualSpan.value = true
+          return false
+        }
         const spanId =spanArray.value.length
         spanArray.value[spanId] = {
           id: spanId,
@@ -160,10 +176,18 @@ export default defineNuxtComponent({
       ) showErrorMessage.value = true
       else{
         showErrorMessage.value = false
-        if(deleteLayout.value) handleDeleteSpan()
-        else if (isGroup.value)  createGroup()
-        else createSpan()
-        close()
+        let success = true // pour ouvrir la popup d'erreur dans la modale
+        if (deleteLayout.value) {
+          handleDeleteSpan()
+        } else if (isGroup.value) {
+          createGroup()
+        } else {
+          success = createSpan()
+        }
+
+        if (success) {
+          close()
+        }
       }
     }
 
@@ -253,7 +277,9 @@ export default defineNuxtComponent({
       selectedGroupValue,
       mainGroupPluginIndexValue,
       virtualSpanCategory,
-      isVirtualSpan
+      isVirtualSpan,
+      unauthorizedVirtualSpan,
+      authorizedTypeList
     }
   },
 })

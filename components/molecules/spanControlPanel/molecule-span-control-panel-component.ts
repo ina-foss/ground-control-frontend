@@ -207,8 +207,10 @@ export default defineComponent({
       const spanId = event.dataTransfer.getData('span')
       if (spanId){
         const span = spanArray.value.find(span=>span?.id == parseInt(spanId))
-        if(span?.plugins[mainPluginData_property.value]?.[0].label || span?.label ==""){
-          const isAuthorized = category?.authorized_types?.includes(span?.plugins[mainPluginData_property.value]?.[0].label);
+        if(span?.label =="" || span?.plugins[mainPluginData_property.value]?.[0].label){
+          let isAuthorized=false
+          if(span?.label !=="")
+           isAuthorized = category?.authorized_types?.includes(span?.plugins[mainPluginData_property.value]?.[0].label);
 
           if(isAuthorized || span?.label =="" || category?.authorized_types == undefined){
             if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
