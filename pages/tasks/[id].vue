@@ -314,7 +314,7 @@ const handleSubmit = async (event, action) => {
       if (event.options?.showToast) {
         toast.add({
           severity: "info",
-          summary: "Cette annotation a été abondonnée",
+          summary: "Cette annotation a été abandonnée",
           life: 4000,
         });
       }

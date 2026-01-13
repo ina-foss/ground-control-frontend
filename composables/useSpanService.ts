@@ -283,15 +283,21 @@ function createSpanService (){
     else return `rgba(170,170,170,${opacity})`
   }
 
-  function applySpan(spanId: number){
+  function applySpan(spanOrId : number | Span){
 
-    function focusSpan(spanId: number, event: Event){
-      newFocus.value = spanId
-      event.stopPropagation()
+    let span
+    let spanId
+
+    if(typeof spanOrId  == "number" ){
+      spanId = spanOrId
+      span = spanArray.value[spanId]
+    }
+    else {
+      span = spanOrId
+      spanId = span.id
     }
 
     removeSpanFromDOM(spanId)
-    const span = spanArray.value[spanId]
     if (!span) return
     span.plugins = _.cloneDeep(pluginValues)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
@@ -458,16 +464,73 @@ function createSpanService (){
 
  })
 
-  const handleSelectionV2 = ({spanArg, event} : {spanArg?: any, event?: Event}) =>{
+  /**
+   * Callback invoked after text has been highlighted in dedicated area
+   * Allow the creation of span
+   */
+  const handleSelectionV2 = ( event: Event ) =>{
     const currentSelection = window.getSelection()
     if (currentSelection && currentSelection.toString() !== '' ) {
       event?.stopPropagation()
       if( options.unlabelled_span || labelSelected.value.length != 0 || spanArg?.tcin ) {
-        state.selection = currentSelection
-        const id = spanArg?.id != undefined ? spanArg.id : markRaw(spanCount.value)
-        state.range = currentSelection.getRangeAt(0)
-        let spanTcin = spanArg?.tcin ?? null
-        let spanTcout = spanArg?.tcout ?? null
+        const selectedNodes = ExtractNodesFromCurrentSelection() as Element[]
+        if(selectedNodes.length == 0) console.error("the span you atempt to create is empty")
+
+        const spanTcin = selectedNodes[0].getAttribute('tcin')
+        const spanTcout = selectedNodes[selectedNodes.length-1].getAttribute('tcout')
+        const id = markRaw(spanCount.value)
+        spanArray.value[id] ={
+          id,
+          nodes : selectedNodes,
+          tcin : spanTcin,
+          tcout : spanTcout,
+        }
+        return {spanId: id}
+      }
+    }
+  }
+
+/**
+    * Reccursivly go through the Document object and aggregate sibling nodes from a given node to return them in an array
+      * @param startNode Starting node for seeking sibling nodes
+      * @param value Number of sibling you seek. Can be either positive if you seek next siblings, or negative to look for previous siblings
+      * @return The array of sibling which length equal `value`, or empty array if `value` was 0
+**/
+  function reccursiveSibling(startNode: ChildNode | null, value :number): (ChildNode | null)[] {
+    if(value  == 0 || startNode == null ) return []
+    if( value > 0 ) return startNode.nextSibling && startNode.nextSibling.nodeType == 1 ? [startNode.nextSibling].concat(reccursiveSibling(startNode.nextSibling,value-1)) : []
+    else return startNode.previousSibling && startNode.previousSibling.nodeType == 1 ? reccursiveSibling(startNode.previousSibling,value+1).concat([startNode.previousSibling]) : []
+  }
+
+  const saveSpan = (local) => {
+    local = [...local.filter(el=>el?.sublocalisations),...spanArray.value.map(span=> span ? formatSpan(span) : undefined)]
+    return local
+  }
+
+  /**
+   * Create a `Selection` and a `Range` based on span timecodes
+   * Used to display imported or already saved spans
+   * @params span The span whose nodes needs to be selected
+   */
+  const selectSpanNodes = (span) => {
+    const startNode = document.querySelector(`[tcin="${span.tcin}"]`) as Node
+    const endNode = document.querySelector(`[tcout="${span.tcout}"]`) as Node
+    const range: Range = new Range()
+    range.setStartBefore(startNode)
+    range.setEndAfter(endNode)
+    const selection: Selection | null = window.getSelection()
+    selection?.empty()
+    selection?.addRange(range)
+  }
+
+  /**
+   * Extract text `Element` from the DOM based on the current selection
+   *
+   * @return {Node[]} The array of `Node` that represent one span
+   */
+  function ExtractNodesFromCurrentSelection() : Node[] {
+        state.selection = window.getSelection()
+        state.range = state.selection.getRangeAt(0)
         if(state.range.commonAncestorContainer.parentNode?.tagName == 'TAG') return
         if(state.range.commonAncestorContainer.nodeType == 3 ) {
             state.range.setEndAfter(state.selection.focusNode)
@@ -498,53 +561,7 @@ function createSpanService (){
             selectedNodes.push(treeWalker.currentNode)
         }
 
-        spanTcin = selectedNodes[0].getAttribute('tcin')
-        spanTcout = selectedNodes[selectedNodes.length-1].getAttribute('tcout')
-        spanArray.value[id] ={
-          id: id,
-          nodes : selectedNodes,
-          tcin : spanTcin,
-          tcout : spanTcout,
-          label: spanArg?.label,
-        }
-        if(selectedNodes.length == 0) console.error("the span you atempt to create is empty")
-        if(spanArg){
-          deletedNum.value=spanArg.deletedItems
-          affectPluginValues(spanArg.plugins)
-          applySpan(id)
-        }
-        return {spanId: id}
-      }
-    }
-  }
-
-/**
-    * Reccursivly go through the Document object and aggregate sibling nodes from a given node to return them in an array
-      * @param startNode Starting node for seeking sibling nodes
-      * @param value Number of sibling you seek. Can be either positive if you seek next siblings, or negative to look for previous siblings
-      * @return The array of sibling which length equal `value`, or empty array if `value` was 0
-**/
-  function reccursiveSibling(startNode: ChildNode | null, value :number): (ChildNode | null)[] {
-    if(value  == 0 || startNode == null ) return []
-    if( value > 0 ) return startNode.nextSibling && startNode.nextSibling.nodeType == 1 ? [startNode.nextSibling].concat(reccursiveSibling(startNode.nextSibling,value-1)) : []
-    else return startNode.previousSibling && startNode.previousSibling.nodeType == 1 ? reccursiveSibling(startNode.previousSibling,value+1).concat([startNode.previousSibling]) : []
-  }
-
-  const saveSpan = (local) => {
-    local = [...local.filter(el=>el?.sublocalisations),...spanArray.value.map(span=> span ? formatSpan(span) : undefined)]
-    return local
-  }
-
-  const createSpan = (span) => {
-    const startNode = document.querySelector(`[tcin="${span.tcin}"]`) as Node
-    const endNode = document.querySelector(`[tcout="${span.tcout}"]`) as Node
-    const range: Range = new Range()
-    range.setStartBefore(startNode)
-    range.setEndAfter(endNode)
-    const selection: Selection | null = window.getSelection()
-    selection?.empty()
-    selection?.addRange(range)
-    handleSelectionV2({spanArg: span})
+    return selectedNodes
   }
 
   const formatSpan = (span : typeof spanArray.value[0]) => {
@@ -556,15 +573,62 @@ function createSpanService (){
     return span
   }
 
-  function loadSpanv2 (locals){
-    locals.value.forEach(segment =>{
-      if (((!segment?.sublocalisations) && (segment?.property?.[0]?.key == "entityType") ) ||  !segment?.data) {
-        if(!segment?.spans && segment?.text) createSpan(segment)
-        else {
-            spanArray.value[segment?.id] = segment
-          }
+
+  /**
+   * Type predicate for Span in text
+   */
+  function isSpan(span: Span | SpanGroup | VirtualSpan | null): span is Span {
+    return span !== null &&
+          !('spans' in span) &&
+          'tcin' in span
+  }
+
+  /**
+   * Parse `spanArray` and append each span into the transcription
+   *
+   * @description Uses type predicate {isSpan} to determine which span to append
+   */
+  function appendAllSpansToDOM(){
+    spanArray.value.forEach((span) =>{
+      if( isSpan(span) ){
+        selectSpanNodes(span)
+        affectPluginValues(span.plugins)
+        applySpan(addNodesToSpan(span))
       }
     })
+  }
+
+
+  /**
+   * Retrieve an array of `Node` from DOM and add them to `span`
+   *
+   * @param span The targetted span
+   *
+   * @return {Span} The span with new `nodes` Property
+   */
+  function addNodesToSpan(span: Span ): Span{
+    selectSpanNodes(span)
+    span.nodes = ExtractNodesFromCurrentSelection()
+    return span
+  }
+
+  /**
+   * Parse the `locals` array and extract spans related objects (spans & groups) to store theme separately
+   *
+   * @return {Promise} that resolve when the parsing is done. Used as an async dependencies for parent component
+   */
+  async function loadSpan(locals: any) {
+
+    await nextTick()
+
+    const result : Array<Span | SpanGroup | VirtualSpan | null> = []
+    locals.value.forEach(segment => {
+      if (((!segment?.sublocalisations) && (segment?.property?.[0]?.key == "entityType")) || !segment?.data) {
+        result[segment?.id] = segment
+      }
+    })
+    spanArray.value = result
+
   }
 
   const onDeleteSpan = ({ index }: { index: number }) => {
@@ -574,8 +638,8 @@ function createSpanService (){
   }
 
   return{
- recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpanv2, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, createSpan, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu
+ recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling,  handleDeleteSpan, loadSpan, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
+ affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM
   }
 }
 

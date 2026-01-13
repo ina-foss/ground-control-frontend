@@ -62,7 +62,7 @@
             <Dialog
               v-model:visible="deleteDialog"
               modal
-              header="Êtes-vous sûr de vouloir supprimer ce projet ?"
+              :header="t('project.deleteConfirmTitle')"
               :style="{ width: '31rem' }"
               class="bg-white pb-0"
               :pt="{
@@ -77,7 +77,7 @@
             >
               <div class="flex justify-end pb-0">
                 <Button
-                  label="Non"
+                  :label="t('common.no')"
                   class="!bg-[#ffffff] !text-primary button button-prev mr-3"
                   size="small"
                   @click="deleteDialog = false"
@@ -85,7 +85,7 @@
                 <Button
                   class="button"
                   size="small"
-                  label="Oui"
+                  :label="t('common.yes')"
                   @click="deleteProject"
                 />
               </div>
@@ -117,7 +117,7 @@
                 backgroundColor: (status_map.find(s => s.value === project.status)?.colorBg) || '#ccc'
               }"
             >
-              {{ status_map.find(s => s.value === project.status)?.label || project.status }}
+              {{ t(`project.status.${project.status}`) }}
             </Tag>
           </div>
         </div>
@@ -133,12 +133,12 @@
         <div v-if="(!project.tasks_to_annotate || project.tasks_to_annotate.length === 0) && !isAdmin" class="no-task-message pl-2 bg-white">
           <span class="status-circle"></span>
           <div>
-            <p class="font-bold">Aucune tâche en attente</p>
-            <p>De nouvelles tâches vous seront bientôt attribuées.</p>
+            <p class="font-bold">{{ t('project.noPendingTasks') }}</p>
+            <p>{{ t('project.assignedTasksSoon') }}</p>
           </div>
+        </div>
       </div>
-      </div>
-      
+
       <Divider class="bottom-0" :pt="{ root:{ style: 'margin-top : 0px; margin-bottom: 0px' } }" />
       <div
         class=" w-full flex justify-between pl-2 py-2 text-gray-400"
@@ -183,22 +183,18 @@
       <template #header>
         <div class="flex flex-col">
           <h3 class="text-lg font-semibold text-[#212529]">
-            Êtes-vous sûr de vouloir terminer ce projet ?
+            {{ t('project.finishConfirmTitle') }}
           </h3>
         </div>
       </template>
       <div class="m-2 text-sm">
         <Message severity="warn" :icon="false" class="mt-2">
-          {{ progressedTasks.length }} tâches<span
-            v-if="progressedTasks.length > 1"
-            >s</span
-          >
-          en cours
+          {{ t('project.tasksInProgress', { count: progressedTasks.length }) }}
         </Message>
       </div>
       <div class="flex justify-end items-center pb-0 space-x-4">
         <Button
-          label="Non"
+          :label="t('common.no')"
           class="!bg-[#ffffff] !text-primary button button-prev mr-3"
           size="small"
           @click="finishDialog = false"
@@ -206,7 +202,7 @@
         <Button
           class="button"
           size="small"
-          label="Oui"
+          :label="t('common.yes')"
           @click="finishProject"
         />
       </div>
@@ -229,22 +225,18 @@
       <template #header>
         <div class="flex flex-col">
           <h3 class="text-lg font-semibold text-[#212529]">
-            Êtes-vous sûr de vouloir archiver ce projet ?
+            {{ t('project.archiveConfirmTitle') }}
           </h3>
         </div>
       </template>
       <div class="m-2 text-sm">
         <Message severity="warn" :icon="false" class="mt-2">
-          {{ progressedTasks.length }} tâches<span
-            v-if="progressedTasks.length > 1"
-            >s</span
-          >
-          en cours
+          {{ t('project.tasksInProgress', { count: progressedTasks.length }) }}
         </Message>
       </div>
       <div class="flex justify-end items-center pb-0 space-x-4">
         <Button
-          label="Non"
+          :label="t('common.no')"
           class="!bg-[#ffffff] !text-primary button button-prev mr-3"
           size="small"
           @click="archiveDialog = false"
@@ -252,7 +244,7 @@
         <Button
           class="button"
           size="small"
-          label="Oui"
+          :label="t('common.yes')"
           @click="archiveProject"
         />
       </div>
@@ -263,10 +255,13 @@
 <script setup>
 import { defineEmits } from "vue";
 import MoleculeFormProject from "./MoleculeFormProject.vue";
-import { useService } from "#imports";
+import { useService ,useI18n} from "#imports";
 import { ProjectService } from "../api/generate";
 import { Permission, ProjectStatus } from "~/api/generate";
 import { status_map } from "~/helpers/statusMap";
+
+const { t } = useI18n()
+const localeRoute = useLocaleRoute()
 
 const menu = ref();
 const visible = ref(false);
@@ -310,20 +305,15 @@ const isClickable = computed(() => !!linkTarget.value)
 const handleCardClick = () => {
   if (!linkTarget.value) return
 
-  if (isAdmin.value) {
-    navigateTo({
-      name: linkTarget.value.name,
-      params: linkTarget.value.params
-    })
-  } else {
-    navigateTo({
-      name: linkTarget.value.name,
-      params: linkTarget.value.params,
-      query: {
-        project_id: project.id
-      }
-    })
-  }
+  const route = localeRoute({
+    name: linkTarget.value.name,
+    params: linkTarget.value.params,
+    query: !isAdmin.value
+      ? { project_id: project.id }
+      : undefined
+  })
+
+  if (route) navigateTo(route)
 }
 
 const { $handleApiError } = useNuxtApp();
@@ -397,7 +387,7 @@ const toggleMenu = (event) => {
 
 const actions = computed(() => [
   {
-    label: "Modifier",
+    label: t('actions.edit'),
     condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && roleUpdateProject.value,
     handler: () => {
       visible.value = true;
@@ -405,7 +395,7 @@ const actions = computed(() => [
     },
   },
   {
-    label: "Archiver",
+    label: t('actions.archive'),
     condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && roleArchiveProject.value  ,
     handler: () => {
       archiveDialog.value = true;
@@ -413,15 +403,15 @@ const actions = computed(() => [
     },
   },
   {
-    label: "Terminer",
+    label: t('actions.finish'),
     condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && rolefinishProject.value,
     handler: () => {
       finishDialog.value = true;
       menu.value.hide();
     },
   },
-    {
-    label: "Désarchiver",
+  {
+    label: t('actions.unarchive'),
     condition: project.status == ProjectStatus.ARCHIVED && roleUnarchiveProject.value,
     handler: async() => {
       await unarchiveProject()
@@ -431,7 +421,7 @@ const actions = computed(() => [
 ]);
 const visibleActions = computed(() => actions.value.filter((a) => a.condition));
 </script>
-<style>
+<style scoped >
 .custom-icon-color .pi {
   color: #212529;
 }

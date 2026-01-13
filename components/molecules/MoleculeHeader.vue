@@ -12,8 +12,8 @@
     <div class="flex justify-end items-center">
       <div class="mr-4">
         <Button
-        v-if="roleCreateProject && $route.name == 'dashboard'"
-        label="Nouveau projet"
+        v-if="roleCreateProject && isDashboard"
+        :label="t('project.newProject')"
         size="small"
         class="hover:!bg-primary"
         @click="dialogVisible = true"
@@ -34,9 +34,15 @@ import AtomIcon from '../atoms/AtomIcon.vue';
 import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
 import { Permission } from '~/api/generate';
+import {useI18n} from "#imports";
 const dialogVisible = ref(false);
 const { $application } = useService();
-
+const { t } = useI18n()
 const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_CREATE));
+const route = useRoute()
 
+const isDashboard = computed(() =>
+  typeof route.name === 'string' &&
+  route.name.startsWith('dashboard')
+)
 </script>

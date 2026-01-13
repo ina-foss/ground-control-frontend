@@ -130,8 +130,16 @@ export default defineNuxtConfig({
     },
   },
   ssr: false,
+  nitro: {
+    compatibilityDate: '2026-01-02'
+  },
   app: {
     pageTransition: {name: 'page', mode: 'in-out'},
+    head: {
+      meta: [
+        { name: 'build-version', content: new Date().toISOString() }
+      ]
+    }
   },
   devtools: {
     enabled: true,
@@ -146,7 +154,7 @@ export default defineNuxtConfig({
   ],
   plugins: [
     '~/directives/v-safe-html.ts',
-    '~/plugins/error-handler.ts',
+    '~/plugins/error-handler.ts'
   ],
   runtimeConfig: {
     public: {}
@@ -154,7 +162,7 @@ export default defineNuxtConfig({
   vite:{
     plugins: [tailwindcss()],
   },
-  modules: [ '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint'],
+  modules: [ '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint', '@nuxtjs/i18n'],
   colorMode: {
     classSuffix: '',
   },
@@ -182,5 +190,16 @@ export default defineNuxtConfig({
   eslint: {
     stylistic: true,
     files: './**/*.{ts,js,vue}'
+  },
+  i18n: {
+    defaultLocale: 'fr',
+    lazy: true,
+    langDir: "locales/",
+    locales: [
+      { code: 'fr', iso: 'fr-FR', name: 'Français (France)',file: 'fr.json'},
+      { code: 'en', iso: 'en-US', name: 'English',file: 'en.json'}
+    ],
+    vueI18n: './i18n.config.ts'
   }
+
 })

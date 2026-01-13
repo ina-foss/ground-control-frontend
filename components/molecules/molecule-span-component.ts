@@ -23,14 +23,15 @@ export default defineComponent({
     state: {type: String as PropType<AnnotationStatus>},
     isAnnotationEditable: { type: Boolean, default: true }
   },
-  setup(props, { emit, expose }) {
+  async setup(props, { emit, expose }) {
 
     const { $application } = useService()
     const { timestampToUnix, unixToTimestamp } = $application
     const { options } = storeToRefs(useOptions())
 
 
-    const {newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpanv2, saveSpan, contextMenuOptions, mainPluginId} = useSpanService()
+
+    const {newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
     const {pluginList } = storeToRefs(usePluginStore())
 
     const moleculeSpanControlPanelRef = ref()
@@ -60,56 +61,26 @@ export default defineComponent({
       return _.filter(locals.value, (local) => local?.sublocalisations).sort((a,b)=> unixToTimestamp(a?.tcin) - unixToTimestamp(b?.tcin) )
     })
 
-    watch(() => options.value.timecode_bloc,async (timecode : boolean ) => {
-      await nextTick()
-      blockArray.value?.childNodes.forEach((blocEl)   => {
-        removeTimecodeDiv(blocEl)
-        if (timecode) {
-          addTimecodeDiv(blocEl)
-        }
-      })
-      },)
 
     function handleWordClick (event: {tcin: number | string, event: MouseEvent}){
-      if (event.event.ctrlKey){
+      if (event.event.ctrlKey || (event.event.target as Element).getAttribute('tcin') == undefined ){
         emit('on-segment-click', event)
       }
     }
 
-
-const removeTimecodeDiv = (blocEl: ChildNode) => {
-  if (blocEl.nodeType == 1) {
-    if (blocEl.firstElementChild?.classList.contains('timecode')) blocEl.removeChild(blocEl.firstElementChild)
-  }
-}
-const addTimecodeDiv = (blocEl : ChildNode ,target?: HTMLDivElement) => {
-    if (blocEl.nodeType == 1) {
-      const divTag : HTMLDivElement = document.createElement('div')
-      divTag.addEventListener('click', ()=> emit('on-segment-click', {tcin: blocEl.firstElementChild.nextSibling.getAttribute('tcin'),tcout: blocEl.lastElementChild?.getAttribute('tcout'), index: computeDivPositionInList(blocEl) }))
-      divTag.classList.add("timecode")
-      divTag.classList.add("cursor-pointer")
-      const tag : VNode = h(createVNode(Tag, { value: timestampToUnix(blocEl.firstElementChild.getAttribute('tcin')), severity: 'secondary' }))
-      render(tag, divTag)
-      if (target) target.insertBefore(divTag, target.firstElementChild )
-      else blocEl.insertBefore(divTag, blocEl.firstElementChild)
-
-    }
-}
-    function computeDivPositionInList(el: HTMLDivElement) {
-      return Array.prototype.indexOf.call(el.parentElement.children, el)
-    }
-
-  watch(()=>options.value.bloc,async ()=> {
-    await nextTick()
-    loadSpanv2(locals)
-
-})
-    onMounted(async () => {
+    watch(()=>options.value.bloc,async ()=> {
       await nextTick()
       loadSpanv2(locals)
     })
 
-      expose({annotationFunction: saveSpan, listRefs: listSegment })
+    onMounted(async () => {
+      await nextTick()
+      appendAllSpansToDOM()
+    })
+
+    expose({annotationFunction: saveSpan, listRefs: listSegment })
+
+    await loadSpan(locals)
 
     return{
       aggregatedLocals,

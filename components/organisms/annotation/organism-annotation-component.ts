@@ -9,6 +9,7 @@ import { useService } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
 import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
+import SpanSkeleton from "~/components/molecules/SpanSkeleton.vue";
 
 export default defineComponent({
   name: "OrganismAnnotation",
@@ -19,6 +20,7 @@ export default defineComponent({
     MoleculeTabs,
     AtomSearch,
     MoleculeTranscription,
+    SpanSkeleton
   },
   props: {
     data: {
@@ -35,7 +37,6 @@ export default defineComponent({
     },
     allFetched: {
       type: Boolean,
-
     },
   },
   emits: [ 'submit-annotation', 'finish-annotation', 'skip-annotation' ],
@@ -323,6 +324,7 @@ export default defineComponent({
   const handleSkip = () => emit('skip-annotation', { locals: {}, options: { showToast: true } })
 
   onMounted(()=>{
+
     window.addEventListener("keydown", globalKeydown);
 
     watch(()=> allFetched.value,() => {
