@@ -261,6 +261,5 @@ export default defineNuxtComponent({
       getPluginList,
       t
     }
-
   },
 })
