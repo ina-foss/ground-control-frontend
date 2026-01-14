@@ -19,7 +19,7 @@
               class="mt-3"
               icon="pi pi-ellipsis-h"
               severity="secondary"
-              text
+              text8
               rounded
               :disabled="visibleActions.length === 0"
               @click.stop.prevent="toggleMenu"
@@ -106,7 +106,7 @@
           >
             <span class="font-bold">
               <span style="color: #0057ff" class="mr-2"
-                >{{ project.steps.length }} </span
+                >{{ project.steps_count }} </span
               ><i class="pi pi-list-check"
             /></span>
             <Tag
@@ -130,7 +130,7 @@
             project.description.slice(1)
           }}
         </div>
-        <div v-if="(!project.tasks_to_annotate || project.tasks_to_annotate.length === 0) && !isAdmin" class="no-task-message pl-2 bg-white">
+        <div v-if="(!project.tasks_id_to_annotate || project.tasks_id_to_annotate.length === 0) && !isAdmin" class="no-task-message pl-2 bg-white">
           <span class="status-circle"></span>
           <div>
             <p class="font-bold">{{ t('project.noPendingTasks') }}</p>
@@ -234,7 +234,7 @@
           {{ t('project.tasksInProgress', { count: progressedTasks.length }) }}
         </Message>
       </div>
-      <div class="flex justify-end items-center pb-0 space-x-4">
+      <div class="flex justify-end items-censster pb-0 space-x-4">
         <Button
           :label="t('common.no')"
           class="!bg-[#ffffff] !text-primary button button-prev mr-3"
@@ -268,7 +268,7 @@ const visible = ref(false);
 const deleteDialog = ref(false);
 const finishDialog = ref(false);
 const archiveDialog = ref(false);
-const { setMode } = useOptions();
+const progressedTasksCount = ref(0)
 const { project } = defineProps({
   project: { type: Object, default: () => {} },
 });
@@ -296,8 +296,8 @@ const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PR
 const linkTarget = computed(() => {
   if (isAdmin.value) {
     return { name: 'projects-id', params: { id: project.id } }
-  } else if (project.tasks_to_annotate?.length && !isAdmin.value) {
-    return { name: 'tasks-id', params: { id: project?.tasks_to_annotate[0].id } }
+  } else if (project.tasks_id_to_annotate && !isAdmin.value) {
+    return { name: 'tasks-id', params: { id: project?.tasks_id_to_annotate[0] } }
   }
   return null
 })
@@ -373,13 +373,17 @@ const unarchiveProject = async () => {
   }
 };
 
-const { data: progressedTasks } = useAsyncData(
-  `project_${project.id}_progressed_tasks`,
-  async () =>
-    await ProjectService.getProgressedTasksForProjectProjectIdProgressedTasksPost(
-      Number(project.id),
-    ),
-);
+watch(
+  () => finishDialog.value || archiveDialog.value,
+  async (open) => {
+    if (!open) return
+    progressedTasksCount.value =
+      await ProjectService.getProgressedTasksCountForProjectProjectIdProgressedTasksCountPost(
+        Number(project.id)
+      )
+  }
+)
+
 
 const toggleMenu = (event) => {
   menu.value.toggle(event);

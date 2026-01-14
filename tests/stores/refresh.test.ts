@@ -125,11 +125,11 @@ describe('useRefreshStore', () => {
     vi.stubGlobal('$fetch', $fetchMock)
 
     vi.stubGlobal('window', { innerWidth: 1920 })
-    await store.fetchProject(0, 10)
+    await store.fetchProjects(0, 10)
     expect(store.project_number).toBe(123)
 
     vi.stubGlobal('window', { innerWidth: 1500 })
-    await store.fetchProject()
+    await store.fetchProjects()
     expect(store.project_number).toBe(123)
   })
 })

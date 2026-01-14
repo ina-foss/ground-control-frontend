@@ -36,6 +36,7 @@ export type { PluginWithIdDto } from './models/PluginWithIdDto';
 export type { ProjectBaseDto } from './models/ProjectBaseDto';
 export type { ProjectDetailDto } from './models/ProjectDetailDto';
 export type { ProjectListDto } from './models/ProjectListDto';
+export type { ProjectListDtoSummary } from './models/ProjectListDtoSummary';
 export type { ProjectParametersResponse } from './models/ProjectParametersResponse';
 export { ProjectStatus } from './models/ProjectStatus';
 export type { ProjectWithIdDto } from './models/ProjectWithIdDto';
