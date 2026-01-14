@@ -137,7 +137,10 @@ export default defineNuxtConfig({
     pageTransition: {name: 'page', mode: 'in-out'},
     head: {
       meta: [
-        { name: 'build-version', content: new Date().toISOString() }
+        { name: 'build-version', content: new Date().toISOString() },
+        { name: "Cache-Control", content: "no-cache, no-store, must-revalidate" },
+        { name: "Expires", content: "0" },
+        { name: "Pragma", content: "no-cache" }
       ]
     }
   },
