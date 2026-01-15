@@ -24,7 +24,7 @@
               :disabled="visibleActions.length === 0"
               @click.stop.prevent="toggleMenu"
             />
-            <OverlayPanel
+            <Popover
               ref="menu"
               appendTo="body"
               class="p-2 shadow-md rounded-xl"
@@ -38,7 +38,7 @@
                   @click.stop.prevent="action.handler(project.id)"
                 />
               </div>
-            </OverlayPanel>
+            </Popover>
             <Button
               v-if="roleDeleteProject"
               style="height: 22px; padding: 0 0 0 0; margin: 0; color: #0c7da2"

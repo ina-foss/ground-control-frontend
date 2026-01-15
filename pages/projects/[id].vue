@@ -211,23 +211,11 @@
             <div
               class="flex items-center cursor-pointer txt"
               :loading="loadingExport"
-              @click="clickButtonMenu($event, slotProps.data)"
             >
-              <SplitButton label="Exporter" outlined />
+              <Button label="Exporter" iconPos="right" icon="pi pi-chevron-down" outlined @click.capture.stop="clickButtonMenu($event, slotProps.data)" />
+              <TieredMenu ref="buttonMenu" :model="buttonItems" :popup="true"  breakpoint="200px" />
             </div>
 
-            <Menu ref="buttonMenu" :model="buttonItems" :popup="true">
-              <template #item="{ item, props }">
-                <a
-                  v-ripple
-                  v-tooltip="{ value: item.tooltip, showDelay: 1000 }"
-                  class="txt flex align-items-center"
-                  v-bind="props.action"
-                >
-                  <p>{{ item.label }}</p>
-                </a>
-              </template>
-            </Menu>
           </div>
         </template>
       </Column>
@@ -677,6 +665,7 @@ import {
   TaskStatus,
   ProjectService,
 } from "../../api/generate";
+import type {StepDetailDto, AnnotationDto} from '~/api/generate'
 import MoleculeFormTask from "~/components/molecules/MoleculeFormTask.vue";
 import { FilterMatchMode, FilterService } from "@primevue/core/api";
 import AtomMarkdown from "../../components/atoms/AtomMarkdown.vue";
@@ -702,7 +691,7 @@ const refreshStore = useRefreshStore();
 const toast = useToast();
 const { $application } = useService();
 const { fetchTasks } = refreshStore;
-const { getTasks } = storeToRefs(refreshStore) 
+const { getTasks } = storeToRefs(refreshStore)
 const dialogVisible = ref(false)
 const deleteModal = reactive({visible: false, data: {},loading:false})
 const clickedRowData = ref(null)
@@ -771,25 +760,50 @@ watch(getTasks, (newTasks) => {
 
 const buttonItems = [
   {
-    label: "Un seul fichier",
-    command: () => {
-      exportOut(selectedRow.value, "one");
-    },
-    tooltip: "Exporter toutes les annotations de l'étape dans un seul fichier",
+    label: "Exporter au format d'import",
+    items: [
+      {
+        label: "Un seul fichier",
+        command: () => {
+          exportOut(selectedRow.value, "one");
+        },
+      },
+      {
+        label: "Regrouper par tâche",
+        command: () => {
+          exportOut(selectedRow.value, "task");
+        },
+      },
+      {
+        label: "Fichiers séparés",
+        command: () => {
+          exportOut(selectedRow.value, "all");
+        },
+      },
+    ]
   },
   {
-    label: "Regrouper par tâche",
-    command: () => {
-      exportOut(selectedRow.value, "task");
-    },
-    tooltip: "Exporter les annotations en les regroupant par tâche",
-  },
-  {
-    label: "Fichiers séparés",
-    command: () => {
-      exportOut(selectedRow.value, "all");
-    },
-    tooltip: "Exporter chaque annotations dans un fichier dédié",
+    label: "Export total",
+    items: [
+      {
+        label: "Un seul fichier",
+        command: () => {
+          exportOut(selectedRow.value, "one","dump");
+        },
+      },
+      {
+        label: "Regrouper par tâche",
+        command: () => {
+          exportOut(selectedRow.value, "task","dump");
+        },
+      },
+      {
+        label: "Fichiers séparés",
+        command: () => {
+          exportOut(selectedRow.value, "all","dump");
+        },
+      },
+    ]
   },
 ];
 
@@ -838,7 +852,7 @@ const clickButtonMenu = (event, step) => {
   buttonMenu.value.toggle(event);
 };
 
-const exportOut = async (step, group) => {
+const exportOut = async (step: StepDetailDto , group : 'task' | 'all' | 'one', mode? : 'dump' | "importLike" = "importLike" )   => {
   const tasks = step.tasks;
   loadingExport.value = true;
   const annos = {};
@@ -852,12 +866,13 @@ const exportOut = async (step, group) => {
           "out",
         );
       if (annotations.length > 0) {
-        if (group == "task") triggerDownload(annotations, task.name);
+        if (group == "task") triggerDownload(annotations, task.name,mode);
         else if (group == "all")
           annotations.forEach((annotation) =>
             triggerDownload(
               annotation,
               task.name + " by " + annotation.user_email.split("@")[0],
+              mode
             ),
           );
         else if (group == "one") annos[task.name] = annotations;
@@ -867,12 +882,16 @@ const exportOut = async (step, group) => {
       throw new Error(error.body.raw_message);
     }
   }
-  if (group == "one") triggerDownload(annos, step.title);
+  if (group == "one") triggerDownload(annos, step.title,mode);
   loadingExport.value = false;
 };
 
-function triggerDownload(data, name) {
-  const annotationsBlob = new Blob([JSON.stringify(data)], {
+function triggerDownload(data: AnnotationDto, name: string, mode: 'dump'|'importLike') {
+  let output : AnnotationDto | Record<string,any> = data
+  if(mode == 'importLike' && data.result ){
+      output = data.result
+  }
+  const annotationsBlob = new Blob([JSON.stringify(output)], {
     type: "application/json",
   });
 
@@ -921,15 +940,20 @@ const stepCreate = (stepId) => {
 
 let email_clicked: string | undefined;
 const handleRowClick = (event) => {
+  if (typeof event == "string" ) {
+    if (isAdmin.value) email_clicked = event;
+    return
+  }
   if (event.data.status === "draft") return;
-  if (typeof event == "string" && isAdmin.value) email_clicked = event;
   clickedRowData.value = event.data;
   if (editMode.value === false)
-    navigateToTask(clickedRowData.value.id, email_clicked, 
-    (clickedRowData.value.status === TaskStatus.DONE || 
-    clickedRowData.value.status === TaskStatus.SKIPPED || 
-    clickedRowData.value.status === TaskStatus.ARCHIVED) 
+    navigateToTask(clickedRowData.value.id, email_clicked,
+    (clickedRowData.value.status === TaskStatus.DONE ||
+    clickedRowData.value.status === TaskStatus.SKIPPED ||
+    clickedRowData.value.status === TaskStatus.ARCHIVED ||
+    email_clicked ) // If email_clicked specified , annotation is in READ mode
     ? 'read' : 'edit');
+    email_clicked = undefined
 };
 
 const onCellEditComplete = () => {
