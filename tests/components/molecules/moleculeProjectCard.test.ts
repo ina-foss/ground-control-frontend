@@ -5,7 +5,7 @@ import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFormProject from '~/components/molecules/MoleculeFormProject.vue'
 import { ProjectService } from '~/api/generate';
 import { Dialog } from 'primevue';
-import {OverlayPanel } from 'primevue';
+import {Popover } from 'primevue';
 
 
 let mockedProject = {title: "Project creation",
@@ -93,8 +93,8 @@ describe('MoleculeProjectCard component', ()=>{
     const editButton = wrapper.find('button[data-p-severity="secondary"]')
     await editButton.trigger('click')
 
-    expect(wrapper.findComponent(OverlayPanel).exists()).toBeTruthy()
-    expect(wrapper.findComponent(OverlayPanel).isVisible()).toBeTruthy()
+    expect(wrapper.findComponent(Popover).exists()).toBeTruthy()
+    expect(wrapper.findComponent(Popover).isVisible()).toBeTruthy()
 
   })
 

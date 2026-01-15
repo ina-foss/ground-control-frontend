@@ -40,7 +40,7 @@ function createSpanService (){
   const contextControlPanelMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value})},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({spanId:spanMenuSelected.value,suppression: true}) }])
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
-  let pluginValues = reactive<pluginValues>({})
+  const pluginValues = reactive<pluginValues>({})
 
   const mainPluginId = computed(()=>{
       return pluginList?.value?.find(plugin=>plugin.display_config?.main_plugin == true)?.id  || undefined
@@ -165,7 +165,7 @@ function createSpanService (){
       }
     }
 
-    let tag = document.querySelector(`tag[spanid="${spanId}"]`)
+    const tag = document.querySelector(`tag[spanid="${spanId}"]`)
     if( tag ) tag.remove()
     if(span.nodes){
       span.nodes.forEach((node: HTMLDivElement)=>{
@@ -187,8 +187,8 @@ function createSpanService (){
   }
 
   const dropPin = () => {
-    let nodesToAdd = [...document.querySelectorAll('div .dragged_outer ')]
-    let nodesToRemove = [...document.querySelectorAll('div .dragged_inner ')]
+    const nodesToAdd = [...document.querySelectorAll('div .dragged_outer ')]
+    const nodesToRemove = [...document.querySelectorAll('div .dragged_inner ')]
     nodesToAdd.forEach(node=>node.classList.remove('dragged_outer'))
     nodesToRemove.forEach(node=>node.classList.remove('dragged_inner'))
     const spanId = event.dataTransfer.getData('spanid')
@@ -350,12 +350,12 @@ function createSpanService (){
 
           // Check for existing tag being overlap by the new tag on the LEFT side
           let elements = document.elementsFromPoint(tagCoord.x,tagCoord.y)
-          let overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+          const overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
           avoidOverlap(tag,overlapingTags)
 
           // Check for existing tag being overlap by the new tag on the RIGHT side
           elements = document.elementsFromPoint(tagCoord.right+50,tagCoord.y)
-          let overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+          const overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
           if(overlapingEndTags.length > 0 )
           if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
 
@@ -388,13 +388,13 @@ function createSpanService (){
     let debugCounter = 0
     while(avoidingTags.length > 0 && debugCounter <10){
         const otherTag = avoidingTags[0]
-        let elementCoord = otherTag.getBoundingClientRect()
+        const elementCoord = otherTag.getBoundingClientRect()
         movingTag.classList.remove('left-0')
-        let tagParent = movingTag.parentElement?.getBoundingClientRect()
-        let otherTagRight = elementCoord.right
+        const tagParent = movingTag.parentElement?.getBoundingClientRect()
+        const otherTagRight = elementCoord.right
         movingTag.style.left = `${ (otherTagRight - tagParent.left ) }px`
 
-        let {x,y} = movingTag.getBoundingClientRect()
+        const {x,y} = movingTag.getBoundingClientRect()
         avoidingTags = document.elementsFromPoint(x,y).filter(element => element.tagName == "TAG" && element != movingTag )
         debugCounter++
 
@@ -645,7 +645,7 @@ function createSpanService (){
 /**
  * @param initialization True for forcing the creation of a new instance
   **/
-export default function (initialization?: boolean): SpanService {
+export default function (initialization?: boolean){
   if(!spanServiceInstance || initialization) spanServiceInstance = createSpanService()
   return spanServiceInstance
 }
