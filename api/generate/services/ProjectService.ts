@@ -5,9 +5,9 @@
 import type { ProjectBaseDto } from '../models/ProjectBaseDto';
 import type { ProjectDetailDto } from '../models/ProjectDetailDto';
 import type { ProjectListDto } from '../models/ProjectListDto';
+import type { ProjectListDtoSummary } from '../models/ProjectListDtoSummary';
 import type { ProjectParametersResponse } from '../models/ProjectParametersResponse';
 import type { ProjectWithIdDto } from '../models/ProjectWithIdDto';
-import type { TaskWithIdDto } from '../models/TaskWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -27,6 +27,32 @@ export class ProjectService {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/projects',
+            query: {
+                'skip': skip,
+                'limit': limit,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Read Projects Summary
+     * Retrieve a list of projects with pagination support.
+     * @param skip
+     * @param limit
+     * @returns ProjectListDtoSummary Successful Response
+     * @throws ApiError
+     */
+    public static readProjectsSummaryProjectsSummaryGet(
+        skip?: number,
+        limit: number = 100,
+    ): CancelablePromise<Array<ProjectListDtoSummary>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/projects/summary',
             query: {
                 'skip': skip,
                 'limit': limit,
@@ -201,17 +227,17 @@ export class ProjectService {
         });
     }
     /**
-     * Get Progressed Tasks For Project
+     * Get Progressed Tasks Count For Project
      * @param projectId
-     * @returns TaskWithIdDto Successful Response
+     * @returns number Successful Response
      * @throws ApiError
      */
-    public static getProgressedTasksForProjectProjectIdProgressedTasksPost(
+    public static getProgressedTasksCountForProjectProjectIdProgressedTasksCountPost(
         projectId: number,
-    ): CancelablePromise<Array<TaskWithIdDto>> {
+    ): CancelablePromise<number> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/{project_id}/progressed_tasks',
+            url: '/{project_id}/progressed_tasks/count',
             path: {
                 'project_id': projectId,
             },

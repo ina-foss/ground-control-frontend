@@ -44,7 +44,7 @@ mockNuxtImport('useService',()=>{
 
   mockNuxtImport('useAsyncData', () => {
     return  (key) => {
-      if(key === "projects"){
+      if(key === "projects-summary"){
         return { data: mockedProject, refresh: refreshProject, status: refreshStatus, error: undefined  }
       }
       else if( key === "total_project_number"){

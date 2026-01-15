@@ -202,7 +202,7 @@ const updateProject = async () => {
         }
       });
       emits('toggle-dialog');
-      const projects =  useAsyncData('projects',async ()=> await refreshStore.fetchProject(),{server:false})
+      useAsyncData('projects-summary',async ()=> await refreshStore.fetchProjects(),{server:false})
     } catch (error) {
       $handleApiError(error)
     }
@@ -259,10 +259,7 @@ const createProject = async () => {
         max_tasks_per_person.value = 1
 
         emits('toggle-dialog')
-
-        // refreshStore.fetchProject() // Pas de parametre = on refetch avec le precedent skip value
-
-        const projects =  useAsyncData('projects',async ()=> await refreshStore.fetchProject(),{server:false})
+        useAsyncData('projects-summary',async ()=> await refreshStore.fetchProjects(),{server:false})
     })
   }
 }
