@@ -161,7 +161,7 @@ export default defineNuxtComponent({
         virtualSpanCategory.value = false
         defaultLabel.value=null
       }
-
+      return true
     }
 
     function handleConfirmationButton (){
