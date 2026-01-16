@@ -78,7 +78,7 @@
             </b>
             <InputText
               v-model="defaultLabel"
-              :placeholder="t('correctedTermPlaceholder')"
+              :placeholder="t('spanForm.correctedTermPlaceholder')"
               class="w-[calc(100%-110px)]"
             />
           </div>
@@ -116,8 +116,7 @@
 
     <Dialog
       :visible="unauthorizedVirtualSpan"
-      header="L'élément que vous essayé d’insérer n’est pas autorisé
-              car son type est inadéquat."
+      :header="t('spanForm.virtualSpan.dialog.header')"
       :baseZIndex="1100"
       :closable="true"
       :dismissableMask="false"
@@ -128,7 +127,7 @@
                 class="pi pi-exclamation-triangle text-red-500 text-2xl mt-1"
               ></span>
         <div>
-          <b>Vous pouvez uniquement insérer des éléments de type :</b>
+          <b>{{ t('spanForm.virtualSpan.dialog.allowedTypesLabel') }}</b>
           <ul class="mt-2 ml-6 list-disc">
             <li v-for="type in authorizedTypeList" :key="type">
               {{ type }}

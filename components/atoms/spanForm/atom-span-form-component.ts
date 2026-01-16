@@ -47,7 +47,7 @@ export default defineNuxtComponent({
 
     const modalHeader= computed(()=>{
       if(deleteLayout.value) return t('spanForm.deleteHeader')
-      if(isVirtualSpan.value) return "Span : création d’un span virtuel"
+      if(isVirtualSpan.value) return t('spanForm.virtualSpan.virtualSpanHeader')
       return groupDisplay.value ? t('spanForm.groupHeader') : t('spanForm.spanHeader')
     })
 
@@ -292,7 +292,7 @@ export default defineNuxtComponent({
       virtualSpanCategory,
       isVirtualSpan,
       unauthorizedVirtualSpan,
-      authorizedTypeList
+      authorizedTypeList,
       showLabelInput,
       labelTitle,
       getPluginList,

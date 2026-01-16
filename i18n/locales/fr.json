@@ -41,7 +41,14 @@
     "deleteHeader": "Confirmation de suppression",
     "groupHeader": "Groupe : propriétés",
     "spanHeader": "Span : propriétés",
-    "selectSpanType": "Sélectionner un type de span parmi ces groupes"
+    "selectSpanType": "Sélectionner un type de span parmi ces groupes",
+    "virtualSpan": {
+      "virtualSpanHeader": "Span : création d’un span virtuel",
+      "dialog": {
+        "header": "L’élément que vous essayez d’insérer n’est pas autorisé car son type est inadéquat.",
+        "allowedTypesLabel": "Vous pouvez uniquement insérer des éléments de type :"
+      }
+    }
   },
   "common":{
     "no": "Non",
