@@ -215,6 +215,9 @@ export default defineNuxtComponent({
         selectedGroupValue.value=selectedGroup?.value
         mainGroupPluginIndexValue.value=mainGroupPluginIndex?.value
       }
+      else{
+        isVirtualSpan.value= false
+      }
       if(suppression) deleteLayout.value = suppression
       visible.value = true
     }
