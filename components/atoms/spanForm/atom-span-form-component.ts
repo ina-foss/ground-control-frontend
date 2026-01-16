@@ -1,18 +1,22 @@
 import _ from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
-import { toRaw } from "vue"
 import {DisplayZone} from '~/api/generate'
+import { useI18n } from '#imports'
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
   components: {AtomPluginItemslist},
   setup(props,{emit,expose}) {
     let currentSpanId = undefined
+    const { t } = useI18n()
     const textSpan=ref()
     const visible = ref()
+    const labelTitle = ref()
     const nodesCount=ref<number>()
-    const suppWarning=ref("Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés.")
+    const suppWarning = computed(() =>
+      t('spanForm.suppressionWarning')
+    )
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]
@@ -42,19 +46,15 @@ export default defineNuxtComponent({
     const authorizedTypeList = ref<string[]>([])
 
     const modalHeader= computed(()=>{
-      if(deleteLayout.value) return 'Confirmation de suppresion'
+      if(deleteLayout.value) return t('spanForm.deleteHeader')
       if(isVirtualSpan.value) return "Span : création d’un span virtuel"
-      return groupDisplay.value ? "Groupe : propriétés" : "Span : propriétés"
+      return groupDisplay.value ? t('spanForm.groupHeader') : t('spanForm.spanHeader')
     })
-
 
     onMounted(()=>{
       initPluginValues(getPluginList.value)
     })
 
-    function onLastSelected(value:any) {
-        defaultLabel.value = value ??  textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
-    }
 
     function pluginChangeValue(plugin: PluginWithIdDto,event){
       if( (plugin.display_config.main_plugin || groupDisplay.value ) && event.length != 0 && event[0] != null   ) showErrorMessage.value = false
@@ -112,6 +112,18 @@ export default defineNuxtComponent({
         }
       });
       return result
+    })
+
+    const showLabelInput = computed(() => {
+      if(!isForResearch.value) {
+        if (!mainPluginIndex.value) return true
+        const selected = pluginValues[mainPluginIndex.value]?.[0]
+        if (!selected || selected.editable ==="") return false
+        labelTitle.value=selected.editable
+        if(selected && selected.copyable ==='false') defaultLabel.value=""
+
+      }
+      return true
     })
 
     function expandContext() {
@@ -246,7 +258,6 @@ export default defineNuxtComponent({
       visible,
       labelSelected,
       handleConfirmationButton,
-      createSpan,
       nodes,
       prevNodes,
       nextNodes,
@@ -273,7 +284,6 @@ export default defineNuxtComponent({
       childPluginMap,
       textSpan,
       readPluginValues,
-      onLastSelected,
       showErrorMessage,
       pluginChangeValue,
       extractTextFromSpanNodes,
@@ -283,6 +293,10 @@ export default defineNuxtComponent({
       isVirtualSpan,
       unauthorizedVirtualSpan,
       authorizedTypeList
+      showLabelInput,
+      labelTitle,
+      getPluginList,
+      t
     }
   },
 })

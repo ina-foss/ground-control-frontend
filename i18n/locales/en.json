@@ -28,6 +28,21 @@
     "archiveConfirmTitle": "Are you sure you want to archive this project?",
     "tasksInProgress": "{count} task in progress| {count} tasks in progress"
   },
+  "spanForm": {
+    "context": "Context",
+    "selectValueError": "Please select a value",
+    "missingWordsLabel": "Number of missing words",
+    "missingWordsPlaceholder": "Enter the number of missing words",
+    "correctedTerm": "Terme corrigé",
+    "transcriptionTerm": "Transcription term",
+    "correctedTermPlaceholder": "Entrez le terme corrigé",
+    "deleteConfirm": "Do you really want to delete this span?",
+    "suppressionWarning": "To create a deletion span, only 1 word must be selected.",
+    "deleteHeader": "Delete confirmation",
+    "groupHeader": "Group: properties",
+    "spanHeader": "Span: properties",
+    "selectSpanType": "Select a span type from these groups"
+  },
   "common":{
     "no": "No",
     "yes": "Yes"
@@ -36,6 +51,8 @@
     "edit": "Edit",
     "archive":"Archive",
     "finish":"Finish",
-    "unarchive":"Unarchive"
+    "unarchive":"Unarchive",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
   }
 }

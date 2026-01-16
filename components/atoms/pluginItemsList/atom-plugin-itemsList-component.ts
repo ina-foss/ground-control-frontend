@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import type { PluginWithIdDto } from '~/api/generate'
 import { PluginService } from '~/api/generate'
+import { useI18n } from '#imports'
 
 export default defineComponent({
   name: 'AtomPluginItemslist',
@@ -15,6 +16,7 @@ export default defineComponent({
   emits:['update:pluginValue'],
   setup(props, {emit}) {
     const { isForResearch } = useSpanService()
+    const { t } = useI18n()
 
     const {groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
 
@@ -92,7 +94,8 @@ export default defineComponent({
       all_entities_plugin,
       groupButtonLayout,
       groupByOptions,
-      customizedLabel
+      customizedLabel,
+      t
     }
   },
 })
