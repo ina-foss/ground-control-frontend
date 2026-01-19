@@ -5,6 +5,7 @@
         <AtomSearch class='hidden'  :spans="spanArray" />
       </div>
       <div class="grow h-0 flex justify-center relative overflow-visible ">
+        <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-33.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : state == TaskStatus.DONE ? 'Tâche Terminée ✅ ' : 'Mode Lecture 📖' " ></span>
         <ScrollPanel class="h-full pr-2 overflow-x-visible "
           :dt="{
           bar : {

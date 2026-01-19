@@ -49,7 +49,7 @@
     </div>
     </div>
   <div v-else class="h-full">
-    <AtomSearch class=" right-10 absolute flex items-center top-[72px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
+    <AtomSearch class=" right-10 absolute flex items-center top-[80px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
     <div class="xs:grid xs:grid-cols-10 flex flex-col h-full gap-5">
       <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :panel-size="panelSize" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))" @scroll-to-segment="handleVideoTimelineClick">
       </MoleculeAnnotationLeftPanel>

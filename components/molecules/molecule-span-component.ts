@@ -12,7 +12,7 @@ import AtomTaskComment from "../atoms/AtomTaskComment.vue";
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import AtomSpanForm from '../atoms/spanForm/AtomSpanForm.vue'
 import MoleculeSpanControlPanel from './spanControlPanel/MoleculeSpanControlPanel.vue'
-import {AnnotationStatus} from "~/api/generate";
+import {AnnotationStatus, TaskStatus} from "~/api/generate";
 
 
 export default defineComponent({
@@ -83,6 +83,7 @@ export default defineComponent({
     await loadSpan(locals)
 
     return{
+      TaskStatus,
       aggregatedLocals,
       spanForm,
       contextMenuOptions,

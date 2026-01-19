@@ -39,6 +39,7 @@ const { fetchAnnotations } = refresh;
 let timeAnnotationStart;
 const data = ref(getData);
 const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
+const canUserReview = computed(()=> $application.hasRole(Permission.GROUND_CONTROL_ANNOTATION_REVIEW))
 
 watchEffect(() => {
   useHead({
@@ -102,7 +103,7 @@ const {
   async () =>
     await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(
       data.value.id,
-      isAdmin.value == true && route.query.email
+      route.query.email
         ? route.query.email
         : userEmail.value,
       "out",
@@ -322,7 +323,7 @@ const handleSubmit = async (event, action) => {
         path: `/projects/${route.query.project_id}`,
       }) : navigateTo({
         path: "/dashboard",
-      }) 
+      })
     } catch (error) {
       console.error("Failed to skip annotation:", error);
       $handleApiError(error);

@@ -664,6 +664,8 @@ import {
   Permission,
   TaskStatus,
   ProjectService,
+  type TaskListDto,
+  type TaskWithIdDto,
 } from "../../api/generate";
 import type {StepDetailDto, AnnotationDto} from '~/api/generate'
 import MoleculeFormTask from "~/components/molecules/MoleculeFormTask.vue";
@@ -939,19 +941,20 @@ const stepCreate = (stepId) => {
 };
 
 let email_clicked: string | undefined;
-const handleRowClick = (event) => {
-  if (typeof event == "string" ) {
-    if (isAdmin.value) email_clicked = event;
+const handleRowClick = (event : string | {originalEvent: MouseEvent , data: TaskWithIdDto } ) => {
+  // callback when the event is triggered by Avatar in the task List
+  if (typeof event == "string" && isAdmin.value){
+    email_clicked = event;
     return
   }
-  if (event.data.status === "draft") return;
+  // callback when the event is triggered by the Task
+  if (event.data?.status === "draft") return;
   clickedRowData.value = event.data;
   if (editMode.value === false)
     navigateToTask(clickedRowData.value.id, email_clicked,
     (clickedRowData.value.status === TaskStatus.DONE ||
     clickedRowData.value.status === TaskStatus.SKIPPED ||
-    clickedRowData.value.status === TaskStatus.ARCHIVED ||
-    email_clicked ) // If email_clicked specified , annotation is in READ mode
+    clickedRowData.value.status === TaskStatus.ARCHIVED)
     ? 'read' : 'edit');
     email_clicked = undefined
 };
