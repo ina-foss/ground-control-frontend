@@ -26,6 +26,8 @@
  * :type UPDATE_ANNOTATION_RESULT: str
  * :ivar FINISH_ANNOTATION: Permission string to finish an annotation.
  * :type FINISH_ANNOTATION: str
+ * :ivar REVIEW_ANNOTATION: Permission string to view someone else's annotation.
+ * :type REVIEW_ANNOTATION: str
  * :ivar READ_MEDIA: Permission string to read media.
  * :type READ_MEDIA: str
  * :ivar CREATE_MEDIA: Permission string to create media.
@@ -109,6 +111,7 @@ export enum Permission {
     GROUND_CONTROL_ANNOTATION_GET_ANNOTATIONS_BY_ID = 'ground-control:annotation:get_annotations_by_id',
     GROUND_CONTROL_ANNOTATION_UPDATE_ANNOTATION_RESULT = 'ground-control:annotation:update_annotation_result',
     GROUND_CONTROL_ANNOTATION_FINISH_ANNOTATION = 'ground-control:annotation:finish_annotation',
+    GROUND_CONTROL_ANNOTATION_REVIEW = 'ground-control:annotation:review',
     GROUND_CONTROL_MEDIA_READ = 'ground-control:media:read',
     GROUND_CONTROL_MEDIA_CREATE = 'ground-control:media:create',
     GROUND_CONTROL_MEDIA_UPDATE = 'ground-control:media:update',

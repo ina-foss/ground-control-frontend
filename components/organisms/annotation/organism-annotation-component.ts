@@ -286,7 +286,7 @@ export default defineComponent({
 
       case 'span':
           return { component :MoleculeSpan,
-            props: { isAnnotationEditable: isAnnotationEditable},
+            props: { isAnnotationEditable: isAnnotationEditable.value},
             events:{ 'on-segment-click': handleSegmentClick }
     }
 

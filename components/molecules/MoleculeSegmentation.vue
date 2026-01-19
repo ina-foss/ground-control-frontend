@@ -2,7 +2,7 @@
   <AtomHelp class="fixed z-[1000]" />
 
   <div :class="`col-span-5 w-full flex justify-center relative transition-all`"  >
-    <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center font-bold gap-1 justify-center top-[-30px]" v-html="useRoute().query.email ? `<p>Tâche annotée par<p><span class='px-2 py-1 bg-primary text-white font-bold rounded-md'>${useRoute().query.email}</span>` : 'Tâche Terminée ✅' " ></span>
+    <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-37.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : 'Tâche Terminée ✅' " ></span>
     <div :class="`${options.timecode_segment || options.number_segment ? 'w-full' : 'w-fit'} relative  justify-center flex flex-row  h-0 min-h-full transition-all`">
     <div class="h-full  left-0 top-0 transition-all  ">
       <AtomProgressBar class="xs:sticky top-0 transition-all"  :colors="colors" :topics="topics" :topicList="topicList" :totalLength="locals.length" @progress-bar-jump="jumpToTopic($event)" />
