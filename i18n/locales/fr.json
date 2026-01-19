@@ -46,7 +46,7 @@
       "virtualSpanHeader": "Span : création d’un span virtuel",
       "dialog": {
         "header": "L’élément que vous essayez d’insérer n’est pas autorisé car son type est inadéquat.",
-        "allowedTypesLabel": "Vous pouvez uniquement insérer des éléments de type :"
+        "allowedTypesLabel": "Vous pouvez uniquement insérer des éléments de type:"
       }
     }
   },
