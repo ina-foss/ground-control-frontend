@@ -3,7 +3,7 @@ import { setup } from '@nuxt/test-utils';
 import { config } from '@vue/test-utils';
 import path from 'path';
 
-const baseURL = process.env.BASE_URL || 'http://localhost:3000';
+export const baseURL = process.env.BASE_URL || 'http://localhost:3000';
 
 beforeAll(async () => {
 
