@@ -316,52 +316,62 @@ function createSpanService (){
     const borderColor = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value],1)
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
       const bgElement = document.createElement(`bg${spanId}`)
-      bgElement.classList.add('absolute', 'min-w-full', 'h-[16px]','left-0','top-[-2px]','mix-blend-multiply','pointer-events-none','py-2')
+      bgElement.classList.add('absolute', 'min-w-full', 'h-[16px]','left-0','top-[-2px]','mix-blend-multiply','py-2','pointer-events-none')
       element.style.backgroundColor='transparent'
+      // add context menu listener to the word element
+      element.removeEventListener('contextmenu', (event)=>{
+        spanMenuSelected.value = spanId
+        spanMenu.value.show(event)
+        })
+      element.addEventListener('contextmenu', (event)=>{
+        spanMenuSelected.value = spanId
+        spanMenu.value.show(event)
+        })
       bgElement.style.backgroundColor = color
       bgElement.classList.add('border-y-2',)
       bgElement.style.borderColor = borderColor
-        element.style.lineHeight = '14px'
-        element.style.userSelect = 'text'
-        element.classList.add('relative')
-        if(elementIndex == span.nodes.length-1) {
-          bgElement.classList.add('border-r-2','pr-4')
-          bgElement.style.borderRadius = "0px 4px 4px 0px"
-        }
-        if(elementIndex == 0) {
-          bgElement.classList.add('border-l-2')
-          bgElement.style.borderRadius = "4px 0px 0px 4px"
-          const tag = document.createElement('tag')
-          tag.innerText = span.plugins[mainPluginIndex.value]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
-          tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded')
-          tag.style.left= '0px'
-          tag.draggable = true
-          tag.style.backgroundColor = color
-          tag.style.borderColor = borderColor
-          tag.setAttribute('spanId',spanId)
-          tag.style.zIndex= '50'
-          element.appendChild(tag)
-          tag.addEventListener('dragstart',event=> {
-            event.dataTransfer.setData('span',spanId)
-          })
-          tag.addEventListener('contextmenu', (event )=>{
-            spanMenuSelected.value = spanId
-            spanMenu.value.show(event)
-            })
-          const tagCoord = tag.getBoundingClientRect()
-
-          // Check for existing tag being overlap by the new tag on the LEFT side
-          let elements = document.elementsFromPoint(tagCoord.x,tagCoord.y)
-          const overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
-          avoidOverlap(tag,overlapingTags)
-
-          // Check for existing tag being overlap by the new tag on the RIGHT side
-          elements = document.elementsFromPoint(tagCoord.right+50,tagCoord.y)
-          const overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
-          if(overlapingEndTags.length > 0 )
-          if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
-
+      element.style.lineHeight = '14px'
+      element.style.userSelect = 'text'
+      element.classList.add('relative')
+      if(elementIndex == span.nodes.length-1) {
+        bgElement.classList.add('border-r-2','pr-4')
+        bgElement.style.borderRadius = "0px 4px 4px 0px"
       }
+      if(elementIndex == 0) {
+        bgElement.classList.add('border-l-2')
+        bgElement.style.borderRadius = "4px 0px 0px 4px"
+        const tag = document.createElement('tag')
+        tag.innerText = span.plugins[mainPluginIndex.value]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
+        tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded')
+        tag.style.left= '0px'
+        tag.draggable = true
+        tag.style.backgroundColor = color
+        tag.style.borderColor = borderColor
+        tag.setAttribute('spanId',spanId)
+        tag.style.zIndex= '50'
+        element.appendChild(tag)
+        tag.addEventListener('dragstart',event=> {
+          event.dataTransfer.setData('span',spanId)
+        })
+        tag.addEventListener('contextmenu', (event )=>{
+          spanMenuSelected.value = spanId
+          spanMenu.value.show(event)
+          })
+        const tagCoord = tag.getBoundingClientRect()
+
+        // Check for existing tag being overlap by the new tag on the LEFT side
+        let elements = document.elementsFromPoint(tagCoord.x,tagCoord.y)
+        let overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+        avoidOverlap(tag,overlapingTags)
+
+        // Check for existing tag being overlap by the new tag on the RIGHT side
+        elements = document.elementsFromPoint(tagCoord.right+50,tagCoord.y)
+        let overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+        if(overlapingEndTags.length > 0 )
+        if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
+      }
+      // Apply radius on every corner for 1 word span
+      if(span.nodes.length == 1) bgElement.style.borderRadius = "4px"
       const existingBg = [...element.querySelectorAll('bg')]
       if(existingBg.length == 0 ) element.appendChild(bgElement)
       else{
