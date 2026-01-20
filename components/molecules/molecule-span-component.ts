@@ -29,6 +29,15 @@ export default defineComponent({
     const { timestampToUnix, unixToTimestamp } = $application
     const { options } = storeToRefs(useOptions())
 
+    const {$amalia}  = useService()
+
+    const playerTime = ref()
+
+    onMounted(() => {
+      const interval = setInterval(() => {
+        playerTime.value = $amalia.callSeek()
+      }, 50);
+    })
 
 
     const {newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
@@ -109,7 +118,8 @@ export default defineComponent({
       pluginList,
       moleculeSpanControlPanelRef,
       focusGroup,
-      handleWordClick
+      handleWordClick,
+      playerTime
     }
 
   }

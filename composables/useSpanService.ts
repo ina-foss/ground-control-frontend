@@ -342,7 +342,7 @@ function createSpanService (){
         bgElement.style.borderRadius = "4px 0px 0px 4px"
         const tag = document.createElement('tag')
         tag.innerText = span.plugins[mainPluginIndex.value]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
-        tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded')
+        tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded', 'text-text')
         tag.style.left= '0px'
         tag.draggable = true
         tag.style.backgroundColor = color

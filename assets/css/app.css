@@ -57,17 +57,17 @@
   --color-secondary-color: var(--secondary-color);
 
   /* Bleu colors */
-  --color-bleu-50: var(--bleu-50);
-  --color-bleu-100: var(--bleu-100);
-  --color-bleu-200: var(--bleu-200);
-  --color-bleu-300: var(--bleu-300);
-  --color-bleu-400: var(--bleu-400);
-  --color-bleu-500: var(--bleu-500);
-  --color-bleu-600: var(--bleu-600);
-  --color-bleu-700: var(--bleu-700);
-  --color-bleu-800: var(--bleu-800);
-  --color-bleu-900: var(--bleu-900);
-  --color-bleu-950: var(--bleu-950);
+  --color-blue-50: var(--blue-50);
+  --color-blue-100: var(--blue-100);
+  --color-blue-200: var(--blue-200);
+  --color-blue-300: var(--blue-300);
+  --color-blue-400: var(--blue-400);
+  --color-blue-500: var(--blue-500);
+  --color-blue-600: var(--blue-600);
+  --color-blue-700: var(--blue-700);
+  --color-blue-800: var(--blue-800);
+  --color-blue-900: var(--blue-900);
+  --color-blue-950: var(--blue-950);
 
   /* Grey colors */
   --color-grey-50: var(--grey-50);

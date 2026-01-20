@@ -152,7 +152,12 @@ export default class AmaliaPlayerService {
     return players;
   }
 
-  public callSeek() {
+  /**
+  * Return the current time of the Amalia player
+  * @return {number} A float that represents the position of the player in second
+  * @example 214.1403 which represent 00:03:34.1403
+  */
+  public callSeek(): number | undefined {
     const players = this.getPlayers()
     if(players){
       return players[0]?.mediaPlayerElement?.getMediaPlayer().getCurrentTime();
