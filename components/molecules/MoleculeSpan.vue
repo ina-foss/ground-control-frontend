@@ -66,8 +66,3 @@
 
 <script src="./molecule-span-component.ts" lang="ts">
 </script>
-<style scoped lang="postcss">
-.selected-segment {
-  @apply border-surface-500 border-2
-}
-</style>

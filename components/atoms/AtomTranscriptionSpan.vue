@@ -131,11 +131,18 @@ const removeSpanPreview = (event) => {
 
 </script>
 <style scoped>
-.dragged_outer{
-  background-color: highlight;
-  color: white;
-}
-.dragged_inner{
-  color: red;
-}
+  @reference "../../assets/css/app.css";
+
+  .selected-segment > span-transcription-wrapper {
+    @apply border-active border-2
+  }
+
+  .dragged_outer{
+    background-color: highlight;
+    color: white;
+  }
+  .dragged_inner{
+    color: red;
+  }
+
 </style>
