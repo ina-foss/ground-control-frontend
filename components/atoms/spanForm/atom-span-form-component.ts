@@ -120,7 +120,14 @@ export default defineNuxtComponent({
         const selected = pluginValues[mainPluginIndex.value]?.[0]
         if (!selected || selected.editable ==="") return false
         labelTitle.value=selected.editable
-        if(selected && selected.copyable ==='false') defaultLabel.value=""
+        if(selected){
+          if(spanArray.value[currentSpanId].label && spanArray.value[currentSpanId].label !== "")defaultLabel.value=spanArray.value[currentSpanId].label
+          else {
+            defaultLabel.value=selected.copyable ==='false'? "":(textSpan.value)?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
+
+          }
+        }
+
 
       }
       return true
