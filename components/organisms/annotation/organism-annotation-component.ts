@@ -5,7 +5,7 @@ import MoleculeSegmentation from "~/components/molecules/MoleculeSegmentation.vu
 import MoleculeTranscription from "~/components/molecules/MoleculeTranscription.vue";
 import _,{sortBy} from 'lodash';
 import {AnnotationStatus, Permission, TaskStatus} from '~/api/generate';
-import { useService } from "#imports";
+import { useService,useI18n } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
 import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
@@ -43,7 +43,7 @@ export default defineComponent({
   setup(props, {emit}) {
 
     const { data, annotationsIn, annotationsOut, allFetched } = toRefs(props)
-
+    const { t } = useI18n();
     const authStore = useAuth()
     const optionStore = useOptions()
     const {$application} = useService()
@@ -55,6 +55,7 @@ export default defineComponent({
 
     const tabsRef = ref()
 
+    const isPlayerFocused = ref(false)
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
         let index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
         index != -1 ? scrollToSegment({bestIndex: index}) : div.scrollIntoView({'behavior': 'smooth', 'block' : 'center'})
@@ -205,6 +206,34 @@ export default defineComponent({
         return 'col-span-3'
     }
   })
+
+    const layout = computed(() => {
+      if(annotation_type ==='span'){
+        if (isPlayerFocused.value) {
+          return {
+            left: 'col-span-3',
+            center: 'col-span-7',
+          }
+        }
+        // layout habituel
+        return {
+          left: panelSize.value,
+          center: 'col-span-8',
+        }
+      }
+      return {
+        left: panelSize.value,
+        center: 'col-span-7',
+      }
+    })
+
+    watch(layout, () => {
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 1);
+    });
+
+
 
     const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
       if(event.index == undefined ){
@@ -450,6 +479,7 @@ export default defineComponent({
    locals :  locals
   })
 
+    provide('isPlayerFocused', isPlayerFocused)
 
   return {
     annotationInfo,
@@ -482,7 +512,9 @@ export default defineComponent({
     globalKeydown,
     jumpToTopic,
     allow_skip,
-  }
+    layout,
+    t
+    }
 
 },
 })

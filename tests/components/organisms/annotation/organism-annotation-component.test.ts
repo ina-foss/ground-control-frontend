@@ -3,6 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { shallowMount, mount } from '@vue/test-utils'
 import { computed,nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
+import { createI18n } from 'vue-i18n'
+
 
 vi.mock('~/stores/auth', () => ({
   useAuth: vi.fn()
@@ -19,7 +21,10 @@ vi.mock('~/stores/plugins', () => ({
     initialFetch: vi.fn()
   })
 }))
-
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 vi.mock('~/composables/useTcOffset', () => ({ useTcOffset: () => ({ setTcOffset: vi.fn() }) }))
 vi.mock('~/composables/useTopicList', () => ({ useTopicList: () => ({ topicList: [] }) }))
 
@@ -93,7 +98,7 @@ describe('OrganismAnnotationComponent', () => {
     setActivePinia(pinia)
     return mount(OrganismAnnotationComponent, {
       global: {
-        plugins: [pinia],
+        plugins: [pinia,i18n],
         stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
       },
       props: {
@@ -126,7 +131,7 @@ describe('OrganismAnnotationComponent', () => {
     setActivePinia(pinia)
     return shallowMount(OrganismAnnotationComponent, {
       global: {
-        plugins: [pinia],
+        plugins: [pinia,i18n],
         stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
       },
       props: {
@@ -163,7 +168,7 @@ describe('OrganismAnnotationComponent', () => {
       setActivePinia(pinia)
       return shallowMount(OrganismAnnotationComponent, {
         global: {
-          plugins: [pinia],
+          plugins: [pinia,i18n],
           stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
         },
         props: {
@@ -227,7 +232,7 @@ describe('OrganismAnnotationComponent', () => {
       setActivePinia(pinia)
       return shallowMount(OrganismAnnotationComponent, {
         global: {
-          plugins: [pinia],
+          plugins: [pinia,i18n],
           stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
         },
         props: {

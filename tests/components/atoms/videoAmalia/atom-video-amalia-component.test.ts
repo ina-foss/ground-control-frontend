@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import AtomVideoAmalia from '@/components/atoms/videoAmalia/AtomVideoAmalia.vue'
 import {ref} from "vue";
+import {createI18n} from "vue-i18n";
 
 const consumeTimecodeMock = vi.fn(() => 456)
 const unixToTimestampMock = vi.fn(() => 789)
@@ -43,6 +44,11 @@ global.fetch = vi.fn(() =>
   })
 ) as any
 
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
+
 describe('AtomVideoAmalia', () => {
   let wrapper: any
 
@@ -61,7 +67,8 @@ describe('AtomVideoAmalia', () => {
         videoSrc: 'https://example.com/stream.m3u8?typemedia=audio'
       },
       global: {
-        stubs: ['Button']
+        stubs: ['Button'],
+        plugins: [i18n]
       }
     })
     await new Promise(resolve => setTimeout(resolve, 50))
@@ -82,7 +89,8 @@ describe('AtomVideoAmalia', () => {
         videoSrc: 'https://example.com/stream.m3u8?typemedia=audio'
       },
       global: {
-        stubs: ['Button']
+        stubs: ['Button'],
+        plugins: [i18n]
       }
     })
     expect(wrapper.vm.visibleRight).toBe(false)
@@ -110,7 +118,8 @@ describe('AtomVideoAmalia', () => {
         videoSrc: 'https://example.com/stream.m3u8?typemedia=video'
       },
       global: {
-        stubs: ['Button']
+        stubs: ['Button'],
+        plugins: [i18n]
       }
     })
     const rewindButton = wrapper.get('[data-testid="rewind-btn"]')
@@ -133,7 +142,8 @@ describe('AtomVideoAmalia', () => {
         videoSrc: 'https://example.com/stream.m3u8?typemedia=video'
       },
       global: {
-        stubs: ['Button']
+        stubs: ['Button'],
+        plugins: [i18n]
       }
     })
     await new Promise(resolve => setTimeout(resolve, 50))
@@ -155,7 +165,8 @@ describe('AtomVideoAmalia', () => {
       videoSrc: 'https://example.com/stream.m3u8?typemedia=video'
     },
     global: {
-      stubs: ['Button']
+      stubs: ['Button'],
+      plugins: [i18n]
     }
   })
     await new Promise(resolve => setTimeout(resolve, 50))

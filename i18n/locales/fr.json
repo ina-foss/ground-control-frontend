@@ -60,6 +60,30 @@
     "finish":"Terminer",
     "unarchive":"Désarchiver",
     "cancel": "Annuler",
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "skip": "Abandonner et quitter",
+    "save": "Enregistrer"
+  },
+  "player": {
+    "actions": {
+      "configButton": "Config du player",
+      "resize": "Rétrécir",
+      "lastTimecode": "Dernier TC"
+    },
+    "config": {
+      "title": "Configurer les boutons du player",
+      "audio": {
+        "backwardSecond": "Retour 1 seconde par 1 seconde",
+        "forwardSecond": "Avance 1 seconde par 1 seconde"
+      },
+      "video": {
+        "backward5Seconds": "Retour 5 secondes par 5 secondes",
+        "forward5Seconds": "Avance 5 secondes par 5 secondes",
+        "backwardFrame": "Retour image par image",
+        "forwardFrame": "Avance image par image",
+        "slowBackward": "Retour ralenti",
+        "slowForward": "Avance ralentie"
+      }
+    }
   }
 }

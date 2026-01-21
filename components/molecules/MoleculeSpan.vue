@@ -1,5 +1,5 @@
 <template>
-  <molecule-span-wrapper class="col-span-8 flex">
+  <molecule-span-wrapper class="flex h-full w-full">
     <div :class="` flex flex-col h-full relative `">
       <div>
         <AtomSearch class='hidden'  :spans="spanArray" />

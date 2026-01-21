@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import { useService } from '#imports';
+import { useService,useI18n } from '#imports';
 import { ref,watch } from 'vue';
 import settingIcon from '../../public/icons/icons-svg/icons-svg/setting-icon.svg';
 
 export default defineComponent({
   name: "AtomVideoAmalia",
-  emits: ["timecode-update"],
+  emits: ["timecode-update",'update:focusPlayer'],
   props: {
     media_params: {
       type: Object,
@@ -18,13 +18,17 @@ export default defineComponent({
     videoSrc: {
       type: String,
       default: ''
+    },
+    focusPlayer: {
+      type: Boolean,
+      default: false
     }
   },
   setup(props, { emit,expose }) {
 
     const {$amalia, $application} = useService()
     const { media_params,locals,videoSrc } = toRefs(props)
-
+    const { t } = useI18n();
     const myplayer = ref()
     let lastIndex = 0
     let dynamicSrc = ref()
@@ -39,23 +43,26 @@ export default defineComponent({
     const showRollback = computed(()=>{
       return timecodeHistory.value.length > 0
     })
-
+    const focusPlayerModel  = computed({
+      get: () =>  props.focusPlayer,
+      set: (value) => emit('update:focusPlayer', value)
+    })
 
     const visibleRight = ref(false);
     const categories = ref([]);
-    const audioCategories = [
-      { name: "Retour 1 seconde par 1 seconde", key: "backward-second" },
-      { name: "Avance 1 seconde par 1 seconde", key: "forward-second" }
-    ];
+    const audioCategories = computed(() => [
+      { name: t('player.config.audio.backwardSecond'), key: "backward-second" },
+      { name: t('player.config.audio.forwardSecond'), key: "forward-second" }
+    ]);
 
-    const videoCategories = [
-      { name: "Retour 5 secondes par 5 secondes", key: "backward-5seconds" },
-      { name: "Avance 5 secondes par 5 secondes", key: "forward-5seconds" },
-      { name: "Retour image par image", key: "backward-frame" },
-      { name: "Avance image par image", key: "forward-frame" },
-      { name: "Retour ralenti", key: "slow-backward" },
-      { name: "Avance ralentie", key: "slow-forward" }
-    ];
+    const videoCategories = computed(() => [
+      { name: t('player.config.video.backward5Seconds'), key: "backward-5seconds" },
+      { name:  t('player.config.video.forward5Seconds'), key: "forward-5seconds" },
+      { name: t('player.config.video.backwardFrame'), key: "backward-frame" },
+      { name: t('player.config.video.forwardFrame'), key: "forward-frame" },
+      { name: t('player.config.video.slowBackward'), key: "slow-backward" },
+      { name: t('player.config.video.slowForward'), key: "slow-forward" }
+    ]);
     const selectedCategories = ref([]);
 
     watch([selectedCategories, visibleRight], async () => {
@@ -78,9 +85,9 @@ export default defineComponent({
           const mediaType = getMediaType(videoSrc);
 
           if (mediaType === 'audio') {
-            categories.value = audioCategories;
+            categories.value = audioCategories.value;
           } else {
-            categories.value = videoCategories;
+            categories.value = videoCategories.value;
           }
           selectedCategories.value = categories.value.map(cat => cat.key);
           myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc),waveformUrl?.value ||"")) // add amalia player once src is ready
@@ -159,7 +166,9 @@ export default defineComponent({
       visibleRight,
       categories,
       settingIcon,
-      selectedCategories
+      selectedCategories,
+      focusPlayerModel,
+      t
     }
   }
 
