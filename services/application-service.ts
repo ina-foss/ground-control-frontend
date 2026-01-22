@@ -108,7 +108,7 @@ export default class ApplicationService {
     if (!tc.includes(':')) return parseFloat(tc)
     const millisecond = tc.split('.')[1]
     const timeArray = tc.split('.')[0].split(':')
-    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + floor(parseFloat('0.'+millisecond),2)
+    const videoTime = parseInt(timeArray[0]) * 3600 + parseInt(timeArray[1]) * 60 + parseInt(timeArray[2]) + floor(parseFloat('0.'+millisecond),4)
     return videoTime
   }
 

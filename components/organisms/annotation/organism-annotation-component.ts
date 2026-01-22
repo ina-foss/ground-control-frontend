@@ -242,6 +242,7 @@ export default defineComponent({
       bestIndex = event.index
       scrollToSegment({bestIndex: event.index})
       if ( options.value.transcription === true ) {
+        event.tcin = unixToTimestamp(event.tcin) - options.value.jump_before_offset
         moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
       }
     }

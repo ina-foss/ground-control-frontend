@@ -47,6 +47,7 @@
   const updateVideoTimecode = (event) => {
     $amalia.updateCurrentTc($application.unixToTimestamp(event.tcin) )
     pauseTime.value=$application.unixToTimestamp(event.tcout)
+    $amalia.onPlay()
   }
 
   const checkCurrentTime = () => {
@@ -62,8 +63,8 @@
     });
   });
 
-  watch(currentTime, (newCurrentTime) => {
-    if (pauseTime.value !== 0 && newCurrentTime >= pauseTime.value && options.loop_bloc) {
+  watch(()=>currentTime.value, (newCurrentTime) => {
+    if (pauseTime.value !== 0 && options.loop_bloc &&  ((!options.jump_after_offset &&  newCurrentTime >= pauseTime.value) || newCurrentTime >=pauseTime.value + options.jump_after_offset ) )  {
       $amalia.onPause();
       pauseTime.value=0;
     }

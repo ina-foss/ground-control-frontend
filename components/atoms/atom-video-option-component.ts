@@ -6,12 +6,6 @@ export default defineComponent({
   setup(){
     const store = useOptions()
     const {options} =storeToRefs(store)
-
-
-
-
-
-
     return{
       options
     }
