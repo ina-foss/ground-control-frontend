@@ -248,16 +248,17 @@ export default defineComponent({
     function openVirtualSpanForm() {
       const id = spanArray.value.length
       spanFormRef.value?.open({
-        id: id,
-        virtual: true,
-        selectedGroup:selectedGroup,
-        mainGroupPluginIndex:mainGroupPluginIndex,
+        span: {id,label: "", plugins:[]},
+
+        selectedGroup:selectedGroup.value,
+        mainGroupPluginIndex:mainGroupPluginIndex.value,
       })
     }
 
     function openGroupForm() {
+      const id = spanArray.value.length
       spanFormRef.value?.open({
-        group: true
+        span: {id,label: "", plugins:[],spans: []}
       })
     }
     expose({showPanel})

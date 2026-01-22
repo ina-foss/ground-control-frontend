@@ -27,7 +27,7 @@ declare interface Span extends SpanBase {
     plugins: Array
   }
 
-declare interface SpanGroup extends spanBase  {
+declare interface SpanGroup extends SpanBase  {
     spans: [
       {
         spanId: string | number,
@@ -42,7 +42,7 @@ declare interface SpanGroup extends spanBase  {
     tcout: number | string,
   }
 
-declare interface VirtualSpan extends Base {
+declare interface VirtualSpan extends SpanBase {
     deletedItems?: number,
     plugins: Array
 }

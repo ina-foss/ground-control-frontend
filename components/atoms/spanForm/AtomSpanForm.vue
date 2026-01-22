@@ -32,7 +32,7 @@
             <Message class="w-fit" severity="error" icon="pi pi-exclamation-triangle" >  {{ t('spanForm.selectValueError') }}</Message>
           </message-wrapper>
           <!--virtual span role-->
-          <div v-if="isVirtualSpan" class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
+          <div v-if="isVirtual" class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
             <b class=" text-right ">Rôle</b>
             <div class="flex flex-wrap gap-4  ">
               <div class=" w-full flex gap-3 items-center " >
@@ -49,10 +49,10 @@
 
           </div>
           <!--virtual span role-->
-          <plugin-iterator v-for="(plugin,index) in tidiedPluginList[groupDisplay ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
+          <plugin-iterator v-for="(plugin,index) in tidiedPluginList[isGroup ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
             <div class=""   >
               <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @update:plugin-value="pluginChangeValue(plugin,$event)" >
-                <b :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config?.main_plugin || groupDisplay) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </b>
+                <b :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config?.main_plugin || isGroup) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </b>
               </component>
             </div>
             <div class="" v-if="childPluginMap[readPluginValues(plugin)] != undefined " v-for="(child,childIndex) in childPluginMap[readPluginValues(plugin)]" :key="child.id">
@@ -107,7 +107,7 @@
 
       <div class="flex flex-row justify-end gap-2">
         <Button outlined severity="primary" icon="pi pi-times" :label="t('actions.cancel')" @click=" close()" />
-        <Button   :disabled="isVirtualSpan && (!virtualSpanCategory ||  !defaultLabel) ||!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 1 || deletedNum === null || deletedNum === undefined || deletedNum === 0)"
+        <Button   :disabled="isVirtual && (!virtualSpanCategory ||  !defaultLabel) ||!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 1 || deletedNum === null || deletedNum === undefined || deletedNum === 0)"
                   :label="t('actions.confirm')" icon="pi pi-check" @click=" handleConfirmationButton() " />
       </div>
 
