@@ -24,17 +24,17 @@
   --surface-950: 2 6 23;
 
   /*Colors charts*/
-  --bleu-50: #73b1c4;
-  --bleu-100: #80dcf9;
-  --bleu-200: #4acaf2;
-  --bleu-300: #00befa;
-  --bleu-400: #11b9ee;
-  --bleu-500: #0f9fcc;
-  --bleu-600: #0c85ab;
-  --bleu-700: #0c7da2;
-  --bleu-800: #0b7698;
-  --bleu-900: #006180;
-  --bleu-950: #003a4c;
+  --blue-50: #73b1c4;
+  --blue-100: #80dcf9;
+  --blue-200: #4acaf2;
+  --blue-300: #00befa;
+  --blue-400: #11b9ee;
+  --blue-500: #0f9fcc;
+  --blue-600: #0c85ab;
+  --blue-700: #0c7da2;
+  --blue-800: #0b7698;
+  --blue-900: #006180;
+  --blue-950: #003a4c;
 
   --grey-50: #f7f7f7;
   --grey-100: #ededed;
@@ -59,7 +59,7 @@
   --cobalt-950: #002366;
 
   /*Main colors*/
-  --primary-color: var(--bleu-800);
+  --primary-color: var(--blue-800);
   --secondary-color: var(--grey-100);
   --accent-color: var(--cobalt-700);
   --surface-color: #ffffff;
@@ -70,10 +70,10 @@
   --title: var(--grey-900);
   --text: var(--grey-900);
   --subtitle: var(--grey-400);
-  --link: var(--bleu-800);
-  --hover: var(--bleu-700);
-  --secondary: var(--bleu-950);
-  --active: var(--bleu-150);
+  --link: var(--blue-500);
+  --hover: #0c7da2;
+  --secondary: var(--blue-900);
+  --active: var(--blue-700);
   --disabled: var(--grey-150);
 
   /*Semantics*/
@@ -112,7 +112,7 @@
 :root.dark,
 :root[class=dark] {
   /*Main colors*/
-  --primary-color: var(--bleu-600);
+  --primary-color: var(--blue-600);
   --secondary-color: var(--grey-600);
   --accent-color: var(--cobalt-700);
   --surface-color: var(--grey-800);
@@ -123,10 +123,10 @@
   --title: #ffffff;
   --text: #ffffff;
   --subtitle: var(--grey-200);
-  --link: var(--bleu-400);
-  --hover: var(--bleu-200);
-  --secondary: var(--bleu-50);
-  --active: var(--bleu-300);
+  --link: var(--blue-400);
+  --hover: var(--blue-200);
+  --secondary: var(--blue-50);
+  --active: var(--blue-300);
   --disabled: var(--grey-150);
 
   /*Semantics*/

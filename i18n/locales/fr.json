@@ -28,6 +28,28 @@
     "archiveConfirmTitle": "Êtes-vous sûr de vouloir archiver ce projet ?",
     "tasksInProgress": "{count} tâche en cours| {count} tâches en cours"
   },
+  "spanForm": {
+    "context": "Contexte",
+    "selectValueError": "Veuillez sélectionner une valeur",
+    "missingWordsLabel": "Nombre de mots manquants",
+    "missingWordsPlaceholder": "Entrez le nombre de mots manquants",
+    "correctedTerm": "Terme corrigé",
+    "transcriptionTerm": "Terme de la transcription",
+    "correctedTermPlaceholder": "Entrez le terme corrigé",
+    "deleteConfirm": "Souhaitez-vous vraiment supprimer ce span ?",
+    "suppressionWarning": "Pour créer un span de type “suppression”, seul 1 mot doit être sélectionné.",
+    "deleteHeader": "Confirmation de suppression",
+    "groupHeader": "Groupe : propriétés",
+    "spanHeader": "Span : propriétés",
+    "selectSpanType": "Sélectionner un type de span parmi ces groupes",
+    "virtualSpan": {
+      "virtualSpanHeader": "Span : création d’un span virtuel",
+      "dialog": {
+        "header": "L’élément que vous essayez d’insérer n’est pas autorisé car son type est inadéquat.",
+        "allowedTypesLabel": "Vous pouvez uniquement insérer des éléments de type:"
+      }
+    }
+  },
   "common":{
     "no": "Non",
     "yes": "Oui"
@@ -36,6 +58,32 @@
     "edit": "Modifier",
     "archive":"Archiver",
     "finish":"Terminer",
-    "unarchive":"Désarchiver"
+    "unarchive":"Désarchiver",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "skip": "Abandonner et quitter",
+    "save": "Enregistrer"
+  },
+  "player": {
+    "actions": {
+      "configButton": "Config du player",
+      "resize": "Rétrécir",
+      "lastTimecode": "Dernier TC"
+    },
+    "config": {
+      "title": "Configurer les boutons du player",
+      "audio": {
+        "backwardSecond": "Retour 1 seconde par 1 seconde",
+        "forwardSecond": "Avance 1 seconde par 1 seconde"
+      },
+      "video": {
+        "backward5Seconds": "Retour 5 secondes par 5 secondes",
+        "forward5Seconds": "Avance 5 secondes par 5 secondes",
+        "backwardFrame": "Retour image par image",
+        "forwardFrame": "Avance image par image",
+        "slowBackward": "Retour ralenti",
+        "slowForward": "Avance ralentie"
+      }
+    }
   }
 }

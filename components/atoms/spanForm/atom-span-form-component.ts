@@ -2,6 +2,7 @@ import _ from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
 import {DisplayZone} from '~/api/generate'
+import { useI18n } from '#imports'
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
@@ -10,10 +11,14 @@ export default defineNuxtComponent({
   setup(props,{emit,expose}) {
 
     let currentSpan : AnySpan
+    const { t } = useI18n()
     const textSpan=ref()
     const visible = ref()
+    const labelTitle = ref()
     const nodesCount=ref<number>()
-    const suppWarning=ref("Pour créer un span de type “suppression”, seuls 2 mots doivent être sélectionnés.")
+    const suppWarning = computed(() =>
+      t('spanForm.suppressionWarning')
+    )
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
     let filteredPlugins=[]
@@ -34,10 +39,18 @@ export default defineNuxtComponent({
     const showContext = computed(()=>nodes.value.length == 0)
     const groupDisplay = computed(()=>isGroup.value)
     const expandedContext = ref(false)
+    const isVirtualSpan = ref(false)
+    const selectedGroupValue = ref()
+    const mainGroupPluginIndexValue = ref()
+    const virtualSpanCategory = ref('')
+
+    const unauthorizedVirtualSpan = ref(false)
+    const authorizedTypeList = ref<string[]>([])
 
     const modalHeader= computed(()=>{
-      if(deleteLayout.value) return 'Confirmation de suppresion'
-      return groupDisplay.value ? "Groupe : propriétés" : "Span : propriétés"
+      if(deleteLayout.value) return t('spanForm.deleteHeader')
+      if(isVirtualSpan.value) return t('spanForm.virtualSpan.virtualSpanHeader')
+      return groupDisplay.value ? t('spanForm.groupHeader') : t('spanForm.spanHeader')
     })
 
 
@@ -45,9 +58,6 @@ export default defineNuxtComponent({
       initPluginValues(getPluginList.value)
     })
 
-    function onLastSelected(value:any) {
-        defaultLabel.value = value ??  textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
-    }
 
     function pluginChangeValue(plugin: PluginWithIdDto,event){
       if( (plugin.display_config.main_plugin || groupDisplay.value ) && event.length != 0 && event[0] != null   ) showErrorMessage.value = false
@@ -107,6 +117,25 @@ export default defineNuxtComponent({
       return result
     })
 
+    const showLabelInput = computed(() => {
+      if(!isForResearch.value) {
+        if (!mainPluginIndex.value) return true
+        const selected = pluginValues[mainPluginIndex.value]?.[0]
+        if (!selected || selected.editable ==="") return false
+        labelTitle.value=selected.editable
+        if(selected){
+          if(spanArray.value[currentSpanId].label && spanArray.value[currentSpanId].label !== "")defaultLabel.value=spanArray.value[currentSpanId].label
+          else {
+            defaultLabel.value=selected.copyable ==='false'? "":(textSpan.value)?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
+
+          }
+        }
+
+
+      }
+      return true
+    })
+
     function expandContext() {
       expandedContext.value = true
     }
@@ -134,7 +163,30 @@ export default defineNuxtComponent({
         spanArray.value[currentSpan.id] = currentSpan
       }
       else{ // virtual spans
+        /*const category = virtualSpanCategory.value
+        const mainDataProperty = Object.keys(pluginValues)[0]
+        const spanType =pluginValues[mainDataProperty]?.[0]?.label
+
+        const authorizedTypes = category?.authorized_types
+
+        const isAuthorized = !authorizedTypes || authorizedTypes.includes(spanType)
+
+        if (!isAuthorized) {
+          authorizedTypeList.value = authorizedTypes
+          unauthorizedVirtualSpan.value = true
+          return false
+        }*/
         const spanId =spanArray.value.length
+        /*const spanId =spanArray.value.length
+        spanArray.value[spanId] = {
+          id: spanId,
+          label: defaultLabel.value
+        }
+        selectedGroupValue.value.spans = [...selectedGroupValue.value.spans,{spanId: spanId, role: virtualSpanCategory.value}]
+        virtualSpanCategory.value = false
+        defaultLabel.value=null
+      }
+      return true*/
         const span = {
           id: spanId,
           plugins: _.cloneDeep(pluginValues),
@@ -164,10 +216,18 @@ export default defineNuxtComponent({
       ) showErrorMessage.value = true
       else{
         showErrorMessage.value = false
-        if(deleteLayout.value) deleteSpan(currentSpan)
-        else if (isGroup.value)  createGroup()
-        else createSpan()
-        close()
+        let success = true // pour ouvrir la popup d'erreur dans la modale
+        if (deleteLayout.value) {
+          deleteSpan(currentSpan)
+        } else if (isGroup.value) {
+          createGroup()
+        } else {
+          success = createSpan()
+        }
+
+        if (success) {
+          close()
+        }
       }
     }
 
@@ -246,10 +306,19 @@ export default defineNuxtComponent({
       childPluginMap,
       textSpan,
       readPluginValues,
-      onLastSelected,
       showErrorMessage,
       pluginChangeValue,
-      extractTextFromSpanNodes
+      extractTextFromSpanNodes,
+      selectedGroupValue,
+      mainGroupPluginIndexValue,
+      virtualSpanCategory,
+      isVirtualSpan,
+      unauthorizedVirtualSpan,
+      authorizedTypeList,
+      showLabelInput,
+      labelTitle,
+      getPluginList,
+      t
     }
   },
 })

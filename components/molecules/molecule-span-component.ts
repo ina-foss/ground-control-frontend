@@ -12,7 +12,7 @@ import AtomTaskComment from "../atoms/AtomTaskComment.vue";
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import AtomSpanForm from '../atoms/spanForm/AtomSpanForm.vue'
 import MoleculeSpanControlPanel from './spanControlPanel/MoleculeSpanControlPanel.vue'
-import {AnnotationStatus} from "~/api/generate";
+import {AnnotationStatus, TaskStatus} from "~/api/generate";
 
 
 export default defineComponent({
@@ -29,6 +29,15 @@ export default defineComponent({
     const { timestampToUnix, unixToTimestamp } = $application
     const { options } = storeToRefs(useOptions())
 
+    const {$amalia}  = useService()
+
+    const playerTime = ref()
+
+    onMounted(() => {
+      const interval = setInterval(() => {
+        playerTime.value = $amalia.callSeek()
+      }, 50);
+    })
 
 
     const {newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
@@ -78,6 +87,7 @@ export default defineComponent({
     await loadSpan(locals)
 
     return{
+      TaskStatus,
       aggregatedLocals,
       spanForm,
       contextMenuOptions,
@@ -103,7 +113,8 @@ export default defineComponent({
       pluginList,
       moleculeSpanControlPanelRef,
       focusGroup,
-      handleWordClick
+      handleWordClick,
+      playerTime
     }
 
   }

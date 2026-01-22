@@ -2,11 +2,11 @@ import _, { every } from 'lodash'
 import AtomSpanTag from './AtomSpanTag.vue'
 import { DisplayZone } from '~/api/generate'
 import draggable from 'vuedraggable';
+import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
 
 export default defineComponent({
   name:"MoleculeSpanControlPanel",
-  emits: ['handleNewGroup'],
-  components: {AtomSpanTag,draggable},
+  components: {AtomSpanForm, AtomSpanTag,draggable},
   props: {
     isAnnotationEditable: {
       type: Boolean,
@@ -32,8 +32,7 @@ export default defineComponent({
     const spanFilter = ref()
     const groupFilter = ref()
     const spanLinkFilter = ref()
-    const dialogVirtualSpan = ref()
-    const virtualSpanLabel = ref()
+    const spanFormRef = ref<InstanceType<typeof AtomSpanForm> | null>(null)
 
     const panelCollapseController = reactive({
       spanList: true,
@@ -181,16 +180,6 @@ export default defineComponent({
       }
     }
 
-    function handleCreateVirtualSpan(){
-      const id = spanArray.value.length
-      spanArray.value[id] = {
-        id: id,
-        label: virtualSpanLabel.value
-      }
-      selectedGroup.value.spans = [...selectedGroup.value.spans,{spanId: id, role: dialogVirtualSpan.value}]
-      dialogVirtualSpan.value = false
-    }
-
     function handleRemoveGroup (targetGroup? : SpanGroup){
       if(!groupDeleted.value){
         groupDeleted.value = targetGroup
@@ -218,8 +207,10 @@ export default defineComponent({
       const spanId = event.dataTransfer.getData('span')
       if (spanId){
         const span = spanArray.value.find(span=>span?.id == parseInt(spanId))
-        if(span?.plugins[mainPluginData_property.value]?.[0].label || span?.label ==""){
-          const isAuthorized = category?.authorized_types?.includes(span?.plugins[mainPluginData_property.value]?.[0].label);
+        if(span?.label =="" || span?.plugins[mainPluginData_property.value]?.[0].label){
+          let isAuthorized=false
+          if(span?.label !=="")
+           isAuthorized = category?.authorized_types?.includes(span?.plugins[mainPluginData_property.value]?.[0].label);
 
           if(isAuthorized || span?.label =="" || category?.authorized_types == undefined){
             if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
@@ -254,6 +245,21 @@ export default defineComponent({
       if (newValue){ localStorage.setItem('blocks-order', JSON.stringify(newValue))}
     }, { deep: true })
 
+    function openVirtualSpanForm() {
+      const id = spanArray.value.length
+      spanFormRef.value?.open({
+        id: id,
+        virtual: true,
+        selectedGroup:selectedGroup,
+        mainGroupPluginIndex:mainGroupPluginIndex,
+      })
+    }
+
+    function openGroupForm() {
+      spanFormRef.value?.open({
+        group: true
+      })
+    }
     expose({showPanel})
 
     return {
@@ -292,9 +298,6 @@ export default defineComponent({
       unlinkSpan,
       handleCancelRemoveGroup,
       layout,
-      dialogVirtualSpan,
-      virtualSpanLabel,
-      createVirtualSpan : handleCreateVirtualSpan,
       spanNone,
       spanLinkFilter,
       switchGroupLayout,
@@ -311,6 +314,9 @@ export default defineComponent({
       openSpanMenu,
       deleteDialogVisible,
       panelCollapseController,
+      spanFormRef,
+      openVirtualSpanForm,
+      openGroupForm,
       visibleSpanOnlyArray,
       visibleGroupArray,
       sortedVisibleGroupArray

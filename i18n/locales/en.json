@@ -28,6 +28,28 @@
     "archiveConfirmTitle": "Are you sure you want to archive this project?",
     "tasksInProgress": "{count} task in progress| {count} tasks in progress"
   },
+  "spanForm": {
+    "context": "Context",
+    "selectValueError": "Please select a value",
+    "missingWordsLabel": "Number of missing words",
+    "missingWordsPlaceholder": "Enter the number of missing words",
+    "correctedTerm": "Corrected term",
+    "transcriptionTerm": "Transcription term",
+    "correctedTermPlaceholder": "Enter the corrected term",
+    "deleteConfirm": "Do you really want to delete this span?",
+    "suppressionWarning": "To create a deletion span, only 1 word must be selected.",
+    "deleteHeader": "Delete confirmation",
+    "groupHeader": "Group: properties",
+    "spanHeader": "Span: properties",
+    "selectSpanType": "Select a span type from these groups",
+    "virtualSpan": {
+      "virtualSpanHeader": "Span: virtual span creation",
+      "dialog": {
+        "header": "The element you are trying to insert is not allowed because its type is incompatible.",
+        "allowedTypesLabel": "You can only insert elements of the following types:"
+      }
+    }
+  },
   "common":{
     "no": "No",
     "yes": "Yes"
@@ -36,6 +58,32 @@
     "edit": "Edit",
     "archive":"Archive",
     "finish":"Finish",
-    "unarchive":"Unarchive"
+    "unarchive":"Unarchive",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "skip": "Cancel and exit",
+    "save": "Save"
+  },
+  "player": {
+    "actions": {
+      "configButton": "Player settings",
+      "resize": "Resize",
+      "lastTimecode": "Last TC"
+    },
+    "config": {
+      "title": "Configure player buttons",
+      "audio": {
+        "backwardSecond": "Rewind 1 second",
+        "forwardSecond": "Forward 1 second"
+      },
+      "video": {
+        "backward5Seconds": "Rewind 5 seconds",
+        "forward5Seconds": "Forward 5 seconds",
+        "backwardFrame": "Frame backward",
+        "forwardFrame": "Frame forward",
+        "slowBackward": "Slow rewind",
+        "slowForward": "Slow forward"
+      }
+    }
   }
 }

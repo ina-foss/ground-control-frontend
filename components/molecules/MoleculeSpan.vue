@@ -1,10 +1,11 @@
 <template>
-  <molecule-span-wrapper class="col-span-8 flex">
+  <molecule-span-wrapper class="flex h-full w-full">
     <div :class="` flex flex-col h-full relative `">
       <div>
         <AtomSearch class='hidden'  :spans="spanArray" />
       </div>
       <div class="grow h-0 flex justify-center relative overflow-visible ">
+        <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-33.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : state == TaskStatus.DONE ? 'Tâche Terminée ✅ ' : 'Mode Lecture 📖' " ></span>
         <ScrollPanel class="h-full pr-2 overflow-x-visible "
           :dt="{
           bar : {
@@ -13,7 +14,7 @@
           },
         }">
           <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col" >
-            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local"  @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
+            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :playerTime="playerTime"  @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
           </div>
           <div v-else>
             <div
@@ -47,8 +48,7 @@
                   <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3">
                     <MoleculeSpanControlPanel
                     :is-annotation-editable="isAnnotationEditable"
-                    ref="moleculeSpanControlPanelRef"
-                @handle-new-group="isAnnotationEditable && spanForm?.open({span:{spans:[]}})"/>
+                    ref="moleculeSpanControlPanelRef"/>
                   </TabPanel>
           <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
                       <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">
@@ -66,8 +66,3 @@
 
 <script src="./molecule-span-component.ts" lang="ts">
 </script>
-<style scoped lang="postcss">
-.selected-segment {
-  @apply border-surface-500 border-2
-}
-</style>

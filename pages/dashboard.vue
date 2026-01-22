@@ -21,8 +21,9 @@
       <Message v-if="status === 'error'" severity="error" icon="pi pi-exclamation-triangle">
         {{ projectError.message }}
       </Message>
+      
       <MoleculeProjectCard
-        v-for="(project,index) in filteredProjects " :key="index" :project=project
+        v-for="(project) in filteredProjects " :key="project.id" :project=project
         />
     </div>
     </div>
@@ -65,18 +66,19 @@
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue';
 import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
-import {ProjectStatus,Permission} from "../api/generate";
+import {Permission, ProjectService} from "../api/generate";
 import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
 import { useI18n } from '#imports'
 
 const refreshStore = useRefreshStore()
-const {fetchProject} = refreshStore
+const {fetchProjects} = refreshStore
 const {getProjectNumber} = storeToRefs(refreshStore)
 const first = ref(0)
+const selectedStatus = ref(null);
 const paginatorSize = computed(()=> window.innerWidth > 1600 ? 20 : 16)
 const { t } = useI18n()
 // On renomme error pour eviter un conflit avec @nuxt/test-utils/runtime
-const {data:data,refresh, status, error: projectError} = await useAsyncData('projects',async ()=> await fetchProject(first.value, paginatorSize.value),{server:false})
+const {data:data,refresh, status, error: projectError} = await useAsyncData('projects-summary',async ()=> await fetchProjects(first.value, paginatorSize.value),{server:false})
 
 const dashboardRef = ref()
 localStorage.setItem('breadcrumbItems', null);
@@ -84,10 +86,6 @@ const { $application } = useService();
 
 const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_CREATE));
 
-
-
-
-const selectedStatus = ref(null); // Statut sélectionné depuis la dropdown
 const statusOptions = [
   { value: "draft", label: t('project.status.draft'), colorText: "#FFF", colorBg:"#757575"},
   { value: "pending", label: t('project.status.pending'), colorText: "#000", colorBg:"#FFC107" },
@@ -97,15 +95,15 @@ const statusOptions = [
   { value: "archived", label: t('project.status.archived'), colorText: "#000", colorBg:"#B3DDF4" },
 ];
 
-const sortDataById = computed(() => {
-    return [...data.value].sort((a, b) => a.id - b.id)
-  }
-)
-
 const filteredProjects = computed(() => {
-  if (!selectedStatus.value) return sortDataById.value;
-  return sortDataById.value.filter((project) => project.status === selectedStatus.value.value);
-});
+  if (!data.value) return []
+
+  if (!selectedStatus.value) return data.value
+
+  return data.value.filter(
+    p => p.status === selectedStatus.value.value
+  )
+})
 
 provide('refreshProject', refresh)
 

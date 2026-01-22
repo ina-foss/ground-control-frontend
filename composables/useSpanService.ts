@@ -24,6 +24,7 @@ function createSpanService (){
 
   const spanClicked = ref(false)
   const spanArray = ref<Array<AnySpan | null>>([{id:0,label:"", plugins: []}])
+  //const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([{id:0,label:"", plugins: []}])
   const linkMode = ref(false)
   const spanCount = computed<number>(()=>spanArray.value.length)
   const newFocus = ref<number | undefined>()
@@ -40,7 +41,7 @@ function createSpanService (){
   const contextControlPanelMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
-  let pluginValues = reactive<pluginValues>({})
+  const pluginValues = reactive<pluginValues>({})
 
   const mainPluginId = computed(()=>{
       return pluginList?.value?.find(plugin=>plugin.display_config?.main_plugin == true)?.id  || undefined
@@ -66,7 +67,9 @@ function createSpanService (){
     {immediate: false}
   )
 
-  function initPluginValues (iterator :Array<PluginWithIdDto>){
+  function initPluginValues (iterator? :Array<PluginWithIdDto>){
+    if (!Array.isArray(iterator)) return
+
     iterator.forEach(plugin=>{
       if(plugin.data_property) pluginValues[plugin.data_property] = [] // Creation des variables utilisee en tant qu'input
       else pluginValues[`plugin-${plugin.id}`] = [] // Creation des variables utilisee en tant qu'input
@@ -163,7 +166,7 @@ function createSpanService (){
       }
     }
 
-    let tag = document.querySelector(`tag[spanid="${span.id}"]`)
+    const tag = document.querySelector(`tag[spanid="${span.id}"]`)
     if( tag ) tag.remove()
     if(span.nodes){
       span.nodes.forEach((node: HTMLDivElement)=>{
@@ -185,8 +188,8 @@ function createSpanService (){
   }
 
   const dropPin = () => {
-    let nodesToAdd = [...document.querySelectorAll('div .dragged_outer ')]
-    let nodesToRemove = [...document.querySelectorAll('div .dragged_inner ')]
+    const nodesToAdd = [...document.querySelectorAll('div .dragged_outer ')]
+    const nodesToRemove = [...document.querySelectorAll('div .dragged_inner ')]
     nodesToAdd.forEach(node=>node.classList.remove('dragged_outer'))
     nodesToRemove.forEach(node=>node.classList.remove('dragged_inner'))
     const spanId = event.dataTransfer.getData('spanid')
@@ -215,7 +218,7 @@ function createSpanService (){
     if(event.dataTransfer.getData('pin_position')) dropPin()
   }
 
-  function deleteSpan(span: Span | SpanGroup | VirtualSpan) {
+  function deleteSpan(span: AnySpan) {
     if (isSpan(span)) removeSpanFromDOM(span)
     spanArray.value.filter(el=>el &&  isSpanGroup(el) ).forEach(spanArrayElement => {
       // Retire les assignations de role du span que l'on supprime
@@ -312,52 +315,62 @@ function createSpanService (){
     const borderColor = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value],1)
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
       const bgElement = document.createElement(`bg${spanId}`)
-      bgElement.classList.add('absolute', 'min-w-full', 'h-[16px]','left-0','top-[-2px]','mix-blend-multiply','pointer-events-none','py-2')
+      bgElement.classList.add('absolute', 'min-w-full', 'h-[16px]','left-0','top-[-2px]','mix-blend-multiply','py-2','pointer-events-none')
       element.style.backgroundColor='transparent'
+      // add context menu listener to the word element
+      element.removeEventListener('contextmenu', (event)=>{
+        spanMenuSelected.value = spanId
+        spanMenu.value.show(event)
+        })
+      element.addEventListener('contextmenu', (event)=>{
+        spanMenuSelected.value = spanId
+        spanMenu.value.show(event)
+        })
       bgElement.style.backgroundColor = color
       bgElement.classList.add('border-y-2',)
       bgElement.style.borderColor = borderColor
-        element.style.lineHeight = '14px'
-        element.style.userSelect = 'text'
-        element.classList.add('relative')
-        if(elementIndex == span.nodes.length-1) {
-          bgElement.classList.add('border-r-2','pr-4')
-          bgElement.style.borderRadius = "0px 4px 4px 0px"
-        }
-        if(elementIndex == 0) {
-          bgElement.classList.add('border-l-2')
-          bgElement.style.borderRadius = "4px 0px 0px 4px"
-          const tag = document.createElement('tag')
-          tag.innerText = span.plugins[mainPluginIndex.value]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
-          tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded')
-          tag.style.left= '0px'
-          tag.draggable = true
-          tag.style.backgroundColor = color
-          tag.style.borderColor = borderColor
-          tag.setAttribute('spanId',spanId)
-          tag.style.zIndex= '50'
-          element.appendChild(tag)
-          tag.addEventListener('dragstart',event=> {
-            event.dataTransfer.setData('span',spanId)
-          })
-          tag.addEventListener('contextmenu', (event )=>{
-            spanMenuSelected.value = spanId
-            spanMenu.value.show(event)
-            })
-          const tagCoord = tag.getBoundingClientRect()
-
-          // Check for existing tag being overlap by the new tag on the LEFT side
-          let elements = document.elementsFromPoint(tagCoord.x,tagCoord.y)
-          let overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
-          avoidOverlap(tag,overlapingTags)
-
-          // Check for existing tag being overlap by the new tag on the RIGHT side
-          elements = document.elementsFromPoint(tagCoord.right+50,tagCoord.y)
-          let overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
-          if(overlapingEndTags.length > 0 )
-          if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
-
+      element.style.lineHeight = '14px'
+      element.style.userSelect = 'text'
+      element.classList.add('relative')
+      if(elementIndex == span.nodes.length-1) {
+        bgElement.classList.add('border-r-2','pr-4')
+        bgElement.style.borderRadius = "0px 4px 4px 0px"
       }
+      if(elementIndex == 0) {
+        bgElement.classList.add('border-l-2')
+        bgElement.style.borderRadius = "4px 0px 0px 4px"
+        const tag = document.createElement('tag')
+        tag.innerText = span.plugins[mainPluginIndex.value]?.map(spanPlugin=>spanPlugin.label).join(', ') ?? ''
+        tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded', 'text-text')
+        tag.style.left= '0px'
+        tag.draggable = true
+        tag.style.backgroundColor = color
+        tag.style.borderColor = borderColor
+        tag.setAttribute('spanId',spanId)
+        tag.style.zIndex= '50'
+        element.appendChild(tag)
+        tag.addEventListener('dragstart',event=> {
+          event.dataTransfer.setData('span',spanId)
+        })
+        tag.addEventListener('contextmenu', (event )=>{
+          spanMenuSelected.value = spanId
+          spanMenu.value.show(event)
+          })
+        const tagCoord = tag.getBoundingClientRect()
+
+        // Check for existing tag being overlap by the new tag on the LEFT side
+        let elements = document.elementsFromPoint(tagCoord.x,tagCoord.y)
+        let overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+        avoidOverlap(tag,overlapingTags)
+
+        // Check for existing tag being overlap by the new tag on the RIGHT side
+        elements = document.elementsFromPoint(tagCoord.right+50,tagCoord.y)
+        let overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+        if(overlapingEndTags.length > 0 )
+        if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
+      }
+      // Apply radius on every corner for 1 word span
+      if(span.nodes.length == 1) bgElement.style.borderRadius = "4px"
       const existingBg = [...element.querySelectorAll('bg')]
       if(existingBg.length == 0 ) element.appendChild(bgElement)
       else{
@@ -386,13 +399,13 @@ function createSpanService (){
     let debugCounter = 0
     while(avoidingTags.length > 0 && debugCounter <10){
         const otherTag = avoidingTags[0]
-        let elementCoord = otherTag.getBoundingClientRect()
+        const elementCoord = otherTag.getBoundingClientRect()
         movingTag.classList.remove('left-0')
-        let tagParent = movingTag.parentElement?.getBoundingClientRect()
-        let otherTagRight = elementCoord.right
+        const tagParent = movingTag.parentElement?.getBoundingClientRect()
+        const otherTagRight = elementCoord.right
         movingTag.style.left = `${ (otherTagRight - tagParent.left ) }px`
 
-        let {x,y} = movingTag.getBoundingClientRect()
+        const {x,y} = movingTag.getBoundingClientRect()
         avoidingTags = document.elementsFromPoint(x,y).filter(element => element.tagName == "TAG" && element != movingTag )
         debugCounter++
 
@@ -631,7 +644,7 @@ function createSpanService (){
 /**
  * @param initialization True for forcing the creation of a new instance
   **/
-export default function (initialization?: boolean): SpanService {
+export default function (initialization?: boolean){
   if(!spanServiceInstance || initialization) spanServiceInstance = createSpanService()
   return spanServiceInstance
 }

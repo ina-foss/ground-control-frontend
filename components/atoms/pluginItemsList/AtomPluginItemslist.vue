@@ -30,7 +30,7 @@
   </div>
   <div v-else  class="flex flex-col gap-4 " >
     <div>
-      <b>Sélectionner un type de span parmi ces groupes</b>
+      <b>{{t('spanForm.selectSpanType')}}</b>
     </div>
     <div class="flex flex-row gap-4 ">
       <group-wrapper v-for="(group,name) in groupByOptions" :key="group" class="flex flex-col gap-5 p-lg bg-grey-50 rounded-lg last:grow ">

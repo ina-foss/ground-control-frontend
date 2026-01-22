@@ -2,15 +2,15 @@
   <div
     v-if="isAnnotationEditable"
        class=" right-12 mr-4 absolute flex items-center top-[0px] h-[70px] z-[5]" >
-    <Button  v-if="allow_skip" class="mr-4 text-xs" label="Abandonner et quitter"
+    <Button  v-if="allow_skip" class="mr-4 text-xs" :label="t('actions.skip')"
       variant="text"
       icon="pi pi-ban"
       @click="handleSkip({})"
       />
-    <Button  class="mr-4" outlined label="Enregistrer"
+    <Button  class="mr-4" outlined :label="t('actions.save')"
     @click="handleSubmit({})"/>
     <Button class="button-overwrite"
-            label="Terminer"
+            :label="t('actions.finish')"
       @click="handleFinish()"
     />
   </div>
@@ -49,17 +49,18 @@
     </div>
     </div>
   <div v-else class="h-full">
-    <AtomSearch class=" right-10 absolute flex items-center top-[72px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
-    <div class="xs:grid xs:grid-cols-10 flex flex-col h-full gap-5">
-      <MoleculeAnnotationLeftPanel ref="moleculeAnnotationLeftPanelRef" :panel-size="panelSize" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))" @scroll-to-segment="handleVideoTimelineClick">
-
+    <AtomSearch class=" right-10 absolute flex items-center top-[80px] z-[5]" :list="listRefs"  @find-element="handleFocusElement" @unselect="handleSelection" />
+    <div class="xs:grid xs:grid-cols-10 flex flex-col h-full gap-5 relative">
+      <MoleculeAnnotationLeftPanel :class="layout.left" ref="moleculeAnnotationLeftPanelRef" :panel-size="panelSize" :video-src="videoSrc" :media_params="data.media?.player_parameters" :locals="sortBy(annotationsIn[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el.tcin))" @scroll-to-segment="handleVideoTimelineClick">
       </MoleculeAnnotationLeftPanel>
-      <Suspense>
+      <div :class="[layout.center, 'h-full min-h-0 flex']">
+        <Suspense>
         <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  :state="annotationsOut[annotationInfo?.index]?.annotation_status" v-on="annotationComponent.events" />
         <template #fallback>
           <SpanSkeleton/>
         </template>
       </Suspense>
+      </div>
     </div>
   </div>
 </template>

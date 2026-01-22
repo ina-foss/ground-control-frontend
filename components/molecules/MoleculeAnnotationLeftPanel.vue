@@ -1,7 +1,7 @@
 <template>
   <div :class="[ 'flex-col flex pl-5 max-h-full', panelSize  ]">
 
-    <AtomVideoAmalia ref="videoPlayer" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoAmalia ref="videoPlayer"  v-model:focusPlayer="isPlayerFocused" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
     <slot/>
   </div>
@@ -39,6 +39,7 @@
   const videoPlayer = ref(AtomVideoAmalia|null)
   const scrollToSegment = inject('scrollToSegment')
   const emits = defineEmits(['scroll-to-segment'])
+  const isPlayerFocused = inject('isPlayerFocused')
 
   const pauseTime = ref(0); // variable réactive
   const currentTime = ref(0);

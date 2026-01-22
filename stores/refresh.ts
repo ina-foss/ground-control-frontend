@@ -46,10 +46,10 @@ export const useRefreshStore = defineStore('refresh', {
     setParameters(newParams: Partial<ProjectParametersResponse>) {
       this.strategy_parameters = { ...this.strategy_parameters, ...newParams }
     },
-    async fetchProject(skip: number, limit: number) {
+    async fetchProjects(skip: number, limit: number) {
       const default_limit = window.innerWidth > 1600 ? 20 : 16
       const { access_token } = storeToRefs(useAuth())
-      const res = await $fetch(`${getApplicationConfiguration()['apiBasePath']}/projects`,{
+      const res = await $fetch(`${getApplicationConfiguration()['apiBasePath']}/projects/summary`,{
           query: {skip:  skip  ?? this.last_index , limit: limit ?? default_limit  },
           headers: {Authorization: 'Bearer ' + access_token.value },
           raw: true,

@@ -7,10 +7,11 @@
       class="w-fit bg-surface-200 cursor-pointer"
       @click="$emit('handleWordClick',{tcin: local.tcin, tcout:local.tcout, event: $event})"
     />
-    <span-transcription-wrapper class=" bg-white rounded-md scroll-m-12 inline-flex flex-wrap gap-y-6 customText w-[75ch] border-l-inherit py-6 px-2" >
-      <div
-        v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))" :key="word.tcin" class="px-0.5 hover:bg-surface-200 " :tcout="unixToTimestamp(word.tcout)" :data-tc="word.tcin"
-        :tcin="unixToTimestamp(word.tcin)" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev" @click="$emit('handleWordClick',{tcin: word.tcin, event: $event})">
+    <span-transcription-wrapper class=" bg-white rounded-md scroll-m-12 inline-flex flex-wrap gap-y-6 customText w-[75ch] border-l-inherit py-6 px-2 " >
+      <div v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))"
+        @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev" @click="$emit('handleWordClick',{tcin: word.tcin, event: $event})"
+        :data-tc="word.tcin" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)"
+        :class="{'inline-block px-[2px] hover:bg-surface-200 relative  ': true, 'text-active  ': playerTime > unixToTimestamp(word.tcin),}">
         {{ word.data.text[0] }}
       </div>
     </span-transcription-wrapper>
@@ -21,11 +22,15 @@
 import _ from 'lodash'
 import { useService } from '#imports';
 
-const { local } = defineProps({
+const { local, playerTime } = defineProps({
   local: {
     type: Object,
     default : () => {}
   },
+  playerTime :{
+    type: Number,
+    default : () => 0
+  }
 })
 
 const { handleDrop, dragData } = useSpanService()
@@ -124,15 +129,20 @@ const removeSpanPreview = (event) => {
 
 }
 
-
-
 </script>
 <style scoped>
-.dragged_outer{
-  background-color: highlight;
-  color: white;
-}
-.dragged_inner{
-  color: red;
-}
+  @reference "../../assets/css/app.css";
+
+  .selected-segment > span-transcription-wrapper {
+    @apply border-active border-2
+  }
+
+  .dragged_outer{
+    background-color: highlight;
+    color: white;
+  }
+  .dragged_inner{
+    color: red;
+  }
+
 </style>

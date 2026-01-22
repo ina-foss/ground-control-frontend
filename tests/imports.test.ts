@@ -37,7 +37,7 @@ beforeAll(() => {
 
   mockNuxtImport('useRefreshStore', () => {
     return () => ({
-      fetchProject: vi.fn()
+      fetchProjects: vi.fn()
     });
   });
 
