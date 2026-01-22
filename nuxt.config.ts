@@ -102,6 +102,17 @@ const DSINAPreset = definePreset(Lara, {
         }
       }
     },
+    inputnumber:{
+      colorScheme:{
+        light: {
+          buttonColor: 'white !important',
+          buttonHoverColor: 'white !important',
+          buttonBackground: '{primary.color} !important',
+          buttonHoverBackground: 'var(--hover) !important',
+          buttonActiveBackground: '{primary.color}'
+        },
+      },
+    },
     datatable: {
       headerCellPadding: '12px',
       headerCellColor: 'var(--title)',

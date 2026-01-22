@@ -15,6 +15,24 @@ export type Options =  {
    */
   loop_bloc: boolean
 
+  /**
+  * Number of seconds to rewind before the target jump position.
+  * This provides context by starting slightly earlier than the requested timestamp.
+  *
+  * @example If set to 2 and user jumps to 2m04s, playback starts at 2m02s
+  * @defaultValue 2
+  */
+  jump_before_offset: number
+
+  /**
+  * Number of seconds to rewind before the target jump position.
+  * This provides context by starting slightly earlier than the requested timestamp.
+  *
+  * @example If set to 2 and user jumps to 2m04s, playback starts at 2m02s
+  * @defaultValue 2
+  */
+  jump_after_offset: number
+
   /** if the span are displayed
    * @defaultValue `true`
    */
@@ -58,6 +76,8 @@ export const useOptions = defineStore("annotation-options",() => {
       player: false,
       transcription: true,
       loop_bloc: false,
+      jump_before_offset: 2,
+      jump_after_offset: 2,
       number_segment:false,
       unlabelled_span: true,
     })

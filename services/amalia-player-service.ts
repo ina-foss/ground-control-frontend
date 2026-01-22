@@ -174,4 +174,12 @@ export default class AmaliaPlayerService {
     players[0].mediaPlayerElement.getMediaPlayer().pause();
   }
 
+  /**
+  * Launch amalia player's playback
+  */
+  public onPlay() {
+    const player = this.getPlayers()[0]
+    player.mediaPlayerElement.getMediaPlayer().play()
+  }
+
 }

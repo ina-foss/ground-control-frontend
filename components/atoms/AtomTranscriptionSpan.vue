@@ -9,7 +9,7 @@
     />
     <span-transcription-wrapper class=" bg-white rounded-md scroll-m-12 inline-flex flex-wrap gap-y-6 customText w-[75ch] border-l-inherit py-6 px-2 " >
       <div v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))"
-        @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev" @click="$emit('handleWordClick',{tcin: word.tcin, event: $event})"
+        @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev" @click="$emit('handleWordClick',{tcin: word.tcin, event: $event, tcout:word.tcout})"
         :data-tc="word.tcin" :key="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)"
         :class="{'inline-block px-[2px] hover:bg-surface-200 relative  ': true, 'text-active  ': playerTime > unixToTimestamp(word.tcin),}">
         {{ word.data.text[0] }}
