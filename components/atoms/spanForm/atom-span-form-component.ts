@@ -143,7 +143,6 @@ export default defineNuxtComponent({
     }
 
     function createGroup() {
-      debugger
       const spanId = spanArray.value.length
       let spanGroup = {
         plugins: _.cloneDeep(pluginValues),
@@ -191,7 +190,6 @@ export default defineNuxtComponent({
      * Callback after clicking on the "Confirmed" button
      */
     function handleConfirmationButton (){
-      debugger
       if (
         // validation for span case (with mainPlugin only)
         ( mainPluginIndex.value && !isGroup.value && (pluginValues[mainPluginIndex.value].length == 0 || !pluginValues[mainPluginIndex.value][0] ) ) ||
@@ -206,7 +204,6 @@ export default defineNuxtComponent({
         if (deleteLayout.value) {
           deleteSpan(currentSpan.value)
         } else if (isGroup.value) {
-          debugger
           createGroup()
         } else if(isVirtual.value){
           createSpanVirtuel()
