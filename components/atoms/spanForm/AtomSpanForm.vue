@@ -17,12 +17,12 @@
               @click="expandContext()"/>
           </context-button-wrapper>
         </context-header>
-        <div v-if="!groupDisplay" :class="['w-full  items-center  gap-1 text-sm/6 ', expandedContext ? 'inline'  : 'flex']"  >
-          <span :class="[!expandedContext ?  '  truncate  ' : '  text-justify']" :style="{'direction': expandedContext ? 'ltr' : 'rtl'}"> {{ prevNodes.map(n=>n.firstChild.nodeValue).join(' ') + " " }}</span>
-          <span :class="[ ' max-w-full text-justify rounded px-2 border-2 !border-[--extra-1]  ', expandedContext ? '' : 'truncate' ]" style="flex: 1 0 min-content; background-color: #86d4ff40 ;" >
+        <div v-if="!groupDisplay" :class="['w-full  justify-center items-center  gap-1 text-sm/6 ', expandedContext ? 'inline'  : 'flex']"  >
+          <span :class="[!expandedContext ?  ' truncate ' : '  text-justify']" :style="{'direction': expandedContext ? 'ltr' : 'rtl'}" style="flex: 0 1 content; min-width: 0px; " > {{ prevNodes.map(n=>n.firstChild.nodeValue).join(' ') + " " }}</span>
+          <span :class="[ ' max-w-full text-justify rounded px-2 border-2 !border-[--extra-1]  ', expandedContext ? '' : 'truncate' ]" style="flex: 0 0 content; background-color: #86d4ff40 ;" >
             {{extractTextFromSpanNodes(nodes)}}
             </span>
-          <span :class="[!expandedContext ?  '  truncate ' : 'text-justify ']"> {{ " " + nextNodes.map(n=>n.firstChild.nodeValue).join(' ') }}</span>
+          <span :class="[!expandedContext ?  '  truncate ' : 'text-justify ']" style="flex: 0 1 content;min-width: 0px; "> {{ " " + nextNodes.map(n=>n.firstChild.nodeValue).join(' ') }} </span>
         </div>
       </context-wrapper>
 
