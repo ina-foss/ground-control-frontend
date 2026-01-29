@@ -12,5 +12,6 @@ export type PluginAutocompleteValueDTO = {
     group?: (string | null);
     editable?: (string | null);
     copyable?: (string | null);
+    tooltip?: (string | null);
 };
 

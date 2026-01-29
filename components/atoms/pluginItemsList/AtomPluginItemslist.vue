@@ -6,6 +6,7 @@
         <ToggleButton
             v-for="option in visibleOptions"
             :key="option.label"
+            v-tooltip="option.tooltip && option.tooltip !== '' ? option.tooltip : null"
             :modelValue="isEqual(pluginValue, option)"
             class="h-[33px] rounded-[6px] "
             :class="{ 'selected': isEqual(pluginValue, option) }"
