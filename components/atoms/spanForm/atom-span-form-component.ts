@@ -124,7 +124,7 @@ export default defineNuxtComponent({
         if (!selected || selected.editable ==="") return false
         labelTitle.value=selected.editable
         if(selected){
-          if(spanArray.value[currentSpanId].label && spanArray.value[currentSpanId].label !== "")defaultLabel.value=spanArray.value[currentSpanId].label
+          if(currentSpan.value?.label && currentSpan.value.label !== "")defaultLabel.value=currentSpan.value?.label
           else {
             defaultLabel.value=selected.copyable ==='false'? "":(textSpan.value)?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
 

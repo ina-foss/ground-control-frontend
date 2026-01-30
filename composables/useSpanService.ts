@@ -624,7 +624,11 @@ function createSpanService (){
         result[segment?.id] = segment
       }
     })
-    spanArray.value = result
+
+    // keep default spanArray value on first loading
+    if(!_.isEqual(result, [])){
+      spanArray.value = result
+    }
 
   }
 
