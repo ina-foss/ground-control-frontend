@@ -44,11 +44,17 @@
     "selectSpanType": "Select a span type from these groups",
     "virtualSpan": {
       "virtualSpanHeader": "Span: virtual span creation",
+      "role": "Role",
       "dialog": {
         "header": "The element you are trying to insert is not allowed because its type is incompatible.",
         "allowedTypesLabel": "You can only insert elements of the following types:"
       }
     }
+  },
+  "contextMenu": {
+    "editProperties": "Edit properties",
+    "editBounds": "Edit bounds",
+    "delete": "Delete"
   },
   "common":{
     "no": "No",
@@ -66,7 +72,7 @@
   },
   "player": {
     "actions": {
-      "configButton": "Player settings",
+      "configButton": "Settings",
       "resize": "Resize",
       "lastTimecode": "Last TC"
     },

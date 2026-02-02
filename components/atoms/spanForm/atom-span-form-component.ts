@@ -69,7 +69,6 @@ export default defineNuxtComponent({
     let nextNodes = ref<Nodes[]>([])
 
     const deleteLayout = ref(false)
-    let roleSelected = null
     let pluginSelected=ref('');
 
     const extIdMap = computed(()=>{
@@ -163,27 +162,41 @@ export default defineNuxtComponent({
     }
     function createSpanVirtuel(){
       const category = virtualSpanCategory.value
-      const mainDataProperty = Object.keys(pluginValues)[0]
-      const spanType =pluginValues[mainDataProperty]?.[0]?.label
-
+      const spanType =pluginValues[mainPluginIndex.value]?.[0]?.label
       const authorizedTypes = category?.authorized_types
-
       const isAuthorized = !authorizedTypes || authorizedTypes.includes(spanType)
 
       if (!isAuthorized) {
         authorizedTypeList.value = authorizedTypes
         unauthorizedVirtualSpan.value = true
-        throw new Error("test error") // a modifer
-      }
-      const spanId =spanArray.value.length
-      //update label with user input
-      if(currentSpan.value) currentSpan.value.label = defaultLabel.value
-      spanArray.value[currentSpan.value.id] = currentSpan.value
+        throw {}
 
-      selectedGroupValue.value.spans = [...selectedGroupValue.value.spans,{spanId: spanId, role: virtualSpanCategory.value}]
+      }
+      //update label with user input
+      if(currentSpan.value)
+      {
+        currentSpan.value.label = defaultLabel.value
+        currentSpan.value.plugins = _.cloneDeep(pluginValues)
+
+      }
+      const index = selectedGroupValue.value.spans.findIndex(
+        s => s.spanId === currentSpan.value.id
+      )
+
+      if (index !== -1) {// edit virtual span
+        selectedGroupValue.value.spans.splice(index, 1, {
+          spanId: currentSpan.value.id,
+          role: virtualSpanCategory.value
+        })
+      } else {//add new
+        selectedGroupValue.value.spans.push({
+          spanId: currentSpan.value.id,
+          role: virtualSpanCategory.value
+        })
+      }
       virtualSpanCategory.value = false
       defaultLabel.value=null
-
+      spanArray.value[currentSpan.value.id] = currentSpan.value
     }
 
     /**
@@ -191,13 +204,21 @@ export default defineNuxtComponent({
      */
     function handleConfirmationButton (){
       if (
-        // validation for span case (with mainPlugin only)
-        ( mainPluginIndex.value && !isGroup.value && (pluginValues[mainPluginIndex.value].length == 0 || !pluginValues[mainPluginIndex.value][0] ) ) ||
+        //validation for virtual span case (check every plugin in the form with label)
+        (isVirtual.value && (!virtualSpanCategory.value ||  !defaultLabel.value) )
+       ||
         // validation for group case (check every plugin in the form)
         isGroup.value && tidiedPluginList.value[DisplayZone.GROUP_MODAL]?.every( groupPlugin =>
           pluginValues[readPluginValues(groupPlugin)].length == 0 ||
           pluginValues[readPluginValues(groupPlugin)][0]?.id == ''
         )
+        ||
+        // validation for span case (with mainPlugin only)
+        ( mainPluginIndex.value && !isGroup.value && (pluginValues[mainPluginIndex.value].length == 0 || !pluginValues[mainPluginIndex.value][0] ) )
+        ||
+        // validation for deletedNum when isForResearch is false (with suppression plugin selected)
+        (!isForResearch.value && childPluginMap.value &&  pluginSelected.value !== '' && (nodesCount.value > 1
+          || !deletedNum.value || deletedNum.value === 0))
       ) showErrorMessage.value = true
       else{
         showErrorMessage.value = false
@@ -226,7 +247,7 @@ export default defineNuxtComponent({
       currentSpan.value = span
       selectedGroupValue.value=selectedGroup
       mainGroupPluginIndexValue.value=mainGroupPluginIndex
-      if(role) roleSelected = role
+      if(role) virtualSpanCategory.value=role.value
       pluginSelected.value=''
       affectPluginValues(span.plugins)
       deletedNum.value =  span.deletedItems
@@ -252,6 +273,7 @@ export default defineNuxtComponent({
       deleteLayout.value = false
       spanMenuSelected.value = undefined
       defaultLabel.value = undefined
+      virtualSpanCategory.value = undefined
       initPluginValues(getPluginList.value)
       deletedNum.value = undefined
       nodes.value = []

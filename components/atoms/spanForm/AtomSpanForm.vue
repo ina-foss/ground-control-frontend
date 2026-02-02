@@ -33,7 +33,7 @@
           </message-wrapper>
           <!--virtual span role-->
           <div v-if="isVirtual" class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
-            <b class=" text-right ">Rôle</b>
+            <b :class="{'pt-2 text-right ': true , 'text-error': (!virtualSpanCategory) && showErrorMessage }">{{t('spanForm.virtualSpan.role')}}</b>
             <div class="flex flex-wrap gap-4  ">
               <div class=" w-full flex gap-3 items-center " >
                 <Button
@@ -48,7 +48,7 @@
             </div>
 
           </div>
-          <!--virtual span role-->
+          <!--virtual span plugins-->
           <plugin-iterator v-for="(plugin,index) in tidiedPluginList[isGroup ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
             <div class=""   >
               <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @update:plugin-value="pluginChangeValue(plugin,$event)" >
@@ -65,7 +65,7 @@
           <div v-if="!isForResearch" >
             <div v-if="pluginSelected">
               <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5"  v-if="nodesCount === 1">
-                <b  class="pt-2 text-right "> {{t('spanForm.missingWordsLabel')}} </b>
+                <b  :class="{'pt-2 text-right ': true , 'text-error': showErrorMessage }"> {{t('spanForm.missingWordsLabel')}} </b>
                 <InputNumber v-model="deletedNum" :placeholder="t('spanForm.missingWordsPlaceholder')" class="w-[250px]"/>
               </div>
               <label v-else class="block text-center text-red-500" >{{suppWarning}}</label>
@@ -73,7 +73,7 @@
           </div>
 
           <div v-if="isForResearch" class="grid grid-cols-[100px_auto] gap-3 gap-y-5">
-            <b class="pt-2 text-right">
+            <b :class="{'pt-2 text-right ': true , 'text-error': (!defaultLabel) && showErrorMessage }">
               {{t('spanForm.correctedTerm')}}
             </b>
             <InputText
@@ -107,8 +107,7 @@
 
       <div class="flex flex-row justify-end gap-2">
         <Button outlined severity="primary" icon="pi pi-times" :label="t('actions.cancel')" @click=" close()" />
-        <Button   :disabled="isVirtual && (!virtualSpanCategory ||  !defaultLabel) ||!isForResearch && childPluginMap &&  pluginSelected !== '' && (nodesCount > 1 || deletedNum === null || deletedNum === undefined || deletedNum === 0)"
-                  :label="t('actions.confirm')" icon="pi pi-check" @click=" handleConfirmationButton() " />
+        <Button :label="t('actions.confirm')" icon="pi pi-check" @click=" handleConfirmationButton() " />
       </div>
 
     </div>

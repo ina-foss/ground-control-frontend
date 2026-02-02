@@ -162,7 +162,7 @@
                           @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
                           <group-linked-span
                             v-for="span in selectedGroup?.spans.filter(span => isEqual(span.role, category)).sort((a, b) => unixToTimestamp(spanArray[a.spanId]?.tcin) - unixToTimestamp(spanArray[b.spanId]?.tcin))"
-                            :key="span" class="flex justify-between items-center max-w-full span-tag min-w-0">
+                            :key="span?.spanId" class="flex justify-between items-center max-w-full span-tag min-w-0">
                             <AtomSpanTag :plugin-id="mainPluginId"
                               :plugin-value="spanArray[span.spanId]?.plugins?.[mainPluginIndex]"
                               v-tooltip.top="{
@@ -170,7 +170,8 @@
                               ,
                               showDelay: 300,
                               appendTo: 'body'}"
-                              :text="spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value => value.label).join(', ')" />
+                              :text="spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value => value.label).join(', ')"
+                                         @contextmenu="openVirtualSpanMenu($event, span)"/>
                             <span class="pi pi-trash hover:bg-disabled rounded-full p-1"
                               @click="unlinkSpan(span, selectedGroup)" />
                           </group-linked-span>

@@ -15,7 +15,7 @@ export default defineComponent({
   },
   setup(props,{emit,expose}){
 
-    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected} = useSpanService()
+    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
     const { pluginList } = storeToRefs(usePluginStore())
@@ -72,6 +72,18 @@ export default defineComponent({
       event.stopPropagation()
 
       spanMenuSelected.value = span.id
+
+      spanControlPanelMenu.value.show(event)
+    }
+
+    function openVirtualSpanMenu(event: MouseEvent, span: any) {
+      event.preventDefault()
+      event.stopPropagation()
+
+      spanMenuSelected.value = span.spanId
+      spanRole.value=span.role
+      selectedGroupVirtual.value=selectedGroup.value
+      mainGroupPluginIndexVirtual.value=mainGroupPluginIndex.value
 
       spanControlPanelMenu.value.show(event)
     }
@@ -312,6 +324,7 @@ export default defineComponent({
       contextControlPanelMenuOptions,
       spanControlPanelMenu,
       spanMenuSelected,
+      spanRole,
       openSpanMenu,
       deleteDialogVisible,
       panelCollapseController,
@@ -320,7 +333,10 @@ export default defineComponent({
       openGroupForm,
       visibleSpanOnlyArray,
       visibleGroupArray,
-      sortedVisibleGroupArray
+      sortedVisibleGroupArray,
+      openVirtualSpanMenu,
+      selectedGroupVirtual,
+      mainGroupPluginIndexVirtual
     }
   }
 })

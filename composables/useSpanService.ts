@@ -2,13 +2,14 @@ import _ from 'lodash'
 import {TypePlugin} from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
 import {usePluginStore} from "~/stores/plugins";
+import { useI18n } from '#imports'
 
 
 let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
 
 function createSpanService (){
 
-
+  const { t } = useI18n()
   const {options} = useOptions()
 
   const { $application } = useService()
@@ -29,6 +30,9 @@ function createSpanService (){
   const spanCount = computed<number>(()=>spanArray.value.length)
   const newFocus = ref<number | undefined>()
   const spanMenuSelected = ref<number | undefined>(undefined)
+  const spanRole = ref<number | undefined>(undefined)
+  const mainGroupPluginIndexVirtual = ref<number | undefined>(undefined)
+  const selectedGroupVirtual = ref<any | undefined>(undefined)
   const labelSelected = ref([])
   const defaultLabel = ref()
   const deletedNum=ref<number>()
@@ -37,8 +41,8 @@ function createSpanService (){
     pin_position : undefined,
     spanid : undefined,
   })
-  const contextMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:'Editer les bornes', command:()=>showDragPin()},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
-  const contextControlPanelMenuOptions = ref([{label: 'Editer les proprietes', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:2, label: 'Supprimer', command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
+  const contextMenuOptions = ref([{label:  t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:t('contextMenu.editBounds'), command:()=>showDragPin()},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
+  const contextControlPanelMenuOptions = ref([{label: t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,suppression: true}) }])
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
   const pluginValues = reactive<pluginValues>({})
@@ -640,7 +644,7 @@ function createSpanService (){
 
   return{
  recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling, deleteSpan, loadSpan, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
- affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan
+ affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual
   }
 }
 
