@@ -15,7 +15,7 @@ export default defineComponent({
   },
   setup(props,{emit,expose}){
 
-    const { readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual} = useSpanService()
+    const { focusGroup, readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual} = useSpanService()
     const { unixToTimestamp } = useService().$application
 
     const { pluginList } = storeToRefs(usePluginStore())
@@ -40,21 +40,15 @@ export default defineComponent({
       groupList: true,
     })
 
-    function showPanel(panel : Array<string> | string | undefined){
+    function showPanel(...panel : string[] | undefined){
       if(!panel){
         throw new Error('panel is not defined')
       }
-      if(Array.isArray(panel)){
-        panel.forEach(pan=>{
-          if(Object.keys(panelCollapseController).includes(pan)){
-            panelCollapseController[pan] = false
-          }
-          else throw new Error('incorrect panel name')
-        })
-      }
-      else(
-       panelCollapseController[panel] = false
-      )
+      panel.forEach(pan=>{ if(Object.keys(panelCollapseController).includes(pan)){
+          panelCollapseController[pan] = false
+        }
+        else throw new Error('incorrect panel name')
+      })
     }
 
     const deleteDialogVisible = ref(false)
@@ -162,7 +156,12 @@ export default defineComponent({
 
     function handleGroupClick (id: number) {
       if(newFocus.value == id) newFocus.value = undefined
-      else newFocus.value = id
+
+      else {
+        newFocus.value = id
+        document.querySelector('div')?.classList.add()
+        showPanel('currentGroup')
+      }
     }
 
     function previewSpanDrop (event : DragEvent) {
@@ -276,6 +275,7 @@ export default defineComponent({
     expose({showPanel})
 
     return {
+      showPanel,
       spanForm,
       groupArray,
       emit,
@@ -336,7 +336,8 @@ export default defineComponent({
       sortedVisibleGroupArray,
       openVirtualSpanMenu,
       selectedGroupVirtual,
-      mainGroupPluginIndexVirtual
+      mainGroupPluginIndexVirtual,
+      focusGroup
     }
   }
 })

@@ -40,14 +40,10 @@ export default defineComponent({
     })
 
 
-    const {newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
+    const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
     const {pluginList } = storeToRefs(usePluginStore())
 
     const moleculeSpanControlPanelRef = ref()
-
-    function focusGroup({groupId}: {groupId: number}) {
-      newFocus.value = groupId
-    }
 
 
     const blockArray = ref<HTMLDivElement|null>(null)

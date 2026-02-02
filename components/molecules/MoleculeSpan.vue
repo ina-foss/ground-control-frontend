@@ -24,7 +24,7 @@
                 {{ word.data.text[0] }}
             </div>
           </div>
-          <AtomSpanForm ref="spanForm" @new-group="focusGroup($event) & moleculeSpanControlPanelRef.showPanel(['currentGroup','groupList']) "/>
+          <AtomSpanForm ref="spanForm" />
           <ContextMenu v-if="isAnnotationEditable" ref="spanMenu" :model="contextMenuOptions"  />
         </ScrollPanel>
       </div>

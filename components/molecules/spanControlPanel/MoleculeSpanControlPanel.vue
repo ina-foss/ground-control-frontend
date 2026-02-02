@@ -277,7 +277,7 @@
                   </Dialog>
 
                   <!-- ADD VIRTUAL SPAN DIALOG-->
-                  <AtomSpanForm ref="spanFormRef" />
+                  <AtomSpanForm ref="spanFormRef" @new-group="focusGroup($event) & showPanel('currentGroup','groupList') " />
                   <!-- UNAUTHORIZED SPAN DIALOG -->
                   <Dialog
                       :visible="!!unauthorizedSpanDropped"
