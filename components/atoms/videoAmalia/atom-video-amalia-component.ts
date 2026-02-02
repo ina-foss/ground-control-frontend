@@ -22,7 +22,7 @@ export default defineComponent({
     focusPlayer: {
       type: Boolean,
       default: false
-    }
+    },
   },
   setup(props, { emit,expose }) {
 
@@ -154,6 +154,7 @@ export default defineComponent({
         lastIndex = bestIndex
       }
     }
+    const annotation_type = inject('annotation_type')
 
     expose({seek, consumeTimecode: handleRewindTimecode});
 
@@ -168,7 +169,8 @@ export default defineComponent({
       settingIcon,
       selectedCategories,
       focusPlayerModel,
-      t
+      t,
+      annotation_type
     }
   }
 

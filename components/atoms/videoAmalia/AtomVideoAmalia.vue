@@ -13,7 +13,7 @@
   <div  id="PLAYER" ref="myplayer" class="rounded-t-lg h-auto aspect-video w-full overflow-hidden" @click="seek()"/>
   <div class="w-full flex justify-between rounded-lg p-1">
     <Button @click="visibleRight = true" icon="pi pi-cog" severity="secondary" rounded :label="t('player.actions.configButton')" />
-    <Button @click="focusPlayerModel = !focusPlayerModel" icon="pi pi-arrows-h"  severity="secondary" rounded :label="t('player.actions.resize')"/>
+    <Button v-if="annotation_type ==='span'" @click="focusPlayerModel = !focusPlayerModel" icon="pi pi-arrows-h"  severity="secondary" rounded :label="t('player.actions.resize')"/>
     <Button data-testid="rewind-btn" icon="pi pi-stopwatch" severity="secondary" :disabled="!showRollback"  :label="t('player.actions.lastTimecode')"  @click="handleRewindTimecode()" rounded/>
 
   </div>
