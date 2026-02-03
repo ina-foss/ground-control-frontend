@@ -135,6 +135,15 @@ const DSINAPreset = definePreset(Lara, {
 })
 
 export default defineNuxtConfig({
+  components:{
+    dirs : [
+      {
+        path: "~/components",
+        pathPrefix: false,
+        global: true
+      },
+    ]
+  },
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => tag.includes('-') && !tag.startsWith('router') && !tag.startsWith('atom')
