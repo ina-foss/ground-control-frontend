@@ -10,14 +10,14 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     let errorMessage = "Une erreur s'est produite.";
     if (error?.body?.raw_message) {
-      errorMessage = error.body.raw_message;
+      errorMessage = error?.body?.raw_message;
     } else if (error?.message) {
-      errorMessage = error.message + (error?.body?.detail ? `: ${error.body.detail}` : '');
+      errorMessage = error?.message + (error?.body?.detail ? `: ${error?.body?.detail}` : '');
     }
-    
+
     toast.add({
       severity: "error",
-      summary: "Erreur API",
+      summary: error?.title ?? "Erreur API",
       detail: errorMessage,
       life: 7000,
     });

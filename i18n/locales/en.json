@@ -28,6 +28,15 @@
     "archiveConfirmTitle": "Are you sure you want to archive this project?",
     "tasksInProgress": "{count} task in progress| {count} tasks in progress"
   },
+  "span":{
+    "editBorders":{
+      "errors":{
+        "errorTitle": "Can't proceed action",
+        "removeAllNodesError": "To delete a span, right click on it and hit 'delete'.",
+        "wrongDirectionError": "To extend a span in one direction, drag the nearest border and not the opposite one."
+      }
+    }
+  },
   "spanForm": {
     "context": "Context",
     "selectValueError": "Please select a value",

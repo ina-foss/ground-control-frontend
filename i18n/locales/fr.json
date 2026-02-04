@@ -28,6 +28,15 @@
     "archiveConfirmTitle": "Êtes-vous sûr de vouloir archiver ce projet ?",
     "tasksInProgress": "{count} tâche en cours| {count} tâches en cours"
   },
+  "span":{
+    "editBorders":{
+      "errors":{
+        "errorTitle": "Action impossible",
+        "removeAllNodesError": "Pour supprimer un span, effectuez un clic droit puis sélectionner 'supprimer'.",
+        "wrongDirectionError": "Pour étendre un span dans une direction, sélectionnez le bord du span le plus proche."
+      }
+    }
+  },
   "spanForm": {
     "context": "Contexte",
     "selectValueError": "Veuillez sélectionner une valeur",

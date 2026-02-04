@@ -3,6 +3,7 @@ import {TypePlugin} from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
 import {usePluginStore} from "~/stores/plugins";
 import { useI18n } from '#imports'
+const nuxtApp = useNuxtApp()
 
 
 let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
@@ -41,7 +42,7 @@ function createSpanService (){
     pin_position : undefined,
     spanid : undefined,
   })
-  const contextMenuOptions = ref([{label:  t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:t('contextMenu.editBounds'), command:()=>showDragPin()},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
+  const contextMenuOptions = ref([{label:  t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:t('contextMenu.editBounds'), command:(event)=>showDragPin(event)},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
   const contextControlPanelMenuOptions = ref([{label: t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,suppression: true}) }])
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
@@ -195,15 +196,33 @@ function createSpanService (){
       dragData.pin_position = direction
   }
 
+  /**
+   * Callback invoked after user stop dragging a span border
+   *
+   **/
   const dropPin = () => {
     const nodesToAdd = [...document.querySelectorAll('div .dragged_outer ')]
     const nodesToRemove = [...document.querySelectorAll('div .dragged_inner ')]
     nodesToAdd.forEach(node=>node.classList.remove('dragged_outer'))
     nodesToRemove.forEach(node=>node.classList.remove('dragged_inner'))
     const spanId = event.dataTransfer.getData('spanid')
-    const span = spanArray.value[spanId]
+    const span : Span = spanArray.value[spanId] as Span
+
+    // Case where user try to delete the entire span
+    if(_.isEqual(nodesToRemove,span.nodes)) {
+      nuxtApp.$handleApiError({message:t('span.editBorders.errors.removeAllNodesError'),title:t('span.editBorders.errors.errorTitle')})
+      hideDragPin(span)
+      return
+    }
+
+    if( nodesToRemove.length == 0 && nodesToAdd.length == 0 ){
+      nuxtApp.$handleApiError({message:t('span.editBorders.errors.wrongDirectionError'),title:t('span.editBorders.errors.errorTitle')})
+      hideDragPin(span)
+      return
+    }
+
     if(!span?.deletedItems){
-      removeSpanFromDOM(spanId)
+      removeSpanFromDOM(span)
       if (nodesToRemove.length > 0) span.nodes = _.difference(span.nodes, nodesToRemove)
       else if (event.dataTransfer.getData('pin_position') == 'left') {
         span.nodes = nodesToAdd.concat(span.nodes)
@@ -214,7 +233,7 @@ function createSpanService (){
       span.tcout = span.nodes[span.nodes.length - 1].getAttribute('tcout')
       deletedNum.value = span.deletedItems
       affectPluginValues(span.plugins)
-      applySpan(spanId)
+      applySpan(span)
       newFocus.value = null
     }
 
@@ -324,7 +343,6 @@ function createSpanService (){
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
       const bgElement = document.createElement(`bg${spanId}`)
       bgElement.classList.add('absolute', 'min-w-full', 'h-[16px]','left-0','top-[-2px]','mix-blend-multiply','py-2','pointer-events-none')
-      element.style.backgroundColor='transparent'
       // add context menu listener to the word element
       element.removeEventListener('contextmenu', (event)=>{
         spanMenuSelected.value = spanId
@@ -334,6 +352,7 @@ function createSpanService (){
         spanMenuSelected.value = spanId
         spanMenu.value.show(event)
         })
+      element.style.backgroundColor="none"
       bgElement.style.backgroundColor = color
       bgElement.classList.add('border-y-2',)
       bgElement.style.borderColor = borderColor
@@ -421,7 +440,7 @@ function createSpanService (){
     }
   }
 
-  function showDragPin(){
+  function showDragPin({originalEvent, item}:{originalEvent : Event, item:any}){
     const nodes = spanArray.value[spanMenuSelected.value].nodes
     const rightDragPin = document.createElement('pinWrapper')
     rightDragPin.classList.add("h-full", "w-[10px]", 'absolute','cursor-ew-resize', 'flex', 'justify-center', 'top-0'  )
@@ -446,7 +465,24 @@ function createSpanService (){
         span.appendChild(rightDragPin)
       }
     })
+
+    originalEvent.stopPropagation()
+
+    // clicking anywhere once the pin are visible hide them
+    window.addEventListener('click',(clickEvent: Event)=>{
+      if ((clickEvent.target as Node).nodeName != "PINWRAPPER") hideDragPin()
+    },{once: true})
+
   }
+
+
+  function hideDragPin(span? : Span){
+    const nodes = span?.nodes ?? spanArray.value[spanMenuSelected.value].nodes
+    nodes.forEach((node: HTMLDivElement)=>{
+      node.querySelector('pin')?.remove()
+      node.querySelector('pinWrapper')?.remove()
+    })
+   }
 
   function extractTextFromSpanNodes(nodesArray: Array<Node> | null): string | null {
     if (!nodesArray) return null;
@@ -648,7 +684,7 @@ function createSpanService (){
 
   return{
     focusGroup, recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling, deleteSpan, loadSpan, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
-    affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual
+    affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,hideDragPin
   }
 }
 
