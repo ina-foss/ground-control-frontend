@@ -5,11 +5,12 @@ import MoleculeSegmentation from "~/components/molecules/MoleculeSegmentation.vu
 import MoleculeTranscription from "~/components/molecules/MoleculeTranscription.vue";
 import _,{sortBy} from 'lodash';
 import {AnnotationStatus, Permission, TaskStatus} from '~/api/generate';
-import { useService,useI18n } from "#imports";
+import { useService, useI18n } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
 import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
 import SpanSkeleton from "~/components/molecules/SpanSkeleton.vue";
+import MoleculeDialogConfirm from "~/components/molecules/moleculeDialogConfirm/MoleculeDialogConfirm.vue";
 
 export default defineComponent({
   name: "OrganismAnnotation",
@@ -20,7 +21,8 @@ export default defineComponent({
     MoleculeTabs,
     AtomSearch,
     MoleculeTranscription,
-    SpanSkeleton
+    SpanSkeleton,
+    MoleculeDialogConfirm
   },
   props: {
     data: {
@@ -43,7 +45,7 @@ export default defineComponent({
   setup(props, {emit}) {
 
     const { data, annotationsIn, annotationsOut, allFetched } = toRefs(props)
-    const { t } = useI18n();
+    const { t } = useI18n()
     const authStore = useAuth()
     const optionStore = useOptions()
     const {$application} = useService()
@@ -54,6 +56,8 @@ export default defineComponent({
     const { getParameters } = storeToRefs(refresh)
     const spansChanged = ref(false)
     const tabsRef = ref()
+    const abondanDialog = ref(false)
+    const finishDialog = ref(false)
 
     const isPlayerFocused = ref(false)
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
@@ -529,7 +533,9 @@ export default defineComponent({
     jumpToTopic,
     allow_skip,
     layout,
-    t
-    }
+    t,
+    abondanDialog,
+    finishDialog
+  }
 },
 })

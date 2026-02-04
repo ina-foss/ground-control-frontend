@@ -37,6 +37,26 @@
       }
     }
   },
+  "annotation": {
+    "lastAutoSave": "Sauvegarde automatique déclenchée à {time}",
+    "dialogs": {
+      "abandon": {
+        "title": "Confirmation d’abandon de tâche",
+        "message": "Êtes-vous sûr de vouloir abandonner et quitter cette tâche?",
+        "description_part1": "Anomalie signalée.\n Statut",
+        "description_status": "Abandonnée",
+        "description_part2": "jusqu’à revalidation du",
+        "description_role": "chef de projet"
+      },
+      "finish": {
+        "title": "Confirmation d'une tâche terminée",
+        "message": "Êtes-vous sûr de vouloir terminer cette tâche?",
+        "description_part1": "Tâche marquée",
+        "description_status": "Terminée",
+        "description_part2": "et verrouillée."
+      }
+    }
+  },
   "spanForm": {
     "context": "Contexte",
     "selectValueError": "Veuillez sélectionner une valeur",
@@ -77,7 +97,8 @@
     "cancel": "Annuler",
     "confirm": "Confirmer",
     "skip": "Abandonner et quitter",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "abandon": "Abandonner et quitter"
   },
   "player": {
     "actions": {
@@ -100,8 +121,5 @@
         "slowForward": "Avance ralentie"
       }
     }
-  },
-  "annotation": {
-    "lastAutoSave": "Sauvegarde automatique déclenchée à {time}"
   }
 }

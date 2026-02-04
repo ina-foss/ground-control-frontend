@@ -5,8 +5,13 @@ import { flushPromises } from '@vue/test-utils';
 import MoleculeSpanControlPanel  from '../../../components/molecules/spanControlPanel/MoleculeSpanControlPanel.vue'
 import AtomSpanTag from '../../../components/molecules/spanControlPanel/AtomSpanTag.vue'
 import {Select} from 'primevue'
+import { createI18n } from 'vue-i18n'
 
 let mock =vi.fn()
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 
 vi.mock('~/stores/plugins', async () => {
   return {
@@ -152,6 +157,7 @@ describe('MoleculeSpanControlPanel', ()=>{
         isAnnotationEditable : true
       },
       global:{
+        plugins: [i18n],
         stubs:{
           teleport: true,
           transition: false,
