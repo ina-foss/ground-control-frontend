@@ -91,5 +91,8 @@
         "slowForward": "Avance ralentie"
       }
     }
+  },
+  "annotation": {
+    "lastAutoSave": "Sauvegarde automatique déclenchée à {time}"
   }
 }

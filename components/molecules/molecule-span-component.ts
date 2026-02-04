@@ -18,10 +18,10 @@ import {AnnotationStatus, TaskStatus} from "~/api/generate";
 export default defineComponent({
   name: "MoleculeSpan",
   components: {MoleculeSpanControlPanel, AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption,AtomTaskComment, AtomSpanForm},
-  emits: ['on-segment-click'],
+  emits: ['on-segment-click', 'update:spansChanged'],
   props: {
     state: {type: String as PropType<AnnotationStatus>},
-    isAnnotationEditable: { type: Boolean, default: true }
+    isAnnotationEditable: { type: Boolean, default: true },
   },
   async setup(props, { emit, expose }) {
 
@@ -45,6 +45,10 @@ export default defineComponent({
 
     const moleculeSpanControlPanelRef = ref()
 
+
+    watch(spanArray, () => {
+      emit('update:spansChanged', true)
+    }, { deep: true })
 
     const blockArray = ref<HTMLDivElement|null>(null)
     const listSegment = computed(() => blockArray.value?.children)

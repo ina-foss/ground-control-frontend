@@ -17,7 +17,7 @@
     <div v-if=" !allFetched " class="grid grid-cols-10 h-0 min-h-full  " >
       <div :class="[' h-full pl-5 gap-3', panelSize ]">
         <Skeleton
-:pt="{
+        :pt="{
           root: {
              style: 'height: auto'
           }

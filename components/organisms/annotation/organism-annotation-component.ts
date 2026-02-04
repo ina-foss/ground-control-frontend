@@ -52,7 +52,7 @@ export default defineComponent({
     const{setTcOffset}= useTcOffset()
     const refresh = useRefreshStore()
     const { getParameters } = storeToRefs(refresh)
-
+    const spansChanged = ref(false)
     const tabsRef = ref()
 
     const isPlayerFocused = ref(false)
@@ -79,6 +79,7 @@ export default defineComponent({
     const config = ref(null)
     const route = useRoute();
     const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
+
     let bestIndex = 0
     const annotationInfo = computed< {index: number, id: number} | null>(() => {
       if (!allFetched) return null;
@@ -317,13 +318,17 @@ export default defineComponent({
       case 'span':
           return { component :MoleculeSpan,
             props: { isAnnotationEditable: isAnnotationEditable.value},
-            events:{ 'on-segment-click': handleSegmentClick }
+            events:{ 'on-segment-click': handleSegmentClick,
+                    'update:spansChanged': (val) => {
+                      spansChanged.value = val
+                    }
+             }
     }
 
   }
 })
 
-  const handleSubmit = ( {showToast = true} : {showToast? : boolean} )  => {
+  const handleSubmit = ({ showToast = true, message = null }: { showToast?: boolean; message?: string | null })  => {
     let savingLocals
     if(annotation_type == 'auto-summary'){
       savingLocals = tabsRef.value.moleculeAnnotationRef.annotationFunction(tabsRef.value.moleculeAnnotationRef.locals)
@@ -334,7 +339,7 @@ export default defineComponent({
       if (moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
       savingLocals = moleculeAnnotationRef.value.annotationFunction(localSubmit.value)
     }
-    emit('submit-annotation', { locals: savingLocals, options: { showToast}  })
+    emit('submit-annotation', { locals: savingLocals, options: { showToast, message}  })
   }
 
   const handleFinish = () => {
@@ -352,8 +357,13 @@ export default defineComponent({
   }
 
   const handleSkip = () => emit('skip-annotation', { locals: {}, options: { showToast: true } })
+  let autoSaveInterval = null;
 
-  onMounted(()=>{
+   onMounted(()=>{
+    autoSaveInterval = setInterval(() => {
+      const lastAutoSave = new Date().toLocaleTimeString('fr-FR')
+      spansChanged.value && handleSubmit({ showToast: true, message:  t('annotation.lastAutoSave', { time :lastAutoSave }) })
+    }, 60 * 1000)
 
     window.addEventListener("keydown", globalKeydown);
 
@@ -371,6 +381,11 @@ export default defineComponent({
         }
       })
   })
+
+  onBeforeUnmount(() => {
+    clearInterval(autoSaveInterval);
+  });
+
 
   const globalKeydown=(event) =>{
     if((event.key && event.target.tagName != "INPUT") && (event.key && event.target.tagName != "TEXTAREA") ){
@@ -516,6 +531,5 @@ export default defineComponent({
     layout,
     t
     }
-
 },
 })

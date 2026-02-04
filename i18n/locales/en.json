@@ -91,5 +91,8 @@
         "slowForward": "Slow forward"
       }
     }
+  },
+  "annotation": {
+    "lastAutoSave": "Last automatic is triggered at {time}"
   }
 }
