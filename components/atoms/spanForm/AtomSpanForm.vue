@@ -28,9 +28,6 @@
 
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-5  ">
         <main-plugins-wrapper class="flex flex-col gap-5  ">
-          <message-wrapper v-if="showErrorMessage" class="flex justify-center">
-            <Message class="w-fit" severity="error" icon="pi pi-exclamation-triangle" >  {{ t('spanForm.selectValueError') }}</Message>
-          </message-wrapper>
           <!--virtual span role-->
           <div v-if="isVirtual" class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
             <b :class="{'pt-2 text-right ': true , 'text-error': (!virtualSpanCategory) && showErrorMessage }">{{t('spanForm.virtualSpan.role')}}</b>
@@ -48,6 +45,9 @@
             </div>
 
           </div>
+          <message-wrapper v-if="showErrorMessage" class="flex justify-center">
+            <Message class="w-fit" severity="error" icon="pi pi-exclamation-triangle" >  {{ t('spanForm.selectValueError') }}</Message>
+          </message-wrapper>
           <!--virtual span plugins-->
           <plugin-iterator v-for="(plugin,index) in tidiedPluginList[isGroup ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
             <div class=""   >
