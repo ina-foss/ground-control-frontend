@@ -899,20 +899,20 @@ function triggerDownload(data: AnnotationDto, name: string, mode: 'dump'|'import
 
   // Create a download link
   const url = window.URL.createObjectURL(annotationsBlob);
-  const a = document.createElement("a");
-  a.style.display = "none";
-  a.href = url;
-  a.download = name || "test";
+  const link = document.createElement("a");
+  link.style.display = "none";
+  link.href = url;
+  link.download =  name.concat('.json');
 
   // Ensure filename is not null or empty
-  if (a.download) {
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+  if (link.download) {
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
     toast.add({
       severity: "success",
       summary: "Export done",
-      detail: ` Your file "${a.download}" has been downloaded`,
+      detail: ` Your file "${link.download}" has been downloaded`,
       life: 5000,
     });
   }

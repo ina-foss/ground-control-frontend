@@ -193,7 +193,7 @@ const submitExistantAnnotation = (locals, action, timeSpent, options) => {
           severity: "info",
           summary:
             action === "submit"
-              ? options?.message? options?.message: "Cette annotation a été mise à jour"
+              ? options?.message ?? "Cette annotation a été mise à jour"
               : "Cette annotation est terminée",
           life: 4000,
         });
