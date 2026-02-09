@@ -533,7 +533,7 @@ function createSpanService (){
         const tcout = nodes[nodes.length-1].getAttribute('tcout')
         const id = unref(spanCount.value)
 
-        return {span: {id, nodes,tcin,tcout, label: "", deletedItems:0, plugins: [] } }
+        return {span: {id, nodes,tcin,tcout, deletedItems:0, plugins: [] } }
       }
     }
   }
