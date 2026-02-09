@@ -63,6 +63,7 @@
                           event.dataTransfer.setData('span', span.id)
                           event.dataTransfer.setDragImage([...event.target.children][1],10,10)
                         }"
+                          @click="onSpanClick(span)"
                       >
                         <span-number class="font-bold self-center px-2">{{index+1}}</span-number>
                         <AtomSpanTag

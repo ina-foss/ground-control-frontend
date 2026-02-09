@@ -82,8 +82,6 @@ export default defineComponent({
     const annotationStatus = AnnotationStatus.DONE
     const config = ref(null)
     const route = useRoute();
-    const configItemPlugin = ref<Array<{ id: any; data: any }>>([]);
-
     let bestIndex = 0
     const annotationInfo = computed< {index: number, id: number} | null>(() => {
       if (!allFetched) return null;
@@ -242,7 +240,7 @@ export default defineComponent({
 
     const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean }) => { // Lorsqu'un segment est cliqué
       if(event.index == undefined ){
-        event.index = _.findIndex(locals.value,tr=>tr.tcin == event.tcin || (tr.tcin <= event.tcin && tr.tcout >= event.tcin) )
+        event.index = _.findIndex(locals.value.filter(el => el?.tclevel !== undefined),tr=>tr.tcin == event.tcin || (tr.tcin <= event.tcin && tr.tcout >= event.tcin) )
       }
       bestIndex = event.index
       scrollToSegment({bestIndex: event.index})
@@ -476,8 +474,6 @@ export default defineComponent({
   provide('spanService',spanService)
 
   provide('plugin-config', config)
-
-  provide('plugin-items-config', configItemPlugin)
 
   provide('handleSegmentClick', handleSegmentClick)
 

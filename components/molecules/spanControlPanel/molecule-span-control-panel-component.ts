@@ -3,6 +3,7 @@ import AtomSpanTag from './AtomSpanTag.vue'
 import { DisplayZone } from '~/api/generate'
 import draggable from 'vuedraggable';
 import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
+import {useService} from "~/composables/useService";
 
 export default defineComponent({
   name:"MoleculeSpanControlPanel",
@@ -14,12 +15,13 @@ export default defineComponent({
     },
   },
   setup(props,{emit,expose}){
+    const {$amalia}  = useService()
 
     const { focusGroup, readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual} = useSpanService()
-    const { unixToTimestamp } = useService().$application
-
+    const { unixToTimestamp,timestampToUnix } = useService().$application
     const { pluginList } = storeToRefs(usePluginStore())
     const { getPluginList, getAllPluginOptionList } = usePluginStore()
+    const handleSegmentClick  = inject('handleSegmentClick')
 
     const blocks = ref([
       { id: 'span', key: 'span' },
@@ -272,6 +274,11 @@ export default defineComponent({
         span: {id,label: "", plugins:[],spans: []}
       })
     }
+    const onSpanClick = (span) => {
+      handleSegmentClick?.({ tcin: span?.tcin})
+      $amalia.onPause()
+    }
+
     expose({showPanel})
 
     return {
@@ -334,6 +341,7 @@ export default defineComponent({
       visibleSpanOnlyArray,
       visibleGroupArray,
       sortedVisibleGroupArray,
+      onSpanClick,
       openVirtualSpanMenu,
       selectedGroupVirtual,
       mainGroupPluginIndexVirtual,
