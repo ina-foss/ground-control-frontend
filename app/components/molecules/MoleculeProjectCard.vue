@@ -189,7 +189,7 @@
       </template>
       <div class="m-2 text-sm">
         <Message severity="warn" :icon="false" class="mt-2">
-          {{ t('project.tasksInProgress', { count: progressedTasks.length }) }}
+          {{ t('project.tasksInProgress', { count: progressedTasksCount }) }}
         </Message>
       </div>
       <div class="flex justify-end items-center pb-0 space-x-4">
@@ -231,7 +231,7 @@
       </template>
       <div class="m-2 text-sm">
         <Message severity="warn" :icon="false" class="mt-2">
-          {{ t('project.tasksInProgress', { count: progressedTasks.length }) }}
+          {{ t('project.tasksInProgress', { count: progressedTasksCount }) }}
         </Message>
       </div>
       <div class="flex justify-end items-censster pb-0 space-x-4">
@@ -384,7 +384,6 @@ watch(
       )
   }
 )
-
 
 const toggleMenu = (event) => {
   menu.value.toggle(event);
