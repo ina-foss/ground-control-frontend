@@ -62,6 +62,7 @@
     <div class="xs:grid xs:grid-cols-10 flex h-full flex-col gap-5">
       <MoleculeAnnotationLeftPanel
         ref="moleculeAnnotationLeftPanelRef"
+        :class="layout.left"
         :panel-size="panelSize"
         :video-src="videoSrc"
         :media_params="data.media?.player_parameters"

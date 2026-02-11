@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { useService,useI18n } from '#imports';
 import { ref,watch } from 'vue';
-import settingIcon from '../../public/icons/icons-svg/icons-svg/setting-icon.svg';
 
 export default defineComponent({
   name: "AtomVideoAmalia",
@@ -22,7 +21,7 @@ export default defineComponent({
     focusPlayer: {
       type: Boolean,
       default: false
-    },
+    }
   },
   setup(props, { emit,expose }) {
 
@@ -47,6 +46,18 @@ export default defineComponent({
       get: () =>  props.focusPlayer,
       set: (value) => emit('update:focusPlayer', value)
     })
+
+    const resizeIcon = computed(() =>
+      focusPlayerModel.value ? 'pi pi-arrow-down-left-and-arrow-up-right-to-center' : 'pi pi-arrow-up-right-and-arrow-down-left-from-center'
+    )
+    const resizeLabel = computed(() =>
+      focusPlayerModel.value
+        ? t('player.actions.shrink')
+        : t('player.actions.expand')
+    )
+    const actionsRef = ref<HTMLElement | null>(null)
+    const isCompact = ref(false)
+    let observer: ResizeObserver | null = null
 
     const visibleRight = ref(false);
     const categories = ref([]);
@@ -93,7 +104,16 @@ export default defineComponent({
           myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc),waveformUrl?.value ||"")) // add amalia player once src is ready
         }
       });
+      if (!actionsRef.value) return
+      observer = new ResizeObserver(entries => {
+        const width = entries[0].contentRect.width
+        isCompact.value = width < 330
+      })
+      observer.observe(actionsRef.value)
+    })
 
+    onBeforeUnmount(() => {
+      observer?.disconnect()
     })
 
     function handleRewindTimecode(index?:any) {
@@ -166,10 +186,13 @@ export default defineComponent({
       dynamicSrc,
       visibleRight,
       categories,
-      settingIcon,
       selectedCategories,
       focusPlayerModel,
       t,
+      resizeIcon,
+      resizeLabel,
+      actionsRef,
+      isCompact,
       annotation_type
     }
   }

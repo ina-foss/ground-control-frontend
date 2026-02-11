@@ -102,8 +102,9 @@
   },
   "player": {
     "actions": {
-      "configButton": "Config",
-      "resize": "Rétrécir",
+      "configButton": "Configuration",
+      "shrink": "Rétrécir",
+      "expand": "Agrandir",
       "lastTimecode": "Dernier TC"
     },
     "config": {
