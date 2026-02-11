@@ -1,7 +1,7 @@
 export type Options =  {
   /**
    * If the video is sync to the transcription scrolling
-   * @defaultValue `false`
+   * @defaultValue `true`
    */
   player: boolean
 
@@ -73,7 +73,7 @@ export const useOptions = defineStore("annotation-options",() => {
       timecode_bloc: true,
       timecode_segment:false,
       bloc: true,
-      player: false,
+      player: true,
       transcription: true,
       loop_bloc: false,
       jump_before_offset: 2,

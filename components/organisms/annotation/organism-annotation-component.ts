@@ -243,7 +243,7 @@ export default defineComponent({
         event.index = _.findIndex(locals.value.filter(el => el?.tclevel !== undefined),tr=>tr.tcin == event.tcin || (tr.tcin <= event.tcin && tr.tcout >= event.tcin) )
       }
       bestIndex = event.index
-      scrollToSegment({bestIndex: event.index})
+      if(!options.value.player) scrollToSegment({bestIndex: event.index}) // if the sync is enabled, let the player scroll to the right segment
       if ( options.value.transcription === true ) {
         event.tcin = unixToTimestamp(event.tcin) - options.value.jump_before_offset
         moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
