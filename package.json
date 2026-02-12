@@ -19,7 +19,7 @@
   "dependencies": {
     "@ina/amalia": "file:libs/amalia-2.1.11-develop.tgz",
     "@nuxtjs/color-mode": "^3.4.1",
-    "@nuxtjs/i18n": "^9.5.6",
+    "@nuxtjs/i18n": "^10.2.3",
     "@pinia/nuxt": "^0.5.1",
     "@primeuix/themes": "^1.0.0",
     "@primevue/themes": "^4.3.1",
@@ -29,7 +29,7 @@
     "hls.js": "^1.5.8",
     "lodash": "^4.17.21",
     "markdown-it": "^14.1.0",
-    "nuxt": "^3.14.1592",
+    "nuxt": "^4.3.1",
     "nuxt-socket-io": "^3.0.10",
     "oidc-client-ts": "^3.3.0",
     "pinia": "^2.1.7",

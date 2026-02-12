@@ -1,9 +1,12 @@
-import OrganismAnnotationComponent from "../../../../components/organisms/annotation/OrganismAnnotation.vue";
+import OrganismAnnotationComponent from "~/components/organisms/annotation/OrganismAnnotation.vue";
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { shallowMount, mount } from '@vue/test-utils'
 import { computed,nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
+import { useAuth } from '~/stores/auth'
+import { useOptions } from '~/stores/annotation-options'
+import {mockedReturn} from "../../../mock";
 
 vi.mock('~/stores/auth', () => ({
   useAuth: vi.fn()
@@ -38,9 +41,6 @@ const mockedUseService = vi.fn().mockReturnValue({
 vi.mock('#imports', () => ({ useService: mockedUseService }))
 
 
-import { useAuth } from '~/stores/auth'
-import { useOptions } from '~/stores/annotation-options'
-import {mockedReturn} from "~/tests/mock";
 
 vi.mock('vue-router', async () => {
   const actual = await vi.importActual('vue-router')

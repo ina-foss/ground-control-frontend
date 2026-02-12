@@ -2,8 +2,8 @@ import {expect, describe, it }  from 'vitest'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import type { VueWrapper } from '@vue/test-utils';
 import { flushPromises } from '@vue/test-utils';
-import MoleculeSpanControlPanel  from '../../../components/molecules/spanControlPanel/MoleculeSpanControlPanel.vue'
-import AtomSpanTag from '../../../components/molecules/spanControlPanel/AtomSpanTag.vue'
+import MoleculeSpanControlPanel  from '~/components/molecules/spanControlPanel/MoleculeSpanControlPanel.vue'
+import AtomSpanTag from '~/components/molecules/spanControlPanel/AtomSpanTag.vue'
 import {Select} from 'primevue'
 import { createI18n } from 'vue-i18n'
 

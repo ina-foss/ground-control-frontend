@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import {getApplicationConfiguration, initApplicationConfiguration} from '../../services/dynamic-configuration-service'
+import {getApplicationConfiguration, initApplicationConfiguration} from '../../app/services/dynamic-configuration-service'
 
 // Mock the global fetch function
 global.fetch = vi.fn()

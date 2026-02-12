@@ -3,7 +3,7 @@ import type { VueWrapper } from '@vue/test-utils'
 import { mockNuxtImport, mountSuspended} from "@nuxt/test-utils/runtime";
 import { Button, InputText} from 'primevue';
 import { StepService } from '~/api/generate';
-import MoleculeFormProject from '../../../components/molecules/MoleculeFormProject.vue';
+import MoleculeFormProject from '../../../app/components/molecules/MoleculeFormProject.vue';
 import { flushPromises } from '@vue/test-utils';
 
 let mockedProject = {title: "Project creation",

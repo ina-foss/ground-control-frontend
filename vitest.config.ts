@@ -35,6 +35,7 @@ export default defineVitestConfig({
       '/api/**',
       '**/shared/**',
       '**/tests/app.test.ts',
+      '**/tests/imports.test.ts',
       // '**/tests/pages/**', // exclude specific directories
       '**/*.config.ts',   // exclude files with specific patterns
       '**/*.test.skip.ts',   // exclude files with specific patterns

@@ -1,5 +1,5 @@
 import {mount} from "@vue/test-utils";
-import Id from "../../../pages/tasks/[id].vue";
+import Id from "../../../app/pages/tasks/[id].vue";
 import { it} from "vitest";
 
 

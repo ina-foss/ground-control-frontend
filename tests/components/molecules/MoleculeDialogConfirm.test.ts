@@ -1,4 +1,4 @@
-import MoleculeDialogConfirm from '../../../components/molecules/moleculeDialogConfirm/MoleculeDialogConfirm.vue'
+import MoleculeDialogConfirm from '../../../app/components/molecules/moleculeDialogConfirm/MoleculeDialogConfirm.vue'
 import { describe, it, expect, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import type { VueWrapper } from '@vue/test-utils'
