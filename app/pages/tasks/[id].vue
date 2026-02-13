@@ -16,10 +16,10 @@
 import { ref } from "vue";
 import {
   AnnotationService,
-  AnnotationStatus,
+  Status as AnnotationStatus,
   Permission,
   ProjectService,
-  TaskStatus,
+  Status as TaskStatus,
 } from "~/api/generate";
 import { useAuth } from "~/stores/auth";
 import { storeToRefs } from "pinia";
@@ -39,7 +39,6 @@ const { fetchAnnotations } = refresh;
 let timeAnnotationStart;
 const data = ref(getData);
 const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
-const canUserReview = computed(()=> $application.hasRole(Permission.GROUND_CONTROL_ANNOTATION_REVIEW))
 
 watchEffect(() => {
   useHead({
@@ -175,6 +174,7 @@ const submitExistantAnnotation = (locals, action, timeSpent, options) => {
   // L'utilisateur a déjà une annotation associée à cette tâche
   let promise;
   if (action === "submit") {
+    refresh_out()
     promise =
       AnnotationService.updateAnnotationResultAnnotationAnnotationIdPatch(
         annotationInfo.value.id,
@@ -198,6 +198,13 @@ const submitExistantAnnotation = (locals, action, timeSpent, options) => {
               : "Cette annotation est terminée",
           life: 4000,
         });
+        if (annotations_out.value[annotationInfo.value.index].annotation_status === AnnotationStatus.SKIPPED) {
+          toast.add({
+            severity: "warn",
+            summary:"Cette tâche a été abandonnée par un autre utilisateur. Vous pouvez toujours continuer à annoter si vous le souhaitez.",
+            life: 6000,
+          });
+        }
         await loadProject();
       }
       if (action === "end") {
@@ -234,6 +241,7 @@ const submitExistantAnnotation = (locals, action, timeSpent, options) => {
     })
     .then(() => {
       refresh_out();
+      
     });
 };
 

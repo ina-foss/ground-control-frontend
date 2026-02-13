@@ -256,7 +256,7 @@
 import { defineEmits } from "vue";
 import MoleculeFormProject from "./MoleculeFormProject.vue";
 import { useService ,useI18n} from "#imports";
-import { Permission, ProjectStatus, ProjectService } from "~/api/generate";
+import { Permission, Status, ProjectService } from "~/api/generate";
 import { status_map } from "~/helpers/statusMap";
 import type { PropType } from "vue";
 import type { ProjectDetailDto } from "~/api/generate";
@@ -393,7 +393,7 @@ const toggleMenu = (event) => {
 const actions = computed(() => [
   {
     label: t('actions.edit'),
-    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && roleUpdateProject.value,
+    condition: project.status !== Status.DONE && project.status !== Status.ARCHIVED && roleUpdateProject.value,
     handler: () => {
       visible.value = true;
       menu.value.hide();
@@ -401,7 +401,7 @@ const actions = computed(() => [
   },
   {
     label: t('actions.archive'),
-    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && roleArchiveProject.value  ,
+    condition: project.status !== Status.DONE && project.status !== Status.ARCHIVED && roleArchiveProject.value  ,
     handler: () => {
       archiveDialog.value = true;
       menu.value.hide();
@@ -409,7 +409,7 @@ const actions = computed(() => [
   },
   {
     label: t('actions.finish'),
-    condition: project.status !== ProjectStatus.DONE && project.status !== ProjectStatus.ARCHIVED && rolefinishProject.value,
+    condition: project.status !== Status.DONE && project.status !== Status.ARCHIVED && rolefinishProject.value,
     handler: () => {
       finishDialog.value = true;
       menu.value.hide();
@@ -417,7 +417,7 @@ const actions = computed(() => [
   },
   {
     label: t('actions.unarchive'),
-    condition: project.status == ProjectStatus.ARCHIVED && roleUnarchiveProject.value,
+    condition: project.status == Status.ARCHIVED && roleUnarchiveProject.value,
     handler: async() => {
       await unarchiveProject()
       menu.value.hide();

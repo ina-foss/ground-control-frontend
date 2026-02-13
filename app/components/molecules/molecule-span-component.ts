@@ -12,7 +12,7 @@ import AtomTaskComment from "../atoms/AtomTaskComment.vue";
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import AtomSpanForm from '../atoms/spanForm/AtomSpanForm.vue'
 import MoleculeSpanControlPanel from './spanControlPanel/MoleculeSpanControlPanel.vue'
-import {AnnotationStatus, TaskStatus} from "~/api/generate";
+import {Status} from "~/api/generate";
 
 
 export default defineComponent({
@@ -20,8 +20,8 @@ export default defineComponent({
   components: {MoleculeSpanControlPanel, AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption,AtomTaskComment, AtomSpanForm},
   emits: ['on-segment-click', 'update:spansChanged'],
   props: {
-    state: {type: String as PropType<AnnotationStatus>},
-    isAnnotationEditable: { type: Boolean, default: true },
+    state: {type: String as PropType<Status>},
+    isAnnotationEditable: { type: Boolean, default: true }
   },
   async setup(props, { emit, expose }) {
 
@@ -98,7 +98,7 @@ export default defineComponent({
     await loadSpan(locals)
 
     return{
-      TaskStatus,
+      Status,
       aggregatedLocals,
       spanForm,
       contextMenuOptions,

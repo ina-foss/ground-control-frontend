@@ -4,8 +4,8 @@
 /* eslint-disable */
 import type { AnnotationDto } from '../models/AnnotationDto';
 import type { AnnotationFullCreate } from '../models/AnnotationFullCreate';
-import type { AnnotationStatus } from '../models/AnnotationStatus';
 import type { InOutEnum } from '../models/InOutEnum';
+import type { Status } from '../models/Status';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -191,7 +191,7 @@ export class AnnotationService {
      */
     public static getAllAnnotationsAnnotationsGet(
         userEmail?: string,
-        status?: AnnotationStatus,
+        status?: Status,
         projectId?: number,
         stepId?: number,
         startCreatedAt?: string,

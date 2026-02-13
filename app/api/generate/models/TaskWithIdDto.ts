@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AnnotationWithIdDto } from './AnnotationWithIdDto';
+import type { Status } from './Status';
 import type { TaskDataType } from './TaskDataType';
-import type { TaskStatus } from './TaskStatus';
 /**
  * Extends TaskBaseDto with an additional id field.
  */
@@ -12,7 +12,8 @@ export type TaskWithIdDto = {
     name: string;
     instruction?: (string | null);
     data_type: TaskDataType;
-    status: TaskStatus;
+    status: Status;
+    previous_status?: (Status | null);
     lead_time: (number | null);
     step_id: number;
     media_id: number;
@@ -22,6 +23,6 @@ export type TaskWithIdDto = {
     priority?: number;
     id: number;
     created_at: (string | null);
-    annotations: Array<AnnotationWithIdDto>;
+    annotations?: Array<AnnotationWithIdDto>;
 };
 

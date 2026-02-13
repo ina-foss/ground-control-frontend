@@ -43,7 +43,7 @@
 <script setup>
 import AtomTrancription from '../atoms/AtomTrancription.vue';
 import AtomVideoOption from '../atoms/atom-video-option.vue'
-import {AnnotationStatus} from '../../api/generate';
+import {Status as AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
 let isChanged = false
 const carouselRef = ref()

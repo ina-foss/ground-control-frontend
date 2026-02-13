@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AnnotationStatus } from './AnnotationStatus';
+import type { Status } from './Status';
 /**
  * DTO representing an annotation object, including association with task and project.
  */
 export type AnnotationDto = {
     user_email: string;
-    annotation_status: AnnotationStatus;
+    annotation_status: Status;
     version: number;
     result: (Record<string, any> | null);
     id: number;

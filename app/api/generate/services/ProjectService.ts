@@ -40,7 +40,7 @@ export class ProjectService {
     }
     /**
      * Read Projects Summary
-     * Retrieve a list of projects with pagination support.
+     * Retrieve a list of projects with pagination support (optimized).
      * @param skip
      * @param limit
      * @returns ProjectListDtoSummary Successful Response

@@ -203,7 +203,7 @@
                 border-radius: 4px;
                 margin-right: 12px;
               "
-              :disabled="slotProps.data.status == StepStatus.ARCHIVED"
+              :disabled="slotProps.data.status == Status.ARCHIVED"
               label="Créer une tâche"
               outlined
               @click="stepCreate(slotProps.data.id)"
@@ -403,11 +403,7 @@
               <template #body="{ data: nestedData }">
                 <div class="flex justify-start gap-2">
                   <Avatar
-                    v-for="(annotation, index) in nestedData.annotations.filter(
-                      (annotation) =>
-                        annotation.annotation_status !=
-                        AnnotationStatus.SKIPPED,
-                    )"
+                    v-for="(annotation, index) in nestedData.annotations"
                     :key="index"
                     v-tooltip.top="annotation.user_email"
                     :label="annotation.user_email.charAt(0).toUpperCase()"
@@ -423,6 +419,8 @@
                     :style="{
                       backgroundColor: getColorForAnnotation(
                         annotation.annotation_status,
+                        annotation.user_email,
+                        annotation.skipped_by
                       ),
                     }"
                   />
@@ -507,7 +505,7 @@
                   :modelValue="data.expiration_date && new Date(data.expiration_date)"
                   dateFormat="dd/mm/yy"
                   showIcon
-                  :disabled="!roleUpdateExpirationDate || data.status == TaskStatus.ARCHIVED"
+                  :disabled="!roleUpdateExpirationDate || data.status == Status.ARCHIVED"
                   class="w-full"
                   :invalid="data.expiration_date && new Date(data.expiration_date) < new Date()"
                   @update:modelValue="(value) => onExpirationDateChange(value, data)"
@@ -578,7 +576,7 @@
                     label="Activer"
                     severity="primary"
                     outlined
-                    :disabled="nestedData.status == TaskStatus.ARCHIVED"
+                    :disabled="nestedData.status == Status.ARCHIVED"
                     @click="activateTask(nestedData.id)"
                   />
                   </div>
@@ -587,7 +585,7 @@
                       v-if="roleDeleteTask"
                       severity="danger"
                       outlined
-                      :disabled="nestedData.status == TaskStatus.ARCHIVED"
+                      :disabled="nestedData.status == Status.ARCHIVED"
                       @click="showDeleteTaskModal(nestedData)"
                       style="
                         height: 22px;
@@ -658,11 +656,9 @@ import _ from "lodash";
 import { ref } from "vue";
 import {
   AnnotationService,
-  AnnotationStatus,
-  StepStatus,
+  Status,
   TaskService,
   Permission,
-  TaskStatus,
   ProjectService,
   type TaskListDto,
   type TaskWithIdDto,
@@ -708,7 +704,8 @@ const statusOptions = ref<StatusOption[]>([])
 const toggleStrategy = () => {
   showStrategy.value = !showStrategy.value;
 };
-
+const authStore = useAuth();
+const { userEmail } = storeToRefs(authStore);
 const filters = ref<DataTableFilterMeta>({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   name: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -816,9 +813,8 @@ const showDeleteTaskModal = (rowData) => {
 };
 
 const activateTask = (task_id) => {
-  TaskService.updateTaskStatusTaskTaskIdStatusPost(
+  TaskService.activateTaskTaskTaskIdActivatePost(
     task_id,
-    TaskStatus.PENDING,
   ).then(() => refresh());
 };
 
@@ -843,10 +839,14 @@ const filteredProjects = computed(() => {
 });
 
 // On affiche meme si c'es pas fini
-function getColorForAnnotation(annotation_status) {
-  if (annotation_status === AnnotationStatus.DONE) {
+function getColorForAnnotation(annotation_status,annotated_by = null,skipped_by = null) {
+  if (skipped_by && annotated_by && annotated_by === skipped_by) {
+    return "#E53935";
+  }
+  if (annotation_status === Status.DONE) {
     return "#ACE1AF";
-  } else return "#0057FF";
+  } 
+  return "#0057FF";
 }
 
 const clickButtonMenu = (event, step) => {
@@ -951,10 +951,10 @@ const handleRowClick = (event : string | {originalEvent: MouseEvent , data: Task
   if (event.data?.status === "draft") return;
   clickedRowData.value = event.data;
   if (editMode.value === false)
-    navigateToTask(clickedRowData.value.id, email_clicked,
-    (clickedRowData.value.status === TaskStatus.DONE ||
-    clickedRowData.value.status === TaskStatus.SKIPPED ||
-    clickedRowData.value.status === TaskStatus.ARCHIVED)
+    navigateToTask(clickedRowData.value.id, email_clicked ?? userEmail.value,
+    (clickedRowData.value.status === Status.DONE ||
+    clickedRowData.value.status === Status.SKIPPED ||
+    clickedRowData.value.status === Status.ARCHIVED)
     ? 'read' : 'edit');
     email_clicked = undefined
 };
@@ -978,7 +978,7 @@ const onExpirationDateChange = async (value: Date, row: any) => {
 }
 
 const consultTask = (annotation_id: number) => {
-  navigateToTask(annotation_id, email_clicked, 'read');
+  navigateToTask(annotation_id, userEmail.value, 'read');
 };
 
 </script>

@@ -8,7 +8,7 @@ import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ from 'lodash'
 import AtomTopicList from "~/components/atoms/topicList/AtomTopicList.vue";
-import {AnnotationStatus} from '~/api/generate/models/AnnotationStatus';
+import {Status} from '~/api/generate';
 import AtomHelp from "../atoms/AtomHelp.vue";
 
 
@@ -21,7 +21,7 @@ export default defineComponent({
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []},
-    state: {type: String as PropType<AnnotationStatus>},
+    state: {type: String as PropType<Status>},
     tcOffset: {type: Number, default: ()=> 0},
     transcriptions: {type: Array, default: ()=>['test']}
   },

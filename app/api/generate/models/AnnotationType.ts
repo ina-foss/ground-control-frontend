@@ -4,10 +4,6 @@
 /* eslint-disable */
 /**
  * Enum representing the different types of annotations.
- *
- * Attributes:
- * SEGMENTATION (str): The annotation type for segmentation tasks.
- * TRANSCRIPTION (str): The annotation type for transcription tasks.
  */
 export enum AnnotationType {
     SEGMENTATION = 'segmentation',

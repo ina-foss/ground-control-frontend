@@ -33,7 +33,7 @@ export default class ApplicationService {
 
   public getDefaultHeader() {
     const { access_token } = storeToRefs(this.authStore);
-    return { Authorization: `Bearer ${access_token.value}` };
+    return { Authorization: `Bearer ${access_token?.value}` };
   }
 
   /**
@@ -168,7 +168,7 @@ export default class ApplicationService {
    */
   public getUserRoles(): [] {
     const { user } = storeToRefs(this.authStore);
-    return user.value?.profile?.roles ?? [];
+    return user?.value?.profile?.roles ?? [];
   }
 
   public getUserRolesFromToken(): [] {

@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { Body_task_inject_step__step_id__post } from '../models/Body_task_inject_step__step_id__post';
+import type { Status } from '../models/Status';
 import type { TaskBaseDto } from '../models/TaskBaseDto';
 import type { TaskListDto } from '../models/TaskListDto';
-import type { TaskStatus } from '../models/TaskStatus';
 import type { TaskWithIdDto } from '../models/TaskWithIdDto';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -182,7 +182,7 @@ export class TaskService {
      */
     public static updateTaskStatusTaskTaskIdStatusPost(
         taskId: number,
-        status: TaskStatus,
+        status: Status,
     ): CancelablePromise<TaskListDto> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -192,6 +192,28 @@ export class TaskService {
             },
             query: {
                 'status': status,
+            },
+            errors: {
+                401: `Unauthorized`,
+                403: `Forbidden`,
+                422: `Validation Error`,
+            },
+        });
+    }
+    /**
+     * Activate Task
+     * @param taskId
+     * @returns TaskListDto Successful Response
+     * @throws ApiError
+     */
+    public static activateTaskTaskTaskIdActivatePost(
+        taskId: number,
+    ): CancelablePromise<TaskListDto> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/task/{task_id}/activate',
+            path: {
+                'task_id': taskId,
             },
             errors: {
                 401: `Unauthorized`,

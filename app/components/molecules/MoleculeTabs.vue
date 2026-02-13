@@ -55,8 +55,8 @@
 import AtomMarkdown from "../atoms/AtomMarkdown.vue";
 import AtomTimecodeList from "../atoms/AtomTimecodeList.vue";
 import AtomSentence from "../atoms/sentence/AtomSentence.vue"
-import MoleculeTranscription from "./MoleculeTranscription.vue"
-import {AnnotationStatus} from '../../api/generate';
+import MoleculeTranscription from "../../components/molecules/MoleculeTranscription.vue"
+import {Status as AnnotationStatus} from '../../api/generate';
 
 const carouselRef = ref()
 const currentPage = computed(()=>carouselRef.value.d_page)

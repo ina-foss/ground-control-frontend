@@ -4,10 +4,10 @@
 /* eslint-disable */
 import type { AnnotationWithIdDto } from './AnnotationWithIdDto';
 import type { MediaDto } from './MediaDto';
+import type { Status } from './Status';
 import type { StepProjectDto } from './StepProjectDto';
 import type { TaskCommentDto } from './TaskCommentDto';
 import type { TaskDataType } from './TaskDataType';
-import type { TaskStatus } from './TaskStatus';
 /**
  * DTO for listing tasks, extending TaskCreateDto with additional
  * fields relevant for listing tasks.
@@ -16,7 +16,8 @@ export type TaskListDto = {
     name: string;
     instruction?: (string | null);
     data_type: TaskDataType;
-    status: TaskStatus;
+    status: Status;
+    previous_status?: (Status | null);
     lead_time: (number | null);
     step_id: number;
     media_id: number;

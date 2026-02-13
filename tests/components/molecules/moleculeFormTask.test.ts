@@ -4,8 +4,8 @@ import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { mockNuxtImport} from "@nuxt/test-utils/runtime";
 import { Button, Dialog, StepList,Stepper, StepPanels, Step, FileUpload} from 'primevue';
-import MoleculeFormTask from '../../../app/components/molecules/MoleculeFormTask.vue';
-import { TaskDataType, AnnotationService, TaskService, MediaService, TaskStatus, AnnotationStatus } from '~/api/generate';
+import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
+import { TaskDataType, AnnotationService, TaskService, MediaService, Status as TaskStatus, Status as AnnotationStatus } from '~/api/generate';
 
 
 const mockedStepObject = {

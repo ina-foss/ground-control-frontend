@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { MediaCreate } from './MediaCreate';
-import type { ProjectStatus } from './ProjectStatus';
+import type { Status } from './Status';
 import type { StepDto } from './StepDto';
 /**
  * Detailed DTO for project objects, including creation and update timestamps,
@@ -14,7 +14,7 @@ import type { StepDto } from './StepDto';
 export type ProjectDetailDto = {
     title: (string | null);
     description: (string | null);
-    status: (ProjectStatus | null);
+    status: (Status | null);
     is_published: (boolean | null);
     empty_annotations: (boolean | null);
     allow_skip: (boolean | null);

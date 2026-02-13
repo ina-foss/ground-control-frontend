@@ -142,7 +142,7 @@
 
 <script setup>
 
-import {TaskStatus, TaskService, TaskDataType, MediaService, AnnotationService, AnnotationStatus} from '~/api/generate';
+import {Status as TaskStatus, TaskService, TaskDataType, MediaService, AnnotationService, Status as AnnotationStatus} from '~/api/generate';
 import {useRefreshStore, useAuth} from '#imports';
 import _ from 'lodash';
 

@@ -2,15 +2,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AnnotationStatus } from './AnnotationStatus';
+import type { Status } from './Status';
 /**
  * DTO base infos + its ID
  */
 export type AnnotationWithIdDto = {
     user_email: string;
-    annotation_status: AnnotationStatus;
+    annotation_status: Status;
     version: number;
     id: number;
     created_at: (string | null);
+    skipped_by: (string | null);
 };
 

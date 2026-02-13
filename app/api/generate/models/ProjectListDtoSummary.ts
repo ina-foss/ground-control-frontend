@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ProjectStatus } from './ProjectStatus';
+import type { Status } from './Status';
 export type ProjectListDtoSummary = {
     id: number;
     created_by: string;
     title: string;
     description: (string | null);
     steps_count: number;
-    status: (ProjectStatus | null);
+    status: (Status | null);
     created_at?: (string | null);
     tasks_id_to_annotate?: (Array<number> | null);
 };

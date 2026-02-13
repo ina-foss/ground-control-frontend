@@ -7,6 +7,9 @@ export const baseURL = process.env.BASE_URL || 'http://localhost:3000';
 
 beforeAll(async () => {
 
+  await setup({
+    server: false,
+  })
 
   // Mock module: oidc-client-ts
   vi.mock("oidc-client-ts", () => {

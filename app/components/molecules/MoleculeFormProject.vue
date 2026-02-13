@@ -141,7 +141,7 @@
 <script setup>
 
 
-import {AnnotationType, ProjectService, ProjectStatus, StepService, StepStatus, TaskStatus} from '~/api/generate';
+import {AnnotationType, ProjectService, Status, StepService} from '~/api/generate';
 import {useRefreshStore} from '#imports';
 import {useAuth} from '../../stores/auth';
 
@@ -193,7 +193,7 @@ const updateProject = async () => {
             description: 'Step description',
             annotation_type: type,
             pinned_at: null,
-            status: StepStatus.DRAFT,
+            status: Status.DRAFT,
             project_id: response.id,
           }).catch((err) => {
               console.error(err)
@@ -216,7 +216,7 @@ const createProject = async () => {
     const response = ProjectService.createProjectProjectPost({
       title: title.value,
       description: description.value,
-      status: ProjectStatus.DRAFT,
+      status: Status.DRAFT,
       is_published: false,
       empty_annotations: emptyAnnotations.value,
       allow_skip: allowSkip.value,
@@ -233,7 +233,7 @@ const createProject = async () => {
             description: 'Step description',
             annotation_type: type,
             pinned_at: null,
-            status: StepStatus.DRAFT,
+            status: Status.DRAFT,
             project_id: res.id,
             redundancy: parseInt(redundancy.value, 10),
             completeness_rate: parseFloat(completeness_rate.value),

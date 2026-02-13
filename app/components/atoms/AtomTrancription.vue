@@ -80,7 +80,7 @@ import Textarea from 'primevue/textarea';
 import { useService } from '#imports';
 
 import { useTopicList } from '../../composables/useTopicList'
-import {AnnotationStatus} from '../../api/generate/models/AnnotationStatus';
+import {Status as AnnotationStatus} from '../../api/generate';
 const emits = defineEmits(['confirm', 'onSegmentClick'])
 const toast = useToast()
 const { $application }  = useService()

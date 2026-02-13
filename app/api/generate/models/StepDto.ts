@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AnnotationType } from './AnnotationType';
-import type { StepStatus } from './StepStatus';
+import type { Status } from './Status';
 /**
  * DTO representing a step object, including association with task and project.
  */
@@ -12,7 +12,7 @@ export type StepDto = {
     description: (string | null);
     annotation_type: AnnotationType;
     pinned_at: (string | null);
-    status: StepStatus;
+    status: Status;
     project_id: number;
     /**
      * Number of annotations per task
