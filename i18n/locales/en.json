@@ -21,25 +21,6 @@
       "skipped": "Abandoned",
       "archived": "Archived"
     },
-    "annotation": {
-    "dialogs": {
-      "abandon": {
-        "title": "Task Abandon Confirmation",
-        "message": "Are you sure you want to abandon and leave this task?",
-        "description_part1": "An anomaly has been reported.\nStatus",
-        "description_status": "Abandoned",
-        "description_part2": "until revalidation by the",
-        "description_role": "project manager"
-      },
-      "finish": {
-        "title": "Task Completion Confirmation",
-        "message": "Are you sure you want to finish this task?",
-        "description_part1": "Task marked",
-        "description_status": "Completed",
-        "description_part2": "and locked."
-      }
-    }
-  },
     "deleteConfirmTitle": "Are you sure you want to delete this project?",
     "noPendingTasks": "No pending tasks",
     "assignedTasksSoon": "New tasks will be assigned to you soon.",
@@ -123,6 +104,23 @@
     }
   },
   "annotation": {
-    "lastAutoSave": "Last automatic is triggered at {time}"
+    "lastAutoSave": "Last automatic is triggered at {time}",
+    "dialogs": {
+      "abandon": {
+        "title": "Task Abandon Confirmation",
+        "message": "Are you sure you want to abandon and leave this task?",
+        "description_part1": "An anomaly has been reported.\nStatus",
+        "description_status": "Abandoned",
+        "description_part2": "until revalidation by the",
+        "description_role": "project manager"
+      },
+      "finish": {
+        "title": "Task Completion Confirmation",
+        "message": "Are you sure you want to finish this task?",
+        "description_part1": "Task marked",
+        "description_status": "Completed",
+        "description_part2": "and locked."
+      }
+    }
   }
 }

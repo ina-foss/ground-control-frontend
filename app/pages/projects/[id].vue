@@ -921,7 +921,7 @@ function triggerDownload(data: AnnotationDto, name: string, mode: 'dump'|'import
   window.URL.revokeObjectURL(url);
 }
 
-const navigateToTask = (id: number, email?: string, mode: 'edit' | 'read' = 'edit') => {
+const navigateToTask = (id: number,  mode: 'edit' | 'read' = 'edit', email?: string | null) => {
 
   navigateTo({
     path: `/tasks/${id}`,
@@ -951,11 +951,12 @@ const handleRowClick = (event : string | {originalEvent: MouseEvent , data: Task
   if (event.data?.status === "draft") return;
   clickedRowData.value = event.data;
   if (editMode.value === false)
-    navigateToTask(clickedRowData.value.id, email_clicked,
+    navigateToTask(clickedRowData.value.id,
     (clickedRowData.value.status === Status.DONE ||
     clickedRowData.value.status === Status.SKIPPED ||
     clickedRowData.value.status === Status.ARCHIVED)
-    ? 'read' : 'edit');
+    ? 'read' : 'edit',
+      email_clicked,);
     email_clicked = undefined
 };
 
@@ -978,7 +979,7 @@ const onExpirationDateChange = async (value: Date, row: any) => {
 }
 
 const consultTask = (annotation_id: number) => {
-  navigateToTask(annotation_id, userEmail.value, 'read');
+  navigateToTask(annotation_id, 'read');
 };
 
 </script>
