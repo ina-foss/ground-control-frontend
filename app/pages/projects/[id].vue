@@ -743,7 +743,7 @@ const { data: projectParameters, status: statusParameters } = useAsyncData(
     ),
 );
 watch(projectParameters, (newVal) => {
-  if (newVal && !isEqual(newVal, refreshStore.strategy_parameters)) {
+  if (newVal && !_.isEqual(newVal, refreshStore.strategy_parameters)) {
     refreshStore.setParameters(newVal);
   }
 });
@@ -845,7 +845,7 @@ function getColorForAnnotation(annotation_status,annotated_by = null,skipped_by 
   }
   if (annotation_status === Status.DONE) {
     return "#ACE1AF";
-  } 
+  }
   return "#0057FF";
 }
 
@@ -951,7 +951,7 @@ const handleRowClick = (event : string | {originalEvent: MouseEvent , data: Task
   if (event.data?.status === "draft") return;
   clickedRowData.value = event.data;
   if (editMode.value === false)
-    navigateToTask(clickedRowData.value.id, email_clicked ?? userEmail.value,
+    navigateToTask(clickedRowData.value.id, email_clicked,
     (clickedRowData.value.status === Status.DONE ||
     clickedRowData.value.status === Status.SKIPPED ||
     clickedRowData.value.status === Status.ARCHIVED)
