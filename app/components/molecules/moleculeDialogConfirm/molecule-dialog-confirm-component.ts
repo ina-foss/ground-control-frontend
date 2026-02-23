@@ -43,7 +43,7 @@ export default defineComponent({
       this.$emit('update:visible', false)
       this.$emit('cancel')
     },
-    
+
     handleConfirm() {
       this.$emit('update:visible', false)
       this.$emit('confirm')

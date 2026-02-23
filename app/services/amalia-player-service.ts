@@ -177,9 +177,15 @@ export default class AmaliaPlayerService {
   /**
   * Launch amalia player's playback
   */
-  public onPlay() {
-    const player = this.getPlayers()[0]
-    player.mediaPlayerElement.getMediaPlayer().play()
+  public async onPlay() {
+    const player = this.getPlayers()?.[0]
+    if(player){
+      try{
+        await player.mediaPlayerElement.getMediaPlayer().play()
+      }
+      catch (e:any){
+      }
+    }
   }
 
 }

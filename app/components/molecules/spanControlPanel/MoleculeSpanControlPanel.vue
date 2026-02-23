@@ -172,7 +172,8 @@
                               showDelay: 300,
                               appendTo: 'body'}"
                               :text="spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value => value.label).join(', ')"
-                                         @contextmenu="openVirtualSpanMenu($event, span)"/>
+                                         @contextmenu="openVirtualSpanMenu($event, span)"
+                                         @click="onSpanClick(spanArray[span.spanId])"/>
                             <span class="pi pi-trash hover:bg-disabled rounded-full p-1"
                               @click="unlinkSpan(span, selectedGroup)" />
                           </group-linked-span>

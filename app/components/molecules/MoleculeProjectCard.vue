@@ -162,7 +162,7 @@
       <template #message>
         <Message severity="warn" class="block w-full">
           {{ t('project.tasksInProgress', { count: progressedTasksCount }) }}
-        </Message> 
+        </Message>
       </template>
     </MoleculeDialogConfirm>
     <MoleculeDialogConfirm
@@ -182,7 +182,7 @@
       <template #message>
         <Message severity="warn" class="block w-full">
           {{ t('project.tasksInProgress', { count: progressedTasksCount }) }}
-        </Message> 
+        </Message>
       </template>
     </MoleculeDialogConfirm>
   </div>

@@ -47,7 +47,13 @@
   const updateVideoTimecode = (event) => {
     $amalia.updateCurrentTc($application.unixToTimestamp(event.tcin) )
     pauseTime.value=$application.unixToTimestamp(event.tcout)
-    $amalia.onPlay()
+    if(!event.fromSpan){
+      $amalia.onPlay()
+    }
+    else{
+      $amalia.onPause()
+    }
+
   }
 
   const checkCurrentTime = () => {

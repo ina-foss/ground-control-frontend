@@ -12,7 +12,7 @@
         {{ title }}
       </h3>
     </template>
-    <div 
+    <div
       v-if="message || description || $slots.description || $slots.message"
       class="flex gap-4 pt-4 pb-[20px] px-0 text-sm text-gray-700">
       <i

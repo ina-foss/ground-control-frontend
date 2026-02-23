@@ -274,9 +274,29 @@ export default defineComponent({
         span: {id,label: "", plugins:[],spans: []}
       })
     }
+
+    expose({showPanel})
+
+    function openVirtualSpanForm() {
+      const id = spanArray.value.length
+      spanFormRef.value?.open({
+        span: {id,label: "", plugins:[]},
+
+        selectedGroup:selectedGroup.value,
+        mainGroupPluginIndex:mainGroupPluginIndex.value,
+      })
+    }
+
+    function openGroupForm() {
+      const id = spanArray.value.length
+      spanFormRef.value?.open({
+        span: {id,label: "", plugins:[],spans: []}
+      })
+    }
     const onSpanClick = (span) => {
-      handleSegmentClick?.({ tcin: span?.tcin})
-      $amalia.onPause()
+      if(span?.tcin){
+        handleSegmentClick?.({ tcin: span?.tcin,fromSpan:true})
+      }
     }
 
     expose({showPanel})
