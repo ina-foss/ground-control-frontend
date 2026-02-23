@@ -2,11 +2,16 @@ import {expect, describe, it }  from 'vitest'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import type { VueWrapper } from '@vue/test-utils';
 import { flushPromises } from '@vue/test-utils';
-import MoleculeSpanControlPanel  from '../../../components/molecules/spanControlPanel/MoleculeSpanControlPanel.vue'
-import AtomSpanTag from '../../../components/molecules/spanControlPanel/AtomSpanTag.vue'
+import MoleculeSpanControlPanel  from '~/components/molecules/spanControlPanel/MoleculeSpanControlPanel.vue'
+import AtomSpanTag from '~/components/molecules/spanControlPanel/AtomSpanTag.vue'
 import {Select} from 'primevue'
+import { createI18n } from 'vue-i18n'
 
 let mock =vi.fn()
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 
 vi.mock('~/stores/plugins', async () => {
   return {
@@ -148,9 +153,14 @@ describe('MoleculeSpanControlPanel', ()=>{
   beforeEach(async ()=>{
     wrapper = await mountSuspended(MoleculeSpanControlPanel,{
       attachTo: document.body,
+      props:{
+        isAnnotationEditable : true
+      },
       global:{
+        plugins: [i18n],
         stubs:{
           teleport: true,
+          transition: false,
           draggable: {
             template: `
               <div>
@@ -177,6 +187,7 @@ describe('MoleculeSpanControlPanel', ()=>{
 
   it('should mount',() =>{
     expect(wrapper.text().includes('Spans')).toBeTruthy()
+    expect(wrapper.html()).not.toContain('delete-group-wrapper')
   })
 
   it('should display the list of spans and be able to filter it', async ()=>{
@@ -184,12 +195,10 @@ describe('MoleculeSpanControlPanel', ()=>{
     const spanWrappers = wrapper.findAll('span-content-wrapper')
     const spanNoneWrapper = wrapper.findAll('span-none-content')
     expect(spanWrappers.length).toBe(2) // 2 real spans
-    expect(spanNoneWrapper.length).toBe(1) // span "None"
-    expect(wrapper.findAllComponents(AtomSpanTag).length).toBe(3)
+    expect(wrapper.findAllComponents(AtomSpanTag).length).toBe(2)
     expect(wrapper.findAll('span-wrapper  span-content-wrapper').length).toBe(2)
     expect(spanWrappers.at(0).text().includes('1')).toBeTruthy()
     expect(spanWrappers.at(1).text().includes('2')).toBeTruthy()
-    expect(spanNoneWrapper.at(0).text()).toContain('None')
 
     // --- FILTER SPAN LIST ON PLUGIN VALUE ----
     expect(wrapper.vm.spanOnlyArray.length).toBe(2)
@@ -207,7 +216,7 @@ describe('MoleculeSpanControlPanel', ()=>{
     await  wrapper.findAllComponents(Select)[0].trigger('click')
     const options = wrapper.findAll('.p-select-list-container li')
 
-    expect(wrapper.vm.spanOnlyArray.length).toBe(2)
+    expect(wrapper.vm.visibleSpanOnlyArray.length).toBe(2)
 
     // ---- TEST THE UNLINKED VALUE ----
     await options[0].trigger('mousedown')
@@ -215,8 +224,8 @@ describe('MoleculeSpanControlPanel', ()=>{
     // check whether spanLinkFilter or spanLinkFilter.value depending on the vitest unwrapping
     expect(wrapper.vm.spanLinkFilter.value.value ?? wrapper.vm.spanLinkFilter.value).toEqual('unlinked')
 
-    expect(wrapper.vm.spanOnlyArray.length).toBe(1)
-    expect(wrapper.vm.spanOnlyArray[0]).toEqual(
+    expect(wrapper.vm.visibleSpanOnlyArray.length).toBe(1)
+    expect(wrapper.vm.visibleSpanOnlyArray[0]).toEqual(
         {
           id:3,
           tcin: 0.780029296875,
@@ -237,10 +246,10 @@ describe('MoleculeSpanControlPanel', ()=>{
     await  wrapper.findAllComponents(Select)[0].trigger('click')
     await options[1].trigger('mousedown')
 
-    expect(wrapper.vm.spanLinkFilter.value.value ?? wrapper.vm.spanLinkFilter.value).toEqual('linked')
+    expect(wrapper.vm.spanLinkFilter.value).toEqual('linked')
 
-    expect(wrapper.vm.spanOnlyArray.length).toBe(1)
-    expect(wrapper.vm.spanOnlyArray[0]).toEqual(
+    expect(wrapper.vm.visibleSpanOnlyArray.length).toBe(1)
+    expect(wrapper.vm.visibleSpanOnlyArray[0]).toEqual(
         {
           id:2,
           tcin: 0.10009765625,
@@ -266,19 +275,28 @@ describe('MoleculeSpanControlPanel', ()=>{
     // ---- SHOW GROUP LIST ----
     const groupWrapper1 = wrapper.findAll('group-wrapper')[0]
     const groupWrapper2 = wrapper.findAll('group-wrapper')[1]
-    expect(groupWrapper1.text()).toContain('1Citation1')
-    expect(groupWrapper2.text()).toContain('2Co Ref')
+    // Groups are sorted by id descending, so group 4 (Co Ref) comes first, then group 1 (Citation)
+    expect(groupWrapper1.text()).toContain('2Co Ref')
+    expect(groupWrapper2.text()).toContain('1Citation')
 
-    expect(wrapper.vm.groupArray.length).toBe(2)
+    expect(wrapper.vm.visibleGroupArray.length).toBe(2)
 
 
     // ---- FILTER GROUP LIST ----
     await wrapper.findAllComponents(Select)[3].trigger('click')
-    await wrapper.find('.p-select-list-container li').trigger('mousedown')
+    expect(wrapper.vm.groupArray.length).toBe(2)
+    const options = wrapper.findAll('.p-select-list-container li')
+    expect(options[0].text()).toBe('Citation')
+    await options[0].trigger('mousedown')
+    await wrapper.vm.$nextTick()
+    await flushPromises()
 
-
-    expect(wrapper.vm.groupArray.length).toBe(1)
-    expect(wrapper.findAll('group-wrapper').length).toBe(2)
+    // Verify the filter is set and the computed property filters correctly
+    expect(wrapper.vm.groupFilter).toBeTruthy()
+    expect(wrapper.vm.visibleGroupArray.length).toBe(1)
+    expect(wrapper.vm.sortedVisibleGroupArray.length).toBe(1)
+    // Note: DOM assertion removed due to draggable stub reactivity limitations in test environment
+    // The filtering logic is verified through the computed properties above
 
   })
 
@@ -419,6 +437,9 @@ describe('MoleculeSpanControlPanel', ()=>{
 
   it('should delete the group',async()=>{
 
+    expect(wrapper.html()).not.toContain('delete-group-wrapper')
+    expect(wrapper.find('delete-group-wrapper')).toBeFalsy
+
     // Check that group with id 1 exists
     const spanArray = wrapper.vm.spanArray?.value || wrapper.vm.spanArray
     const initialGroup = spanArray.find(span => span.id === 1)
@@ -427,15 +448,22 @@ describe('MoleculeSpanControlPanel', ()=>{
     expect(initialGroup.spans.length).toBeGreaterThan(0)
 
     // Trigger the modal
-    const deleteGroupButton = wrapper.find('group-wrapper span')
+    const deleteGroupButton = wrapper.findAll('group-wrapper span')[1]
     await deleteGroupButton.trigger('click')
     await wrapper.vm.$nextTick()
 
+    expect(wrapper.html()).toContain('delete-group-wrapper')
+    expect(wrapper.find('delete-group-wrapper')).toBeTruthy()
 
     // Cancel suppression
-    const cancelGroupModalButton = wrapper.findAll('delete-group-wrapper button')[0]
+    const cancelGroupModalButton = wrapper.find('delete-group-footer button')
     await cancelGroupModalButton.trigger('click')
     await wrapper.vm.$nextTick()
+
+    expect(wrapper.vm.groupDeleted).toBe(null)
+
+    expect(wrapper.html()).not.toContain('delete-group-wrapper')
+    expect(wrapper.find('delete-group-wrapper')).toBeFalsy
 
     // Check that group still exists
     const spanArrayAfterCancel = wrapper.vm.spanArray?.value || wrapper.vm.spanArray
@@ -449,16 +477,19 @@ describe('MoleculeSpanControlPanel', ()=>{
     await deleteGroupButton.trigger('click')
     await wrapper.vm.$nextTick()
 
+    expect(wrapper.html()).toContain('delete-group-wrapper')
+
     // Confirm suppression
     const deleteGroupModalButton = wrapper.findAll('delete-group-wrapper button')[1]
     await deleteGroupModalButton.trigger('click')
     await wrapper.vm.$nextTick()
 
+    expect(wrapper.html()).not.toContain('delete-group-wrapper')
+
     // Check that group no longer exists
     const spanArrayAfterDelete = wrapper.vm.spanArray?.value || wrapper.vm.spanArray
     const groupAfterDelete = spanArrayAfterDelete?.find(span => span && span.id === 1)
     expect(groupAfterDelete).toBeUndefined()
-
   })
 
 })

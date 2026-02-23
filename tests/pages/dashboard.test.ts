@@ -1,5 +1,5 @@
 import {expect, describe, it,vi }  from 'vitest'
-import Dashboard from '../../pages/dashboard.vue'
+import Dashboard from '../../app/pages/dashboard.vue'
 import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
@@ -44,7 +44,7 @@ mockNuxtImport('useService',()=>{
 
   mockNuxtImport('useAsyncData', () => {
     return  (key) => {
-      if(key === "projects"){
+      if(key === "projects-summary"){
         return { data: mockedProject, refresh: refreshProject, status: refreshStatus, error: undefined  }
       }
       else if( key === "total_project_number"){

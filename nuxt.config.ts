@@ -102,6 +102,17 @@ const DSINAPreset = definePreset(Lara, {
         }
       }
     },
+    inputnumber:{
+      colorScheme:{
+        light: {
+          buttonColor: 'white !important',
+          buttonHoverColor: 'white !important',
+          buttonBackground: '{primary.color} !important',
+          buttonHoverBackground: 'var(--hover) !important',
+          buttonActiveBackground: '{primary.color}'
+        },
+      },
+    },
     datatable: {
       headerCellPadding: '12px',
       headerCellColor: 'var(--title)',
@@ -111,7 +122,7 @@ const DSINAPreset = definePreset(Lara, {
       rowColor: 'var(--title)',
       colorScheme: {
         light: {
-          rowHoverBackground: '{surface.50}',
+          rowHoverBackground: '#F6FCFE',
           headerCellBackground: 'var(--neutral-color)'
         }
       }
@@ -119,19 +130,43 @@ const DSINAPreset = definePreset(Lara, {
     select: {
       paddingX: '8px',
       paddingY: '8px',
+    },
+    tooltip: {
+      background: 'var(--grey-500) !important',
+      color: 'var(--surface-color) !important',
     }
   }
 })
 
 export default defineNuxtConfig({
+  components:{
+    dirs : [
+      {
+        path: "~/components",
+        pathPrefix: false,
+        global: true
+      },
+    ]
+  },
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => tag.includes('-') && !tag.startsWith('router') && !tag.startsWith('atom')
     },
   },
   ssr: false,
+  nitro: {
+    compatibilityDate: '2026-01-02'
+  },
   app: {
     pageTransition: {name: 'page', mode: 'in-out'},
+    head: {
+      meta: [
+        { name: 'build-version', content: new Date().toISOString() },
+        { name: "Cache-Control", content: "no-cache, no-store, must-revalidate" },
+        { name: "Expires", content: "0" },
+        { name: "Pragma", content: "no-cache" }
+      ]
+    }
   },
   devtools: {
     enabled: true,
@@ -146,7 +181,7 @@ export default defineNuxtConfig({
   ],
   plugins: [
     '~/directives/v-safe-html.ts',
-    '~/plugins/error-handler.ts',
+    '~/plugins/error-handler.ts'
   ],
   runtimeConfig: {
     public: {}
@@ -154,7 +189,7 @@ export default defineNuxtConfig({
   vite:{
     plugins: [tailwindcss()],
   },
-  modules: [ '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint'],
+  modules: [ '@nuxtjs/color-mode', '@primevue/nuxt-module', '@pinia/nuxt', "nuxt-lodash", '@nuxt/eslint', '@nuxtjs/i18n'],
   colorMode: {
     classSuffix: '',
   },
@@ -182,5 +217,16 @@ export default defineNuxtConfig({
   eslint: {
     stylistic: true,
     files: './**/*.{ts,js,vue}'
+  },
+  i18n: {
+    defaultLocale: 'fr',
+    lazy: true,
+    langDir: "locales/",
+    locales: [
+      { code: 'fr', iso: 'fr-FR', name: 'Français (France)',file: 'fr.json'},
+      { code: 'en', iso: 'en-US', name: 'English',file: 'en.json'}
+    ],
+    vueI18n: './i18n.config.ts'
   }
+
 })

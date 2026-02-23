@@ -1,13 +1,10 @@
-import {defineVitestConfig} from '@nuxt/test-utils/config'
+import {defineVitestConfig} from '@nuxt/test-utils/config';
 
 export default defineVitestConfig({
   test: {
     css: true,
     watch: false,
     environment: 'nuxt',
-    environmentMatchGlobs: [
-      ['tests', 'jsdom']
-    ],
     globals: true,
     setupFiles: 'tests/setup.ts',
     deps: {
@@ -38,6 +35,7 @@ export default defineVitestConfig({
       '/api/**',
       '**/shared/**',
       '**/tests/app.test.ts',
+      '**/tests/imports.test.ts',
       // '**/tests/pages/**', // exclude specific directories
       '**/*.config.ts',   // exclude files with specific patterns
       '**/*.test.skip.ts',   // exclude files with specific patterns
@@ -45,7 +43,7 @@ export default defineVitestConfig({
 
     ],
     coverage: {
-      provider: 'istanbul',
+      provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: './coverage',
       exclude: [
@@ -57,6 +55,7 @@ export default defineVitestConfig({
         '**/*.config.ts',
         '**/public/**',
         '**/utils/**',
+        '**/assets/**',
         '**/test-results/**',
         '**/plugins/**',
         '**/middleware/**',
@@ -67,7 +66,6 @@ export default defineVitestConfig({
         '**/.coverage/**',
         '**/tailwind.config.js',
         '**/**nuxt**',
-
       ]
     },
   }

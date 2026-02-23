@@ -1,8 +1,12 @@
-import OrganismAnnotationComponent from "../../../../components/organisms/annotation/OrganismAnnotation.vue";
+import OrganismAnnotationComponent from "~/components/organisms/annotation/OrganismAnnotation.vue";
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, mount } from '@vue/test-utils'
 import { computed,nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
+import { createI18n } from 'vue-i18n'
+import { useAuth } from '~/stores/auth'
+import { useOptions } from '~/stores/annotation-options'
+import {mockedReturn} from "../../../mock";
 
 vi.mock('~/stores/auth', () => ({
   useAuth: vi.fn()
@@ -19,7 +23,10 @@ vi.mock('~/stores/plugins', () => ({
     initialFetch: vi.fn()
   })
 }))
-
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 vi.mock('~/composables/useTcOffset', () => ({ useTcOffset: () => ({ setTcOffset: vi.fn() }) }))
 vi.mock('~/composables/useTopicList', () => ({ useTopicList: () => ({ topicList: [] }) }))
 
@@ -34,9 +41,6 @@ const mockedUseService = vi.fn().mockReturnValue({
 vi.mock('#imports', () => ({ useService: mockedUseService }))
 
 
-import { useAuth } from '~/stores/auth'
-import { useOptions } from '~/stores/annotation-options'
-import {mockedReturn} from "~/tests/mock";
 
 vi.mock('vue-router', async () => {
   const actual = await vi.importActual('vue-router')
@@ -91,9 +95,9 @@ describe('OrganismAnnotationComponent', () => {
   const factory = (props = {}) => {
     const pinia = createPinia()
     setActivePinia(pinia)
-    return shallowMount(OrganismAnnotationComponent, {
+    return mount(OrganismAnnotationComponent, {
       global: {
-        plugins: [pinia],
+        plugins: [pinia, i18n],
         stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
       },
       props: {
@@ -126,7 +130,7 @@ describe('OrganismAnnotationComponent', () => {
     setActivePinia(pinia)
     return shallowMount(OrganismAnnotationComponent, {
       global: {
-        plugins: [pinia],
+        plugins: [pinia, i18n],
         stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
       },
       props: {
@@ -163,7 +167,7 @@ describe('OrganismAnnotationComponent', () => {
       setActivePinia(pinia)
       return shallowMount(OrganismAnnotationComponent, {
         global: {
-          plugins: [pinia],
+          plugins: [pinia, i18n],
           stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
         },
         props: {
@@ -227,7 +231,7 @@ describe('OrganismAnnotationComponent', () => {
       setActivePinia(pinia)
       return shallowMount(OrganismAnnotationComponent, {
         global: {
-          plugins: [pinia],
+          plugins: [pinia, i18n],
           stubs: ['MoleculeAnnotationLeftPanel', 'MoleculeSpan', 'MoleculeSegmentation', 'MoleculeTranscription', 'MoleculeTabs', 'AtomSearch'],
         },
         props: {

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useRefreshStore } from '@/stores/refresh'
-import * as api from '@/api/generate'
-import * as dynamicConfig from '@/services/dynamic-configuration-service'
+import { useRefreshStore } from '~/stores/refresh'
+import * as api from '~/api/generate'
+import * as dynamicConfig from '~/services/dynamic-configuration-service'
 
 vi.mock('@/stores/auth-store', () => ({
   useAuth: vi.fn()
@@ -107,7 +107,7 @@ describe('useRefreshStore', () => {
     store = useRefreshStore()
     vi.clearAllMocks()
 
-    vi.mocked(dynamicConfig.getApplicationConfiguration).mockReturnValue({
+    vi.spyOn(dynamicConfig,'getApplicationConfiguration').mockReturnValue({
       apiBasePath: 'https://GC-api'
     })
 
@@ -125,11 +125,11 @@ describe('useRefreshStore', () => {
     vi.stubGlobal('$fetch', $fetchMock)
 
     vi.stubGlobal('window', { innerWidth: 1920 })
-    await store.fetchProject(0, 10)
+    await store.fetchProjects(0, 10)
     expect(store.project_number).toBe(123)
 
     vi.stubGlobal('window', { innerWidth: 1500 })
-    await store.fetchProject()
+    await store.fetchProjects()
     expect(store.project_number).toBe(123)
   })
 })

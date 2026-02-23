@@ -1,0 +1,145 @@
+{
+  "menu": {
+    "options": "Options",
+    "language": "Langue",
+    "english": "Anglais (En)",
+    "french":"Français (Fr)",
+    "switchToLight": "Passer en mode clair",
+    "switchToDark": "Passer en mode sombre",
+    "refreshToken": "Rafraîchir le token",
+    "logout": "Déconnexion"
+  },
+  "project": {
+    "title": "Projets",
+    "statusPlaceholder": "Statut",
+    "newProject": "Nouveau projet",
+    "status": {
+      "draft": "Brouillon",
+      "pending": "En attente",
+      "in-progress": "En cours",
+      "done": "Terminé",
+      "skipped": "Abandonné",
+      "archived": "Archivé"
+    },
+    "deleteConfirmTitle": "Êtes-vous sûr de vouloir supprimer ce projet ?",
+    "noPendingTasks": "Aucune tâche en attente",
+    "assignedTasksSoon": "De nouvelles tâches vous seront bientôt attribuées.",
+    "finishConfirmTitle": "Êtes-vous sûr de vouloir terminer ce projet ?",
+    "archiveConfirmTitle": "Êtes-vous sûr de vouloir archiver ce projet ?",
+    "tasksInProgress": "{count} tâche en cours| {count} tâches en cours"
+  },
+  "error":{
+    "title": {
+       "impossibleAction" : "Action impossible"
+    }
+  },
+  "span":{
+    "highlight": {
+      "errors": {
+        "emptySpan" : "Un span doit contenir au moins un mot."
+      }
+    },
+    "editBorders":{
+      "errors":{
+        "removeAllNodesError": "Pour supprimer un span, effectuez un clic droit puis sélectionner 'supprimer'.",
+        "wrongDirectionError": "Pour étendre un span dans une direction, sélectionnez le bord du span le plus proche."
+      }
+    }
+  },
+  "annotation": {
+    "lastAutoSave": "Sauvegarde automatique déclenchée à {time}",
+    "dialogs": {
+      "abandon": {
+        "title": "Confirmation d’abandon de tâche",
+        "message": "Êtes-vous sûr de vouloir abandonner et quitter cette tâche?",
+        "description_part1": "Anomalie signalée.\n Statut",
+        "description_status": "Abandonnée",
+        "description_part2": "jusqu’à revalidation du",
+        "description_role": "chef de projet"
+      },
+      "finish": {
+        "title": "Confirmation d'une tâche terminée",
+        "message": "Êtes-vous sûr de vouloir terminer cette tâche?",
+        "description_part1": "Tâche marquée",
+        "description_status": "Terminée",
+        "description_part2": "et verrouillée."
+      }
+    }
+  },
+  "spanForm": {
+    "context": "Contexte",
+    "selectValueError": "Veuillez sélectionner une valeur",
+    "missingWordsLabel": "Nombre de mots manquants",
+    "missingWordsPlaceholder": "Entrez le nombre de mots manquants",
+    "correctedTerm": "Terme corrigé",
+    "transcriptionTerm": "Terme de la transcription",
+    "correctedTermPlaceholder": "Entrez le terme corrigé",
+    "deleteConfirm": "Souhaitez-vous vraiment supprimer ce span ?",
+    "suppressionWarning": "Pour créer un span de type “suppression”, seul 1 mot doit être sélectionné.",
+    "deleteHeader": "Confirmation de suppression",
+    "groupHeader": "Groupe : propriétés",
+    "spanHeader": "Span : propriétés",
+    "selectSpanType": "Sélectionner un type de span parmi ces groupes",
+    "virtualSpan": {
+      "virtualSpanHeader": "Span : création d’un span virtuel",
+      "role": "Rôle",
+      "dialog": {
+        "header": "L’élément que vous essayez d’insérer n’est pas autorisé car son type est inadéquat.",
+        "allowedTypesLabel": "Vous pouvez uniquement insérer des éléments de type:"
+      }
+    }
+  },
+  "contextMenu": {
+    "editProperties": "Éditer les propriétés",
+    "editBounds": "Éditer les bornes",
+    "delete": "Supprimer"
+  },
+  "common":{
+    "no": "Non",
+    "yes": "Oui"
+  },
+  "actions": {
+    "edit": "Modifier",
+    "archive":"Archiver",
+    "finish":"Terminer",
+    "unarchive":"Désarchiver",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "skip": "Abandonner et quitter",
+    "save": "Enregistrer",
+    "abandon": "Abandonner et quitter",
+    "delete": "Supprimer"
+  },
+  "player": {
+    "actions": {
+      "configButton": "Configuration",
+      "shrink": "Rétrécir",
+      "expand": "Agrandir",
+      "lastTimecode": "Dernier TC"
+    },
+    "config": {
+      "title": "Configurer les boutons du player",
+      "audio": {
+        "backwardSecond": "Retour 1 seconde par 1 seconde",
+        "forwardSecond": "Avance 1 seconde par 1 seconde"
+      },
+      "video": {
+        "backward5Seconds": "Retour 5 secondes par 5 secondes",
+        "forward5Seconds": "Avance 5 secondes par 5 secondes",
+        "backwardFrame": "Retour image par image",
+        "forwardFrame": "Avance image par image",
+        "slowBackward": "Retour ralenti",
+        "slowForward": "Avance ralentie"
+      }
+    }
+  },
+  "steps": {
+    "title": "Étapes",
+    "statusPlaceholder": "Statut",
+    "empty": "Ce projet ne comporte aucune étape"
+  },
+  "strategy": {
+    "show": "Stratégie > ",
+    "hide": " < Stratégie"
+  }
+}

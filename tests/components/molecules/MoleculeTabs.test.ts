@@ -1,7 +1,7 @@
 import {expect, describe, it }  from 'vitest'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
-import MoleculeTabs from '../../../components/molecules/MoleculeTabs.vue'
-import {mockedTransciptionsWithTopics, mockedTransciptionsWithTopics} from '~/tests/mock';
+import MoleculeTabs from '~/components/molecules/MoleculeTabs.vue'
+import {mockedTransciptionsWithTopics} from '../../mock';
 import type { VueWrapper } from '@vue/test-utils';
 import { Carousel } from 'primevue';
 
@@ -16,7 +16,6 @@ const mockJumpToTopic = vi.fn()
 describe('Molecule Tabs', ()=>{
   let wrapper : VueWrapper
   beforeEach(async()=>{
-    vi.useFakeTimers()
     wrapper = await mountSuspended(MoleculeTabs,{
       global:{
         stubs: {

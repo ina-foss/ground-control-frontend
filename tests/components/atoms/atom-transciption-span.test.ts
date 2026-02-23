@@ -1,9 +1,19 @@
 import {expect, describe, it }  from 'vitest'
 import AtomTranscriptionSpan  from '@/components/atoms/AtomTranscriptionSpan.vue'
-import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { mockedTransciptionsWithoutTopics } from '@/tests/mock'
+import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
+import { mockedTransciptionsWithoutTopics } from '../../mock'
 import type { VueWrapper } from '@vue/test-utils';
 
+mockNuxtImport('useSpanService', async()=>{
+  const actual = await vi.importActual('~/composables/useSpanService')
+  return ()=>({
+    ...actual.default(),
+      spanArray : ref([
+        {id:0,plugins:[],label:"None"},
+        {id:1,plugins:[],nodes:[],label:"span 1"}
+      ])
+  })
+})
 
 describe('Atom Transcription Span',()=> {
 
@@ -15,6 +25,7 @@ describe('Atom Transcription Span',()=> {
         pin_position: undefined,
         spanid: undefined
       }),
+      spanArray: ref([{id:0,plugins:[],label:"None"},{id:1,plugins:[],nodes:[],label:"span 1"}]),
       handleDrop: vi.fn()
     })
   }))
@@ -39,6 +50,7 @@ describe('Atom Transcription Span',()=> {
     const { dragData } = useSpanService()
     const word = wrapper.findAll('div').at(100)
     word?.element.appendChild(document.createElement('bg1'))
+    wrapper.vm.spanArray[1].nodes[0] = word?.element
     const dataTransfer = new DataTransfer()
     dataTransfer.setData('pin_position', 'right')
     dataTransfer.setData('spanid', '1')
@@ -63,6 +75,7 @@ describe('Atom Transcription Span',()=> {
     const { dragData } = useSpanService()
     const word = wrapper.findAll('div').at(100)
     word?.element.appendChild(document.createElement('bg1'))
+    wrapper.vm.spanArray[1].nodes[0] = word?.element
     const dataTransfer = new DataTransfer()
     dragData.pin_position = 'left'
     dragData.spanid = 1
@@ -89,15 +102,16 @@ describe('Atom Transcription Span',()=> {
     word2?.element.appendChild(document.createElement('bg1'))
     const word3 = wrapper.findAll('div').at(102)
     word3?.element.appendChild(document.createElement('bg1'))
+    wrapper.vm.spanArray[1].nodes = [word1?.element,word2?.element,word3?.element]
     const dataTransfer = new DataTransfer()
-    dragData.pin_position = 'right'
+    dragData.pin_position = 'left'
     dragData.spanid = 1
-    const target = wrapper.findAll('div').at(102)
+    const target = wrapper.findAll('div').at(101)
     await target.trigger('dragover',{
       dataTransfer: dataTransfer
     })
 
-    expect(wrapper.findAll('.dragged_inner').length).toBe(1)
+    expect(wrapper.findAll('.dragged_inner').length).toBe(2)
 
     await target.trigger('dragleave',{
       dataTransfer: dataTransfer
@@ -115,10 +129,11 @@ describe('Atom Transcription Span',()=> {
     word2?.element.appendChild(document.createElement('bg1'))
     const word3 = wrapper.findAll('div').at(102)
     word3?.element.appendChild(document.createElement('bg1'))
+    wrapper.vm.spanArray[1].nodes = [word1?.element,word2?.element,word3?.element]
     const dataTransfer = new DataTransfer()
-    dragData.pin_position = 'left'
+    dragData.pin_position = 'right'
     dragData.spanid = 1
-    const target = wrapper.findAll('div').at(102)
+    const target = wrapper.findAll('div').at(100)
     await target.trigger('dragover',{
       dataTransfer: dataTransfer
     })

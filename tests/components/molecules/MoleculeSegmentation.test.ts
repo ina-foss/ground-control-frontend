@@ -1,8 +1,8 @@
 import {expect, describe, it }  from 'vitest'
 import PrimeVue from 'primevue/config';
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
-import MoleculeSegmentation from '../../../components/molecules/MoleculeSegmentation.vue'
-import {mockedReturn, mockedTransciptionsWithoutTopics, mockedTransciptionsWithTopics} from '~/tests/mock';
+import MoleculeSegmentation from '~/components/molecules/MoleculeSegmentation.vue'
+import {mockedReturn, mockedTransciptionsWithoutTopics, mockedTransciptionsWithTopics} from '../../mock';
 import { mount} from '@vue/test-utils';
 import type { VueWrapper } from '@vue/test-utils';
 import AtomTopicList  from '@/components/atoms/topicList/AtomTopicList.vue'
@@ -11,12 +11,17 @@ import AtomPluginBlock from '~/components/atoms/pluginBlock/AtomPluginBlock.vue'
 import AtomSegmentation from "~/components/atoms/AtomSegmentation.vue";
 import AtomSpanOption from '@/components/atoms/AtomSpanOption.vue';
 import AtomVideoOption from '@/components/atoms/atom-video-option.vue';
+import { createI18n } from 'vue-i18n'
 
   vi.mock('~/composables/useSpanService', () => ({
     default: () => ({
-      loadSpanv2: vi.fn()
+      loadSpan: vi.fn()
     })
   }))
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 
 describe('Molecule Segmentation', ()=>{
   let wrapper : VueWrapper
@@ -54,7 +59,7 @@ describe('Molecule Segmentation', ()=>{
 
     wrapper =  mount(MoleculeSegmentation,{
       global: {
-        plugins: [PrimeVue],
+        plugins: [PrimeVue,i18n],
         provide: {
           jumpToTopic: vi.fn(),
           annotation_type: 'segmentation',
@@ -73,7 +78,7 @@ describe('Molecule Segmentation', ()=>{
 
     wrapper2 = mount(MoleculeSegmentation,{
       global: {
-        plugins: [PrimeVue],
+        plugins: [PrimeVue,i18n],
         provide: {
           spanService:{
             loadSpan: vi.fn()

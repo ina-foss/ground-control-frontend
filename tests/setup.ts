@@ -3,10 +3,13 @@ import { setup } from '@nuxt/test-utils';
 import { config } from '@vue/test-utils';
 import path from 'path';
 
-const baseURL = process.env.BASE_URL || 'http://localhost:3000';
+export const baseURL = process.env.BASE_URL || 'http://localhost:3000';
 
 beforeAll(async () => {
 
+  await setup({
+    server: false,
+  })
 
   // Mock module: oidc-client-ts
   vi.mock("oidc-client-ts", () => {

@@ -1,10 +1,10 @@
 import {expect, describe, it }  from 'vitest'
-import id from '../../pages/projects/[id].vue'
+import id from '../../app/pages/projects/[id].vue'
 import type { VueWrapper } from '@vue/test-utils'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import { DataTable, Tag, Select, Button} from 'primevue';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
-import {TaskService} from '../../api/generate';
+import {TaskService} from '../../app/api/generate';
 
 
 let mockedProjectView = ref({
