@@ -5,6 +5,7 @@
       <label class="text-primary font-semibold p-2">{{ t('project.title') }}</label>
       <Select
         appendTo="body"
+        :key="$i18n.locale"
         v-model="selectedStatus"
         :options="statusOptions"
         option-label="label"
@@ -76,7 +77,7 @@ const {getProjectNumber} = storeToRefs(refreshStore)
 const first = ref(0)
 const selectedStatus = ref(null);
 const paginatorSize = computed(()=> window.innerWidth > 1600 ? 20 : 16)
-const { t } = useI18n()
+const { t,locale } = useI18n()
 // On renomme error pour eviter un conflit avec @nuxt/test-utils/runtime
 const {data:data,refresh, status, error: projectError} = await useAsyncData('projects-summary',async ()=> await fetchProjects(first.value, paginatorSize.value),{server:false})
 
@@ -86,14 +87,22 @@ const { $application } = useService();
 
 const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_CREATE));
 
-const statusOptions = [
+const statusOptions = computed(() =>[
   { value: "draft", label: t('project.status.draft'), colorText: "#FFF", colorBg:"#757575"},
   { value: "pending", label: t('project.status.pending'), colorText: "#000", colorBg:"#FFC107" },
   { value: "in-progress", label: t('project.status.in-progress'), colorText: "#000", colorBg:"#F9D621" },
   { value: "done", label: t('project.status.done'), colorText: "#000", colorBg:"#9ADC82" },
   { value: "skipped", label: t('project.status.skipped'), colorText: "#FFF", colorBg:"#EF4444" },
   { value: "archived", label: t('project.status.archived'), colorText: "#000", colorBg:"#B3DDF4" },
-];
+]);
+watch(locale, () => {
+  if (!selectedStatus.value) return
+
+  selectedStatus.value =
+    statusOptions.value.find(
+      s => s.value === selectedStatus.value.value
+    ) || null
+})
 
 const filteredProjects = computed(() => {
   if (!data.value) return []
