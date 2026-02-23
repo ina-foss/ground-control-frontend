@@ -13,7 +13,7 @@
             size:'4px',
           },
         }">
-          <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col" >
+          <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col w-fit" >
             <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :playerTime="playerTime"  @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
           </div>
           <div v-else>

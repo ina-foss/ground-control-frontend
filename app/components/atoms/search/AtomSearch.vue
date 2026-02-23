@@ -1,6 +1,6 @@
 <template>
-  <div v-if="!searchInterface" class="flex items-center -mr-1">
-    <Button outlined icon="pi pi-search" label="Recherche" @click="invertInterface" />
+  <div v-if="!searchInterface" class="flex items-center -mr-3">
+    <Button style="border-radius: 4px; outline: 1px #003A4C solid; outline-offset: -1px; color: #003A4C;" outlined icon="pi pi-search" label="Recherche" @click="invertInterface" />
   </div>
   <div v-else class="flex w-[320px] h-[40px] items-center bg-white rounded -mr-1">
     <div>

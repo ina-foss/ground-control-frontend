@@ -12,13 +12,13 @@
         <!-- Bloc "span" -->
         <div v-if="element.key === 'span'" class="draggable-section">
           <div class="flex flex-col gap-2">
-              <Panel toggleable v-model:collapased="panelCollapseController.spanList">
+              <Panel toggleable v-model:collapsed="panelCollapseController.spanList" class="[&_.p-panel-header]:!bg-transparent [&_.p-panel-content]:!p-0">
               <template #toggleicon={collapsed}>
                 <Button :icon="collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up'" severity="secondary" rounded text />
               </template>
               <template #header>
                   <panel-span-header class="flex items-center w-full">
-                    <div class="drag-handle pr-3">:::</div>
+                    <div class="drag-handle pr-3 hover:text-hover">:::</div>
                     <b class="text-xl">Spans</b>
                     <span-filter-wrapper class="flex items-center ml-auto gap-4">
                       <span-link-filter v-if="isForResearch" class="flex items-center gap-2" @click.stop>
@@ -58,7 +58,7 @@
                           v-for="(span,index) in visibleSpanOnlyArray"
                           :key="span.id"
                           draggable="true"
-                          class="flex p-2 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type"
+                          class="flex py-3 flex-row items-center gap-1 hover:bg-primary-50 cursor-pointer transition-all duration-300 expand-type"
                           @dragstart="event=>{
                           event.dataTransfer.setData('span', span.id)
                           event.dataTransfer.setDragImage([...event.target.children][1],10,10)
@@ -73,16 +73,16 @@
                             expandable
                             @contextmenu="openSpanMenu($event, span)"
                         />
-                        <span class="self-center font-semibold flex-1 overflow-hidden truncate">
-                        <span class="inline-block max-w-full truncate"
+                        <span class="self-center flex-1 overflow-hidden truncate">
+                        <span class="inline-block max-w-full truncate pl-2"
                               v-tooltip.right="{
                               value: span?.label ?? extractTextFromSpanNodes(span?.nodes),
                               showDelay: 300,
                               appendTo: 'body'}">
-                          {{span?.label ?? extractTextFromSpanNodes(span?.nodes)}}
+                          {{capitalizeFirstLetter(span?.label ?? extractTextFromSpanNodes(span?.nodes))}}
                         </span>
                         </span>
-                        <span class="text-subtitle text-end italic truncate grow max-w-[40%] overflow-hidden">
+                        <span class="text-subtitle text-end italic truncate grow max-w-[40%] overflow-hidden pr-2">
                         <span
                             v-if="span?.label"
                             v-tooltip.left="{
@@ -102,15 +102,15 @@
 
         <!-- Bloc "currentGroup" -->
         <div v-if="element.key === 'currentGroup' && isForResearch && mainGroupPluginId" class="draggable-section">
-          <div class="py-2">
-            <Panel toggleable v-model:collapsed="panelCollapseController.currentGroup" >
+          <div>
+            <Panel toggleable v-model:collapsed="panelCollapseController.currentGroup" class="[&_.p-panel-header]:!bg-transparent" >
               <template #toggleicon={collapsed}>
                 <Button :icon="collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up'" severity="secondary" rounded text />
               </template>
               <template #header>
                 <div class="flex items-center w-full h-7">
                   <group-title-wrapper class="flex items-center gap-3">
-                    <div class="drag-handle pr-3">:::</div>
+                    <div class="drag-handle pr-3 hover:text-hover">:::</div>
                     <b class="text-xl">Groupe Courant</b>
                     <AtomSpanTag class="text-xl justify-content-end ml-auto" v-if="groupIsSelected"
                       :plugin-id="mainGroupPluginId" :plugin-value="selectedGroup?.plugins[mainGroupPluginIndex]"
@@ -190,13 +190,13 @@
         <!-- Bloc "groupsList" -->
         <div v-if="element.key === 'groupsList' && isForResearch && mainGroupPluginId" class="draggable-section">
           <div class="flex flex-col">
-              <Panel toggleable v-model:collapsed="panelCollapseController.groupList">
+              <Panel toggleable v-model:collapsed="panelCollapseController.groupList" class="[&_.p-panel-header]:!bg-transparent">
               <template #toggleicon={collapsed}>
                 <Button :icon="collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up'" severity="secondary" rounded text />
               </template>
                 <template #header>
                   <category-header class="flex flex-row items-center w-full">
-                    <div class="drag-handle pr-3">:::</div>
+                    <div class="drag-handle pr-3 hover:text-hover">:::</div>
                     <b class="text-xl">Liste des groupes</b>
                     <group-filtergroup-filter-wrapper class="flex items-center gap-xl ml-auto pr-3">
                       <group-filled-filter class="flex items-center gap-sm" @click.stop>
@@ -340,7 +340,6 @@ virtual-span-preview:hover{
 }
 
 .draggable-section {
-  border: 1px solid #d0d7de;
   border-radius: 8px;
   padding: 8px;
   background: white;

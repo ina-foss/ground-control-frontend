@@ -6,7 +6,7 @@
           borderColor:createSpanColorPalette(pluginId,pluginValue,1),
           '--computed-width' : getMinSizeText() + 'px'
         }"
-      :class="{'min-w-[80px] w-[80px] hover-span': expandable ,'w-fit':fluid , ' px-2 py-1 max-w-full transition-all duration-300 font-bold rounded border-2 inline-block text-xs/4 h-fit truncate text-center  ' : true}" >
+      :class="{'min-w-[80px] w-[80px] hover-span': expandable ,'w-fit':fluid , ' px-2 py-1 max-w-full transition-all duration-300 font-bold rounded border-2 inline-block text-xs/4 h-fit truncate  ' : true}" >
           {{text || "None"}}
         </span>
   </div>
