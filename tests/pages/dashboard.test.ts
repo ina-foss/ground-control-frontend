@@ -4,12 +4,13 @@ import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, type VueWrapper } from '@vue/test-utils'
-import { Paginator, Select, Skeleton} from 'primevue'
+import { Paginator, Select, ProgressSpinner} from 'primevue'
 import { mockedProject as project } from '../mock'
+import { createI18n } from 'vue-i18n'
 
 const mockedProject = ref(project)
 const mockedProjectLenght = ref(mockedProject.value.length)
-let refreshStatus = "sucess"
+const refreshStatus = ref("success")
 
 vi.mock('@/stores/refresh',()=>({
   useRefreshStore : vi.fn(()=>{
@@ -20,6 +21,10 @@ vi.mock('@/stores/refresh',()=>({
 }))
 const refreshProject = vi.fn()
 let wrapper : VueWrapper
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 
 mockNuxtImport('useToast', () => {
   return ()=>{
@@ -56,9 +61,13 @@ mockNuxtImport('useService',()=>{
 describe('dashboard.vue', () => {
 
   beforeEach(async()=>{
-    wrapper = await mountSuspended(Dashboard)
+    wrapper = await mountSuspended(Dashboard,{
+    global: {
+      plugins: [i18n], 
+      stubs: { teleport: true },
+    }
   })
-
+  })
 
   it('can mount dashboard', async () => {
     expect(wrapper.exists()).toBe(true)
@@ -152,15 +161,15 @@ describe('Paginator', () => {
     })
   })
 
-  describe('Skeleton', ()=>{
+  describe('ProgressSpinner', ()=>{
 
    beforeEach(async()=>{
-      refreshStatus = 'pending'
+      refreshStatus.value = 'pending'
       mockedProject.value = []
       wrapper = await mountSuspended(Dashboard)
     })
 
     it("should render during project fetching", ()=>{
-        expect(wrapper.findComponent(Skeleton).exists()).toBeTruthy()
+        expect(wrapper.findComponent(ProgressSpinner).exists()).toBeTruthy()
     })
 })

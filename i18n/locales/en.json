@@ -13,6 +13,7 @@
     "title": "Projects",
     "statusPlaceholder": "Status",
     "newProject": "New project",
+    "editProject": "Edit {title}",
     "status": {
       "draft": "Draft",
       "pending": "Pending",
@@ -74,6 +75,32 @@
     "editBounds": "Edit bounds",
     "delete": "Delete"
   },
+  "moleculeFormProject": {
+    "step": {
+      "information": "Information",
+      "settings": "Settings",
+      "steps": "Steps"
+    },
+    "form": {
+      "intro": "Enter the project configuration",
+      "title": "Title",
+      "titlePlaceholder": "Enter the project title",
+      "titleRequired": "Title is required",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter the project description"
+    },
+    "settings": {
+      "redundancy": "Redundancy",
+      "coverage": "Task coverage",
+      "maxTasks": "Max tasks per person",
+      "allowEmptyAnnotations": "Allow empty annotations?",
+      "allowSkip": "Allow task skipping?"
+    },
+    "steps": {
+      "available": "Available",
+      "selected": "Selected"
+    }
+  },
   "common":{
     "no": "No",
     "yes": "Yes"
@@ -88,7 +115,10 @@
     "skip": "Cancel and exit",
     "save": "Save",
     "abandon": "Abandon and exit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "next": "Next",
+    "previous": "Previous",
+    "create": "Create"
   },
   "player": {
     "actions": {

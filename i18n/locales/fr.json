@@ -13,6 +13,7 @@
     "title": "Projets",
     "statusPlaceholder": "Statut",
     "newProject": "Nouveau projet",
+    "editProject": "Modifier {title}",
     "status": {
       "draft": "Brouillon",
       "pending": "En attente",
@@ -94,6 +95,32 @@
     "editBounds": "Éditer les bornes",
     "delete": "Supprimer"
   },
+  "moleculeFormProject":  {
+    "step": {
+      "information": "Informations",
+      "settings": "Paramètres",
+      "steps": "Étapes"
+    },
+    "form": {
+      "intro": "Entrez la configuration du projet",
+      "title": "Titre",
+      "titlePlaceholder": "Entrez le titre du projet",
+      "titleRequired": "Le titre est requis",
+      "description": "Description",
+      "descriptionPlaceholder": "Entrez la description du projet"
+    },
+    "settings": {
+      "redundancy": "Redondance",
+      "coverage": "Couverture des tâches",
+      "maxTasks": "Max tâche par personne",
+      "allowEmptyAnnotations": "Autoriser les annotations vides ?",
+      "allowSkip": "Autoriser l’abandon d’une tâche ?"
+    },
+    "steps": {
+      "available": "Disponibles",
+      "selected": "Sélectionnés"
+    }
+  },
   "common":{
     "no": "Non",
     "yes": "Oui"
@@ -108,7 +135,10 @@
     "skip": "Abandonner et quitter",
     "save": "Enregistrer",
     "abandon": "Abandonner et quitter",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "create": "Créer"
   },
   "player": {
     "actions": {

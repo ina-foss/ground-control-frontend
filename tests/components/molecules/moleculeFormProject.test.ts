@@ -5,6 +5,7 @@ import { Button, InputText} from 'primevue';
 import { StepService } from '~/api/generate';
 import MoleculeFormProject from '../../../app/components/molecules/MoleculeFormProject.vue';
 import { flushPromises } from '@vue/test-utils';
+import { createI18n } from 'vue-i18n'
 
 let mockedProject = {title: "Project creation",
       description: "test",
@@ -20,6 +21,11 @@ let mockedProject = {title: "Project creation",
       updated_at: null,
       steps: [{ annotation_type: 'span' },{annotation_type:'segmentation'}]
 }
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 
 mockNuxtImport('useAuth',()=>{
   return () =>{
@@ -79,6 +85,7 @@ describe('Molecule Form Project for new Project', ()=>{
 
     wrapper = await mountSuspended(MoleculeFormProject,{
       global:{
+        plugins: [i18n],
         stubs:{
           teleport: true
         }
@@ -91,13 +98,13 @@ describe('Molecule Form Project for new Project', ()=>{
 
   it('should mount itself', ()=>{
     expect(wrapper.exists()).toBeTruthy()
-    expect(wrapper.text()).toContain('Nouveau projet')
-
+    expect(wrapper.text()).toContain('project.newProjec')
   })
 
   it('should disappear if props change', async()=>{
     wrapper = await mountSuspended(MoleculeFormProject,{
       global:{
+        plugins: [i18n],
         stubs:{
           teleport: true
         }
@@ -133,7 +140,7 @@ describe('Molecule Form Project for new Project', ()=>{
     expect(wrapper.find('[id$="steppanel_1"]').attributes('style')).toContain('display: none')
 
     const prevButton = wrapper.findAllComponents(Button).at(2)
-    expect(prevButton.text()).toContain('Précédent')
+    expect(prevButton.text()).toContain("actions.previous")
     await prevButton.trigger('click')
 
     expect(wrapper.find('[id$="steppanel_1"]').attributes('style')).toBeUndefined()
@@ -199,7 +206,7 @@ describe('Molecule Form Project for new Project', ()=>{
 
   it('should trigger title missing error ', async()=>{
     const createButton = wrapper.findAllComponents(Button).at(5)
-    expect(createButton.text()).toContain('Créer')
+    expect(createButton.text()).toContain('actions.create')
 
     await createButton.trigger('click')
     // expect toast erro to be trigger
@@ -271,6 +278,7 @@ describe('Molecule Form Project for existing Project', ()=>{
 
     wrapper = await mountSuspended(MoleculeFormProject,{
       global:{
+        plugins: [i18n],
         stubs:{
           teleport: true
         }
@@ -284,7 +292,7 @@ describe('Molecule Form Project for existing Project', ()=>{
 
   it('should mount itself', ()=>{
     expect(wrapper.exists()).toBeTruthy()
-    expect(wrapper.text()).toContain('Modifier')
+    expect(wrapper.text()).toContain('project.edit')
 
   })
 
@@ -309,7 +317,7 @@ describe('Molecule Form Project for existing Project', ()=>{
 
   it('should be able to update project ', async()=>{
     const createButton = wrapper.findAllComponents(Button).at(5)
-    expect(createButton.text()).toContain('Sauvegarder')
+    expect(createButton.text()).toContain('actions.save')
 
     // Navigate to step 3 to modify types
     const nextButton1 = wrapper.findAllComponents(Button).at(1)

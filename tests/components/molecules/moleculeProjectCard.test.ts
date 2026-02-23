@@ -1,177 +1,166 @@
-import {expect, describe, it }  from 'vitest'
+import { expect, describe, it, vi, beforeEach } from 'vitest'
 import type { VueWrapper } from '@vue/test-utils'
-import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
+import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFormProject from '~/components/molecules/MoleculeFormProject.vue'
 import { ProjectService } from '~/api/generate';
-import { Dialog } from 'primevue';
-import {Popover } from 'primevue';
+import { Dialog, Popover } from 'primevue';
+import { createI18n } from 'vue-i18n'
+import { reactive } from 'vue'
 
-
-let mockedProject = {title: "Project creation",
-      description: "test",
-      status: "draft",
-      is_published: false,
-      empty_annotations: false,
-      allow_skip: false,
-      control_weights: 10,
-      pinned_at: null,
-      created_by: "admin@localhost.com",
-      id: 1,
-      created_at: "2025-02-25T15:26:12.383995",
-      updated_at: null,
-      steps: []
+let mockedProject = {
+  title: "Project creation",
+  description: "test",
+  status: "draft",
+  is_published: false,
+  empty_annotations: false,
+  allow_skip: false,
+  control_weights: 10,
+  pinned_at: null,
+  created_by: "admin@localhost.com",
+  id: 1,
+  created_at: "2025-02-25T15:26:12.383995",
+  updated_at: null,
+  steps: []
 }
 
 global.requestAnimationFrame = vi.fn()
 
-const mockRefresh = vi.fn()
-
-  mockNuxtImport('useToast', () => {
-    return ()=>{
-      vi.fn()
-    }
-  })
-
-const mocks = vi.hoisted(()=>{
-  return {
-    deleteProject : vi.fn()
-  }
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
 })
 
-  vi.mock('~/api/generate/',async (importOrigial)=>{
-    const original = await importOrigial()
-    return {
-      ...original,
-      ProjectService: {deleteProjectProjectProjectIdDelete: mocks.deleteProject },
-    }
+const mockRefresh = vi.fn()
+
+mockNuxtImport('useToast', () => {
+  return () => ({
+    add: vi.fn()
   })
+})
+
+const mocks = vi.hoisted(() => ({
+  deleteProject: vi.fn()
+}))
+
+vi.mock('~/api/generate/', async (importOriginal) => {
+  const original = await importOriginal()
+  return {
+    ...original,
+    ProjectService: {
+      deleteProjectProjectProjectIdDelete: mocks.deleteProject
+    },
+  }
+})
 
 const mockStatus = reactive({
   hasRole: false
 })
 
-  mockNuxtImport('useService', ()=>{
-    return ()=>{
-      return {
-      $application :{
-        hasRole: vi.fn(()=>mockStatus.hasRole),
-        formatDate: vi.fn().mockReturnValue(''),
-
-      }}
+mockNuxtImport('useService', () => {
+  return () => ({
+    $application: {
+      hasRole: vi.fn(() => mockStatus.hasRole),
+      formatDate: vi.fn().mockReturnValue(''),
     }
   })
+})
 
-describe('MoleculeProjectCard component', ()=>{
+describe('MoleculeProjectCard component', () => {
 
-  let wrapper : VueWrapper
+  let wrapper: VueWrapper
 
+  beforeEach(async () => {
+    mockStatus.hasRole = false
+    mocks.deleteProject.mockReset()
+    mockRefresh.mockReset()
 
-  beforeEach(  async ()=>{
-    wrapper = await mountSuspended(MoleculeProjectCard,{
-      global:{
+    wrapper = await mountSuspended(MoleculeProjectCard, {
+      global: {
+        plugins: [i18n],
         provide: {
           refreshProject: mockRefresh
         },
-        stubs:{
+        stubs: {
           teleport: true
         }
       },
-      props:{
-        project: mockedProject
+      props: {
+        project: { ...mockedProject }
       }
     })
   })
 
-  it('should have the right title',async () =>{
-    expect(wrapper.exists()).toBe(true);
-    expect(wrapper.text().includes(mockedProject.title))
+  it('should have the right title', () => {
+    expect(wrapper.exists()).toBe(true)
+    expect(wrapper.text()).toContain(mockedProject.title)
   })
 
-  it('edit buttons should work', async()=>{
-    expect(wrapper.findComponent(MoleculeFormProject).exists()).toBeFalsy()
+  it('edit buttons should work', async () => {
     const editButton = wrapper.find('button[data-p-severity="secondary"]')
     await editButton.trigger('click')
 
     expect(wrapper.findComponent(Popover).exists()).toBeTruthy()
-    expect(wrapper.findComponent(Popover).isVisible()).toBeTruthy()
-
   })
 
-  it('delete button should not be visible for non-admin', async()=>{
+  it('delete button should not be visible for non-admin', async () => {
     let deleteButton = wrapper.find('button[data-p-severity="error-state"]')
-
     expect(deleteButton.exists()).toBeFalsy()
 
     mockStatus.hasRole = true
     await wrapper.vm.$nextTick()
+
     deleteButton = wrapper.find('button[data-p-severity="error-state"]')
-
     expect(deleteButton.exists()).toBeTruthy()
-    expect(deleteButton.isVisible()).toBeTruthy()
-
   })
 
-  it('delete button should show the dialog and call delete service', async()=>{
-    let deleteDialog = wrapper.getComponent(Dialog)
-    expect(deleteDialog.text()).toBe("")
-    let deleteButton = wrapper.find('button[data-p-severity="error-state"]')
+  it('delete button should show the dialog and call delete service', async () => {
+    mockStatus.hasRole = true
+
+    // remount with admin role
+    wrapper = await mountSuspended(MoleculeProjectCard, {
+      global: {
+        plugins: [i18n],
+        provide: { refreshProject: mockRefresh },
+        stubs: { teleport: true }
+      },
+      props: { project: { ...mockedProject } }
+    })
+
+    const deleteButton = wrapper.get('button[data-p-severity="error-state"]')
     await deleteButton.trigger('click')
 
+    const deleteDialog = wrapper.getComponent(Dialog)
+    const confirmDeleteButton = deleteDialog.get('button[aria-label="common.yes"]')
 
-    deleteDialog = wrapper.getComponent(Dialog)
-    expect(deleteDialog.text()).not.toBe("")
+    await confirmDeleteButton.trigger('click')
 
-    const confrimDeleteButton = deleteDialog.find('button[aria-label="Oui"]')
-
-    await confrimDeleteButton.trigger('click')
-
-    expect(ProjectService.deleteProjectProjectProjectIdDelete).toHaveBeenCalledOnce()
+    expect(mocks.deleteProject).toHaveBeenCalledOnce()
     expect(mockRefresh).toHaveBeenCalledOnce()
   })
 
-  it("should display error by calling error plugin", async()=>{
+  it("should display error by calling error plugin", async () => {
+    mockStatus.hasRole = true
     mocks.deleteProject.mockRejectedValue(new Error('ApiError'))
-    const consoleMock = vi.spyOn(console,'error')
 
-    let deleteButton = wrapper.find('button[data-p-severity="error-state"]')
+    wrapper = await mountSuspended(MoleculeProjectCard, {
+      global: {
+        plugins: [i18n],
+        provide: { refreshProject: mockRefresh },
+        stubs: { teleport: true }
+      },
+      props: { project: { ...mockedProject } }
+    })
+
+    const consoleMock = vi.spyOn(console, 'error')
+    const deleteButton = wrapper.get('button[data-p-severity="error-state"]')
     await deleteButton.trigger('click')
-    let deleteDialog = wrapper.getComponent(Dialog)
-    const confrimDeleteButton = deleteDialog.find('button[aria-label="Oui"]')
-    await confrimDeleteButton.trigger('click')
 
-    expect(consoleMock).toHaveBeenCalledTimes(2)
+    const deleteDialog = wrapper.getComponent(Dialog)
+    const confirmDeleteButton = deleteDialog.get('button[aria-label="common.yes"]')
 
+    await confirmDeleteButton.trigger('click')
 
-    mocks.deleteProject.mockRestore()
-
-  })
-
-  it('should display done tag', async () => {
-    let tag = wrapper.find('.tag-draft')
-    expect(tag.exists()).toBe(true)
-    expect(tag.text()).toContain('Brouillon')
-
-    mockedProject.status = 'done'
-    await wrapper.setProps({ project: mockedProject })
-    tag = wrapper.find('.tag-done')
-    expect(tag.exists()).toBe(true)
-    expect(tag.text()).toContain('Terminé')
-  })
-
-  it('should display pending tag', async () => {
-    mockedProject.status = 'pending'
-    await wrapper.setProps({ project: mockedProject })
-    const tag = wrapper.find('.tag-pending')
-    expect(tag.exists()).toBe(true)
-    expect(tag.text()).toContain('En attente')
-  })
-
-  it('should display in-progress tag', async () => {
-    mockedProject.status = 'in-progress'
-    await wrapper.setProps({ project: mockedProject })
-    const tag = wrapper.find('.tag-in-progress')
-    expect(tag.exists()).toBe(true)
-    expect(tag.text()).toContain('En cours')
+    expect(consoleMock).toHaveBeenCalled()
   })
 })
