@@ -4,7 +4,7 @@ import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, type VueWrapper } from '@vue/test-utils'
-import { Paginator, Select, ProgressSpinner} from 'primevue'
+import { Paginator, Select, Skeleton} from 'primevue'
 import { mockedProject as project } from '../mock'
 import { createI18n } from 'vue-i18n'
 
@@ -161,7 +161,7 @@ describe('Paginator', () => {
     })
   })
 
-  describe('ProgressSpinner', ()=>{
+  describe('Skeleton', ()=>{
 
    beforeEach(async()=>{
       refreshStatus.value = 'pending'
@@ -170,6 +170,6 @@ describe('Paginator', () => {
     })
 
     it("should render during project fetching", async () => {
-      //expect(wrapper.findComponent(ProgressSpinner).exists()).toBeTruthy()
+      expect(wrapper.findComponent(Skeleton).exists()).toBeTruthy()
     })
 })
