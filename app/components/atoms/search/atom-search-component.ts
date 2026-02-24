@@ -94,7 +94,6 @@ export default defineComponent({
           const regex = new RegExp(`(${selectedSearch.value})`, "gi");
           const text = span.querySelector('.customText')?.textContent
           if (text) {
-            const text = span.querySelector('.customText')?.textContent
             if (text.match(regex)) {
               const splittedText = text.split(regex)
               const newHTML = splittedText.map((part, i) =>

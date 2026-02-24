@@ -3,7 +3,6 @@ import type { PropType } from "vue";
 import { useOptions } from "~/stores/annotation-options";
 import _,{pullAt, find}  from 'lodash';
 import { Tag } from 'primevue';
-import AtomSpan from "../atoms/AtomSpan.vue";
 import AtomSpanDetail from "~/components/atoms/AtomSpanDetail.vue";
 import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
 import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
@@ -17,7 +16,7 @@ import {Status} from "~/api/generate";
 
 export default defineComponent({
   name: "MoleculeSpan",
-  components: {MoleculeSpanControlPanel, AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, AtomSpan, atomVideoOption,AtomTaskComment, AtomSpanForm},
+  components: {MoleculeSpanControlPanel, AtomSpanDetail, AtomSpanOption,AtomSearch,AtomTranscriptionSpan, atomVideoOption,AtomTaskComment, AtomSpanForm},
   emits: ['on-segment-click', 'update:spansChanged'],
   props: {
     state: {type: String as PropType<Status>},
