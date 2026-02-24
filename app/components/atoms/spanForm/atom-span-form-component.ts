@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, {isEqual} from 'lodash'
 import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
 import {DisplayZone} from '~/api/generate'
@@ -6,6 +6,7 @@ import { useI18n } from '#imports'
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
+  methods: {isEqual},
   emits:['new-group'],
   components: {AtomPluginItemslist},
   setup(props,{emit,expose}) {

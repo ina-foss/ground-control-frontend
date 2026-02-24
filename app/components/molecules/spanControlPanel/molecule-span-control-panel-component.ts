@@ -99,6 +99,12 @@ export default defineComponent({
           .sort((a : Span,b : Span)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
     )
 
+    const spanCurrentGroupArray = computed(()=>
+        spanArray.value
+            .filter((span: Span) => (span))
+            .sort((a : Span,b : Span)=> unixToTimestamp(a.tcin) - unixToTimestamp(b.tcin))
+    )
+
     const visibleSpanOnlyArray = computed<Span[]>(()=>
        spanOnlyArray.value
           .filter((span: Span) => !spanFilter.value || _.some(span?.plugins?.[mainPluginIndex.value], item => _.isEqual(item, spanFilter.value)))
@@ -274,25 +280,6 @@ export default defineComponent({
         span: {id,label: "", plugins:[],spans: []}
       })
     }
-
-    expose({showPanel})
-
-    function openVirtualSpanForm() {
-      const id = spanArray.value.length
-      spanFormRef.value?.open({
-        span: {id,label: "", plugins:[]},
-
-        selectedGroup:selectedGroup.value,
-        mainGroupPluginIndex:mainGroupPluginIndex.value,
-      })
-    }
-
-    function openGroupForm() {
-      const id = spanArray.value.length
-      spanFormRef.value?.open({
-        span: {id,label: "", plugins:[],spans: []}
-      })
-    }
     const onSpanClick = (span) => {
       if(span?.tcin){
         handleSegmentClick?.({ tcin: span?.tcin,fromSpan:true})
@@ -366,7 +353,8 @@ export default defineComponent({
       selectedGroupVirtual,
       mainGroupPluginIndexVirtual,
       focusGroup,
-      capitalizeFirstLetter
+      capitalizeFirstLetter,
+      spanCurrentGroupArray
     }
   }
 })
