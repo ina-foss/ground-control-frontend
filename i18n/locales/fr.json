@@ -79,6 +79,8 @@
     "suppressionWarning": "Pour créer un span de type “suppression”, seul 1 mot doit être sélectionné.",
     "deleteHeader": "Confirmation de suppression",
     "groupHeader": "Groupe : propriétés",
+    "deleteGroupConfirmMessage": "Etes-vous sûr de vouloir supprimer ce groupe ?",
+    "deleteGroupConfirmTitle": "Confirmation de suppression",
     "spanHeader": "Span : propriétés",
     "selectSpanType": "Sélectionner un type de span parmi ces groupes",
     "virtualSpan": {

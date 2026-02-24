@@ -59,6 +59,8 @@
     "suppressionWarning": "To create a deletion span, only 1 word must be selected.",
     "deleteHeader": "Delete confirmation",
     "groupHeader": "Group: properties",
+    "deleteGroupConfirmMessage": "Are you sure you want to delete this group?",
+    "deleteGroupConfirmTitle": "Deletion confirmation",
     "spanHeader": "Span: properties",
     "selectSpanType": "Select a span type from these groups",
     "virtualSpan": {

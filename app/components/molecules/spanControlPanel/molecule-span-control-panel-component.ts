@@ -4,10 +4,13 @@ import { DisplayZone } from '~/api/generate'
 import draggable from 'vuedraggable';
 import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
 import {useService} from "~/composables/useService";
+import AtomDialogFilterGroup from "~/components/atoms/dialogFilterGroup/atomDialogFilterGroup.vue";
+import MoleculeDialogConfirm from "~/components/molecules/moleculeDialogConfirm/molecule-dialog-confirm-component";
+import {useI18n} from "#imports";
 
 export default defineComponent({
   name:"MoleculeSpanControlPanel",
-  components: {AtomSpanForm, AtomSpanTag,draggable},
+  components: {MoleculeDialogConfirm, AtomDialogFilterGroup, AtomSpanForm, AtomSpanTag,draggable},
   props: {
     isAnnotationEditable: {
       type: Boolean,
@@ -16,6 +19,7 @@ export default defineComponent({
   },
   setup(props,{emit,expose}){
     const {$amalia}  = useService()
+    const { t } = useI18n()
 
     const { focusGroup, readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,capitalizeFirstLetter} = useSpanService()
     const { unixToTimestamp,timestampToUnix } = useService().$application
@@ -30,7 +34,7 @@ export default defineComponent({
     ]);
     const groupDeleted = ref<SpanGroup | null>(null)
     const unauthorizedSpanDropped = ref(false);
-    const authorizedGroupList = ref("");
+    const authorizedGroupList = ref<string[]>([])
     const spanFilter = ref()
     const groupFilter = ref()
     const spanLinkFilter = ref()
@@ -354,7 +358,8 @@ export default defineComponent({
       mainGroupPluginIndexVirtual,
       focusGroup,
       capitalizeFirstLetter,
-      spanCurrentGroupArray
+      spanCurrentGroupArray,
+      t
     }
   }
 })

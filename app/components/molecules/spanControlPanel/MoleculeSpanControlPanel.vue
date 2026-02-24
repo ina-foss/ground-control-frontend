@@ -254,53 +254,33 @@
 
                   <!-- Dialogs ici, inchangés -->
                   <!-- DELETE GROUP DIALOG -->
-                  <Dialog
+                  <MoleculeDialogConfirm
                       v-model:visible="deleteDialogVisible"
-                      header="Confirmation de suppression"
                       @update:visible="(value) => { if (!value) groupDeleted = null }"
-                  >
-                    <delete-group-wrapper class="flex flex-col gap-6">
-                      <delete-group-content class="flex items-center gap-4">
-                        <delete-group-icon>
-                          <span
-                            style="filter: brightness(0) saturate(100%) invert(48%) sepia(72%) saturate(4640%) hue-rotate(337deg) brightness(98%) contrast(91%);"
-                            class="pi pi-exclamation-triangle text-6xl"/>
-                        </delete-group-icon>
-                        <delete-group-text class="flex flex-col w-[440px]">
-                          <b>Etes-vous sûr de vouloir supprimer ce groupe ?</b>
-                          <span class="text-error_state">{{groupDeleted?.label }}</span>
-                        </delete-group-text>
-                      </delete-group-content>
-                      <delete-group-footer class="flex flex-row justify-end gap-2">
-                        <Button outlined severity="primary" icon="pi pi-times" :disabled="!isAnnotationEditable" label="Annuler" @click="handleCancelRemoveGroup()" />
-                        <Button label="Confirmer" icon="pi pi-check" @click=" handleRemoveGroup() " />
-                      </delete-group-footer>
-                    </delete-group-wrapper>
-                  </Dialog>
+                      :title="t('spanForm.deleteGroupConfirmTitle')"
+                      :message="t('spanForm.deleteGroupConfirmMessage')"
+                      :withExclamation="true"
+                      :cancelButton="{
+                        label: t('actions.cancel'),
+                        icon: 'pi pi-times',
+                        severity: 'primary',
+                        outlined: true,
+                      }"
+                      @cancel="handleCancelRemoveGroup"
+                      :confirmButton="{
+                        label: t('actions.confirm'),
+                        icon: 'pi pi-check',
+                        severity: 'primary',
+                      }"
+                      @confirm="handleRemoveGroup"
+                  />
 
                   <!-- ADD VIRTUAL SPAN DIALOG-->
                   <AtomSpanForm ref="spanFormRef" @new-group="focusGroup($event) & showPanel('currentGroup','groupList') " />
                   <!-- UNAUTHORIZED SPAN DIALOG -->
-                  <Dialog
-                      :visible="!!unauthorizedSpanDropped"
-                      header="L'élément que vous essayé d’insérer n’est pas autorisé
-              car son type est inadéquat."
-                      @update:visible="(value) => { if (!value) unauthorizedSpanDropped = null }"
-                  >
-                    <div class="flex items-start gap-2 text-gray-800">
-              <span
-                  class="pi pi-exclamation-triangle text-red-500 text-2xl mt-1"
-              ></span>
-                      <div>
-                        <b>Vous pouvez uniquement insérer des éléments de type :</b>
-                        <ul class="mt-2 ml-6 list-disc">
-                          <li v-for="type in authorizedGroupList" :key="type">
-                            {{ type }}
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </Dialog>
+                  <AtomDialogFilterGroup :visible="!!unauthorizedSpanDropped"
+                                         :authorized-type-list="authorizedGroupList"
+                                         @update:visible="(value) => { if (!value) unauthorizedSpanDropped = null }"></AtomDialogFilterGroup>
                 </div>
               </Panel>
           </div>

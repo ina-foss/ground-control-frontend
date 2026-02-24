@@ -3,12 +3,14 @@ import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
 import {DisplayZone} from '~/api/generate'
 import { useI18n } from '#imports'
+import AtomDialogFilterGroup from "~/components/atoms/dialogFilterGroup/atom-dialog-filter-group-component";
+
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
-  methods: {isEqual},
   emits:['new-group'],
-  components: {AtomPluginItemslist},
+  methods: {isEqual},
+  components: {AtomDialogFilterGroup, AtomPluginItemslist},
   setup(props,{emit,expose}) {
 
     let currentSpan = ref<AnySpan | undefined>()
