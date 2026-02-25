@@ -7,7 +7,7 @@
         appendTo="body"
         :key="$i18n.locale"
         v-model="selectedStatus"
-        :options="statusOptions"
+        :options="status_map"
         option-label="label"
         class="w-fit items-center h-[33px]"
         :placeholder="t('project.statusPlaceholder')"
@@ -67,9 +67,9 @@
 import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue';
 import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
-import {Permission, ProjectService} from "../api/generate";
-import MoleculeProjectCard from "../app/components/molecules/MoleculeProjectCard.vue";
-import { useI18n } from '#imports'
+import {Permission} from "../api/generate";
+import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
+import { status_map } from "~/helpers/statusMap";
 
 const refreshStore = useRefreshStore()
 const {fetchProjects} = refreshStore
@@ -86,23 +86,6 @@ localStorage.setItem('breadcrumbItems', null);
 const { $application } = useService();
 
 const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_CREATE));
-
-const statusOptions = computed(() =>[
-  { value: "draft", label: t('project.status.draft'), colorText: "#FFF", colorBg:"#757575"},
-  { value: "pending", label: t('project.status.pending'), colorText: "#000", colorBg:"#FFC107" },
-  { value: "in-progress", label: t('project.status.in-progress'), colorText: "#000", colorBg:"#F9D621" },
-  { value: "done", label: t('project.status.done'), colorText: "#000", colorBg:"#9ADC82" },
-  { value: "skipped", label: t('project.status.skipped'), colorText: "#FFF", colorBg:"#EF4444" },
-  { value: "archived", label: t('project.status.archived'), colorText: "#000", colorBg:"#B3DDF4" },
-]);
-watch(locale, () => {
-  if (!selectedStatus.value) return
-
-  selectedStatus.value =
-    statusOptions.value.find(
-      s => s.value === selectedStatus.value.value
-    ) || null
-})
 
 const filteredProjects = computed(() => {
   if (!data.value) return []

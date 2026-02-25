@@ -246,7 +246,7 @@ const handleCardClick = () => {
     name: linkTarget.value.name,
     params: linkTarget.value.params,
     query: !isAdmin.value
-      ? { project_id: project.id }
+      ? { project_id: project.id, mode: 'edit' }
       : undefined
   })
 
