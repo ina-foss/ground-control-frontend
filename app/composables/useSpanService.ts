@@ -506,18 +506,6 @@ function createSpanService (){
   })
 
 
-
-  interface State {
-    selection: Selection | null,
-    range: Range | null
-  }
-
-  const state: State = reactive({
-    selection: null,
-    range: null
-
- })
-
   /**
    * Callback invoked after text has been highlighted in dedicated area
    * Allow the creation of span
@@ -581,27 +569,32 @@ function createSpanService (){
    * @return {Node[]} The array of `Node` that represent one span
    */
   function ExtractNodesFromCurrentSelection() : Node[] {
-        state.selection = window.getSelection()
-        state.range = state.selection.getRangeAt(0)
-        if(state.range.commonAncestorContainer.parentNode?.tagName == 'TAG') return
-        if(state.range.commonAncestorContainer.nodeType == 3 ) {
-            state.range.setEndAfter(state.selection.focusNode)
-            state.range.setStartBefore(state.selection.anchorNode?.parentNode)
-        }
-        state.selection.removeAllRanges()
+    const selection = window.getSelection()
+    if (!selection || selection.rangeCount === 0) return []
+    const range = selection.getRangeAt(0)
+    let container = range.commonAncestorContainer as HTMLElement
+    while (container && container.nodeName !== "SPAN-TRANSCRIPTION-WRAPPER") {
+      container = container.parentNode as HTMLElement
+    }
 
-        const selectedNodes: Node[] = []
-        const treeWalker = document.createTreeWalker(
-          state.range.commonAncestorContainer,
+    if (!container) return []
+    selection.removeAllRanges()
+
+    const selectedNodes: Node[] = []
+
+      const treeWalker = document.createTreeWalker(
+          container,
           NodeFilter.SHOW_ELEMENT,
           {
             acceptNode: (node) => {
               // On parcourt uniquement les noeuds qui intersectionnent la selection de l'utilisateur
-              if (state.range.intersectsNode(node) ) {
+              if (range.intersectsNode(node)) {
                 // Si le noeud est un wrapper on le skip et on passe a ses descendants
-                if(node.nodeName == 'TRANSCRIPTION-CONTAINER' || node.nodeName ==  "SPAN-TRANSCRIPTION-WRAPPER") return NodeFilter.FILTER_SKIP
-                // Si le noeud est une div, on le parcourt, sinon (tag, border, bg... ) on le rejette
-                return node.nodeName == 'DIV' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+                if (node.nodeName === "SPAN-TRANSCRIPTION-WRAPPER" ||node.nodeName === "TRANSCRIPTION-CONTAINER") {
+                  return NodeFilter.FILTER_SKIP
+                }
+                //Si le noeud est une div, on le parcourt, sinon (tag, border, bg... ) on le rejette
+                return node.nodeName === "DIV" ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
               }
               return NodeFilter.FILTER_REJECT
             }

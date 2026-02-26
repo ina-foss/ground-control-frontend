@@ -43,6 +43,7 @@ export default defineComponent({
 
     function invertInterface() {
       //afficher la zone de text a chercher
+      selectedSearch.value = '';
       searchInterface.value = !searchInterface.value
     }
 
@@ -111,8 +112,9 @@ export default defineComponent({
           } else {
             const words = span?.querySelectorAll('.inline-block');
             words.forEach((wordDiv) => {
-              const text = extractTextFromSpan(wordDiv).toLowerCase();
-              if (text?.match(regex)) {
+              const text = extractTextFromSpan(wordDiv)
+              const regex = new RegExp(`(${selectedSearch.value})`, "gi");
+              if (regex?.test(text)) {
                 const splittedText = text.split(regex)
                 const textNode = [...wordDiv.childNodes].filter(node=>node.nodeType == 3).pop()
                 textNode?.remove()
@@ -162,7 +164,7 @@ export default defineComponent({
         } else {
           selectedSpan.value = [];
           selectedSpan.value = list.value.filter((el: HTMLDivElement) =>
-              extractTextFromSpan(el).toLowerCase().includes(value.toLowerCase())
+              new RegExp(value, 'i').test(extractTextFromSpan(el))
           );
           searchIndex.value = 0;
           highlightResults();
