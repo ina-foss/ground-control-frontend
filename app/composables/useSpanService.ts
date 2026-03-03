@@ -1,10 +1,13 @@
 import _ from 'lodash'
-import {TypePlugin} from '~/api/generate'
+import {TypePlugin, type PluginAutocompleteValueDTO, type PluginWithIdDto} from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
 import {usePluginStore} from "~/stores/plugins";
 import { useI18n } from '#imports'
 const nuxtApp = useNuxtApp()
 
+export type PluginAutocompleteValueWithMetadata = PluginAutocompleteValueDTO & {
+  metadata?: Record<string, any> | null;
+};
 
 let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
 
@@ -45,7 +48,7 @@ function createSpanService (){
   const contextMenuOptions = ref([{label:  t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:t('contextMenu.editBounds'), command:(event)=>showDragPin(event)},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
   const contextControlPanelMenuOptions = ref([{label: t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,suppression: true}) }])
 
-  type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
+  type pluginValues= Record<string,PluginAutocompleteValueWithMetadata[]>
   const pluginValues = reactive<pluginValues>({})
 
   const mainPluginId = computed(()=>{

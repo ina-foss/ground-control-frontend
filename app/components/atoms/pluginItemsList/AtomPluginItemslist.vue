@@ -7,14 +7,14 @@
             v-for="option in visibleOptions"
             :key="option.label"
             v-tooltip="option.tooltip && option.tooltip !== '' ? option.tooltip : null"
-            :modelValue="isEqual(pluginValue, option)"
+            :modelValue="isEqual(pluginValue?.ext_id, option?.ext_id)"
             class="h-[33px] rounded-[6px] "
             :class="{ 'selected': isEqual(pluginValue, option) }"
-            :outlined="!isEqual(pluginValue,option)"
+            :outlined="!isEqual(pluginValue?.ext_id,option?.ext_id)"
             :label="option.label"
             :onLabel="option.label"
             :offLabel="option.label"
-            @click="() => pluginValue = isEqual(pluginValue, option) ? null : option"
+            @click="() => pluginValue = isEqual(pluginValue?.ext_id, option?.ext_id) ? null : option"
         />
       </div>
       <Select

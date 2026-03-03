@@ -3,6 +3,7 @@ import AtomPluginAutocomplete from '../pluginAutocomplete/AtomPluginAutocomplete
 import AtomPluginLabel from '../pluginLabel/AtomPluginLabel.vue'
 import { usePluginStore } from '~/stores/plugins'
 import type {PluginAutocompleteValueDTO} from "~/api/generate"
+import type { PluginAutocompleteValueWithMetadata } from '~/composables/useSpanService'
 
 
 export default defineComponent({
@@ -12,7 +13,7 @@ export default defineComponent({
     topicIndex: {type: Number},
     isTopicFirstSegment: {type: Boolean},
     source:{type: Boolean},
-    pluginValues: {type: Object as ()=> Record<string,PluginAutocompleteValueDTO[]>}
+    pluginValues: {type: Object as ()=> Record<string,PluginAutocompleteValueWithMetadata[]>}
   },
   emits:['update:pluginValues'],
   setup(props,{emit} ){
