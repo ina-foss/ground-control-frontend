@@ -497,12 +497,16 @@ function createSpanService (){
     if(oldValue != undefined){
       const oldElementArray = spanArray.value[oldValue]?.nodes
       if(!oldElementArray){ // on deselectionne un groupe
+        return
+        // NOTE: disable for now, may be deleted later
         recolorSpan(spanArray.value[oldValue])
       }
     }
     if(newValue != undefined){
       const elementArray = spanArray.value[newValue]?.nodes
       if(!elementArray) { // On a selectionne un groupe
+        return
+        // NOTE: disable for now, may be deleted later
           decolorSpan(spanArray.value[newValue])
       }
     }

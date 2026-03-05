@@ -66,6 +66,7 @@
       >
         <img
           class="h-8 w-8 brightness-0"
+          alt="wikidata icon"
           src="/icons/icons-svg/icons-svg/wikiData.svg"
         />
         <span>Wikidata</span>

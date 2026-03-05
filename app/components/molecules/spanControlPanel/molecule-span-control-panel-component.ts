@@ -21,7 +21,7 @@ export default defineComponent({
     const {$amalia}  = useService()
     const { t } = useI18n()
 
-    const { focusGroup, readPluginValues ,mainPluginIndex, recolorSpan, decolorSpan, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,capitalizeFirstLetter} = useSpanService()
+    const { focusGroup, readPluginValues ,mainPluginIndex, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,capitalizeFirstLetter} = useSpanService()
     const { unixToTimestamp,timestampToUnix } = useService().$application
     const { pluginList } = storeToRefs(usePluginStore())
     const { getPluginList, getAllPluginOptionList } = usePluginStore()
@@ -224,7 +224,6 @@ export default defineComponent({
 
     const dropSpan = (event : DragEvent, group, category)=>{
 
-      recolorSpan(group)
       const target : HTMLDivElement = event.currentTarget
       target.querySelector('preview')?.remove()
       const spanId = event.dataTransfer.getData('span')
@@ -239,7 +238,6 @@ export default defineComponent({
             if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
               group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
             }
-            decolorSpan(group)
           }
           else{
             authorizedGroupList.value=category?.authorized_types
