@@ -26,7 +26,6 @@ export default defineComponent({
       get: () => props.pluginValue ?? [],
       set: newValue => emit('update:pluginValue', newValue)
     })
-
     const indexPlugin = index.value;
     let debounceTimer: NodeJS.Timeout
     const options = computed(() => {
@@ -44,12 +43,9 @@ export default defineComponent({
             parsedImage = [];
           }
           return {
-            id: item.id,
-            ext_id: item.ext_id,
-            label: item.label,
+            ...item,
             plugin_id: plugin.value.id,
-            description: item?.description,
-            image: parsedImage.length ? parsedImage : '../../../icons/icons-svg/icons-svg/no-image-placeholder.svg'
+            image: parsedImage.length ? parsedImage : '../../../icons/icons-svg/icons-svg/no-image-placeholder.svg',
           }
         });
       }
@@ -67,12 +63,9 @@ export default defineComponent({
             parsedImage = [];
           }
           return {
-            id: item.id,
-            ext_id: item.ext_id,
-            label: item.label,
+            ...item,
             plugin_id: plugin.value.id,
-            description: item?.description,
-            image: parsedImage.length ? parsedImage : '../../../icons/icons-svg/icons-svg/no-image-placeholder.svg'
+            image: parsedImage.length ? parsedImage : '../../../icons/icons-svg/icons-svg/no-image-placeholder.svg',
           }
         })
       }
@@ -91,8 +84,11 @@ export default defineComponent({
     const showValue = computed(() => {
       return plugin.value.display_zone != DisplayZone.BLOC
     })
-
-
+    
+    const iconClass = computed(() => {
+      return plugin.value?.display_config?.defaultValue
+    })
+    
     watch(pluginValue, (newValues, oldValues) => {
       if(newValues?.length == 0) document.getElementById('autocomplete-input').value = textSpan.value?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
       emit('last-selected', newValues?.find(v => !oldValues?.includes(v))?.label)
@@ -202,7 +198,8 @@ export default defineComponent({
       textSpan,
       showValue,
       max_length,
-      maximumScrollHeight
+      maximumScrollHeight,
+      iconClass
     }
   }
 })

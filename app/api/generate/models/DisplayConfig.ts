@@ -16,5 +16,6 @@ export type DisplayConfig = {
     order?: (number | null);
     main_plugin?: (boolean | null);
     label?: (string | null);
+    default_value?: (string | null);
 };
 

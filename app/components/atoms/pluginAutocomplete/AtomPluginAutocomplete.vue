@@ -53,6 +53,38 @@
       </template>
 
     </AutoComplete>
+    <div
+      v-if="pluginValue?.[0]?.link && !iconClass"
+      class="absolute right-7 -translate-y-1/2 flex items-center"
+    >
+      <a
+        :href="pluginValue[0].link"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-1 text-sm font-bold text-gray-600 hover:text-black"
+        @click.stop
+      >
+        <img
+          class="h-8 w-8 brightness-0"
+          src="/icons/icons-svg/icons-svg/wikiData.svg"
+        />
+        <span>Wikidata</span>
+      </a>
+    </div>
+    <div
+      v-else-if="pluginValue[0]?.link && iconClass"
+      class="absolute right-10 -translate-y-1/2 flex items-center"
+    >
+      <a
+        :href="pluginValue[0].link"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-1 text-sm font-bold text-gray-600 hover:text-blue-50"
+        @click.stop
+      >
+        <i :class="iconClass" style="font-size: 21px;"></i>
+      </a>
+   </div>
   </div>
   <div v-if="source" class="  h-[300px] ">
     <div class="w-full flex justify-center" @click.self="$emit('closeModal')">
