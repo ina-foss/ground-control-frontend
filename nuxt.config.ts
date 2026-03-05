@@ -139,6 +139,10 @@ const DSINAPreset = definePreset(Lara, {
 })
 
 export default defineNuxtConfig({
+  imports:{
+    dirs: ['~/types'],
+    autoImport: true
+  },
   components:{
     dirs : [
       {

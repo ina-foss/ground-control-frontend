@@ -24,7 +24,7 @@ declare interface Span extends SpanBase {
     nodes: Node[],
     tcin: number | string,
     tcout: number | string,
-    plugins: Array
+    plugins: PluginAutocompleteValueDTO[]
   }
 
 declare interface SpanGroup extends SpanBase  {
@@ -37,14 +37,14 @@ declare interface SpanGroup extends SpanBase  {
         }
       }
     ],
-    plugins: Array,
+    plugins: PluginAutocompleteValueDTO[],
     tcin: number | string,
     tcout: number | string,
   }
 
 declare interface VirtualSpan extends SpanBase {
     deletedItems?: number,
-    plugins: Array
+    plugins: PluginAutocompleteValueDTO[]
 }
 
 declare type AnySpan = Span | SpanGroup | VirtualSpan

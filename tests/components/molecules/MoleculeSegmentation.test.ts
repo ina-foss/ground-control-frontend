@@ -1,4 +1,4 @@
-import {expect, describe, it }  from 'vitest'
+import {expect, describe, it, vi, beforeEach }  from 'vitest'
 import PrimeVue from 'primevue/config';
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import MoleculeSegmentation from '~/components/molecules/MoleculeSegmentation.vue'
@@ -13,15 +13,21 @@ import AtomSpanOption from '@/components/atoms/AtomSpanOption.vue';
 import AtomVideoOption from '@/components/atoms/atom-video-option.vue';
 import { createI18n } from 'vue-i18n'
 
-  vi.mock('~/composables/useSpanService', () => ({
-    default: () => ({
-      loadSpan: vi.fn()
-    })
-  }))
+vi.mock('~/composables/useSpanService', () => ({
+  default: () => ({
+    loadSpan: vi.fn()
+  })
+}))
+
 const i18n = createI18n({
   legacy: false,
   locale: 'fr'
 })
+
+vi.mock('~/utils/colors',()=>({
+  computeColor: vi.fn(),
+  textColorPicker: vi.fn(),
+}))
 
 describe('Molecule Segmentation', ()=>{
   let wrapper : VueWrapper
@@ -49,7 +55,6 @@ describe('Molecule Segmentation', ()=>{
     vi.mock('../../../components/molecules/molecule-segmentation-component.ts',async (importOriginal)=>{
       const original = await importOriginal()
       return original
-
     })
 
   })

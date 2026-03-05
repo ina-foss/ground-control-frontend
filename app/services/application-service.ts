@@ -36,67 +36,17 @@ export default class ApplicationService {
     return { Authorization: `Bearer ${access_token?.value}` };
   }
 
-  /**
-   * Return the css variable and the associated hex value from a integer
-   */
-  public computeColor= (seed: number)=>{
-    if(seed == null) return {full: 'bg-gray-500', hex:'#BEBEBE' }
-    const full = 'bg-extra'+ (seed%9+1)
-    const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(seed%9+1))
-    return {  hex: hex, full : full , fullHexTransparent: 'bg-['+hex+'4f]'}
-
-  }
-
-  public computeColorByLabel(labels,label): { full: string; hex: string } {
-    if(!label.length || !labels?.length ) return {hex: '#EEEEEEEE', full: 'bg-secondary'}
-    let labelIndex=  (labels.map(label => String(label).trim())).indexOf(label.toString())
-    if(label.length != 1){
-      labelIndex = label.reduce((sum, l) => sum + l.length, 0);
-    }
-    if(labelIndex == null) return {full: 'bg-gray-500', hex:'#BEBEBE' }
-    const full = 'bg-extra'+ (labelIndex%9+1)
-    const hex = getComputedStyle(document.body).getPropertyValue('--extra-'+(labelIndex%9+1))
-    return {  hex: hex, full : full , fullHexTransparent: 'bg-['+hex+'4f]'}
-  }
-  public hexToRgba(hex, opacity) {
-    let r = 0, g = 0, b = 0;
-    // Handle 3 digit hex
-    if (hex.length === 4) {
-      r = parseInt(hex[1] + hex[1], 16);
-      g = parseInt(hex[2] + hex[2], 16);
-      b = parseInt(hex[3] + hex[3], 16);
-    }
-    // Handle 6 digit hex
-    else if (hex.length === 7) {
-      r = parseInt(hex[1] + hex[2], 16);
-      g = parseInt(hex[3] + hex[4], 16);
-      b = parseInt(hex[5] + hex[6], 16);
-    }
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  }
-
 
   /**
    * Convert an color code in Hexadecimal in to a RGB one
    * @param hexColor hexColor
    */
   public extractRGB(hexColor) {
-    const rgbaColor = this.hexToRgba(hexColor, 0.5);
+    const rgbaColor = hexToRgba(hexColor, 0.5);
     const rgba = rgbaColor?.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
     return rgba.slice(0, 3);
   }
 
-  /**
-   * Return correct text color given the backgound color
-   * @param bgColor background color in hexadecimal format ex: '#4f425b'
-   */
-  public textColorPicker(bgColor: string) : "white" | "black"  {
-    const color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
-    const r = parseInt(color.substring(0, 2), 16); // hexToR
-    const g = parseInt(color.substring(2, 4), 16); // hexToG
-    const b = parseInt(color.substring(4, 6), 16); // hexToB
-    return ((r * 0.299) + (g * 0.587) + (b * 0.114)) <= 120 ? 'white' : 'black'
-  }
   /**
    * Convert time in transcription to be used in video jump
    * @param tc

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import AtomTopicList from '@/components/atoms/topicList/AtomTopicList.vue'
+import AtomTopicList from '~/components/atoms/topicList/AtomTopicList.vue'
 import ScrollPanel from 'primevue/scrollpanel'
 
 vi.mock('~/composables/useTopicList', () => ({
@@ -12,10 +12,14 @@ vi.mock('~/composables/useTopicList', () => ({
   })
 }))
 
-vi.mock('#imports', () => ({
+vi.mock('~/utils/colors',()=> ({
+  computeColor: (id: number) => ({ hex: id === 1 ? '#FF0000' : '#00FF00' }),
+}))
+
+
+vi.mock('~/composables/useService', () => ({
   useService: () => ({
     $application: {
-      computeColor: (id: number) => ({ hex: id === 1 ? '#FF0000' : '#00FF00' }),
       extractRGB: (hex: string) => {
         const bigint = parseInt(hex.replace('#', ''), 16)
         return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255]

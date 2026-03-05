@@ -12,7 +12,7 @@ export default defineComponent({
     const { $application } = useService()
     const {spanArray, extractTextFromSpanNodes,onDeleteSpan} = useSpanService()
     const {locals} = inject('span')
-    const { computeColor,textColorPicker,computeColorByLabel,timestampToUnix,unixToTimestamp } = $application
+    const { timestampToUnix,unixToTimestamp } = $application
 
     const jumpToTopic = inject('jumpToTopic')
     const { transcriptions } = toRefs(props)

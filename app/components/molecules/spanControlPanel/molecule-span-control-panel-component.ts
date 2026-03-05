@@ -21,7 +21,7 @@ export default defineComponent({
     const {$amalia}  = useService()
     const { t } = useI18n()
 
-    const { focusGroup, readPluginValues ,mainPluginIndex, extractTextFromSpanNodes, spanForm, spanArray, newFocus,computeColorByLabel,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,capitalizeFirstLetter} = useSpanService()
+    const { focusGroup, readPluginValues ,mainPluginIndex, extractTextFromSpanNodes, spanForm, spanArray, newFocus,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,capitalizeFirstLetter} = useSpanService()
     const { unixToTimestamp,timestampToUnix } = useService().$application
     const { pluginList } = storeToRefs(usePluginStore())
     const { getPluginList, getAllPluginOptionList } = usePluginStore()
@@ -299,7 +299,6 @@ export default defineComponent({
       newFocus,
       groupIsSelected,
       selectedGroup,
-      computeColorByLabel,
       dropSpan,
       previewSpanDrop,
       unpreviewSpanDrop,

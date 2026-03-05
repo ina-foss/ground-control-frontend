@@ -123,10 +123,8 @@
 import commentIcon from '/icons/icons-svg/icons-svg/comment-icon.svg';
 
 import _ from 'lodash'
-import { useService } from '#imports';
 import { defineExpose } from 'vue';
 import AtomPluginBlock from './pluginBlock/AtomPluginBlock.vue';
-import { useAuth } from '#imports';
 import AtomComment from './AtomComment.vue';
 import { remove } from 'lodash'
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
@@ -138,7 +136,7 @@ const emit = defineEmits(['segmentation', 'on-segment-click','activateTopic', 'd
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()
-const { timestampToUnix, computeColor, textColorPicker, unixToTimestamp } = $application
+const { timestampToUnix , unixToTimestamp } = $application
 const jumpToTopic = inject('jumpToTopic',null)
 const segment = ref(null)
 const toast = useToast()

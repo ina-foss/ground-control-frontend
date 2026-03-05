@@ -1,3 +1,5 @@
+import { defineStore } from 'pinia';
+
 export type Options =  {
   /**
    * If the video is sync to the transcription scrolling
@@ -63,6 +65,7 @@ export type Options =  {
   */
   unlabelled_span: boolean
 }
+
 
 export type AnnotationMode = 'read' | 'edit' | 'none'
 

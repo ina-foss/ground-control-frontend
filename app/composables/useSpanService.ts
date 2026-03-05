@@ -13,25 +13,32 @@ let spanServiceInstance : ReturnType<typeof createSpanService> | null = null
 
 function createSpanService (){
 
+  // ----- Imports ------
   const { t } = useI18n()
-  const {options} = useOptions()
-
   const { $application } = useService()
-  const { hexToRgba,computeColorByLabel,computeColor,extractTextFromSpan} = $application
+  const { extractTextFromSpan } = $application
+
+  // ----- Plugin Store ------
+  const { options } = useOptions()
+  const pluginStore = usePluginStore()
+  const { pluginList } = storeToRefs(pluginStore)
+
+  // ----- Types ------
+  type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
+
+  interface State {
+    selection: Selection | null,
+    range: Range | null
+  }
+
+  // ----- Refs ------
+  const spanClicked = ref(false)
+  const spanArray = ref<Array<AnySpan | null>>([{id:0,label:"", plugins: []}])
   const spanMenu = ref()
   const spanControlPanelMenu = ref()
   const op = ref()
-  // ----- Plugin Store ------
-  const pluginStore = usePluginStore()
-  const { pluginList } = storeToRefs(pluginStore)
-  const pluginOptionsList = computed(()=>pluginStore.pluginOptionsList)
   const createdPluginOptionsList = ref([])
-
-  const spanClicked = ref(false)
-  const spanArray = ref<Array<AnySpan | null>>([{id:0,label:"", plugins: []}])
-  //const spanArray = ref<Array<Span | SpanGroup | VirtualSpan | null>>([{id:0,label:"", plugins: []}])
   const linkMode = ref(false)
-  const spanCount = computed<number>(()=>spanArray.value.length)
   const newFocus = ref<number | undefined>()
   const spanMenuSelected = ref<number | undefined>(undefined)
   const spanRole = ref<number | undefined>(undefined)
@@ -41,43 +48,94 @@ function createSpanService (){
   const defaultLabel = ref()
   const deletedNum=ref<number>()
   const spanForm = ref()
-  const dragData = reactive<{pin_position: string | undefined, spanid: number | undefined}>({
-    pin_position : undefined,
-    spanid : undefined,
-  })
   const contextMenuOptions = ref([{label:  t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:t('contextMenu.editBounds'), command:(event)=>showDragPin(event)},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
-  const contextControlPanelMenuOptions = ref([{label: t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,suppression: true}) }])
 
-  type pluginValues= Record<string,PluginAutocompleteValueWithMetadata[]>
+  const contextControlPanelMenuOptions = ref([{label: t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,suppression: true}) }])
   const pluginValues = reactive<pluginValues>({})
+  const state: State = reactive({
+    selection: null,
+    range: null
+  })
+
+
+  // ----- Watchers ------
+  watch(()=>newFocus.value,(newValue, oldValue)=>{
+    if(oldValue != undefined){
+      const oldElementArray = spanArray.value[oldValue]?.nodes
+      if(!oldElementArray){ // on deselectionne un groupe
+        recolorSpan(spanArray.value[oldValue])
+      }
+    }
+    if(newValue != undefined){
+      const elementArray = spanArray.value[newValue]?.nodes
+      if(!elementArray) { // On a selectionne un groupe
+          decolorSpan(spanArray.value[newValue])
+      }
+    }
+  })
+
+  // ------ Computed -------
+  const pluginOptionsList = computed(()=>pluginStore.pluginOptionsList)
 
   const mainPluginId = computed(()=>{
       return pluginList?.value?.find(plugin=>plugin.display_config?.main_plugin == true)?.id  || undefined
   })
 
+  const mainGroupPluginId = computed(()=>{
+    return pluginList.value?.find(plugin=>plugin.display_zone == 'group_modal')?.id || undefined
+  })
+
+  const mainPluginIndex = computed(()=>{
+    if(mainPluginId.value) {
+      const mainPlugin = pluginList.value.find(plugin=>plugin.id == mainPluginId.value)
+      return readPluginValues(mainPlugin)
+    }
+    return undefined
+  })
+
+  const mainGroupPluginIndex = computed(()=>{
+    if(mainPluginId.value) {
+      const mainGroupPlugin = pluginList.value.find(plugin=>plugin.id == mainGroupPluginId.value)
+      return readPluginValues(mainGroupPlugin)
+    }
+    return undefined
+  })
+
+  const mainPluginValueOccurence = computed(()=>{
+    return spanArray.value.map(span =>{
+         if (isSpan(span) || isVirtualSpan(span)) return span?.plugins[mainPluginIndex.value]?.[0]
+    })
+      .reduce((acc: PluginAutocompleteValueDTO[],value: PluginAutocompleteValueDTO )=>{
+        if(!acc.includes(value) && value) acc.push(value)
+        return acc
+      },[]) as PluginAutocompleteValueDTO[]
+  })
+
+  const mainGroupPluginValueOccurence = computed(()=>{
+    return spanArray.value.map(span=>{
+         if (isSpanGroup(span)) return span?.plugins[mainGroupPluginIndex.value]?.[0]
+    })
+      .reduce((acc: PluginAutocompleteValueDTO[],value: PluginAutocompleteValueDTO )=>{
+        if(!acc.includes(value) && value) acc.push(value)
+        return acc
+      },[]) as PluginAutocompleteValueDTO[]
+  })
+
+  const spanCount = computed<number>(()=>spanArray.value.length)
+
+  const dragData = reactive<{pin_position: string | undefined, spanid: number | undefined}>({
+    pin_position : undefined,
+    spanid : undefined,
+  })
+
+  const isForResearch = computed(()=>{
+    return !!(pluginList?.value?.find(plugin => plugin.display_zone === "group_modal")?.id)
+  })
+
+  // ----- Functions -----
   function focusGroup({groupId}: {groupId: number}) {
     newFocus.value = groupId
   }
-
-  watch( ()=>mainPluginId.value,
-    (value)=> {
-      // store value for this task in localStorage
-      // keep other task stored value
-      const savedList : Array<any> = JSON.parse(localStorage.getItem('mainPluginId')) ?? []
-      const existingValue = savedList.find(e=>e.taskId == useRoute().params.id)
-      if(existingValue) existingValue.value = value
-      else savedList.push({taskId: useRoute().params.id, value})
-      localStorage.setItem('mainPluginId',JSON.stringify(savedList) )
-
-      spanArray.value.forEach(span=>{
-        if(span){
-          affectPluginValues(span.plugins)
-          if (span.tcin) applySpan(span.id)
-        }
-      })
-    },
-    {immediate: false}
-  )
 
   function initPluginValues (iterator? :Array<PluginWithIdDto>){
     if (!Array.isArray(iterator)) return
@@ -92,13 +150,6 @@ function createSpanService (){
     return plugin.data_property ? plugin.data_property : `plugin-${plugin.id}`
   }
 
-  const mainPluginIndex = computed(()=>{
-    if(mainPluginId.value) {
-      const mainPlugin = pluginList.value.find(plugin=>plugin.id == mainPluginId.value)
-      return readPluginValues(mainPlugin)
-    }
-    return undefined
-  })
 
   function affectPluginValues(values : pluginValues){
    if(values){
@@ -106,44 +157,41 @@ function createSpanService (){
     }
   }
 
-  const isForResearch = computed(()=>{
-    return !!(pluginList?.value?.find(plugin => plugin.display_zone === "group_modal")?.id)
-  })
 
-   function countByPlugin(data:any){
-     const groupedByPlugin = {}
-     data.value.forEach(item => {
-       if(item != undefined && item.plugins?.length != 0){
-       const plugins = item.plugins
-         if (!plugins) return
+  function countByPlugin(data:any){
+    const groupedByPlugin = {}
+    data.value.forEach(item => {
+      if(item != undefined && item.plugins?.length != 0){
+      const plugins = item.plugins
+        if (!plugins) return
 
-         Object.keys(plugins).forEach(pluginKey => {
-           if (!groupedByPlugin[pluginKey]) {
-             groupedByPlugin[pluginKey] = []
-           }
+        Object.keys(plugins).forEach(pluginKey => {
+          if (!groupedByPlugin[pluginKey]) {
+            groupedByPlugin[pluginKey] = []
+          }
 
-           const pluginArray = plugins[pluginKey]
-           if (!Array.isArray(pluginArray) || pluginArray.length === 0) return
+          const pluginArray = plugins[pluginKey]
+          if (!Array.isArray(pluginArray) || pluginArray.length === 0) return
 
-           pluginArray.forEach(pluginItem => {
-             // Cherche si ce plugin existe déjà
-             const existing = groupedByPlugin[pluginKey].find(
-                 entry => entry[0]?.id === pluginItem.id
-             )
+          pluginArray.forEach(pluginItem => {
+            // Cherche si ce plugin existe déjà
+            const existing = groupedByPlugin[pluginKey].find(
+                entry => entry[0]?.id === pluginItem.id
+            )
 
-             if (existing) {
-               // Incrémente le compteur existant
-               existing[1].count++
-             } else {
-               // Crée une nouvelle entrée
-               groupedByPlugin[pluginKey].push([pluginItem, { count: 1 }])
-             }
-           })
-         })
-     }
-     })
-     return groupedByPlugin
-   }
+            if (existing) {
+              // Incrémente le compteur existant
+              existing[1].count++
+            } else {
+              // Crée une nouvelle entrée
+              groupedByPlugin[pluginKey].push([pluginItem, { count: 1 }])
+            }
+          })
+        })
+    }
+    })
+    return groupedByPlugin
+  }
 
   function removeSpanFromDOM(span: Span){
     if (span.plugins !== undefined) {
@@ -182,6 +230,7 @@ function createSpanService (){
     if( tag ) tag.remove()
     if(span.nodes){
       span.nodes.forEach((node: HTMLDivElement)=>{
+        node.style.backgroundColor = null
         node.querySelectorAll('border').forEach(border=>border.remove())
         node.querySelectorAll(`bg${span.id}`).forEach(border=>border.remove())
         node.querySelectorAll('pinWrapper').forEach(pin=>pin.remove())
@@ -235,7 +284,6 @@ function createSpanService (){
       span.tcin = span.nodes[0].getAttribute('tcin')
       span.tcout = span.nodes[span.nodes.length - 1].getAttribute('tcout')
       deletedNum.value = span.deletedItems
-      affectPluginValues(span.plugins)
       applySpan(span)
       newFocus.value = null
     }
@@ -291,25 +339,19 @@ function createSpanService (){
     }
     else targetSpans = spanArray.value.filter(span=> span?.nodes)
     targetSpans.forEach(span=>{
-      affectPluginValues(span.plugins)
-      applySpan(span.id)
+      applySpan(span)
     })
   }
 
-  function createSpanColorPalette(pluginId: number | undefined, pluginValue: any, opacity? : number = 0.25){
+  function createSpanColorPalette(pluginId: number | undefined, pluginValue: any, opacity : number = 0.25){
     const index = pluginList.value.findIndex(plugin=>plugin.id == pluginId)
     const [plugin, options]= [pluginList.value[index], pluginOptionsList.value[index]]
-    if(pluginList && plugin && pluginValue && pluginValue.length){
-      if(plugin.type == TypePlugin.LISTITEMS  || ( plugin.type == TypePlugin.AUTOCOMPLETE && plugin.config_data.type == 'get plugin' ) ) {
-        return hexToRgba(computeColorByLabel(options?.data.map(option=>option.label),pluginValue.map(value=>value.label)).hex,opacity)
-      }
-      else if(plugin.type == TypePlugin.AUTOCOMPLETE && plugin.config_data.type == 'post plugin'){
-        const seed = pluginValue?.map(value=>value.label.split('').reduce((acc,value)=>acc+=value.charCodeAt(0),0)).reduce((acc,value)=>acc+=value,0)
-        return hexToRgba(computeColor(seed).hex,opacity)
-      }
-      else return `rgba(213,32,123)`
+    if(options.data.length <= DEFAULT_COLOR_CYLCLING.length){ // absolute color based only on plugin
+      return getAbsolutePluginColor(pluginValue,options,plugin,opacity)
     }
-    else return `rgba(170,170,170,${opacity})`
+    else{ // color depends on already picked plugin values
+      return getRelativePluginColor(pluginValue,mainPluginId.value == pluginId ? mainPluginValueOccurence.value : mainGroupPluginValueOccurence.value, opacity)
+    }
   }
 
   function applySpan(spanOrId : number | Span){
@@ -327,7 +369,6 @@ function createSpanService (){
     }
 
     if (!span) return
-    span.plugins = _.cloneDeep(pluginValues)
     removeSpanFromDOM(span)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
     span.label = (()=>{
@@ -493,25 +534,6 @@ function createSpanService (){
     return nodesArray.map(node => extractTextFromSpan(node)).join(' ');
   }
 
-  watch(()=>newFocus.value,(newValue, oldValue)=>{
-    if(oldValue != undefined){
-      const oldElementArray = spanArray.value[oldValue]?.nodes
-      if(!oldElementArray){ // on deselectionne un groupe
-        return
-        // NOTE: disable for now, may be deleted later
-        recolorSpan(spanArray.value[oldValue])
-      }
-    }
-    if(newValue != undefined){
-      const elementArray = spanArray.value[newValue]?.nodes
-      if(!elementArray) { // On a selectionne un groupe
-        return
-        // NOTE: disable for now, may be deleted later
-          decolorSpan(spanArray.value[newValue])
-      }
-    }
-  })
-
 
   /**
    * Callback invoked after text has been highlighted in dedicated area
@@ -636,7 +658,6 @@ function createSpanService (){
     spanArray.value.forEach((span) =>{
       if( isSpan(span) ){
         selectSpanNodes(span)
-        affectPluginValues(span.plugins)
         applySpan(addNodesToSpan(span))
       }
     })

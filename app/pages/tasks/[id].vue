@@ -23,7 +23,6 @@ import {
 } from "~/api/generate";
 import { useAuth } from "~/stores/auth";
 import { storeToRefs } from "pinia";
-import { useRefreshStore } from "#imports";
 import OrganismAnnotation from "~/components/organisms/annotation/OrganismAnnotation.vue";
 
 const refresh = useRefreshStore();
@@ -241,7 +240,7 @@ const submitExistantAnnotation = (locals, action, timeSpent, options) => {
     })
     .then(() => {
       refresh_out();
-      
+
     });
 };
 

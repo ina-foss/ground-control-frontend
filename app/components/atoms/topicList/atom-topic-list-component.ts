@@ -17,7 +17,7 @@ export default defineComponent({
 
     const { topicList } = useTopicList()
     const { $application } = useService()
-    const { computeColor, extractRGB} = $application
+    const { extractRGB } = $application;
 
     const { topics } = toRefs(props)
 

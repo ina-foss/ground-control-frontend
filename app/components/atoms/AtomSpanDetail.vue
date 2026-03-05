@@ -64,11 +64,8 @@
 
 
 <script setup>
-import { useService } from '#imports';
-const { $application } = useService()
 const customdividerstyle = ref({content: 'bg-surface-100 z-10 px-1'})
 const emit = defineEmits(['deleteSpan','unselect','link','focusSpan'])
-const { computeColor,textColorPicker,computeColorByLabel } = $application
 
 const { focusSpan, spanRefArray, relationArray,labels } = defineProps({
   focusSpan: {

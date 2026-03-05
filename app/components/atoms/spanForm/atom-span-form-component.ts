@@ -38,7 +38,6 @@ export default defineNuxtComponent({
     const showErrorMessage = ref(false)
 
 
-    const {computeColor} = $application
     const showContext = computed(()=>nodes.value.length == 0)
     const isGroup = computed(()=>isSpanGroup(currentSpan.value))
     const expandedContext = ref(false)
@@ -159,8 +158,8 @@ export default defineNuxtComponent({
 
     function createSpan () {
       if(nodes.value.length > 0){ // real spans
-        applySpan(currentSpan.value)
         spanArray.value[currentSpan.value.id] = currentSpan.value
+        applySpan(currentSpan.value)
       }
     }
     function createSpanVirtuel(){
@@ -206,6 +205,7 @@ export default defineNuxtComponent({
      * Callback after clicking on the "Confirmed" button
      */
     function handleConfirmationButton (){
+      if(currentSpan.value) currentSpan.value.plugins = _.cloneDeep(pluginValues)
       if (
         //validation for virtual span case (check every plugin in the form with label)
         (isVirtual.value && (!virtualSpanCategory.value ||  !defaultLabel.value) )

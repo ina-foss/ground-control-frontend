@@ -1,7 +1,11 @@
-import {expect, describe, it }  from 'vitest'
+import {expect, describe, it, vi }  from 'vitest'
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import AtomSpanDetail from '~/components/atoms/AtomSpanDetail.vue';
 import type { VueWrapper } from '@vue/test-utils';
+
+vi.mock('~/utils/colors',()=>({
+  textColorPicker: vi.fn()
+}))
 
 const mockedLabelsArray = [
   'label1',

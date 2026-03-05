@@ -28,9 +28,7 @@ export default defineComponent({
   setup(props, { emit, expose }) {
 
     const { loadSpan, handleSelectionV2, spanMenu, contextMenuOptions, spanForm} = useSpanService()
-    const { $application } = useService()
     const { topicList, deleteTopic, createTopic, fusionTopicData, copyTopicData } = useTopicList(true)
-    const { computeColor } = $application
     const dragging = reactive<{start: number|null, end: number|null}>({start: null, end:null})
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())

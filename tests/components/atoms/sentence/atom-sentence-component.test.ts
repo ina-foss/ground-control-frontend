@@ -12,6 +12,12 @@ const mockTranscriptions = [{
   }
 }]
 
+vi.mock('~/utils/colorl.ts', () => ({
+  computeColor: vi.fn(),
+  textColorPicker: vi.fn(),
+  computeColorByLabel: vi.fn(),
+}));
+
 const mockTopicList = {
   1: { title: 'Sujet important' }
 }
@@ -63,9 +69,6 @@ describe('AtomSentence.vue', () => {
         },
         mocks: {
           $application: {
-            computeColor: vi.fn(),
-            textColorPicker: vi.fn(),
-            computeColorByLabel: vi.fn(),
             timestampToUnix: timestampToUnix,
             unixToTimestamp: (ts: string | number) => {
               if (typeof ts === 'string') {

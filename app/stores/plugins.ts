@@ -1,9 +1,10 @@
-import type { PluginWithIdDto } from "~/api/generate"
+import type { PluginAutocompleteValueDTO, PluginWithIdDto } from "~/api/generate"
 import { PluginService, DisplayZone  } from "~/api/generate"
 import AtomPluginAutocomplete from '../app/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
 import AtomPluginLabel from '../app/components/atoms/pluginLabel/AtomPluginLabel.vue'
 import AtomPluginItemslist from "~/components/atoms/pluginItemsList/AtomPluginItemslist.vue"
 import _ from 'lodash'
+import { defineStore } from "pinia"
 
 export const usePluginStore = defineStore('plugin',{
   state: () =>{
@@ -15,7 +16,7 @@ export const usePluginStore = defineStore('plugin',{
       /**
        * List of options array for each plugin
        **/
-      pluginOptionsList: [] as Array<any>,
+      pluginOptionsList: [] as{data: PluginAutocompleteValueDTO[], id :number}[],
     }
   },
   actions: {
@@ -84,7 +85,7 @@ export const usePluginStore = defineStore('plugin',{
     getPluginList(state): PluginWithIdDto[]{
       return state.pluginList
     },
-    getAllPluginOptionList(state): PluginWithIdDto[]{
+    getAllPluginOptionList(state): {data:PluginAutocompleteValueDTO[], id:number}[] {
       return state.pluginOptionsList
     }
   }
