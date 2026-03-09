@@ -1,5 +1,6 @@
 <template>
-        <Avatar ref="avatar"
+        <Avatar
+ref="avatar"
           v-tooltip.left="userEmail"
           style="background-color: transparent;"
  class="cursor-pointer" shape="circle"

@@ -1,6 +1,6 @@
-import { type ITask } from '~/shared/model/task.model';
+import type { ITask } from '~/shared/model/task.model';
 
-import { type DeploymentModelType } from '~/shared/model/enumerations/deployment-model-type.model';
+import type { DeploymentModelType } from '~/shared/model/enumerations/deployment-model-type.model';
 export interface IDeploymentModel {
   id?: number;
   name?: string | null;

@@ -23,7 +23,7 @@
     <div>
 
       <div>
-        <AtomPluginBlock :topicIndex="topicIndex" :isTopicFirstSegment="isTopicFirstSegment" :source="dialogVisible" v-model:pluginValues="pluginValues" />
+        <AtomPluginBlock v-model:plugin-values="pluginValues" :topic-index="topicIndex" :is-topic-first-segment="isTopicFirstSegment" :source="dialogVisible" />
       </div>
 
     </div>

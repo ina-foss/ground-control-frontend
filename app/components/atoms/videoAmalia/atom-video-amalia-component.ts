@@ -31,10 +31,10 @@ export default defineComponent({
     const { t } = useI18n();
     const myplayer = ref()
     let lastIndex = 0
-    let dynamicSrc = ref()
-    let dynamicTumbnails = ref()
-    let downloadUrl = ref()
-    let waveformUrl = ref()
+    const dynamicSrc = ref()
+    const dynamicTumbnails = ref()
+    const downloadUrl = ref()
+    const waveformUrl = ref()
     const {unixToTimestamp} = $application
     const {getHistory, consumeTimecode} = useTimecodeHistory()
 
@@ -169,7 +169,7 @@ export default defineComponent({
           $application.unixToTimestamp(locals.value[mid].tcin) >= currentTime ? endIndex = mid : startIndex = mid
         }
 
-        let bestIndex = currentTime < $application.unixToTimestamp(locals.value[endIndex].tcin) ? startIndex : endIndex
+        const bestIndex = currentTime < $application.unixToTimestamp(locals.value[endIndex].tcin) ? startIndex : endIndex
 
         emit('timecode-update', {tcin: currentTime, lastIndex: lastIndex, bestIndex: bestIndex, fromHistory: fromHistory}) // emit both times to scroll and adapt css
         lastIndex = bestIndex

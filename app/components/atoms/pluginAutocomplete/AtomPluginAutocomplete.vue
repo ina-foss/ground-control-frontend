@@ -1,7 +1,8 @@
 <template>
   <div v-if="indexPlugin<3 && !source" class=" grid grid-cols-[100px_calc(100%-220px)] gap-3 gap-y-5 items-center " >
     <slot />
-    <AutoComplete ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
+    <AutoComplete
+ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
                   option-label="label" multiple
                   class="w-full"
                   :delay="300"
@@ -20,7 +21,7 @@
               :src="slotProps.option.image"
               alt="icon"
               class="w-14 h-14 object-contain"
-        />
+        >
         <div class="flex flex-col pt-2">
             <span class="font-medium text-gray-900">
               {{ slotProps.option.label }}
@@ -39,7 +40,7 @@
                 :src="slotProps.value.image"
                 alt="icon"
                 class="h-10 object-contain"
-            />
+            >
           <chip-content class="flex flex-col justify-center min-w-0 flex-1 ">
               <span class="font-medium text-gray-900 truncate">
                 {{ slotProps.value.label }}
@@ -68,7 +69,7 @@
           class="h-8 w-8 brightness-0"
           alt="wikidata icon"
           src="/icons/icons-svg/icons-svg/wikiData.svg"
-        />
+        >
         <span>Wikidata</span>
       </a>
     </div>
@@ -83,7 +84,7 @@
         class="flex items-center gap-1 text-sm font-bold text-gray-600 hover:text-blue-50"
         @click.stop
       >
-        <i :class="iconClass" style="font-size: 21px;"></i>
+        <i :class="iconClass" style="font-size: 21px;"/>
       </a>
    </div>
   </div>
@@ -112,7 +113,7 @@
                   :src="slotProps.option.image"
                   alt="icon"
                   class="w-14 h-14 object-contain"
-              />
+              >
 
               <div class="flex flex-col">
                 <span class="font-medium text-gray-900">
@@ -133,7 +134,7 @@
                     :src="slotProps.value.image"
                     alt="icon"
                     class="h-10 object-contain"
-                />
+                >
                 <chip-text class="flex flex-col max-w-[150px]">
                   <span class="font-medium text-gray-900 truncate">
                     {{ slotProps.value.label }}

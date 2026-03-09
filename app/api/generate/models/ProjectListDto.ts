@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { MediaCreate } from './MediaCreate';
 import type { Status } from './Status';
 import type { StepDetailDto } from './StepDetailDto';

@@ -95,15 +95,15 @@
   <MoleculeDialogConfirm
     v-model:visible="abondanDialog"
     :title="t('annotation.dialogs.abandon.title')"
-    :withExclamation="true"
+    :with-exclamation="true"
     :message="t('annotation.dialogs.abandon.message')"
-    :cancelButton="{
+    :cancel-button="{
       label: t('actions.cancel'),
       icon: 'pi pi-times',
       severity: 'primary',
       outlined: true,
     }"
-    :confirmButton="{
+    :confirm-button="{
       label: t('actions.confirm'),
       icon: 'pi pi-check',
       severity: 'primary',
@@ -124,15 +124,15 @@
   <MoleculeDialogConfirm
     v-model:visible="finishDialog"
     :title="t('annotation.dialogs.finish.title')"
-    :withExclamation="true"
+    :with-exclamation="true"
     :message="t('annotation.dialogs.finish.message')"
-    :cancelButton="{
+    :cancel-button="{
       label: t('actions.cancel'),
       icon: 'pi pi-times',
       severity: 'primary',
       outlined: true,
     }"
-    :confirmButton="{
+    :confirm-button="{
       label: t('actions.confirm'),
       icon: 'pi pi-check',
       severity: 'primary',

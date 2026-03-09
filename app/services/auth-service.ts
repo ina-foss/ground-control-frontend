@@ -38,7 +38,7 @@ export default class AuthService {
 
           // Détecte que le token a expiré (fail du silent renew)
           this.userManager.events.addAccessTokenExpired(() => {
-            /* eslint-disable no-console */
+             
             console.warn("⛔ Token expiré et non renouvelé !");
             this.isRenewing = false;
           });

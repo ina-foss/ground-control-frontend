@@ -12,7 +12,7 @@
     "generate": "nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare && cp -r node_modules/@ina/amalia public/",
-    "update-api": "openapi --input http://localhost:8000/docs/openapi.json --output ./app/api/generate",
+    "update-api": "openapi --input http://localhost:8001/docs/openapi.json --output ./app/api/generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

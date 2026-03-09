@@ -12,8 +12,9 @@ class="flex cursor-pointer items-center flex-start gap-2  w-full"
             <p class="text-sm">{{$application.timestampToUnix(transcriptions[0].tcin)  }}</p>
           </div>
         </Tag>
-        <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
-v-if="transcriptionTag != ' '" severity="info" class="h-7 self-center flex-nowrap  whitespace-nowrap "
+        <Tag
+v-if="transcriptionTag != ' '"
+style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold" severity="info" class="h-7 self-center flex-nowrap  whitespace-nowrap "
              :value="transcriptionTag"/>
         <span v-if="transcriptions[0].data.topic" class="font-bold overflow-hidden text-ellipsis line-clamp-2 ">
           {{ topicList[transcriptions[0].data.topic]?.title }}
@@ -25,10 +26,12 @@ v-if="transcriptionTag != ' '" severity="info" class="h-7 self-center flex-nowra
     <div v-if="isExpand == true" class="flex flex-col gap-2 ">
       <div class="grid gap-3 w-full " style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr));">
         <!-- List of available transcriptions -->
-        <span style="color: white;background-color: #212529"
-v-for="(phrase, index) in transcriptions" :key="index"
+        <span
+v-for="(phrase, index) in transcriptions"
+:key="index" style="color: white;background-color: #212529"
               class="rounded w-full text-gray-100 relative p-2  scroll-mt-5 ">
-                  <Tag  style="border: 1px solid #3379FF; color: #3379FF;background-color: white;font-weight: bold"
+                  <Tag
+style="border: 1px solid #3379FF; color: #3379FF;background-color: white;font-weight: bold"
                        severity="info" class="h-7 self-center my-1 "
             :value="algos[index]"/>
           <p>{{ phrase.data.text[0] }}</p>
@@ -44,12 +47,12 @@ icon="pi pi-check" :outlined="true" rounded  style="scale: 0.8;color: black;back
         <div class="flex pb-2 items-center " style="color: black">
           <h2 class="pr-3">
             Résultat : </h2>
-          <Tag style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold"
-               v-if="editTranscriptionTag != ' '" severity="info" :value="editTranscriptionTag"/>
+          <Tag
+v-if="editTranscriptionTag != ' '"
+               style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-weight: bold" severity="info" :value="editTranscriptionTag"/>
         </div>
         <Textarea v-model="editedTranscription.text" :auto-resize="true" style="width: 95%;color: black"/>
-        <div class="flex justify-center" style="color: black">
-        </div>
+        <div class="flex justify-center" style="color: black"/>
       </div>
       <!-- Footer with Buttons -->
       <div class="flex justify-end gap-2">
@@ -105,7 +108,7 @@ const {transcriptions, algos, userAnnotation, status} = defineProps({
     type: String
   }
 })
-let isExpand = ref(false) // Describe atom render
+const isExpand = ref(false) // Describe atom render
 const confirmedTranscription = reactive({phrase: {}, index: null}) // store the whole amalia lvl 1, update when user confirm
 const isFinished = computed(()=>confirmedTranscription.index != null) // If the transcription has been correctedh
 const editedTranscription = reactive({text: '', index: null}) // store just the text, update for every change

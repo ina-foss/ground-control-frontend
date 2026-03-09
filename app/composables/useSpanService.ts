@@ -432,12 +432,12 @@ function createSpanService (){
 
         // Check for existing tag being overlap by the new tag on the LEFT side
         let elements = document.elementsFromPoint(tagCoord.x,tagCoord.y)
-        let overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+        const overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
         avoidOverlap(tag,overlapingTags)
 
         // Check for existing tag being overlap by the new tag on the RIGHT side
         elements = document.elementsFromPoint(tagCoord.right+50,tagCoord.y)
-        let overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+        const overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
         if(overlapingEndTags.length > 0 )
         if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
       }

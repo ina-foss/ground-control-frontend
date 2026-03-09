@@ -13,10 +13,10 @@
         {{ topicList[transcriptions[0].data.topic]?.title || `Topic  ${transcriptions[0].data.topic}` }}
         </span>
       </div>
-      <div class="flex flex-col gap-4 " v-if="spanArrayByTopic.length">
+      <div v-if="spanArrayByTopic.length" class="flex flex-col gap-4 ">
         <div v-for="span in spanArrayByTopic" :key="span" class=" flex items-center bg-secondary-color border-extra2 border p-3 gap-2 rounded h-fit justify-between ">
           <span class="font-bold  ">{{extractTextFromSpanNodes(span.nodes)}}</span>
-          <span class="pi pi-trash h-full cursor-pointer hover:bg-disabled p-1 rounded-full " @click="onDeleteSpan({index: span.id})" style="font-size: 1.4rem" ></span>
+          <span class="pi pi-trash h-full cursor-pointer hover:bg-disabled p-1 rounded-full " style="font-size: 1.4rem" @click="onDeleteSpan({index: span.id})" />
         </div>
       </div>
       <div v-else>

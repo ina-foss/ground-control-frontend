@@ -11,7 +11,8 @@
               <div class="flex-col">
 
             <div v-if="comments?.length != 0" :class="{'overflow-y-clip overflow-x-hidden mb-3 w-full h-fit':true, '!h-[125px]': comments?.length >3}">
-                  <ScrollPanel class="h-full" :dt="{
+                  <ScrollPanel
+class="h-full" :dt="{
       bar : {
         background: 'var(--primary-color)',
         size:'3px'
@@ -34,7 +35,8 @@
                               v-tooltip.top="item.created_by" :label=item.created_by.charAt(0).toUpperCase()
                               shape="circle"
                               class="!bg-[#0057FF] !text-white font-medium h-4 w-4 rounded-full flex items-center justify-center"/>
-                            <Button v-if="item.created_by === userEmail" style="height: 22px; padding:0 0 0 0;margin:0;color:#0C7DA2;"
+                            <Button
+v-if="item.created_by === userEmail" style="height: 22px; padding:0 0 0 0;margin:0;color:#0C7DA2;"
                                     severity="error-state" text rounded
                                     @click="handleDeleteComment(item.id)">
                             <img
@@ -77,9 +79,11 @@
                     <Textarea v-model="comment" class="h-full text-xs" fluid placeholder="Entrer votre message"/>
                   </div>
                   <div class="flex justify-center gap-3 ">
-                    <Button class="h-auto" outlined label="Annuler" icon="pi pi-times" icon-pos="left"
+                    <Button
+class="h-auto" outlined label="Annuler" icon="pi pi-times" icon-pos="left"
                             @click="handleClearComment"/>
-                    <Button class="h-auto" label="Envoyer" icon="pi pi-arrow-right" icon-pos="left"
+                    <Button
+class="h-auto" label="Envoyer" icon="pi pi-arrow-right" icon-pos="left"
                             @click="handleCreateComment"/>
                   </div>
                 </div>

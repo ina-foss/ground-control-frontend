@@ -51,12 +51,12 @@
           <!--virtual span plugins-->
           <plugin-iterator v-for="(plugin,index) in tidiedPluginList[isGroup ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
             <div class=""   >
-              <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" :index="index" :textSpan="textSpan" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" @update:plugin-value="pluginChangeValue(plugin,$event)" >
+              <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" :index="index" :text-span="textSpan" @update:plugin-value="pluginChangeValue(plugin,$event)" >
                 <b :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config?.main_plugin || isGroup) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </b>
               </component>
             </div>
-            <div class="" v-if="childPluginMap[readPluginValues(plugin)] != undefined " v-for="(child,childIndex) in childPluginMap[readPluginValues(plugin)]" :key="child.id">
-                <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" :index="childIndex" :textSpan="textSpan" v-model:pluginValue="pluginValues[readPluginValues(child)]">
+            <div v-for="(child,childIndex) in childPluginMap[readPluginValues(plugin)]" v-if="childPluginMap[readPluginValues(plugin)] != undefined " :key="child.id" class="">
+                <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" v-model:plugin-value="pluginValues[readPluginValues(child)]" :index="childIndex" :text-span="textSpan">
                   <b class="text-right ">{{  child?.display_config?.label || child?.name.charAt(0).toUpperCase() + child?.name.slice(1)  }}</b>
                 </component>
             </div>
@@ -64,7 +64,7 @@
 
           <div v-if="!isForResearch" >
             <div v-if="pluginSelected">
-              <div class=" grid grid-cols-[100px_auto] gap-3 gap-y-5"  v-if="nodesCount === 1">
+              <div v-if="nodesCount === 1"  class=" grid grid-cols-[100px_auto] gap-3 gap-y-5">
                 <b  :class="{'pt-2 text-right ': true , 'text-error': showErrorMessage }"> {{t('spanForm.missingWordsLabel')}} </b>
                 <InputNumber v-model="deletedNum" :placeholder="t('spanForm.missingWordsPlaceholder')" class="w-[250px]"/>
               </div>
@@ -112,9 +112,10 @@
 
     </div>
     <!-- MODALE D'ERREUR SUPERPOSÉE -->
-    <AtomDialogFilterGroup :visible="unauthorizedVirtualSpan"
+    <AtomDialogFilterGroup
+:visible="unauthorizedVirtualSpan"
                            :authorized-type-list="authorizedTypeList"
-                           @update:visible="v => unauthorizedVirtualSpan = false"></AtomDialogFilterGroup>
+                           @update:visible="v => unauthorizedVirtualSpan = false"/>
   </Dialog>
 </template>
 

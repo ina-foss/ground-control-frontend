@@ -1,13 +1,13 @@
 <template>
   <div>
     <Button
-      type="button"
       v-tooltip="label"
-      @click="toggle($event)"
+      type="button"
       aria-controls="overlay_menu"
       rounded
       class="border border-black bg-transparent"
       variant="text"
+      @click="toggle($event)"
     >
       <template #icon>
         <img

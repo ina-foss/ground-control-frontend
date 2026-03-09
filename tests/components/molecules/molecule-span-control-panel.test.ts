@@ -7,7 +7,7 @@ import AtomSpanTag from '~/components/molecules/spanControlPanel/AtomSpanTag.vue
 import {Select} from 'primevue'
 import { createI18n } from 'vue-i18n'
 
-let mock =vi.fn()
+const mock =vi.fn()
 const i18n = createI18n({
   legacy: false,
   locale: 'fr'

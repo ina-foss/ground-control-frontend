@@ -61,7 +61,7 @@ export default defineComponent({
 
     const isPlayerFocused = ref(false)
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
-        let index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
+        const index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
         index != -1 ? scrollToSegment({bestIndex: index}) : div.scrollIntoView({'behavior': 'smooth', 'block' : 'center'})
     }
     const handleSelection = () => {
@@ -266,7 +266,7 @@ export default defineComponent({
         bestIndex = event.bestIndex
         highlightSegment(event.bestIndex)
         if(!event.fromHistory) addTimecodeHistory(event.tcin ?? locals.value[event.bestIndex]?.tcin  )
-        let segmentPosition =   moleculeAnnotationRef.value?.listRefs[event.bestIndex].getBoundingClientRect().top
+        const segmentPosition =   moleculeAnnotationRef.value?.listRefs[event.bestIndex].getBoundingClientRect().top
         // Auto-scroll if the next segment is near the center of the screen
         // if the action comes from user, scroll every time
         if ((Math.abs(window.innerHeight/2 - segmentPosition)   < 200) || !event.fromHistory) {
@@ -446,7 +446,7 @@ export default defineComponent({
   }
 
   const navigateWithkeyboard = (param,action) => {
-    let elementWithTestClass  = getSelectedSegment();
+    const elementWithTestClass  = getSelectedSegment();
     if (bestIndex >= 0) {
       bestIndex = (elementWithTestClass && bestIndex < moleculeAnnotationRef.value?.listRefs.length - 1) ?
         bestIndex + param : bestIndex;

@@ -5,23 +5,23 @@
         <AccordionHeader class="!bg-white hover:!bg-white rounded !border-t-transparent !border-l-transparent !border-r-transparent ">Affichage</AccordionHeader>
         <AccordionContent class="!border-transparent">
           <div class="flex flex-col gap-[10px] text-title ">
-            <div class="flex justify-between items-center self-stretch py-1 " v-if="span != undefined">
+            <div v-if="span != undefined" class="flex justify-between items-center self-stretch py-1 ">
               <span>Span</span>
               <ToggleSwitch v-model="span" />
             </div>
-            <div class="flex justify-between items-center self-stretch py-1" v-if="timecode_bloc != undefined">
+            <div v-if="timecode_bloc != undefined" class="flex justify-between items-center self-stretch py-1">
               <span >TC bloc</span>
               <ToggleSwitch v-model="timecode_bloc" :disabled="timecodeDisabled" />
             </div>
-            <div class="flex justify-between items-center self-stretch py-1" v-if="bloc != undefined">
+            <div v-if="bloc != undefined" class="flex justify-between items-center self-stretch py-1">
               <span >Bloc</span>
               <ToggleSwitch v-model="bloc" />
             </div>
-            <div class="flex justify-between items-center self-stretch py-1" v-if="timecode_segment != undefined">
+            <div v-if="timecode_segment != undefined" class="flex justify-between items-center self-stretch py-1">
               <span >TC segment</span>
               <ToggleSwitch v-model="timecode_segment" />
             </div>
-            <div class="flex justify-between items-center self-stretch py-1" v-if="number_segment != undefined">
+            <div v-if="number_segment != undefined" class="flex justify-between items-center self-stretch py-1">
               <span >Numéro segment</span>
               <ToggleSwitch v-model="number_segment" />
             </div>

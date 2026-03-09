@@ -3,14 +3,15 @@
 
       <Tabs :value="0" scrollable class="card h-full rounded-b-lg !bg-white">
         <TabList >
-          <Tab  v-if="tabs.length > 0" v-for="(tab,index) in tabs" :key="index" :value="index" class="!bg-white">
+          <Tab  v-for="(tab,index) in tabs" v-if="tabs.length > 0" :key="index" :value="index" class="!bg-white">
             {{ tab.title }}
           </Tab>
           <Tab class="!bg-white" :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">Derniers Timecodes</Tab>
           <Tab v-if="transcriptions" class="!bg-white" :value="4">Résumé</Tab>
           <Tab v-if="transcriptions" class="!bg-white" :value="5">Phrases</Tab>
         </TabList>
-        <ScrollPanel class="h-full" :dt="{
+        <ScrollPanel
+class="h-full" :dt="{
       bar : {
         background: 'var(--primary-color)',
         size:'3px'
@@ -20,14 +21,14 @@
         }
     }">
       <TabPanels  class=" md:block flex-grow h-0 max-h-full">
-        <TabPanel v-if="tabs.length > 0" v-for="(tab,index) in tabs" :key="index" :value="index">
+        <TabPanel v-for="(tab,index) in tabs" v-if="tabs.length > 0" :key="index" :value="index">
             <AtomMarkdown :content="tab.text"/>
         </TabPanel>
         <TabPanel :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">
-          <AtomTimecodeList class="pb-4" :thumbnailUrl="data.media.player_parameters?.thumbnail_base_url"/>
+          <AtomTimecodeList class="pb-4" :thumbnail-url="data.media.player_parameters?.thumbnail_base_url"/>
         </TabPanel>
         <TabPanel v-if="transcriptions" :value="4">
-            <MoleculeTranscription ref="moleculeAnnotationRef" :transcriptions="transcriptions" :userAnnotations="userAnnotations" :status="status"  />
+            <MoleculeTranscription ref="moleculeAnnotationRef" :transcriptions="transcriptions" :user-annotations="userAnnotations" :status="status"  />
         </TabPanel>
         <TabPanel v-if="transcriptions" :value="5">
           <Carousel

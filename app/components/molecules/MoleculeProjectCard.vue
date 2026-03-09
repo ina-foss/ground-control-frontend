@@ -26,7 +26,7 @@
             />
             <Popover
               ref="menu"
-              appendTo="body"
+              append-to="body"
               class="p-2 shadow-md rounded-xl"
             >
               <div class="flex flex-col gap-2 text-sm">
@@ -54,17 +54,17 @@
                 "
                 src="/icons/icons-svg/icons-svg/trashIcon.svg"
                 alt="Trash Icon"
-              />
+              >
             </Button>
             <MoleculeDialogConfirm
               v-model:visible="deleteDialog"
               :title="t('project.deleteConfirmTitle')"
-              :cancelButton="{
+              :cancel-button="{
                 label: t('common.no'),
                 class:'!bg-[#ffffff] !text-primary',
                 size:'small'
               }"
-              :confirmButton="{
+              :confirm-button="{
                 label: t('common.yes'),
                 size: 'small'
               }"
@@ -113,7 +113,7 @@
           }}
         </div>
         <div v-if="(!project.tasks_id_to_annotate || project.tasks_id_to_annotate.length === 0) && !isAdmin" class="no-task-message pl-2 bg-white">
-          <span class="status-circle"></span>
+          <span class="status-circle"/>
           <div>
             <p class="font-bold">{{ t('project.noPendingTasks') }}</p>
             <p>{{ t('project.assignedTasksSoon') }}</p>
@@ -148,12 +148,12 @@
     <MoleculeDialogConfirm
       v-model:visible="finishDialog"
       :title="t('project.finishConfirmTitle')"
-      :cancelButton="{
+      :cancel-button="{
         label: t('common.no'),
         class:'!bg-[#ffffff] !text-primary',
         size:'small'
       }"
-      :confirmButton="{
+      :confirm-button="{
         label: t('common.yes'),
         size: 'small'
       }"
@@ -168,12 +168,12 @@
     <MoleculeDialogConfirm
       v-model:visible="archiveDialog"
       :title="t('project.archiveConfirmTitle')"
-      :cancelButton="{
+      :cancel-button="{
         label: t('common.no'),
         class:'!bg-[#ffffff] !text-primary',
         size:'small'
       }"
-      :confirmButton="{
+      :confirm-button="{
         label: t('common.yes'),
         size: 'small'
       }"

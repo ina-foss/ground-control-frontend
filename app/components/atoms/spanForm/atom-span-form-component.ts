@@ -13,7 +13,7 @@ export default defineNuxtComponent({
   components: {AtomDialogFilterGroup, AtomPluginItemslist},
   setup(props,{emit,expose}) {
 
-    let currentSpan = ref<AnySpan | undefined>()
+    const currentSpan = ref<AnySpan | undefined>()
     const { t } = useI18n()
     const textSpan=ref()
     const visible = ref()
@@ -66,12 +66,12 @@ export default defineNuxtComponent({
       else if( (plugin.display_config.main_plugin || isGroup.value) && ( event.length == 0 || event[0] == null)) showErrorMessage.value = true
     }
 
-    let nodes = ref<Nodes[]>([])
-    let prevNodes = ref<Nodes[]>([])
-    let nextNodes = ref<Nodes[]>([])
+    const nodes = ref<Nodes[]>([])
+    const prevNodes = ref<Nodes[]>([])
+    const nextNodes = ref<Nodes[]>([])
 
     const deleteLayout = ref(false)
-    let pluginSelected=ref('');
+    const pluginSelected=ref('');
 
     const extIdMap = computed(()=>{
       const newVal = pluginValues
@@ -145,7 +145,7 @@ export default defineNuxtComponent({
 
     function createGroup() {
       const spanId = spanArray.value.length
-      let spanGroup = {
+      const spanGroup = {
         plugins: _.cloneDeep(pluginValues),
         id : spanId,
         label: defaultLabel.value,

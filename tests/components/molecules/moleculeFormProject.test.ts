@@ -7,7 +7,7 @@ import MoleculeFormProject from '../../../app/components/molecules/MoleculeFormP
 import { flushPromises } from '@vue/test-utils';
 import { createI18n } from 'vue-i18n'
 
-let mockedProject = {title: "Project creation",
+const mockedProject = {title: "Project creation",
       description: "test",
       status: "draft",
       is_published: false,

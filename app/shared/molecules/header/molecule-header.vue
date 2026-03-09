@@ -26,17 +26,17 @@
       </div>
     </div>
     <div class="flex gap-3 justify-end w-full md:w-auto items-center">
-      <div class="flex items-center" v-for="(item, index) in componentsRight">
+      <div v-for="(item, index) in componentsRight" class="flex items-center">
         <component
           :is="item?.component"
           :key="'right' + index"
           v-bind="{ actionItem: item?.actionItem }"
         />
       </div>
-      <div @click="open = !open" class="md:hidden">
+      <div class="md:hidden" @click="open = !open">
         <i
           :class="`h-6 w-6 text-4xl ${open ? 'pi pi-times' : 'pi pi-bars'}`"
-        ></i>
+        />
       </div>
     </div>
   </div>

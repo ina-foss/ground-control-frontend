@@ -8,7 +8,7 @@
         <Step value="2">Données</Step>
       </StepList>
       <StepPanels>
-        <StepPanel value="1" v-slot="{ activateCallback }">
+        <StepPanel v-slot="{ activateCallback }" value="1">
             <div class="flex flex-col gap-4 justify-center min-w-[70vh] pr-24 pl-24">
               <div class="flex">
                 <label class="self-center w-24 pr-6">Titre</label>
@@ -32,10 +32,10 @@
                 <label class="self-center w-24 pr-4">Date de fin</label>
                 <Calendar
                   v-model="endDate"
-                  dateFormat="dd/mm/yy"
-                  showIcon
+                  date-format="dd/mm/yy"
+                  show-icon
                   class="input-box flex-auto"
-                  :minDate="new Date()"
+                  :min-date="new Date()"
                 />
               </div>
             </div>
@@ -50,12 +50,13 @@
             />
           </div>
         </StepPanel>
-        <StepPanel value="2" v-slot="{ activateCallback }" >
+        <StepPanel v-slot="{ activateCallback }" value="2" >
           <div class="grid grid-cols-1 w-[70vh] gap-3">
             <span class="text-slate-400 "> Télécharger des tâches </span>
-            <FileUpload chooseLabel="Télécharger"
-                        :multiple="true"
-                        ref="templateRef" accept="application/json" :show-upload-button=false :show-cancel-button="false"
+            <FileUpload
+ref="templateRef"
+                        choose-label="Télécharger"
+                        :multiple="true" accept="application/json" :show-upload-button=false :show-cancel-button="false"
                         invalid-file-type-message="Type invalide"  name="file[]" :pt="{
                   buttonbar: {
                     style: `z-index:20; padding-top: 10px; padding-bottom: 10px;`
@@ -122,7 +123,8 @@
 
           </div>
           <div class="flex justify-between pt-8">
-            <Button class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left"
+            <Button
+class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon-pos="left"
                     size="small" @click="activateCallback('1')"/>
             <Button
               class="button"
@@ -155,8 +157,8 @@ const { $handleApiError } = useNuxtApp()
 const toast = useToast()
 
 const templateRef = ref()
-let name = ref('')
-let instruction = ref('')
+const name = ref('')
+const instruction = ref('')
 const endDate = ref(null)
 const fileData = ref([])
 const deleteDialog = ref(false)
@@ -165,8 +167,8 @@ const onSelect = async (event) => {
   const reader = new FileReader();
   reader.onloadend = onReaderLoad;
   reader.readAsText(event.files[event.files.length - 1]);
-  if (event.files.length === fileData.length) {
-    fileData.pop();
+  if (event.files.length === fileData.value.length) {
+    fileData.value.pop();
     toast.add({
       life: 5000,
       severity: 'error',

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import AtomSearch from '@/components/atoms/search/AtomSearch'
-import { mount, VueWrapper } from '@vue/test-utils'
+import type { VueWrapper } from '@vue/test-utils';
+import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 
 describe('AtomSearch.vue', () => {

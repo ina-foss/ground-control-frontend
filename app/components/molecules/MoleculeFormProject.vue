@@ -22,7 +22,7 @@
               <div class="flex">
                 <label class="self-center basis-1/5 pr-4">{{ t('moleculeFormProject.form.title') }}</label>
                 <InputText v-model="title" :placeholder="t('moleculeFormProject.form.titlePlaceholder')" autocomplete="off" class=" input-box flex-auto custom-placeholder"/>
-                <InlineMessage class="input-box ml-3" v-if="errorVisible === true && !title">{{ t('moleculeFormProject.form.titleRequired') }}</InlineMessage>
+                <InlineMessage v-if="errorVisible === true && !title" class="input-box ml-3">{{ t('moleculeFormProject.form.titleRequired') }}</InlineMessage>
               </div>
               <div class="flex ">
                 <label class="self-center basis-1/5 pr-4">{{ t('moleculeFormProject.form.description') }}</label>
@@ -117,16 +117,16 @@
             <div class="flex justify-end pt-8">
               <Button class="button button-prev mx-3" outlined :label="t('actions.previous')" icon="pi pi-arrow-left" icon-pos="left" size="small" @click="activateCallback('2')"/>
               <Button
-                class="button"
-                icon="pi pi-check" icon-pos="left"
-                v-if="!project" :label="t('actions.create')"
+                v-if="!project"
+                class="button" icon="pi pi-check"
+                icon-pos="left" :label="t('actions.create')"
                 size="small"
                 @click="createProject"
               />
               <Button
-                class="button"
-                icon="pi pi-check" icon-pos="left"
-                v-else :label="t('actions.save')"
+                v-else
+                class="button" icon="pi pi-check"
+                icon-pos="left" :label="t('actions.save')"
                 size="small"
                 @click="updateProject"
               />
@@ -142,9 +142,8 @@
 
 
 import {AnnotationType, ProjectService, Status , StepService } from '~/api/generate';
-import {useRefreshStore} from '#imports';
+import {useRefreshStore, useI18n } from '#imports';
 import {useAuth} from '../../stores/auth';
-import { useI18n } from '#imports'
 
 const { t } = useI18n()
 const errorVisible = ref(true);
@@ -157,14 +156,14 @@ const translations = {
   pending: 'En attente',
   ended: 'Terminé'
 }
-let title = ref(project?.title || '')
-let description = ref(project?.description || '')
-let isPublished = ref(project?.is_published || false)
-let allowSkip = ref(project?.allow_skip || true)
-let emptyAnnotations = ref(project?.empty_annotations || true)
-let redundancy = ref(project?.steps[0].redundancy || 1)
-let completeness_rate = ref(project?.steps[0].completeness_rate || 100)
-let max_tasks_per_person = ref(project?.steps[0].max_tasks_per_person || 1)
+const title = ref(project?.title || '')
+const description = ref(project?.description || '')
+const isPublished = ref(project?.is_published || false)
+const allowSkip = ref(project?.allow_skip || true)
+const emptyAnnotations = ref(project?.empty_annotations || true)
+const redundancy = ref(project?.steps[0].redundancy || 1)
+const completeness_rate = ref(project?.steps[0].completeness_rate || 100)
+const max_tasks_per_person = ref(project?.steps[0].max_tasks_per_person || 1)
 const availableType = ref(Object.values(AnnotationType))
 const selectedType = ref(project?.steps ? project?.steps.map(type =>type.annotation_type) : [])
 const refreshStore = useRefreshStore()

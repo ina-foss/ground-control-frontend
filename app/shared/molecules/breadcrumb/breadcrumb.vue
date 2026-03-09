@@ -14,18 +14,18 @@
           class="flex items-center gap-1"
         >
           <i
-            :class="item.icon ?? 'pi pi-home'"
             v-if="item.icon || index === 0"
-          ></i>
+            :class="item.icon ?? 'pi pi-home'"
+          />
           <template v-if="index !== 0">
             {{ item.label }}
           </template>
         </NuxtLink>
-        <div class="flex items-center gap-1" v-else>
+        <div v-else class="flex items-center gap-1">
           <i
-            :class="item.icon ?? 'pi pi-home'"
             v-if="item.icon || index === 0"
-          ></i>
+            :class="item.icon ?? 'pi pi-home'"
+          />
           <span class="font-semibold">{{ item.label }}</span>
         </div>
 

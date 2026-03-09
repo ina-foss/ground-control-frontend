@@ -1,5 +1,9 @@
-import {mount, flushPromises, VueWrapper} from '@vue/test-utils'
+import type { VueWrapper} from '@vue/test-utils';
+import {mount, flushPromises} from '@vue/test-utils'
 import { vi } from 'vitest'
+
+import SilentRefresh from '@/pages/silent-refresh.vue'
+import {mountSuspended} from "@nuxt/test-utils/runtime";
 
 const renewTokenMock = vi.fn()
 const pushMock = vi.fn()
@@ -17,9 +21,6 @@ vi.mock('vue-router', () => ({
     push: pushMock
   })
 }))
-
-import SilentRefresh from '@/pages/silent-refresh.vue'
-import {mountSuspended} from "@nuxt/test-utils/runtime";
 
 describe('silent-refresh.vue', () => {
   beforeEach(async()=>{

@@ -4,13 +4,13 @@
       actionItem?.label
     }}</label>
     <Select
-      @change="handleChange"
       :size="actionItem?.size"
       :options="actionItem?.items"
       option-label="label"
       class="w-fit items-center h-[33px]"
       :placeholder="actionItem?.placeholder"
       show-clear
+      @change="handleChange"
     />
   </div>
 </template>

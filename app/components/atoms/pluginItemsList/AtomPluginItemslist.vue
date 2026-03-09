@@ -7,13 +7,13 @@
             v-for="option in visibleOptions"
             :key="option.label"
             v-tooltip="option.tooltip && option.tooltip !== '' ? option.tooltip : null"
-            :modelValue="isEqual(pluginValue?.ext_id, option?.ext_id)"
+            :model-value="isEqual(pluginValue?.ext_id, option?.ext_id)"
             class="h-[33px] rounded-[6px] "
             :class="{ 'selected': isEqual(pluginValue, option) }"
             :outlined="!isEqual(pluginValue?.ext_id,option?.ext_id)"
             :label="option.label"
-            :onLabel="option.label"
-            :offLabel="option.label"
+            :on-label="option.label"
+            :off-label="option.label"
             @click="() => pluginValue = isEqual(pluginValue?.ext_id, option?.ext_id) ? null : option"
         />
       </div>
@@ -43,13 +43,13 @@
           <ToggleButton
               v-for="option in group"
               :key="option.label"
-              :modelValue="isEqual(pluginValue, option)"
+              :model-value="isEqual(pluginValue, option)"
               class="h-[33px] w-fit rounded-[6px] "
               :class="{ 'selected': isEqual(pluginValue, option) }"
               :outlined="!isEqual(pluginValue,option)"
               :label="customizedLabel(option)"
-              :onLabel="customizedLabel(option)"
-              :offLabel="customizedLabel(option)"
+              :on-label="customizedLabel(option)"
+              :off-label="customizedLabel(option)"
               @click="() => pluginValue = isEqual(pluginValue, option) ? null : option"
           />
         </group-options-wrapper>

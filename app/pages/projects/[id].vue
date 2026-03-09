@@ -123,8 +123,8 @@
       :value="filteredProjects"
       breakpoint="300px"
       column-resize-mode="fit"
+      data-key="id"
       @cell-edit-complete="onCellEditComplete"
-      dataKey="id"
       @row-click="onRowClick"
     >
       <template #empty>
@@ -200,16 +200,17 @@
               :disabled="slotProps.data.status == Status.ARCHIVED"
               label="Créer une tâche"
               outlined
-              @click="stepCreate(slotProps.data.id)"
-                style="color: #0B7698 !important;
+              style="color: #0B7698 !important;
   border-color: #0B7698 !important;"
+                @click="stepCreate(slotProps.data.id)"
             />
             <div
               class="flex items-center cursor-pointer txt"
               :loading="loadingExport"
             >
-              <Button style="color: #0B7698 !important;
-  border-color: #0B7698 !important;" label="Exporter" iconPos="right" icon="pi pi-chevron-down" outlined @click.capture.stop="clickButtonMenu($event, slotProps.data)" />
+              <Button
+style="color: #0B7698 !important;
+  border-color: #0B7698 !important;" label="Exporter" icon-pos="right" icon="pi pi-chevron-down" outlined @click.capture.stop="clickButtonMenu($event, slotProps.data)" />
               <TieredMenu ref="buttonMenu" :model="buttonItems" :popup="true"  breakpoint="200px" />
             </div>
 
@@ -236,8 +237,8 @@
         >
           <DataTable
             v-model:filters="filters"
-            filterDisplay="row"
-            :globalFilterFields="['name']"
+            filter-display="row"
+            :global-filter-fields="['name']"
             :row-class="
               (rowData) =>
                 rowData.status === 'draft'
@@ -274,11 +275,11 @@
               </template>
               <template #body="{ data: nestedData }">
                   <p
-                    class="cursor-text"
                     v-tooltip="nestedData.status === 'draft'
                       ? `Soit sûr d'avoir la permission et activer la tâche pour la commencer`
                       : null
                   "
+                    class="cursor-text"
                 >
                   {{ nestedData.name }}
                 </p>
@@ -287,8 +288,8 @@
                 <InputText
                   v-model="filterModel.value"
                   type="text"
-                  @input="filterCallback()"
                   placeholder="Rechercher par titre ..."
+                  @input="filterCallback()"
                 />
               </template>
             </Column>
@@ -357,8 +358,8 @@
               class="txt"
               style="width: 100px"
               field="status"
-              filterField="status"
-              :showFilterMenu="false"
+              filter-field="status"
+              :show-filter-menu="false"
             >
               <template #body="{ data: nestedData }">
                 <Tag
@@ -381,11 +382,11 @@
                 <Dropdown
                   v-model="filterModel.value"
                   :options="statusOptions"
-                  :emptyMessage="'Aucune option disponible'"
-                  optionLabel="label"
-                  optionValue="value"
+                  :empty-message="'Aucune option disponible'"
+                  option-label="label"
+                  option-value="value"
                   placeholder="Toutes"
-                  showClear
+                  show-clear
                   class="w-full"
                   @change="filterCallback()"
                 />
@@ -412,7 +413,6 @@
                       height: 24px;
                       width: 24px;
                     "
-                    @click="handleRowClick(annotation.user_email)"
                     :style="{
                       backgroundColor: getColorForAnnotation(
                         annotation.annotation_status,
@@ -420,6 +420,7 @@
                         annotation.skipped_by
                       ),
                     }"
+                    @click="handleRowClick(annotation.user_email)"
                   />
                 </div>
               </template>
@@ -436,9 +437,9 @@
                 >
                   Création
                   <i
-                    class="pi pi-info-circle text-gray-500 cursor-help"
                     v-tooltip="'Date de création'"
-                  ></i>
+                    class="pi pi-info-circle text-gray-500 cursor-help"
+                  />
                 </span>
               </template>
               <template #body="slotProps">
@@ -463,9 +464,9 @@
                 >
                   Début
                   <i
-                    class="pi pi-info-circle text-gray-500 cursor-help"
                     v-tooltip="'Date début de traitement'"
-                  ></i>
+                    class="pi pi-info-circle text-gray-500 cursor-help"
+                  />
                 </span>
               </template>
               <template #body="slotProps">
@@ -482,9 +483,9 @@
             </Column>
             <Column
               field="expiration_date"
-              dataType="date"
+              data-type="date"
               style="width: 10rem"
-              :showFilterMenu="false"
+              :show-filter-menu="false"
             >
               <template #header>
                 <span
@@ -492,21 +493,21 @@
                 >
                   Fin
                   <i
-                    class="pi pi-info-circle text-gray-500 cursor-help"
                     v-tooltip="'Date de fin de traitement'"
-                  ></i>
+                    class="pi pi-info-circle text-gray-500 cursor-help"
+                  />
                 </span>
               </template>
               <template #body="{ data }">
                 <Calendar
-                  :modelValue="data.expiration_date && new Date(data.expiration_date)"
-                  dateFormat="dd/mm/yy"
-                  showIcon
+                  :model-value="data.expiration_date && new Date(data.expiration_date)"
+                  date-format="dd/mm/yy"
+                  show-icon
                   :disabled="!roleUpdateExpirationDate || data.status == Status.ARCHIVED"
                   class="w-full"
                   :invalid="data.expiration_date && new Date(data.expiration_date) < new Date()"
-                  @update:modelValue="(value) => onExpirationDateChange(value, data)"
-                  :minDate="new Date()"
+                  :min-date="new Date()"
+                  @update:model-value="(value) => onExpirationDateChange(value, data)"
                 />
               </template>
               <template #filter="{ filterModel, filterCallback }">
@@ -517,11 +518,11 @@
                     { label: 'Non expirée', value: 'active' },
                   ]"
                   placeholder="Toutes"
-                  optionLabel="label"
-                  optionValue="value"
-                  showClear
-                  @change="filterCallback()"
+                  option-label="label"
+                  option-value="value"
+                  show-clear
                   class="w-full"
+                  @change="filterCallback()"
                 />
               </template>
             </Column>
@@ -541,6 +542,7 @@
                 <div class="flex items-center gap-2">
                   <div>
                     <Button
+                      v-tooltip="'Consulter la tâche'"
                       severity="primary"
                       outlined
                       style="
@@ -551,7 +553,6 @@
                       "
                       text
                       rounded
-                      v-tooltip="'Consulter la tâche'"
                       @click="consultTask(nestedData.id)"
                     >
                       <img
@@ -560,7 +561,7 @@
                         style="
                           height: 30px;
                           width: 20px;"
-                      />
+                      >
                     </Button>
                   </div>
                   <div>
@@ -576,10 +577,10 @@
                   <div>
                     <Button
                       v-if="roleDeleteTask"
+                      v-tooltip="'Supprimer la tâche'"
                       severity="danger"
                       outlined
                       :disabled="nestedData.status == Status.ARCHIVED"
-                      @click="showDeleteTaskModal(nestedData)"
                       style="
                         height: 22px;
                         padding: 0;
@@ -588,7 +589,7 @@
                       "
                       text
                       rounded
-                      v-tooltip="'Supprimer la tâche'"
+                      @click="showDeleteTaskModal(nestedData)"
                     >
                       <img
                         src="/icons/icons-svg/icons-svg/trash-icon.svg"
@@ -600,7 +601,7 @@
                             sepia(72%) saturate(4640%) hue-rotate(337deg)
                             brightness(98%) contrast(91%);
                         "
-                      />
+                      >
                     </Button>
                   </div>
                 </div>
@@ -613,12 +614,12 @@
     <MoleculeDialogConfirm
       v-model:visible="deleteModal.visible"
       :title="`Voulez vous supprimer la tâche ${deleteModal.data.name?.slice(0, 17) != deleteModal.data.name ? deleteModal.data.name?.slice(0, 17) + '...' : deleteModal.data.name}  ? `"
-      :cancelButton="{
+      :cancel-button="{
         label: t('actions.cancel'),
         severity: 'secondary',
         variant: 'text'
       }"
-      :confirmButton="{
+      :confirm-button="{
         label: t('actions.delete'),
         icon: 'pi pi-times',
         severity: 'danger',
@@ -627,9 +628,9 @@
     />
     <MoleculeFormTask
       v-if="dialogVisible"
-      @refresh-data="refresh()"
       :dialog-visible="dialogVisible"
       :step-object="formStepClick"
+      @refresh-data="refresh()"
       @toggle-dialog="dialogVisible = false"
     />
   </div>

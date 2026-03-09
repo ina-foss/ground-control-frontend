@@ -2,13 +2,14 @@
   <AtomHelp class="fixed z-[1000]" />
 
   <div :class="`col-span-5 w-full flex justify-center relative transition-all`"  >
-    <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-37.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : 'Tâche Terminée ✅' " ></span>
+    <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-37.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : 'Tâche Terminée ✅' " />
     <div :class="`${options.timecode_segment || options.number_segment ? 'w-full' : 'w-fit'} relative  justify-center flex flex-row  h-0 min-h-full transition-all`">
     <div class="h-full  left-0 top-0 transition-all  ">
-      <AtomProgressBar class="xs:sticky top-0 transition-all"  :colors="colors" :topics="topics" :topicList="topicList" :totalLength="locals.length" @progress-bar-jump="jumpToTopic($event)" />
+      <AtomProgressBar class="xs:sticky top-0 transition-all"  :colors="colors" :topics="topics" :topic-list="topicList" :total-length="locals.length" @progress-bar-jump="jumpToTopic($event)" />
     </div>
     <div class="overflow-y-clip overflow-visible h-full flex-grow flex justify-center   ">
-    <ScrollPanel class="h-full pr-2 overflow-x-visible "
+    <ScrollPanel
+class="h-full pr-2 overflow-x-visible "
       :dt="{
       bar : {
         background: 'var(--primary-color)',
@@ -35,9 +36,9 @@
           :index="index"
           :phrase="phrase"
           :topics="topics"
-          :topicList="topicList"
-          :segmentationRefs="segmentationRefs"
-          :tcOffset="tcOffset"
+          :topic-list="topicList"
+          :segmentation-refs="segmentationRefs"
+          :tc-offset="tcOffset"
           :transcriptions="transcriptions"
           @dragging-start="() => { if(isAnnotationEditable) dragging.start = index}"
           @dragging-end="() => { if(isAnnotationEditable) dragging.end = index}"

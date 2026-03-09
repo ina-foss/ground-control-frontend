@@ -2,10 +2,11 @@
   <div>
     <div class="fixed bottom-5 right-5 !bg-primary !border-primary text-white rounded-full">
       <Button @click="visibleRight = true" >
-        <img style="height:14px;width:14px;filter: invert(1);" :src="helpIcon" alt="help icon" />
+        <img style="height:14px;width:14px;filter: invert(1);" :src="helpIcon" alt="help icon" >
       </Button>
     </div>
-    <Drawer v-model:visible="visibleRight" header="Raccourcis clavier" position="right"
+    <Drawer
+v-model:visible="visibleRight" header="Raccourcis clavier" position="right"
              class="shadow-xl rounded-lg border border-gray-300 "  :style="{ height: '75vh', width:'fit-content', marginRight: '30px' }">
 
         <ul class="-m-4 my-2">

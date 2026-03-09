@@ -2,7 +2,8 @@
   <molecule-span-wrapper class="col-span-8 flex">
     <div :class="` flex flex-col h-full relative `">
       <div class="grow h-0 flex justify-center relative overflow-visible ">
-        <ScrollPanel class="h-full pr-2 overflow-x-visible "
+        <ScrollPanel
+class="h-full pr-2 overflow-x-visible "
           :dt="{
           bar : {
             background: 'var(--primary-color)',
@@ -28,7 +29,8 @@
                   <Tab value="span">Spans</Tab>
                   <Tab value="parameters">Paramètres</Tab>
                 </TabList>
-                <ScrollPanel class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
+                <ScrollPanel
+class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
       bar : {
         background: 'var(--primary-color)',
         size:'5px'

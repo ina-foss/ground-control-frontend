@@ -1,5 +1,4 @@
-import { defineComponent } from 'vue'
-import { inject } from 'vue';
+import { defineComponent, inject  } from 'vue'
 import { DisplayZone, PluginService } from "~/api/generate";
 import type { PluginWithIdDto } from '~/api/generate'
 import type { PropType } from 'vue'

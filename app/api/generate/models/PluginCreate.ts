@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do no edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { ConfigData } from './ConfigData';
 import type { DisplayConfig } from './DisplayConfig';
 import type { DisplayZone } from './DisplayZone';

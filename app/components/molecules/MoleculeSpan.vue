@@ -5,8 +5,9 @@
         <AtomSearch class='hidden'  :spans="spanArray" />
       </div>
       <div class="grow h-0 flex justify-center relative overflow-visible ">
-        <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-33.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : state == Status.DONE ? 'Tâche Terminée ✅ ' : 'Mode Lecture 📖' " ></span>
-        <ScrollPanel class="h-full pr-2 overflow-x-visible "
+        <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-33.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : state == Status.DONE ? 'Tâche Terminée ✅ ' : 'Mode Lecture 📖' " />
+        <ScrollPanel
+class="h-full pr-2 overflow-x-visible "
           :dt="{
           bar : {
             background: 'var(--primary-color)',
@@ -14,7 +15,7 @@
           },
         }">
           <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col w-fit" >
-            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :playerTime="playerTime"  @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
+            <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :player-time="playerTime"  @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
           </div>
           <div v-else>
             <div
@@ -35,7 +36,8 @@
                   <Tab value="span">Spans</Tab>
                   <Tab value="parameters">Paramètres</Tab>
                 </TabList>
-                <ScrollPanel class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
+                <ScrollPanel
+class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
       bar : {
         background: 'var(--primary-color)',
         size:'5px'
@@ -47,8 +49,8 @@
                 <TabPanels class="!bg-secondary  w-full !pl-0 !pb-2 flex-1">
                   <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3">
                     <MoleculeSpanControlPanel
-                    :is-annotation-editable="isAnnotationEditable"
-                    ref="moleculeSpanControlPanelRef"/>
+                    ref="moleculeSpanControlPanelRef"
+                    :is-annotation-editable="isAnnotationEditable"/>
                   </TabPanel>
           <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
                       <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">

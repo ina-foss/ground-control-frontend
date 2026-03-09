@@ -1,6 +1,6 @@
-import { type ITask } from '~/shared/model/task.model';
+import type { ITask } from '~/shared/model/task.model';
 
-import { type PromptType } from '~/shared/model/enumerations/prompt-type.model';
+import type { PromptType } from '~/shared/model/enumerations/prompt-type.model';
 export interface IPrompt {
   id?: number;
   name?: string | null;

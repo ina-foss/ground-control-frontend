@@ -40,13 +40,13 @@ export default defineComponent({
   emits: ['update:visible', 'cancel', 'confirm'],
   methods: {
     handleCancel() {
-      this.$emit('update:visible', false)
       this.$emit('cancel')
+      this.$emit('update:visible', false)
     },
 
     handleConfirm() {
-      this.$emit('update:visible', false)
       this.$emit('confirm')
+      this.$emit('update:visible', false)
     },
   },
 });

@@ -7,7 +7,7 @@ import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
 import {TaskService} from '../../app/api/generate';
 
 
-let mockedProjectView = ref({
+const mockedProjectView = ref({
   "title": "Project Auto-summary",
   "description": "",
   "status": "draft",

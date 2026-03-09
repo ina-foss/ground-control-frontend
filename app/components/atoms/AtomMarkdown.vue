@@ -1,5 +1,5 @@
 <template>
-  <div v-safe-html="parsedMarkdown" class="prose dark:prose-invert prose-sm prose-h1:text-sm prose-p:text-sm prose-a:text-sm prose-lg w-full m-0"></div>
+  <div v-safe-html="parsedMarkdown" class="prose dark:prose-invert prose-sm prose-h1:text-sm prose-p:text-sm prose-a:text-sm prose-lg w-full m-0"/>
 </template>
 
 <script>

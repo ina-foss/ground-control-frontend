@@ -1,6 +1,6 @@
-import { type ITask } from '~/shared/model/task.model';
+import type { ITask } from '~/shared/model/task.model';
 
-import { type ParameterType } from '~/shared/model/enumerations/parameter-type.model';
+import type { ParameterType } from '~/shared/model/enumerations/parameter-type.model';
 export interface IParameter {
   id?: number;
   key?: string | null;

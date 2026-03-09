@@ -1,13 +1,13 @@
 <template>
   <Dialog
     :visible="visible"
-    @update:visible="$emit('update:visible', $event)"
     modal
     :closable="true"
     class="bg-white rounded-md"
     :style="{ width: '35rem' }"
+    @update:visible="$emit('update:visible', $event)"
   >
-    <template #header v-if="title">
+    <template v-if="title" #header>
       <h3 class="text-lg font-semibold text-gray-800">
         {{ title }}
       </h3>

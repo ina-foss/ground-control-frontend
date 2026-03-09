@@ -8,7 +8,7 @@ import { Dialog, Popover } from 'primevue';
 import { createI18n } from 'vue-i18n'
 import { reactive } from 'vue'
 
-let mockedProject = {
+const mockedProject = {
   title: "Project creation",
   description: "test",
   status: "draft",

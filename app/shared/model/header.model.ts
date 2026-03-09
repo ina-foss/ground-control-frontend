@@ -1,4 +1,4 @@
-import { ActionTheme, ActionType, ActionVariant, ButtonSize } from "./enumerations/header-type.model";
+import type { ActionTheme, ActionType, ActionVariant, ButtonSize } from "./enumerations/header-type.model";
 
 export type ActionItem = {
   label: string;

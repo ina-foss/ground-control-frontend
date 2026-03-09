@@ -1,4 +1,4 @@
-import { type ITask } from '~/shared/model/task.model';
+import type { ITask } from '~/shared/model/task.model';
 
 export interface ITaskRequest {
   id?: number;

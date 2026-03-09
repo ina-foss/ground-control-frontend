@@ -1,8 +1,8 @@
-import { type IDeploymentModel } from '~/shared/model/deployment-model.model';
-import { type INamespace } from '~/shared/model/namespace.model';
+import type { IDeploymentModel } from '~/shared/model/deployment-model.model';
+import type { INamespace } from '~/shared/model/namespace.model';
 
-import { type TaskType } from '~/shared/model/enumerations/task-type.model';
-import { type ToolStatus } from '~/shared/model/enumerations/tool-status.model';
+import type { TaskType } from '~/shared/model/enumerations/task-type.model';
+import type { ToolStatus } from '~/shared/model/enumerations/tool-status.model';
 export interface ITask {
   id?: number;
   name?: string;

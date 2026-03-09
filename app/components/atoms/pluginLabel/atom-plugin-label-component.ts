@@ -16,8 +16,8 @@ export default defineComponent({
     const titleLabel = computed<string|undefined>(()=> topicList.value[topicIndex.value].labels.filter((label)=>typeof label === "string")[0] )
 
     function editTitle(newTitle: string){
-      let arrayLabel: Array<any> = topicList.value[topicIndex.value].labels
-      let index = arrayLabel.findIndex((label)=> typeof label === "string")
+      const arrayLabel: Array<any> = topicList.value[topicIndex.value].labels
+      const index = arrayLabel.findIndex((label)=> typeof label === "string")
       arrayLabel[index] = newTitle
     }
 

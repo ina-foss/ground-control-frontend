@@ -12,10 +12,10 @@
     <div v-else class="w-[75%]">
       <div class="relative w-full">
         <InputText v-model="selectedSearch" type="text" class="pr-10 w-full" style="height:30px" />
-        <i v-if="selectedSearch"
+        <i
+v-if="selectedSearch"
            class="pi pi-times absolute right-3 top-1/3 transform -translate-y-1/3 cursor-pointer text-gray-500"
-           @click="clear()">
-        </i>
+           @click="clear()"/>
       </div>
     </div>
 

@@ -8,7 +8,7 @@ import AtomTaskComment from '../atoms/AtomTaskComment.vue';
 import atomVideoOption from '../atoms/atom-video-option.vue';
 import _ from 'lodash'
 import AtomTopicList from "~/components/atoms/topicList/AtomTopicList.vue";
-import {Status} from '~/api/generate/';
+import type {Status} from '~/api/generate/';
 import AtomHelp from "../atoms/AtomHelp.vue";
 
 
@@ -160,7 +160,7 @@ export default defineComponent({
 
 
     const generateTopicNumber = (): number => {
-      let result = _.max(topics) + 1 || 1
+      const result = _.max(topics) + 1 || 1
       const randomColor = computeColor(result).hex
       colors.push(randomColor)
       return result

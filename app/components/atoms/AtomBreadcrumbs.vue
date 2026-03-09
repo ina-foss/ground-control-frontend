@@ -38,7 +38,7 @@ const refresh = useRefreshStore()
 const { getData } = storeToRefs(refresh)
 
 const newBreadCrumbs = computed(()=>{
-  let bd = [home.value]
+  const bd = [home.value]
   if (getData.value?.step){
     bd.push({
       label: getData.value.step.project.title,

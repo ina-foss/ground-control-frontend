@@ -1,18 +1,18 @@
 <template>
   <draggable
-      :modelValue="blocks"
-      @update:modelValue="blocks = $event"
+      :model-value="blocks"
       handle=".drag-handle"
       item-key="id"
       animation="200"
       class="max-w-full w-full h-fit"
+      @update:model-value="blocks = $event"
   >
     <template #item="{ element }" class="max-w-full w-full h-fit">
       <div :key="element.id" class="max-w-full w-full h-fit">
         <!-- Bloc "span" -->
         <div v-if="element.key === 'span'" class="draggable-section">
           <div class="flex flex-col gap-2">
-              <Panel toggleable v-model:collapsed="panelCollapseController.spanList" class="[&_.p-panel-header]:!bg-transparent [&_.p-panel-content]:!p-0">
+              <Panel v-model:collapsed="panelCollapseController.spanList" toggleable class="[&_.p-panel-header]:!bg-transparent [&_.p-panel-content]:!p-0">
               <template #toggleicon={collapsed}>
                 <Button :icon="collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up'" severity="secondary" rounded text />
               </template>
@@ -39,7 +39,7 @@
                             :show-clear="true"
                             :options="createdPluginOptionsList"
                             option-label="label"
-                            emptyMessage="Tous"
+                            empty-message="Tous"
                         />
                       </span-filter>
                     </span-filter-wrapper>
@@ -74,11 +74,12 @@
                             @contextmenu="openSpanMenu($event, span)"
                         />
                         <span class="self-center flex-1 overflow-hidden truncate">
-                        <span class="inline-block max-w-full truncate pl-2"
-                              v-tooltip.right="{
+                        <span
+v-tooltip.right="{
                               value: span?.label ?? extractTextFromSpanNodes(span?.nodes),
                               showDelay: 300,
-                              appendTo: 'body'}">
+                              appendTo: 'body'}"
+                              class="inline-block max-w-full truncate pl-2">
                           {{capitalizeFirstLetter(span?.label ?? extractTextFromSpanNodes(span?.nodes))}}
                         </span>
                         </span>
@@ -103,7 +104,7 @@
         <!-- Bloc "currentGroup" -->
         <div v-if="element.key === 'currentGroup' && isForResearch && mainGroupPluginId" class="draggable-section">
           <div>
-            <Panel toggleable v-model:collapsed="panelCollapseController.currentGroup" class="[&_.p-panel-header]:!bg-transparent" >
+            <Panel v-model:collapsed="panelCollapseController.currentGroup" toggleable class="[&_.p-panel-header]:!bg-transparent" >
               <template #toggleicon={collapsed}>
                 <Button :icon="collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up'" severity="secondary" rounded text />
               </template>
@@ -112,7 +113,8 @@
                   <group-title-wrapper class="flex items-center gap-3">
                     <div class="drag-handle pr-3 hover:text-hover">:::</div>
                     <b class="text-xl">Groupe Courant</b>
-                    <AtomSpanTag class="text-xl justify-content-end ml-auto" v-if="groupIsSelected"
+                    <AtomSpanTag
+v-if="groupIsSelected" class="text-xl justify-content-end ml-auto"
                       :plugin-id="mainGroupPluginId" :plugin-value="selectedGroup?.plugins[mainGroupPluginIndex]"
                       :text="selectedGroup?.plugins[mainGroupPluginIndex]?.[0]?.label" />
                   </group-title-wrapper>
@@ -132,26 +134,28 @@
                             :text="spanNone?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"
                             expandable
                         />
-                        <span></span>
+                        <span/>
                       </span-none-content>
 
                     <span
                       :class="['pi pi-th-large text-2xl cursor-pointer pt-1', layout == 'grid' ? 'opacity-100' : 'opacity-50']"
-                      @click.stop="switchGroupLayout('grid')"></span>
+                      @click.stop="switchGroupLayout('grid')"/>
                     <span
                       :class="['pi pi-list text-2xl cursor-pointer pt-1', layout == 'list' ? 'opacity-100' : 'opacity-50']"
-                      @click.stop="switchGroupLayout('list')"></span>
-                    <div @click.stop="openVirtualSpanForm" class="flex items-center gap-1 cursor-pointer">
-                      <span class="pi pi-plus-circle text-xl"></span>Span virtuel
+                      @click.stop="switchGroupLayout('list')"/>
+                    <div class="flex items-center gap-1 cursor-pointer" @click.stop="openVirtualSpanForm">
+                      <span class="pi pi-plus-circle text-xl"/>Span virtuel
                     </div>
                   </layout-button-wrapper>
                 </div>
               </template>
-              <div :class="{ 'grid transition-all duration-300 overflow-hidden': true }"
+              <div
+:class="{ 'grid transition-all duration-300 overflow-hidden': true }"
                 :style="{ 'grid-template-rows': groupIsSelected ? '1fr' : '0fr' }">
                 <selected-group-content v-show="selectedGroup" :style="{ 'min-height': 0 }">
                   <role-wrapper class="grid" :style="`grid-template-columns: ${groupLayoutSytle};`">
-                    <div v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories"
+                    <div
+v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories"
                       :key="category" class="p-2 border-surface-200 text-center min-w-0 flex flex-col gap-3">
                       <role-title-wrapper class="flex justify-center relative">
                         <role-span-title class="text-center font-bold">{{ category.label }}</role-span-title>
@@ -164,17 +168,19 @@
                           <group-linked-span
                             v-for="span in selectedGroup?.spans.filter(span => isEqual(span.role, category)).sort((a, b) => unixToTimestamp(spanArray[a.spanId]?.tcin) - unixToTimestamp(spanArray[b.spanId]?.tcin))"
                             :key="span?.spanId" class="flex justify-between items-center max-w-full span-tag min-w-0">
-                            <AtomSpanTag :plugin-id="mainPluginId"
-                              :plugin-value="spanArray[span.spanId]?.plugins?.[mainPluginIndex]"
-                              v-tooltip.top="{
+                            <AtomSpanTag
+v-tooltip.top="{
                               value: spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value=>value.label).join(', ') || 'Aucun'
                               ,
                               showDelay: 300,
                               appendTo: 'body'}"
+                              :plugin-id="mainPluginId"
+                              :plugin-value="spanArray[span.spanId]?.plugins?.[mainPluginIndex]"
                               :text="spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value => value.label).join(', ')"
                                          @contextmenu="openVirtualSpanMenu($event, span)"
                                          @click="onSpanClick(spanArray[span.spanId])"/>
-                            <span class="pi pi-trash hover:bg-disabled rounded-full p-1"
+                            <span
+class="pi pi-trash hover:bg-disabled rounded-full p-1"
                               @click="unlinkSpan(span, selectedGroup)" />
                           </group-linked-span>
                         </role-dropzone>
@@ -190,7 +196,7 @@
         <!-- Bloc "groupsList" -->
         <div v-if="element.key === 'groupsList' && isForResearch && mainGroupPluginId" class="draggable-section">
           <div class="flex flex-col">
-              <Panel toggleable v-model:collapsed="panelCollapseController.groupList" class="[&_.p-panel-header]:!bg-transparent">
+              <Panel v-model:collapsed="panelCollapseController.groupList" toggleable class="[&_.p-panel-header]:!bg-transparent">
               <template #toggleicon={collapsed}>
                 <Button :icon="collapsed ? 'pi pi-chevron-down' : 'pi pi-chevron-up'" severity="secondary" rounded text />
               </template>
@@ -235,8 +241,8 @@
                 </template>
                 <div class="flex flex-col gap-3">
                   <group-wrapper
-                      :key="group.id"
                       v-for="(group,index) in sortedVisibleGroupArray"
+                      :key="group.id"
                       :class="{'hover:bg-primary-100 cursor-pointer p-2 rounded-md flex items-center gap-2': true, 'border-2 bg-surface-100 border-title font-semibold': newFocus== group.id}"
                       @click="handleGroupClick(group.id)"
                   >
@@ -256,31 +262,32 @@
                   <!-- DELETE GROUP DIALOG -->
                   <MoleculeDialogConfirm
                       v-model:visible="deleteDialogVisible"
-                      @update:visible="(value) => { if (!value) groupDeleted = null }"
                       :title="t('spanForm.deleteGroupConfirmTitle')"
                       :message="t('spanForm.deleteGroupConfirmMessage')"
-                      :withExclamation="true"
-                      :cancelButton="{
+                      :with-exclamation="true"
+                      :cancel-button="{
                         label: t('actions.cancel'),
                         icon: 'pi pi-times',
                         severity: 'primary',
                         outlined: true,
                       }"
-                      @cancel="handleCancelRemoveGroup"
-                      :confirmButton="{
+                      :confirm-button="{
                         label: t('actions.confirm'),
                         icon: 'pi pi-check',
                         severity: 'primary',
                       }"
+                      @update:visible="(value) => { if (!value) groupDeleted = null }"
+                      @cancel="handleCancelRemoveGroup"
                       @confirm="handleRemoveGroup"
                   />
 
                   <!-- ADD VIRTUAL SPAN DIALOG-->
                   <AtomSpanForm ref="spanFormRef" @new-group="focusGroup($event) & showPanel('currentGroup','groupList') " />
                   <!-- UNAUTHORIZED SPAN DIALOG -->
-                  <AtomDialogFilterGroup :visible="!!unauthorizedSpanDropped"
+                  <AtomDialogFilterGroup
+:visible="!!unauthorizedSpanDropped"
                                          :authorized-type-list="authorizedGroupList"
-                                         @update:visible="(value) => { if (!value) unauthorizedSpanDropped = null }"></AtomDialogFilterGroup>
+                                         @update:visible="(value) => { if (!value) unauthorizedSpanDropped = null }"/>
                 </div>
               </Panel>
           </div>

@@ -6,7 +6,7 @@
 
         <div v-if="thumbnailUrl !=''" class="flex items-center h-full  flex-grow-0 ">
           <Skeleton   v-show="!isLastImageLoaded && index == getHistory.length-1" width="88px" height="100%"  />
-          <img :src="`${newThumbnailUrl}?width=320&start=${unixToTimestamp(timecode)}`" class=" max-h-full   rounded-md" @load="showImage()" alt="thumbnail image of the corresponding timecode" >
+          <img :src="`${newThumbnailUrl}?width=320&start=${unixToTimestamp(timecode)}`" class=" max-h-full   rounded-md" alt="thumbnail image of the corresponding timecode" @load="showImage()" >
         </div>
 
         <span class=""> {{ timestampToUnix(unixToTimestamp(timecode)) }}</span>
