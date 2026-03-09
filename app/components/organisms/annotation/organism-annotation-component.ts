@@ -364,7 +364,10 @@ export default defineComponent({
    onMounted(()=>{
     autoSaveInterval = setInterval(() => {
       const lastAutoSave = new Date().toLocaleTimeString('fr-FR')
-      spansChanged.value && handleSubmit({ showToast: true, message:  t('annotation.lastAutoSave', { time :lastAutoSave }) })
+      if(spansChanged.value){
+        handleSubmit({ showToast: true, message:  t('annotation.lastAutoSave', { time :lastAutoSave }) })
+        spansChanged.value = false
+      }
     }, 60 * 1000)
 
     window.addEventListener("keydown", globalKeydown);

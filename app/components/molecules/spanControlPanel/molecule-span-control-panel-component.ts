@@ -11,6 +11,7 @@ import {useI18n} from "#imports";
 export default defineComponent({
   name:"MoleculeSpanControlPanel",
   components: {MoleculeDialogConfirm, AtomDialogFilterGroup, AtomSpanForm, AtomSpanTag,draggable},
+  emits: ['update:spansChanged'],
   props: {
     isAnnotationEditable: {
       type: Boolean,
@@ -212,6 +213,7 @@ export default defineComponent({
         if(removeId >= 0) spanArray.value[removeId] = undefined
         groupDeleted.value = null
         newFocus.value = undefined
+        emit('update:spansChanged', true)
       }
     }
 
@@ -245,11 +247,13 @@ export default defineComponent({
           }
         }
       }
+      emit('update:spansChanged', true)
     }
 
     function unlinkSpan (span:{spanId : number | string, role: {value : string, label: string } }, group: SpanGroup,){
       if(span && group){
         _.remove(group.spans,groupSpan => groupSpan == span )
+        emit('update:spansChanged', true)
       }
     }
 
@@ -274,6 +278,7 @@ export default defineComponent({
         selectedGroup:selectedGroup.value,
         mainGroupPluginIndex:mainGroupPluginIndex.value,
       })
+      emit('update:spansChanged', true)
     }
 
     function openGroupForm() {

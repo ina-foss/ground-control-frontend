@@ -48,6 +48,8 @@ function createSpanService (){
   const defaultLabel = ref()
   const deletedNum=ref<number>()
   const spanForm = ref()
+  const spansChanged = ref(false)
+
   const contextMenuOptions = ref([{label:  t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:t('contextMenu.editBounds'), command:(event)=>showDragPin(event)},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
 
   const contextControlPanelMenuOptions = ref([{label: t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,suppression: true}) }])
@@ -509,6 +511,7 @@ function createSpanService (){
         rightDragPin.appendChild(visualPin)
         span.appendChild(rightDragPin)
       }
+      spansChanged.value = true
     })
 
     originalEvent.stopPropagation()
@@ -710,10 +713,15 @@ function createSpanService (){
     if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
+  
+  const resetSpansChanged = () => {
+    spansChanged.value = false
+  }
 
   return{
     focusGroup, recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling, deleteSpan, loadSpan, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
-    affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,hideDragPin,capitalizeFirstLetter
+    affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,hideDragPin, spansChanged, resetSpansChanged,
+    capitalizeFirstLetter
   }
 }
 

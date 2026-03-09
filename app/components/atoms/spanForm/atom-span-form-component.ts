@@ -8,9 +8,9 @@ import AtomDialogFilterGroup from "~/components/atoms/dialogFilterGroup/atom-dia
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
-  emits:['new-group'],
   methods: {isEqual},
   components: {AtomDialogFilterGroup, AtomPluginItemslist},
+  emits:['new-group','update:spansChanged'],
   setup(props,{emit,expose}) {
 
     const currentSpan = ref<AnySpan | undefined>()
@@ -199,6 +199,7 @@ export default defineNuxtComponent({
       virtualSpanCategory.value = false
       defaultLabel.value=null
       spanArray.value[currentSpan.value.id] = currentSpan.value
+      
     }
 
     /**
@@ -235,6 +236,7 @@ export default defineNuxtComponent({
           else {
           createSpan()
         }
+          emit('update:spansChanged', true)
           close()
       }
     }

@@ -25,7 +25,7 @@ class="h-full pr-2 overflow-x-visible "
                 {{ word.data.text[0] }}
             </div>
           </div>
-          <AtomSpanForm ref="spanForm" />
+          <AtomSpanForm ref="spanForm" @update:spansChanged="$emit('update:spansChanged', $event)" />
           <ContextMenu v-if="isAnnotationEditable" ref="spanMenu" :model="contextMenuOptions"  />
         </ScrollPanel>
       </div>
@@ -50,7 +50,8 @@ class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
                   <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3">
                     <MoleculeSpanControlPanel
                     ref="moleculeSpanControlPanelRef"
-                    :is-annotation-editable="isAnnotationEditable"/>
+                    :is-annotation-editable="isAnnotationEditable"
+                    @update:spansChanged="$emit('update:spansChanged', $event)"/>
                   </TabPanel>
           <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
                       <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">

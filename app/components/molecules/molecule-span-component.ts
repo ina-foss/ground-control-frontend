@@ -38,16 +38,16 @@ export default defineComponent({
       }, 50);
     })
 
-
-    const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
+    const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM, spansChanged, resetSpansChanged} = useSpanService()
     const {pluginList } = storeToRefs(usePluginStore())
-
     const moleculeSpanControlPanelRef = ref()
-
-
-    watch(spanArray, () => {
-      emit('update:spansChanged', true)
-    }, { deep: true })
+    
+    watch(spansChanged, (val) => {
+      if (val) {
+        emit('update:spansChanged', true)
+        resetSpansChanged()
+      }
+    })
 
     const blockArray = ref<HTMLDivElement|null>(null)
     const listSegment = computed(() => blockArray.value?.children)
@@ -124,7 +124,7 @@ export default defineComponent({
       moleculeSpanControlPanelRef,
       focusGroup,
       handleWordClick,
-      playerTime
+      playerTime,
     }
 
   }
