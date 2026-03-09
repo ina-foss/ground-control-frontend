@@ -199,7 +199,7 @@ export default defineNuxtComponent({
       virtualSpanCategory.value = false
       defaultLabel.value=null
       spanArray.value[currentSpan.value.id] = currentSpan.value
-      
+
     }
 
     /**
@@ -207,7 +207,13 @@ export default defineNuxtComponent({
      */
     function handleConfirmationButton (){
       if(currentSpan.value) currentSpan.value.plugins = _.cloneDeep(pluginValues)
-      if (
+      showErrorMessage.value = false
+
+      // When delete modal, don't check for validation
+      if (deleteLayout.value) {
+        deleteSpan(currentSpan.value)
+      }
+      else if (
         //validation for virtual span case (check every plugin in the form with label)
         (isVirtual.value && (!virtualSpanCategory.value ||  !defaultLabel.value) )
        ||
@@ -223,12 +229,11 @@ export default defineNuxtComponent({
         // validation for deletedNum when isForResearch is false (with suppression plugin selected)
         (!isForResearch.value && childPluginMap.value &&  pluginSelected.value !== '' && (nodesCount.value > 1
           || !deletedNum.value || deletedNum.value === 0))
-      ) showErrorMessage.value = true
+      ) {
+        showErrorMessage.value = true
+      }
       else{
-        showErrorMessage.value = false
-        if (deleteLayout.value) {
-          deleteSpan(currentSpan.value)
-        } else if (isGroup.value) {
+        if (isGroup.value) {
           createGroup()
         } else if(isVirtual.value){
           createSpanVirtuel()
@@ -239,6 +244,9 @@ export default defineNuxtComponent({
           emit('update:spansChanged', true)
           close()
       }
+
+      // Close the modal if no error
+      if(!showErrorMessage.value) close()
     }
 
     /**
