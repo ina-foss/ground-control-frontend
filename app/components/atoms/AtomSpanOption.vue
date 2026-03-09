@@ -13,11 +13,7 @@
               <span >TC bloc</span>
               <ToggleSwitch v-model="timecode_bloc" :disabled="timecodeDisabled" />
             </div>
-            <div v-if="bloc != undefined" class="flex justify-between items-center self-stretch py-1">
-              <span >Bloc</span>
-              <ToggleSwitch v-model="bloc" />
-            </div>
-            <div v-if="timecode_segment != undefined" class="flex justify-between items-center self-stretch py-1">
+            <div class="flex justify-between items-center self-stretch py-1" v-if="timecode_segment != undefined">
               <span >TC segment</span>
               <ToggleSwitch v-model="timecode_segment" />
             </div>

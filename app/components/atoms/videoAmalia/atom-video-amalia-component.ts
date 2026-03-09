@@ -38,6 +38,28 @@ export default defineComponent({
     const {unixToTimestamp} = $application
     const {getHistory, consumeTimecode} = useTimecodeHistory()
 
+    const categories = ref([]);
+    const selectedCategories = ref([]);
+
+
+    let amaliaOptionPM = usePersistence<typeof selectedCategories.value>(
+      'ground-control-amalia-preference',
+      selectedCategories.value,
+    );
+
+    function retrieveLocalStorage() {
+      const localStorageValues = amaliaOptionPM.get()?.items;
+      if (localStorageValues) selectedCategories.value = localStorageValues;
+    };
+
+    watch(
+      () => selectedCategories.value,
+      (value) => {
+        amaliaOptionPM.save(value);
+      },
+      {deep:true}
+    );
+
     const timecodeHistory = getHistory
 
     const showRollback = computed(()=>{
@@ -61,7 +83,6 @@ export default defineComponent({
     let observer: ResizeObserver | null = null
 
     const visibleRight = ref(false);
-    const categories = ref([]);
     const audioCategories = computed(() => [
       { name: t('player.config.audio.backwardSecond'), key: "backward-second" },
       { name: t('player.config.audio.forwardSecond'), key: "forward-second" }
@@ -75,7 +96,6 @@ export default defineComponent({
       { name: t('player.config.video.slowBackward'), key: "slow-backward" },
       { name: t('player.config.video.slowForward'), key: "slow-forward" }
     ]);
-    const selectedCategories = ref([]);
 
     watch([selectedCategories, visibleRight], async () => {
       const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
@@ -102,6 +122,12 @@ export default defineComponent({
             categories.value = videoCategories.value;
           }
           selectedCategories.value = categories.value.map(cat => cat.key);
+
+          amaliaOptionPM = usePersistence(
+                `ground-control-amalia-${mediaType}-preference`,
+                selectedCategories.value,
+              );
+          retrieveLocalStorage()
           myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc),waveformUrl?.value ||"")) // add amalia player once src is ready
         }
       });
@@ -135,7 +161,7 @@ export default defineComponent({
       return videoHls;
     }
 
-    const getMediaType=(url:string)=>{
+    const getMediaType=(url:string) => {
       const parsedUrl = new URL(url.value);
       return parsedUrl.searchParams.get("typemedia")??""
     }
