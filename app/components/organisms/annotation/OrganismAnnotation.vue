@@ -66,13 +66,7 @@
         :panel-size="panelSize"
         :video-src="videoSrc"
         :media_params="data.media?.player_parameters"
-        :locals="
-          sortBy(
-            annotationsIn[0]?.result.data.localisation[0].sublocalisations
-              .localisation,
-            (el) => unixToTimestamp(el?.tcin),
-          )
-        "
+        :locals="pureTranscriptions"
         @scroll-to-segment="handleVideoTimelineClick"
       />
       <div :class="[layout.center, 'h-full min-h-0 flex']">

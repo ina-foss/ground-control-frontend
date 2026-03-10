@@ -32,16 +32,23 @@ export default defineComponent({
 
     const playerTime = ref()
 
+    let intervalCheckTime : NodeJS.Timeout
+
     onMounted(() => {
-      const interval = setInterval(() => {
+      intervalCheckTime = setInterval(() => {
         playerTime.value = $amalia.callSeek()
       }, 50);
     })
 
     const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM, spansChanged, resetSpansChanged} = useSpanService()
+
+    onUnmounted(()=>{
+      clearInterval(intervalCheckTime)
+    })
+
     const {pluginList } = storeToRefs(usePluginStore())
     const moleculeSpanControlPanelRef = ref()
-    
+
     watch(spansChanged, (val) => {
       if (val) {
         emit('update:spansChanged', true)

@@ -69,6 +69,12 @@
     });
   });
 
+  watch(()=>currentTime.value,(newTime,oldTime) => {
+    if( oldTime == 0 && newTime > 0 ){
+        scrollToSegment({bestIndex: 0})
+    }
+  })
+
   watch(()=>currentTime.value, (newCurrentTime) => {
     if (pauseTime.value !== 0 && options.loop_bloc &&  ((!options.jump_after_offset &&  newCurrentTime >= pauseTime.value) || newCurrentTime >=pauseTime.value + options.jump_after_offset ) )  {
       $amalia.onPause();

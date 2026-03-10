@@ -129,9 +129,10 @@ export default defineComponent({
 
     const locals = computed(() => {
       if(allFetched.value){
-      return (annotationInfo.value == null || data.value?.step?.annotation_type == 'auto-summary')
-        ? _.sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
-        : _.sortBy(annotationsOut.value[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
+        let l = (annotationInfo.value == null || data.value?.step?.annotation_type == 'auto-summary')
+          ? _.sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
+          : _.sortBy(annotationsOut.value[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
+        return l.filter(e=> e != null || undefined )
       }
       return []
     })
@@ -144,6 +145,11 @@ export default defineComponent({
       }
       return {}
     })
+
+
+  const pureTranscriptions = computed(()=>{
+      return sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation.filter(el=>el != null && el.data),(el)=>unixToTimestamp(el.tcin))
+  })
 
   const transcriptions = computed(() => { // format array to have all transcription version in the same array element
     const res = []
@@ -513,11 +519,13 @@ export default defineComponent({
     handleSelection,
     videoSrc,
     data,
+    locals,
     moleculeAnnotationRef,
     handleVideoTimelineClick,
     annotationComponent,
     annotationsOut,
     transcriptions,
+    pureTranscriptions,
     annotationsIn,
     sortBy,
     unixToTimestamp,
