@@ -652,7 +652,9 @@ import {
 import MoleculeFormTask from "~/components/molecules/MoleculeFormTask.vue";
 import { FilterMatchMode, FilterService } from "@primevue/core/api";
 import AtomMarkdown from "~/components/atoms/AtomMarkdown.vue";
-import { status_map, type StatusOption } from "~/helpers/statusMap";
+import {useStatusMap,type StatusOption } from "~/helpers/statusMap";
+
+const status_map = useStatusMap();
 import { useI18n } from '#imports';
 FilterService.register('expirationFilter', (value, filter) => {
   if (!filter) return true;

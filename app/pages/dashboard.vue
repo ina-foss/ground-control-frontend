@@ -69,8 +69,9 @@ import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
 import {Permission} from "../api/generate";
 import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
-import { status_map } from "~/helpers/statusMap";
+import {useStatusMap} from "~/helpers/statusMap";
 
+const status_map = useStatusMap();
 const refreshStore = useRefreshStore()
 const {fetchProjects} = refreshStore
 const {getProjectNumber} = storeToRefs(refreshStore)

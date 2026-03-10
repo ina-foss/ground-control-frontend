@@ -193,10 +193,11 @@ import { defineEmits } from "vue";
 import MoleculeFormProject from "./MoleculeFormProject.vue";
 import { useService ,useI18n} from "#imports";
 import { Permission, Status , ProjectService } from "~/api/generate";
-import { status_map } from "~/helpers/statusMap";
 import type { PropType } from "vue";
 import type { ProjectDetailDto } from "~/api/generate";
+import {useStatusMap} from "~/helpers/statusMap";
 
+const status_map = useStatusMap();
 const { t } = useI18n()
 const localeRoute = useLocaleRoute()
 

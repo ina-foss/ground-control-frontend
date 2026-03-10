@@ -166,6 +166,26 @@ export default defineComponent({
       return plugin?.display_config?.label || plugin?.name
     })
 
+    const getGroupLabel = (group) => {
+      if (group?.label) {
+        return group.label
+      }
+
+      const span = group?.spans
+          ?.filter(o => o?.role?.label === whichCategoryTriggerRename(group))
+          .map(o => spanCurrentGroupArray.value.find(span => span.id === o.spanId))
+          .sort((a, b) => {
+            if (!a?.tcin) return 1
+            if (!b?.tcin) return -1
+            return a.tcin - b.tcin
+          })?.[0]
+
+      if (span?.label) {
+        return span.label
+      }
+
+      return group?.plugins?.[mainGroupPluginIndex.value]?.[0]?.label
+    }
 
     function handleGroupClick (id: number) {
       if(newFocus.value == id) newFocus.value = undefined
@@ -336,7 +356,6 @@ export default defineComponent({
       switchGroupLayout,
       groupLayoutSytle,
       createdPluginOptionsList,
-      whichCategoryTriggerRename,
       unauthorizedSpanDropped,
       authorizedGroupList,
       groupFilledFilter,
@@ -361,7 +380,8 @@ export default defineComponent({
       focusGroup,
       capitalizeFirstLetter,
       spanCurrentGroupArray,
-      t
+      t,
+      getGroupLabel
     }
   }
 })
