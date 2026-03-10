@@ -114,9 +114,9 @@
     "unarchive":"Unarchive",
     "cancel": "Cancel",
     "confirm": "Confirm",
-    "skip": "Cancel and exit",
+    "skip": "Cancel and quit",
     "save": "Save",
-    "abandon": "Abandon and exit",
+    "abandon": "Abandon and quit",
     "delete": "Delete",
     "next": "Next",
     "previous": "Previous",
@@ -172,6 +172,28 @@
         "description_status": "Completed",
         "description_part2": "and locked."
       }
+    }
+  },
+  "toast": {
+    "exportDone": {
+      "summary": "Export done",
+      "detail": "The file \"{file}\" has been downloaded"
+    }
+  },
+  "task": {
+    "activation": "Activation",
+    "deactivation": "Deactivation",
+    "activateAll": "Activate all",
+    "desactivateAll": "Deactivate all",
+    "eligible": "{count} eligible task | {count} eligible tasks",
+    "activated": "{count} task activated | {count} tasks activated",
+    "deactivated": "{count} task deactivated | {count} tasks deactivated",
+    "actionDoneFor": "{action} done for {summary}",
+    "tooltip":{
+      "eligibilityInfo": "Task eligibility\nDepending on the assigned status, a task can be automatically activated or deactivated.",
+      "deleteTask": "Delete task",
+      "noEligibleActivate": "No task eligible for activation",
+      "noEligibleDeactivate": "No task eligible for deactivation"
     }
   }
 }

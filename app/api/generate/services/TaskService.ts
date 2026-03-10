@@ -201,20 +201,25 @@ export class TaskService {
         });
     }
     /**
-     * Activate Task
-     * @param taskId
-     * @returns TaskListDto Successful Response
+     * Update Tasks Status
+     * update tasks status list of tasks.
+     * @param status
+     * @param requestBody
+     * @returns number Successful Response
      * @throws ApiError
      */
-    public static activateTaskTaskTaskIdActivatePost(
-        taskId: number,
-    ): CancelablePromise<TaskListDto> {
+    public static updateTasksStatusTasksStatusPost(
+        status: TaskStatus,
+        requestBody: Array<number>,
+    ): CancelablePromise<Array<number>> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/task/{task_id}/activate',
-            path: {
-                'task_id': taskId,
+            url: '/tasks/status',
+            query: {
+                'status': status,
             },
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 401: `Unauthorized`,
                 403: `Forbidden`,

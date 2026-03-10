@@ -15,7 +15,7 @@ const { $handleApiError } = useNuxtApp()
 const authenticateOidc = async () => {
   try {
     const user = await services.$auth.signInCallback();
-    navigateTo(user.url_state);
+    navigateTo(user?.url_state);
   } catch (error) {
     console.error(error);
     $handleApiError(error)

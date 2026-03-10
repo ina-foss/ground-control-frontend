@@ -47,26 +47,6 @@
       }
     }
   },
-  "annotation": {
-    "lastAutoSave": "Sauvegarde automatique déclenchée à {time}",
-    "dialogs": {
-      "abandon": {
-        "title": "Confirmation d’abandon de tâche",
-        "message": "Êtes-vous sûr de vouloir abandonner et quitter cette tâche?",
-        "description_part1": "Anomalie signalée.\n Statut",
-        "description_status": "Abandonnée",
-        "description_part2": "jusqu’à revalidation du",
-        "description_role": "chef de projet"
-      },
-      "finish": {
-        "title": "Confirmation d'une tâche terminée",
-        "message": "Êtes-vous sûr de vouloir terminer cette tâche?",
-        "description_part1": "Tâche marquée",
-        "description_status": "Terminée",
-        "description_part2": "et verrouillée."
-      }
-    }
-  },
   "spanForm": {
     "context": "Contexte",
     "selectValueError": "Veuillez sélectionner une valeur",
@@ -165,6 +145,32 @@
       }
     }
   },
+    "annotation": {
+    "lastAutoSave": "Sauvegarde automatique déclenchée à {time}",
+    "dialogs": {
+      "abandon": {
+        "title": "Confirmation d’abandon de tâche",
+        "message": "Êtes-vous sûr de vouloir abandonner et quitter cette tâche?",
+        "description_part1": "Anomalie signalée.\n Statut",
+        "description_status": "Abandonnée",
+        "description_part2": "jusqu’à revalidation du",
+        "description_role": "chef de projet"
+      },
+      "finish": {
+        "title": "Confirmation d'une tâche terminée",
+        "message": "Êtes-vous sûr de vouloir terminer cette tâche?",
+        "description_part1": "Tâche marquée",
+        "description_status": "Terminée",
+        "description_part2": "et verrouillée."
+      }
+    }
+  },
+  "toast": {
+    "exportDone": {
+      "summary": "Export terminé",
+      "detail": "Le fichier « {file} » a bien été téléchargé"
+    }
+  },
   "steps": {
     "title": "Étapes",
     "statusPlaceholder": "Statut",
@@ -173,5 +179,21 @@
   "strategy": {
     "show": "Stratégie > ",
     "hide": " < Stratégie"
+  },
+  "task": {
+    "activation": "Activation",
+    "deactivation": "Désactivation",
+    "activateAll": "Tout activer",
+    "desactivateAll": "Tout désactiver",
+    "eligible": "{count} tâche éligible | {count} tâches éligibles",
+    "activated": "{count} tâche activée | {count} tâches activées",
+    "deactivated": "{count} tâche désactivée | {count} tâches désactivées",
+    "actionDoneFor": "{action} effectuée pour {summary}",
+    "tooltip":{
+      "eligibilityInfo": "Éligibilité des tâches\nSelon le statut attribué, une tâche peut être activée ou désactivée automatiquement.",
+      "deleteTask": "Supprimer la tâche",
+      "noEligibleActivate": "Aucune tâche éligible à activer",
+      "noEligibleDeactivate": "Aucune tâche éligible à désactiver"
+    }
   }
 }

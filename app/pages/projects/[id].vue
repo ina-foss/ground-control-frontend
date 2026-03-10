@@ -50,11 +50,16 @@
                 {{ showStrategy ? t('strategy.show') : t('strategy.hide') }}
               </h2>
             </div>
-            <transition name="fade" style="min-width: 0px; min-height: 0px" class="overflow-hidden ">
-              <div
-                class="flex items-center gap-x-6 text-[10px] text-grey-600  "
-              >
-                <div v-if="statusParameters === 'pending'" class="text-grey-400">
+            <transition
+              name="fade"
+              style="min-width: 0px; min-height: 0px"
+              class="overflow-hidden"
+            >
+              <div class="flex items-center gap-x-6 text-[10px] text-grey-600">
+                <div
+                  v-if="statusParameters === 'pending'"
+                  class="text-grey-400"
+                >
                   Chargement...
                 </div>
 
@@ -196,7 +201,7 @@
         <template #body="slotProps">
           <div class="flex min-w-[240px] txt">
             <Button
-                class="text-sm font-bold mr-1"
+              class="text-sm font-bold mr-1"
               :disabled="slotProps.data.status == Status.ARCHIVED"
               label="Créer une tâche"
               outlined
@@ -241,7 +246,7 @@ style="color: #0B7698 !important;
             :global-filter-fields="['name']"
             :row-class="
               (rowData) =>
-                rowData.status === 'draft'
+                rowData.status === Status.DRAFT
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   : 'hover:bg-surface-100 cursor-pointer'
             "
@@ -274,12 +279,13 @@ style="color: #0B7698 !important;
                 />
               </template>
               <template #body="{ data: nestedData }">
-                  <p
-                    v-tooltip="nestedData.status === 'draft'
+                <p
+                  class="cursor-text"
+                  v-tooltip="
+                    nestedData.status === Status.DRAFT
                       ? `Soit sûr d'avoir la permission et activer la tâche pour la commencer`
                       : null
                   "
-                    class="cursor-text"
                 >
                   {{ nestedData.name }}
                 </p>
@@ -367,18 +373,20 @@ style="color: #0B7698 !important;
                   style="font-weight: 500"
                   :style="{
                     color:
-                      status_map.find((s) => s.value === nestedData.status)?.colorText || '#000',
+                      status_map.find((s) => s.value === nestedData.status)
+                        ?.colorText || '#000',
                     backgroundColor:
-                      status_map.find((s) => s.value === nestedData.status)?.colorBg || '#ccc',
+                      status_map.find((s) => s.value === nestedData.status)
+                        ?.colorBg || '#ccc',
                   }"
                 >
                   {{
-                    status_map.find((s) => s.value === nestedData.status)?.label ||
-                    nestedData.status
+                    status_map.find((s) => s.value === nestedData.status)
+                      ?.label || nestedData.status
                   }}
                 </Tag>
               </template>
-              <template #filter="{ filterModel, filterCallback, data }">
+              <template #filter="{ filterModel, filterCallback }">
                 <Dropdown
                   v-model="filterModel.value"
                   :options="statusOptions"
@@ -500,10 +508,15 @@ style="color: #0B7698 !important;
               </template>
               <template #body="{ data }">
                 <Calendar
-                  :model-value="data.expiration_date && new Date(data.expiration_date)"
-                  date-format="dd/mm/yy"
-                  show-icon
-                  :disabled="!roleUpdateExpirationDate || data.status == Status.ARCHIVED"
+                  :modelValue="
+                    data.expiration_date && new Date(data.expiration_date)
+                  "
+                  dateFormat="dd/mm/yy"
+                  showIcon
+                  :disabled="
+                    !roleUpdateExpirationDate ||
+                    data.status == Status.ARCHIVED
+                  "
                   class="w-full"
                   :invalid="data.expiration_date && new Date(data.expiration_date) < new Date()"
                   :min-date="new Date()"
@@ -526,7 +539,6 @@ style="color: #0B7698 !important;
                 />
               </template>
             </Column>
-
             <Column
               class="txt"
               body-class="text-sm"
@@ -537,74 +549,157 @@ style="color: #0B7698 !important;
                 <AtomMarkdown :content="getFirstLine(nestedData.instruction)" />
               </template>
             </Column>
-            <Column class="txt" body-class="text-sm" field="actions" header="Actions">
+            <Column class="txt" body-class="text-sm" field="voir" header="Voir">
               <template #body="{ data: nestedData }">
-                <div class="flex items-center gap-2">
-                  <div>
-                    <Button
-                      v-tooltip="'Consulter la tâche'"
-                      severity="primary"
-                      outlined
-                      style="
-                        height: 32px;
-                        padding: 2;
-                        margin: auto;
-                        color: #1e90ff;
-                      "
-                      text
-                      rounded
-                      @click="consultTask(nestedData.id)"
-                    >
-                      <img
-                        src="/icons/icons-svg/icons-svg/view-icon.svg"
-                        alt="View Icon"
-                        style="
-                          height: 30px;
-                          width: 20px;"
-                      >
-                    </Button>
-                  </div>
-                  <div>
-                  <Button
-                    v-if="roleActivateTask && nestedData.status === 'draft' || nestedData.status === 'skipped'"
-                    label="Activer"
-                    severity="primary"
-                    outlined
-                    :disabled="nestedData.status == Status.ARCHIVED"
-                    @click="activateTask(nestedData.id)"
+                <Button
+                  severity="primary"
+                  outlined
+                  style="height: 32px; padding: 0; margin: auto; color: #1e90ff"
+                  text
+                  rounded
+                  title="Consulter la tâche"
+                  @click="consultTask(nestedData.id)"
+                >
+                  <img
+                    src="/icons/icons-svg/icons-svg/view-icon.svg"
+                    alt="View Icon"
+                    style="height: 30px; 
+                    width: 20px;"
+                    />
+                </Button>
+              </template>
+            </Column>
+            <Column
+              field="activation"
+              class="txt"
+              body-class="text-sm !p-0"
+              v-if="roleActivateTask"
+              :showFilterMenu="false"
+            >
+              <template #header>
+                <div
+                  class="flex justify-center items-center gap-1 text-sm font-bold w-full"
+                >
+                  Activation
+                  <i
+                    class="pi pi-info-circle text-gray-500 cursor-help"
+                    v-tooltip="t('task.tooltip.eligibilityInfo')"
                   />
-                  </div>
-                  <div>
-                    <Button
-                      v-if="roleDeleteTask"
-                      v-tooltip="'Supprimer la tâche'"
-                      severity="danger"
-                      outlined
-                      :disabled="nestedData.status == Status.ARCHIVED"
-                      style="
-                        height: 22px;
-                        padding: 0;
-                        margin: auto;
-                        color: #0c7da2;
-                      "
-                      text
-                      rounded
-                      @click="showDeleteTaskModal(nestedData)"
-                    >
-                      <img
-                        src="/icons/icons-svg/icons-svg/trash-icon.svg"
-                        alt="Trash Icon"
-                        style="
-                          height: 18px;
-                          width: 18px;
-                          filter: brightness(0) saturate(100%) invert(48%)
-                            sepia(72%) saturate(4640%) hue-rotate(337deg)
-                            brightness(98%) contrast(91%);
-                        "
-                      >
-                    </Button>
-                  </div>
                 </div>
+              </template>
+              <template #filter>
+                <div class="flex justify-center items-center gap-2 w-full">
+                  <span
+                    v-tooltip="
+                      !filteredTasks.some(
+                        (task) =>
+                          task.status === Status.DRAFT ||
+                          task.status === Status.SKIPPED,
+                      )
+                        ? t('task.tooltip.noEligibleActivate')
+                        : null
+                    "
+                  >
+                    <Button
+                      :label="t('task.activateAll')"
+                      icon="pi pi-check"
+                      size="small"
+                      outlined
+                      class="whitespace-nowrap"
+                      :severity="
+                        !filteredTasks.some(
+                          (task) =>
+                            task.status === Status.DRAFT ||
+                            task.status === Status.SKIPPED,
+                        )
+                          ? 'secondary'
+                          : 'primary'
+                      "
+                      :style="
+                        !filteredTasks.some(
+                          (task) =>
+                            task.status === Status.DRAFT ||
+                            task.status === Status.SKIPPED,
+                        )
+                          ? {}
+                          : {color: '#0B7698', borderColor: '#0B7698'}
+                      "
+                      @click="activateTasks(true)"
+                    />
+                  </span>
+                  <span
+                    v-tooltip="
+                      !filteredTasks?.some(
+                        (task) => task.status === Status.PENDING,
+                      )
+                        ? t('task.tooltip.noEligibleDeactivate')
+                        : null
+                    "
+                  >
+                    <Button
+                      :label="t('task.desactivateAll')"
+                      icon="pi pi-times"
+                      size="small"
+                      class="whitespace-nowrap"
+                      outlined
+                      :severity="
+                        !filteredTasks?.some(
+                          (task) => task.status === Status.PENDING,
+                        )
+                          ? 'secondary'
+                          : 'primary'
+                      "
+                      :style="
+                        !filteredTasks?.some(
+                          (task) => task.status === Status.PENDING,
+                        )
+                          ? {}
+                          : { color: '#0B7698', borderColor: '#0B7698' }
+                      "
+                      @click="activateTasks(false)"
+                    />
+                  </span>
+                </div>
+              </template>
+              <template #body="{ data }">
+                <div
+                  v-if="data.status !== Status.DONE && data.status !== Status.ARCHIVED && data.status !== Status.IN_PROGRESS"
+                  class="flex justify-center w-full"
+                >
+                  <InputSwitch
+                    :model-value="
+                      data.status !== Status.DRAFT &&
+                      data.status !== Status.SKIPPED
+                    "
+                    @click="activateTask(data)"
+                  />
+                </div>
+              </template>
+            </Column>
+            <Column v-if="roleDeleteTask" bodyClass="!p-0" class="txt">
+              <template #body="{ data: nestedData }">
+                <Button
+                  severity="danger"
+                  outlined
+                  :disabled="nestedData.status == Status.ARCHIVED"
+                  @click="showDeleteTaskModal(nestedData)"
+                  style="height: 22px; padding: 0; margin: auto; color: #0c7da2"
+                  text
+                  rounded
+                  title="Supprimer la tâche"
+                >
+                  <img
+                    src="/icons/icons-svg/icons-svg/trash-icon.svg"
+                      alt="Trash Icon"
+                      style="
+                        height: 18px;
+                        width: 18px;
+                        filter: brightness(0) saturate(100%) invert(48%)
+                        sepia(72%) saturate(4640%) hue-rotate(337deg)
+                        brightness(98%) contrast(91%);
+                        "
+                    />
+                </Button>
               </template>
             </Column>
           </DataTable>
@@ -637,8 +732,8 @@ style="color: #0B7698 !important;
 </template>
 
 <script setup lang="ts">
-import _ from "lodash";
-import { ref } from "vue";
+import _ from "lodash"
+import { ref } from "vue"
 import {
   AnnotationService,
   Status,
@@ -656,60 +751,65 @@ import {useStatusMap,type StatusOption } from "~/helpers/statusMap";
 
 const status_map = useStatusMap();
 import { useI18n } from '#imports';
-FilterService.register('expirationFilter', (value, filter) => {
-  if (!filter) return true;
+import type { Task } from "~/shared/model/task.model"
 
-  const today = new Date();
+const { t } = useI18n()
+
+FilterService.register("expirationFilter", (value, filter) => {
+  if (!filter) return true
+
+  const today = new Date()
   if (filter === "active") {
-    return !value || new Date(value) >= today;
+    return !value || new Date(value) >= today
   }
 
   if (filter === "expired") {
-    return value && new Date(value) < today;
+    return value && new Date(value) < today
   }
 
-  return true;
-});
-const { t } = useI18n()
-const route = useRoute();
-const refreshStore = useRefreshStore();
-const toast = useToast();
-const { $application } = useService();
-const { fetchTasks } = refreshStore;
+  return true
+})
+
+const route = useRoute()
+const refreshStore = useRefreshStore()
+const toast = useToast()
+const { $application } = useService()
+const { fetchTasks } = refreshStore
 const { getTasks } = storeToRefs(refreshStore)
 const dialogVisible = ref(false)
-const deleteModal = reactive({visible: false, data: {},loading:false})
+const deleteModal = reactive({ visible: false, data: {}, loading: false })
 const clickedRowData = ref(null)
 const formStepClick = ref()
 const loadingExport = ref(false)
 const buttonMenu = ref()
 const selectedRow = ref()
-const selectedStatus = ref(null);
+const selectedStatus = ref(null)
 const showStrategy = ref(false)
 const { $handleApiError } = useNuxtApp()
 const statusOptions = ref<StatusOption[]>([])
 const toggleStrategy = () => {
-  showStrategy.value = !showStrategy.value;
-};
-const authStore = useAuth();
-const { userEmail } = storeToRefs(authStore);
+  showStrategy.value = !showStrategy.value
+}
+
 const filters = ref<DataTableFilterMeta>({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   name: { value: null, matchMode: FilterMatchMode.CONTAINS },
   expiration_date: { value: null, matchMode: "expirationFilter" },
   status: { value: null, matchMode: FilterMatchMode.EQUALS },
-});
+})
 
-const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
+const isAdmin = computed(() =>
+  $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN),
+)
 const roleDeleteTask = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE),
-);
+)
 const roleActivateTask = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_TASK_ACTIVATE),
-);
+)
 const roleUpdateExpirationDate = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_TASK_UPDATE_EXPIRATION_DATTE),
-);
+)
 const getFirstLine = (markdownText) => {
   if (!markdownText) return "";
   return markdownText.split("\n")[0];
@@ -730,11 +830,11 @@ const onRowClick = ({ data }) => {
   }
 }
 
-const editMode = ref(false);
+const editMode = ref(false)
 const { data, refresh, status } = useAsyncData(
   `task_${route.params.id}`,
   async () => await fetchTasks(route.params.id),
-);
+)
 
 const { data: projectParameters, status: statusParameters } = useAsyncData(
   `project_${route.params.id}_parameters`,
@@ -742,102 +842,143 @@ const { data: projectParameters, status: statusParameters } = useAsyncData(
     await ProjectService.readProjectParametersProjectIdParametersGet(
       Number(route.params.id),
     ),
-);
+)
 watch(projectParameters, (newVal) => {
   if (newVal && !_.isEqual(newVal, refreshStore.strategy_parameters)) {
-    refreshStore.setParameters(newVal);
+    refreshStore.setParameters(newVal)
   }
-});
+})
 
-watch(getTasks, (newTasks) => {
-  if (!newTasks) return
-  const taskStatuses = newTasks.map(t => t.status)
-  const uniqueStatuses = status_map.filter(status =>
-    taskStatuses.some(taskStatus => taskStatus == status.value)
-  )
-  statusOptions.value = uniqueStatuses
-}, { immediate: true })
+watch(
+  getTasks,
+  (newTasks) => {
+    if (!newTasks) return
+    const taskStatuses = newTasks.map((t) => t.status)
+    const uniqueStatuses = status_map.filter((status) =>
+      taskStatuses.some((taskStatus) => taskStatus == status.value),
+    )
+    statusOptions.value = uniqueStatuses
+  },
+  { immediate: true },
+)
+
+const filteredTasks = computed(() => {
+  if (!getTasks.value) return []
+
+  const statusFilter = filters.value.status?.value
+  const tasks = statusFilter
+    ? getTasks.value.filter((task) => task.status === statusFilter)
+    : getTasks.value
+  return tasks
+})
 
 const buttonItems = [
   {
-    label: "Exporter au format d'import",
-    items: [
-      {
-        label: "Un seul fichier",
-        command: () => {
-          exportOut(selectedRow.value, "one");
-        },
-      },
-      {
-        label: "Regrouper par tâche",
-        command: () => {
-          exportOut(selectedRow.value, "task");
-        },
-      },
-      {
-        label: "Fichiers séparés",
-        command: () => {
-          exportOut(selectedRow.value, "all");
-        },
-      },
-    ]
+    label: "Un seul fichier",
+    command: () => {
+      exportOut(selectedRow.value, "one")
+    },
+    tooltip: "Exporter toutes les annotations de l'étape dans un seul fichier",
   },
   {
-    label: "Export total",
-    items: [
-      {
-        label: "Un seul fichier",
-        command: () => {
-          exportOut(selectedRow.value, "one","dump");
-        },
-      },
-      {
-        label: "Regrouper par tâche",
-        command: () => {
-          exportOut(selectedRow.value, "task","dump");
-        },
-      },
-      {
-        label: "Fichiers séparés",
-        command: () => {
-          exportOut(selectedRow.value, "all","dump");
-        },
-      },
-    ]
+    label: "Regrouper par tâche",
+    command: () => {
+      exportOut(selectedRow.value, "task")
+    },
+    tooltip: "Exporter les annotations en les regroupant par tâche",
   },
-];
+  {
+    label: "Fichiers séparés",
+    command: () => {
+      exportOut(selectedRow.value, "all")
+    },
+    tooltip: "Exporter chaque annotations dans un fichier dédié",
+  },
+]
 
 const showDeleteTaskModal = (rowData) => {
-  deleteModal.loading = false;
-  deleteModal.visible = true;
-  deleteModal.data = rowData;
-};
+  deleteModal.loading = false
+  deleteModal.visible = true
+  deleteModal.data = rowData
+}
 
-const activateTask = (task_id) => {
-  TaskService.activateTaskTaskTaskIdActivatePost(
-    task_id,
-  ).then(() => refresh());
-};
+const activateTasks = (activate = true) => {
+  const selectedTaskStatus = filters.value?.status?.value ?? null
+  const tasksToUpdate = selectedTaskStatus
+    ? getTasks.value?.filter(
+        (task) => !selectedTaskStatus || task.status === selectedTaskStatus,
+      )
+    : activate
+      ? getTasks.value?.filter(
+          (task) =>
+            task.status === Status.DRAFT ||
+            task.status === Status.SKIPPED,
+        )
+      : getTasks.value?.filter((task) => task.status === Status.PENDING)
+
+  const tasks_id = tasksToUpdate.map((task) => task.id)
+  const new_status = activate ? Status.PENDING : Status.DRAFT
+
+  TaskService.updateTasksStatusTasksStatusPost(new_status, tasks_id)
+    .then(() => {
+      const count  = tasks_id.length
+      refresh()
+      const actionLabel = activate
+        ? t("task.activation")
+        : t("task.deactivation")
+      const tasksLabel = t(`task.${activate ? "activated" : "deactivated"}`, { count })
+      const summaryLabel = t("task.eligible", count, { count })
+
+      toast.add({
+        severity: "info",
+        summary: t("task.actionDoneFor", {
+          action: actionLabel,
+          summary: summaryLabel
+        }),
+        detail: `${tasksLabel} : ${tasks_id.join(" - ")}`,
+        life: 4000,
+        })
+      })
+    .catch((err) => {
+      console.error("❌ Error updating expiration date:", err)
+      $handleApiError(err)
+    })
+}
+
+const activateTask = (task) => {
+  const { id, status } = task
+  console.log({ id, status })
+
+  const new_status =
+    status === Status.DRAFT || status === Status.SKIPPED
+      ? Status.PENDING
+      : status === Status.PENDING
+        ? Status.DRAFT
+        : status
+  TaskService.updateTaskStatusTaskTaskIdStatusPost(id, new_status).then(() =>
+    refresh(),
+  )
+}
 
 const hideDeleteTaskModal = () => {
-  deleteModal.visible = false;
-  deleteModal.data = {};
-};
+  deleteModal.visible = false
+  deleteModal.data = {}
+}
 
 const deleteTask = (task_id) => {
-  deleteModal.loading = true;
+  deleteModal.loading = true
   TaskService.deleteTaskTaskTaskIdDelete(task_id)
     .then(() => refresh())
-    .then(() => hideDeleteTaskModal());
-};
+    .then(() => hideDeleteTaskModal())
+}
 
 // Filtrer les projets en fonction du statut sélectionné
 const filteredProjects = computed(() => {
-  if (!selectedStatus.value) return data.value.steps; // Si aucun statut n'est sélectionné, retourne toutes les étapes
+  if (!selectedStatus.value) return data.value.steps // Si aucun statut n'est sélectionné, retourne toutes les étapes
   return data.value.steps.filter(
     (step) => step.status === selectedStatus.value.value,
-  ); // Filtre les étapes en fonction du statut
-});
+  ) // Filtre les étapes en fonction du statut
+})
 
 // On affiche meme si c'es pas fini
 function getColorForAnnotation(annotation_status,annotated_by = null,skipped_by = null) {
@@ -851,9 +992,9 @@ function getColorForAnnotation(annotation_status,annotated_by = null,skipped_by 
 }
 
 const clickButtonMenu = (event, step) => {
-  selectedRow.value = step;
-  buttonMenu.value.toggle(event);
-};
+  selectedRow.value = step
+  buttonMenu.value.toggle(event)
+}
 
 const exportOut = async (step: StepDetailDto , group : 'task' | 'all' | 'one', mode? : 'dump' | "importLike" = "importLike" )   => {
   const tasks = step.tasks;
@@ -867,7 +1008,7 @@ const exportOut = async (step: StepDetailDto , group : 'task' | 'all' | 'one', m
           task.id,
           "",
           "out",
-        );
+        )
       if (annotations.length > 0) {
         if (group == "task") triggerDownload(annotations, task.name,mode);
         else if (group == "all")
@@ -877,12 +1018,12 @@ const exportOut = async (step: StepDetailDto , group : 'task' | 'all' | 'one', m
               task.name + " by " + annotation.user_email.split("@")[0],
               mode
             ),
-          );
-        else if (group == "one") annos[task.name] = annotations;
+          )
+        else if (group == "one") annos[task.name] = annotations
       }
     } catch (error) {
-      console.error("Error downloading file for task", task.id, error);
-      throw new Error(error.body.raw_message);
+      console.error("Error downloading file for task", task.id, error)
+      throw new Error(error.body.raw_message)
     }
   }
   if (group == "one") triggerDownload(annos, step.title,mode);
@@ -896,7 +1037,7 @@ function triggerDownload(data: AnnotationDto, name: string, mode: 'dump'|'import
   }
   const annotationsBlob = new Blob([JSON.stringify(output)], {
     type: "application/json",
-  });
+  })
 
   // Create a download link
   const url = window.URL.createObjectURL(annotationsBlob);
@@ -912,34 +1053,36 @@ function triggerDownload(data: AnnotationDto, name: string, mode: 'dump'|'import
     document.body.removeChild(link);
     toast.add({
       severity: "success",
-      summary: "Export done",
-      detail: ` Your file "${link.download}" has been downloaded`,
+      summary: t('toast.exportDone.summary'),
+      detail: t('toast.exportDone.detail', { file: a.download }),
       life: 5000,
-    });
+    })
   }
 
   // Clean up
-  window.URL.revokeObjectURL(url);
+  window.URL.revokeObjectURL(url)
 }
 
-const navigateToTask = (id: number,  mode: 'edit' | 'read' = 'edit', email?: string | null) => {
-
+const navigateToTask = (
+  id: number,
+  mode: "edit" | "read" = "edit",
+  email?: string | null
+) => {
   navigateTo({
     path: `/tasks/${id}`,
     query: {
       email: email,
       project_id: route.params.id,
-      mode:mode
+      mode: mode,
     },
-  });
-};
-
+  })
+}
 
 const stepCreate = (stepId) => {
-  formStepClick.value = _.find(data.value.steps, ["id", stepId], 0);
+  formStepClick.value = _.find(data.value.steps, ["id", stepId], 0)
 
-  dialogVisible.value = true;
-};
+  dialogVisible.value = true
+}
 
 let email_clicked: string | undefined;
 const handleRowClick = (event : string | {originalEvent: MouseEvent , data: TaskWithIdDto } ) => {
@@ -962,16 +1105,16 @@ const handleRowClick = (event : string | {originalEvent: MouseEvent , data: Task
 };
 
 const onCellEditComplete = () => {
-  editMode.value = false;
-};
+  editMode.value = false
+}
 
 const onExpirationDateChange = async (value: Date, row: any) => {
-  const oldValue = row.expiration_date;
-  row.expiration_date = value.toISOString().split("T")[0];
+  const oldValue = row.expiration_date
+  row.expiration_date = value.toISOString().split("T")[0]
   try {
     await TaskService.updateDataTaskTaskTaskIdPatch(row.id, {
       expiration_date: row.expiration_date,
-    });
+    })
   } catch (err: any) {
     console.error("❌ Error updating expiration date:", err)
     $handleApiError(err)
@@ -980,9 +1123,8 @@ const onExpirationDateChange = async (value: Date, row: any) => {
 }
 
 const consultTask = (annotation_id: number) => {
-  navigateToTask(annotation_id, 'read');
-};
-
+  navigateToTask(annotation_id, email_clicked, "read")
+}
 </script>
 <style scoped>
 .table-border-left {
