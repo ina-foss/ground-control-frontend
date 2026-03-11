@@ -6,7 +6,7 @@ import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
 import {useService} from "~/composables/useService";
 import AtomDialogFilterGroup from "~/components/atoms/dialogFilterGroup/atomDialogFilterGroup.vue";
 import MoleculeDialogConfirm from "~/components/molecules/moleculeDialogConfirm/molecule-dialog-confirm-component";
-import {useI18n} from "#imports";
+import {useI18n} from "#i18n"
 
 export default defineComponent({
   name:"MoleculeSpanControlPanel",
@@ -19,11 +19,14 @@ export default defineComponent({
     },
   },
   setup(props,{emit,expose}){
-    const {$amalia}  = useService()
+
     const { t } = useI18n()
 
     const { focusGroup, readPluginValues ,mainPluginIndex, extractTextFromSpanNodes, spanForm, spanArray, newFocus,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,capitalizeFirstLetter} = useSpanService()
-    const { unixToTimestamp,timestampToUnix } = useService().$application
+
+    const { unixToTimestamp } = useService().$application
+
+
     const { pluginList } = storeToRefs(usePluginStore())
     const { getPluginList, getAllPluginOptionList } = usePluginStore()
     const handleSegmentClick  = inject('handleSegmentClick')
@@ -220,7 +223,7 @@ export default defineComponent({
 
     function whichCategoryTriggerRename(group ){
       if (group){
-        return  group.plugins?.[mainGroupPluginIndex.value]?.[0].categories.find(el=>el.options?.trigger_rename)?.label
+        return  group.plugins?.[mainGroupPluginIndex.value]?.[0]?.categories.find(el=>el.options?.trigger_rename)?.label
       }
     }
 

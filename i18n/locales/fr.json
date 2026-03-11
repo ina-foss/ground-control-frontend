@@ -103,6 +103,10 @@
       "selected": "Sélectionnés"
     }
   },
+  "spanControlPanel": {
+    "untitledGroupErrorMessage": "Ce groupe contient une erreur, mais reste sans impact pour annoter.",
+    "emptyGroupMessage": "Une erreur a été détectée, ce groupe n’est plus utilisable."
+  },
   "common":{
     "no": "Non",
     "yes": "Oui"

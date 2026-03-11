@@ -75,7 +75,7 @@
                         />
                         <span class="self-center flex-1 overflow-hidden truncate">
                         <span
-v-tooltip.right="{
+                              v-tooltip.right="{
                               value: span?.label ?? extractTextFromSpanNodes(span?.nodes),
                               showDelay: 300,
                               appendTo: 'body'}"
@@ -114,7 +114,7 @@ v-tooltip.right="{
                     <div class="drag-handle pr-3 hover:text-hover">:::</div>
                     <b class="text-xl">Groupe Courant</b>
                     <AtomSpanTag
-v-if="groupIsSelected" class="text-xl justify-content-end ml-auto"
+                      v-if="groupIsSelected" class="text-xl justify-content-end ml-auto"
                       :plugin-id="mainGroupPluginId" :plugin-value="selectedGroup?.plugins[mainGroupPluginIndex]"
                       :text="selectedGroup?.plugins[mainGroupPluginIndex]?.[0]?.label" />
                   </group-title-wrapper>
@@ -150,12 +150,11 @@ v-if="groupIsSelected" class="text-xl justify-content-end ml-auto"
                 </div>
               </template>
               <div
-:class="{ 'grid transition-all duration-300 overflow-hidden': true }"
+                :class="{ 'grid transition-all duration-300 overflow-hidden': true }"
                 :style="{ 'grid-template-rows': groupIsSelected ? '1fr' : '0fr' }">
                 <selected-group-content v-show="selectedGroup" :style="{ 'min-height': 0 }">
-                  <role-wrapper class="grid" :style="`grid-template-columns: ${groupLayoutSytle};`">
-                    <div
-v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories"
+                  <role-wrapper v-if="selectedGroup?.plugins[mainGroupPluginIndex]?.[0]?.categories?.length" class="grid" :style="`grid-template-columns: ${groupLayoutSytle};`">
+                    <div v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0]?.categories"
                       :key="category" class="p-2 border-surface-200 text-center min-w-0 flex flex-col gap-3">
                       <role-title-wrapper class="flex justify-center relative">
                         <role-span-title class="text-center font-bold">{{ category.label }}</role-span-title>
@@ -169,7 +168,7 @@ v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories"
                             v-for="span in selectedGroup?.spans.filter(span => isEqual(span.role, category)).sort((a, b) => unixToTimestamp(spanArray[a.spanId]?.tcin) - unixToTimestamp(spanArray[b.spanId]?.tcin))"
                             :key="span?.spanId" class="flex justify-between items-center max-w-full span-tag min-w-0">
                             <AtomSpanTag
-v-tooltip.top="{
+                              v-tooltip.top="{
                               value: spanArray[span.spanId]?.label || extractTextFromSpanNodes(spanArray[span.spanId]?.nodes) || spanArray[span.spanId]?.plugins?.[mainPluginIndex]?.map(value=>value.label).join(', ') || 'Aucun'
                               ,
                               showDelay: 300,
@@ -180,13 +179,16 @@ v-tooltip.top="{
                                          @contextmenu="openVirtualSpanMenu($event, span)"
                                          @click="onSpanClick(spanArray[span.spanId])"/>
                             <span
-class="pi pi-trash hover:bg-disabled rounded-full p-1"
+                              class="pi pi-trash hover:bg-disabled rounded-full p-1"
                               @click="unlinkSpan(span, selectedGroup)" />
                           </group-linked-span>
                         </role-dropzone>
                       </ScrollPanel>
                     </div>
                   </role-wrapper>
+                  <role-error-container v-else class="flex justify-center" >
+                    <Message class="w-fit" severity="warn" icon="pi pi-exclamation-triangle">{{t('spanControlPanel.emptyGroupMessage')}}</Message>
+                  </role-error-container>
                 </selected-group-content>
               </div>
             </Panel>
@@ -247,7 +249,7 @@ class="pi pi-trash hover:bg-disabled rounded-full p-1"
                       @click="handleGroupClick(group.id)"
                   >
                     <group-number class="font-bold self-center px-2 h-fit">{{sortedVisibleGroupArray.length - index}}</group-number>
-                    <group-label class="grow line-clamp-1">{{ getGroupLabel(group) }}</group-label>
+                    <group-label class="grow line-clamp-1">{{ getGroupLabel(group) || t('spanControlPanel.untitledGroupErrorMessage')  }}</group-label>
                     <group-span-count class="text-center rounded-full p-0 text-xl leading-10 h-10 w-10 bg-surface-100 shrink-0">{{ group.spans.length }}</group-span-count>
                     <span class="shrink-0" @click.stop="handleRemoveGroup(group)">
                       <img

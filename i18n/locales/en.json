@@ -103,6 +103,10 @@
       "selected": "Selected"
     }
   },
+  "spanControlPanel": {
+    "untitledGroupErrorMessage": "This group contains an error, which doesn't impact annotation.",
+    "emptyGroupMessage": "An error as occured, this group cannot be used."
+  },
   "common":{
     "no": "No",
     "yes": "Yes"
