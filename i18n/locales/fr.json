@@ -142,10 +142,11 @@
       "video": {
         "backward5Seconds": "Retour 5 secondes par 5 secondes",
         "forward5Seconds": "Avance 5 secondes par 5 secondes",
-        "backwardFrame": "Retour image par image",
-        "forwardFrame": "Avance image par image",
-        "slowBackward": "Retour ralenti",
-        "slowForward": "Avance ralentie"
+        "backwardStart": "Aller au début du média",
+        "forwardEnd": "Aller à la fin du média",
+        "forward": "Avance rapide",
+        "volume": "Désactiver le son",
+        "toggleFullScreen": "Plein écran"
       }
     }
   },

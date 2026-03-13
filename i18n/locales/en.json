@@ -142,10 +142,11 @@
       "video": {
         "backward5Seconds": "Rewind 5 seconds",
         "forward5Seconds": "Forward 5 seconds",
-        "backwardFrame": "Frame backward",
-        "forwardFrame": "Frame forward",
-        "slowBackward": "Slow rewind",
-        "slowForward": "Slow forward"
+        "backwardStart": "Go to the beginning of the media",
+        "forwardEnd": "Go to the end of the media",
+        "forward": "Fast forward",
+        "volume": "Mute",
+        "toggleFullScreen": "Full screen"
       }
     }
   },

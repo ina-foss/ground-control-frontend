@@ -31,10 +31,9 @@ export default defineComponent({
     const { t } = useI18n();
     const myplayer = ref()
     let lastIndex = 0
-    const dynamicSrc = ref()
-    const dynamicTumbnails = ref()
-    const downloadUrl = ref()
-    const waveformUrl = ref()
+    let dynamicSrc = ref()
+    let dynamicTumbnails = ref()
+    let waveformUrl = ref()
     const {unixToTimestamp} = $application
     const {getHistory, consumeTimecode} = useTimecodeHistory()
 
@@ -89,12 +88,13 @@ export default defineComponent({
     ]);
 
     const videoCategories = computed(() => [
+      { name: t('player.config.video.backwardStart'), key: "backward-start" },
+      { name: t('player.config.video.forwardEnd'), key: "forward-end" },
+      { name: t('player.config.video.forward'), key: "forward" },
       { name: t('player.config.video.backward5Seconds'), key: "backward-5seconds" },
       { name:  t('player.config.video.forward5Seconds'), key: "forward-5seconds" },
-      { name: t('player.config.video.backwardFrame'), key: "backward-frame" },
-      { name: t('player.config.video.forwardFrame'), key: "forward-frame" },
-      { name: t('player.config.video.slowBackward'), key: "slow-backward" },
-      { name: t('player.config.video.slowForward'), key: "slow-forward" }
+      { name: t('player.config.video.volume'), key: "volume" },
+      { name: t('player.config.video.toggleFullScreen'), key: "toggleFullScreen" }
     ]);
 
     watch([selectedCategories, visibleRight], async () => {
@@ -104,7 +104,7 @@ export default defineComponent({
 
           if (dynamicSrc.value) {
             myplayer.value.removeChild(myplayer.value.firstChild);
-            myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc),waveformUrl?.value ||"",unselectedCategories))
+            myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "",  getMediaType(videoSrc),waveformUrl?.value ||"",unselectedCategories))
           }
         });
       }
@@ -128,7 +128,7 @@ export default defineComponent({
                 selectedCategories.value,
               );
           retrieveLocalStorage()
-          myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc),waveformUrl?.value ||"")) // add amalia player once src is ready
+          myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "",  getMediaType(videoSrc),waveformUrl?.value ||"")) // add amalia player once src is ready
         }
       });
       if (!actionsRef.value) return
@@ -169,9 +169,6 @@ export default defineComponent({
     const playerParams = async () => {
       if (media_params.value?.thumbnail_base_url) {
         dynamicTumbnails.value = await fetchRedirectUrl(media_params.value?.thumbnail_base_url)
-      }
-      if (media_params.value?.download_base_url) {
-        downloadUrl.value = await fetchRedirectUrl(media_params.value?.download_base_url)
       }
       if (media_params.value?.waveform_base_url) {
         waveformUrl.value = await fetchRedirectUrl(media_params.value?.waveform_base_url)

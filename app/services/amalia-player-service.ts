@@ -27,7 +27,7 @@ export default class AmaliaPlayerService {
   }
 
   public configurePlayer(mediaSrc: string, urlStreamPlayBack?: string, thumbnailBaseUrl?: string, mediaType?: string,
-                         downloadUrl?: string, aspectRatio?: string, audioTracks?: Array<{
+                         aspectRatio?: string, audioTracks?: Array<{
       track: number,
       language: string,
       isDefault: boolean
@@ -42,25 +42,19 @@ export default class AmaliaPlayerService {
     this.playerConfiguration.debug = false;
     this.playerConfiguration.logLevel = 'info';
     this.playerConfiguration.displaySizes = {
-      large: 500,
-      medium: 400,
-      small: 340,
+      large: 300,
+      medium: 300,
+      small: 300,
       xsmall: 340
     };
     this.playerConfiguration.dataSources = [];
     if (mediaType != '') {
       if (mediaType === 'video') {
-        this.updateControlbarConfig('backward-second');
-        this.updateControlbarConfig('forward-second');
         this.playerConfiguration.player.ratio = aspectRatio;
       } else {
         this.updateControlbarConfig('backward-5seconds');
         this.updateControlbarConfig('forward-5seconds');
-        this.updateControlbarConfig('backward-frame');
-        this.updateControlbarConfig('forward-frame');
-        this.updateControlbarConfig('screenshot');
         this.updateControlbarConfig('aspectRatio');
-        this.updateControlbarConfig('subtitles');
       }
       if(customConfig){
         customConfig.forEach(x=>{
@@ -68,14 +62,8 @@ export default class AmaliaPlayerService {
         })
       }
     }
-    if (downloadUrl != '') {
-      this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.find((x: any) => x.control == 'download').data.href = downloadUrl;
-    }
     if ((thumbnailBaseUrl && thumbnailBaseUrl !== '')) {
       this.playerConfiguration.thumbnail.baseUrl = `${thumbnailBaseUrl}?width=320`;
-      if (mediaType === 'video') {
-        this.playerConfiguration.pluginsConfiguration['CONTROL_BAR-PLAYER'].data.find((x: any) => x.icon === 'screenshot').data.href = thumbnailBaseUrl;
-      }
     }
     if (mediaType === 'audio' && waveformUrl != '') {
       this.configPlayerAudio(waveformUrl);
@@ -97,20 +85,16 @@ export default class AmaliaPlayerService {
   }
 
   private updateControlbarConfig(controlName: string) {
-    let elementIndex;
-    if (controlName == 'screenshot') {
-      elementIndex = this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.findIndex((x: any) => x.icon == controlName);
-    } else {
-      elementIndex = this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.findIndex((x: any) => x.control == controlName);
-    }
+    let elementIndex= this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.findIndex((x: any) => x.control == controlName);
+
     this.playerConfiguration.pluginsConfiguration["CONTROL_BAR-PLAYER"].data.splice(elementIndex, 1);
   }
 
 
-  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string,waveformUrl:string,customConfig?:Array<string>): HTMLElement {
+  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,mediaType:string,waveformUrl:string,customConfig?:Array<string>): HTMLElement {
     this.loadSource();
     if (!this.playerConfiguration || customConfig) {
-      this.configurePlayer(src,undefined,dynamicTumbnails,mediaType,downloadUrl,undefined,
+      this.configurePlayer(src,undefined,dynamicTumbnails,mediaType,undefined,
           undefined,media_params?.tc_offset,undefined,waveformUrl,customConfig)
     }
     // Create web component

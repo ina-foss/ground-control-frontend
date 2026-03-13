@@ -48,7 +48,7 @@ export default defineComponent({
     const { t } = useI18n()
     const authStore = useAuth()
     const optionStore = useOptions()
-    const {$application} = useService()
+    const {$application,$amalia} = useService()
     const {addTimecodeHistory} = useTimecodeHistory()
     const { unixToTimestamp  } = $application
     const{setTcOffset}= useTcOffset()
@@ -58,6 +58,8 @@ export default defineComponent({
     const tabsRef = ref()
     const abondanDialog = ref(false)
     const finishDialog = ref(false)
+    const isPlaying  = ref(false)
+    const currentTime = ref(0);
 
     const isPlayerFocused = ref(false)
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
@@ -433,11 +435,27 @@ export default defineComponent({
             options.value.number_segment = !options.value.number_segment;
             break;
           case (" "): // Gérer l'espace
-            if (event.ctrlKey) { //creation rupture apres
-              navigateWithkeyboard(0,false);
-            }
-            else{ //creation rupture avant
-              navigateWithkeyboard(0,true);
+            if(annotation_type === 'span'){
+                currentTime.value = $amalia.callSeek();
+                if(currentTime.value===0 && isPlaying.value===false){
+                    isPlaying.value=true
+                }else
+                if(currentTime.value>0){
+                    isPlaying.value=!isPlaying.value
+                }
+                if(isPlaying.value===false){
+                    $amalia.onPause()
+                }
+                else{
+                    $amalia.onPlay()
+                }
+            }else{
+              if (event.ctrlKey) { //creation rupture apres
+                navigateWithkeyboard(0,false);
+              }
+              else{ //creation rupture avant
+                navigateWithkeyboard(0,true);
+              }
             }
             break;
           default:
@@ -544,6 +562,5 @@ export default defineComponent({
     abondanDialog,
     finishDialog
   }
-
 },
 })
