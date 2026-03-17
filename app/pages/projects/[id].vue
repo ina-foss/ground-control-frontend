@@ -874,26 +874,51 @@ const filteredTasks = computed(() => {
 
 const buttonItems = [
   {
-    label: "Un seul fichier",
-    command: () => {
-      exportOut(selectedRow.value, "one")
-    },
-    tooltip: "Exporter toutes les annotations de l'étape dans un seul fichier",
+    label: "Exporter au format d'import",
+    items: [
+      {
+        label: "Un seul fichier",
+        command: () => {
+          exportOut(selectedRow.value, "one");
+        },
+      },
+      {
+        label: "Regrouper par tâche",
+        command: () => {
+          exportOut(selectedRow.value, "task");
+        },
+      },
+      {
+        label: "Fichiers séparés",
+        command: () => {
+          exportOut(selectedRow.value, "all");
+        },
+      },
+    ]
   },
   {
-    label: "Regrouper par tâche",
-    command: () => {
-      exportOut(selectedRow.value, "task")
-    },
-    tooltip: "Exporter les annotations en les regroupant par tâche",
-  },
-  {
-    label: "Fichiers séparés",
-    command: () => {
-      exportOut(selectedRow.value, "all")
-    },
-    tooltip: "Exporter chaque annotations dans un fichier dédié",
-  },
+    label: "Export total",
+    items: [
+      {
+        label: "Un seul fichier",
+        command: () => {
+          exportOut(selectedRow.value, "one","dump");
+        },
+      },
+      {
+        label: "Regrouper par tâche",
+        command: () => {
+          exportOut(selectedRow.value, "task","dump");
+        },
+      },
+      {
+        label: "Fichiers séparés",
+        command: () => {
+          exportOut(selectedRow.value, "all","dump");
+        },
+      },
+    ]
+  }
 ]
 
 const showDeleteTaskModal = (rowData) => {

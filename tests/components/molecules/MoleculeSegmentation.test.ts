@@ -3,7 +3,7 @@ import PrimeVue from 'primevue/config';
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import MoleculeSegmentation from '~/components/molecules/MoleculeSegmentation.vue'
 import {mockedReturn, mockedTransciptionsWithoutTopics, mockedTransciptionsWithTopics} from '../../mock';
-import { mount} from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import type { VueWrapper } from '@vue/test-utils';
 import AtomTopicList  from '@/components/atoms/topicList/AtomTopicList.vue'
 import AtomProgressBar  from '@/components/atoms/AtomProgressBar.vue';
@@ -52,17 +52,19 @@ describe('Molecule Segmentation', ()=>{
       }
     })
 
-    vi.mock('../../../components/molecules/molecule-segmentation-component.ts',async (importOriginal)=>{
-      const original = await importOriginal()
-      return original
-    })
+    vi.mock('~/composables/usePersistence',()=>({
+      usePersistence: vi.fn(()=>({
+        get: vi.fn().mockReturnValue(undefined),
+        save: vi.fn()
+      }))
+    }))
 
   })
 
   beforeEach(async()=>{
 
 
-    wrapper =  mount(MoleculeSegmentation,{
+    wrapper = mount(MoleculeSegmentation,{
       global: {
         plugins: [PrimeVue,i18n],
         provide: {
@@ -81,7 +83,7 @@ describe('Molecule Segmentation', ()=>{
       },
     })
 
-    wrapper2 = mount(MoleculeSegmentation,{
+    wrapper2 =  mount(MoleculeSegmentation,{
       global: {
         plugins: [PrimeVue,i18n],
         provide: {

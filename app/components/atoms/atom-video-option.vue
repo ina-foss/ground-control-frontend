@@ -18,6 +18,10 @@
               <ToggleSwitch v-model="options.loop_bloc" />
             </div>
             <div class="flex justify-between items-center self-stretch py-1 ">
+              <span>Lancement média</span>
+              <SelectButton v-model="options.ctrlWordClick" :options="[{label:'Ctrl + clic', value: true},{label:'Clic', value: false}]" option-label="label" option-value="value" size="small" />
+            </div>
+            <div class="flex justify-between items-center self-stretch py-1 ">
               <span>Avant le mot cliqué</span>
               <InputNumber v-model="options.jump_before_offset" show-buttons :min="0" style="width: 5.5rem;" suffix="s" fluid />
             </div>

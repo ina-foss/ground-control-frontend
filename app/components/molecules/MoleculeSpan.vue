@@ -54,7 +54,7 @@ class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
                     @update:spansChanged="$emit('update:spansChanged', $event)"/>
                   </TabPanel>
           <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
-                      <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(250px,1fr))">
+                      <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(300px,1fr))">
                         <AtomSpanOption v-model:span="options.span"  v-model:timecode-bloc="options.timecode_bloc"   v-model:bloc="options.bloc" />
                         <atom-video-option />
                         <AtomTaskComment />

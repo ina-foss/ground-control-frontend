@@ -246,7 +246,7 @@ export default defineComponent({
 
 
 
-    const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean,fromSpan?: boolean }) => { // Lorsqu'un segment est cliqué
+    const handleSegmentClick = (event: {tcin: string|number, index: number, fromVideo?: boolean,fromSpan?: boolean, event?: MouseEvent }) => { // Lorsqu'un segment est cliqué
       if(event.index == undefined ){
         event.index = _.findIndex(locals.value.filter(el => el?.tclevel !== undefined),tr=>tr.tcin == event.tcin || (tr.tcin <= event.tcin && tr.tcout >= event.tcin) )
       }
@@ -254,7 +254,9 @@ export default defineComponent({
       if(event.fromSpan||!options.value.player) scrollToSegment({bestIndex: event.index}) // if the sync is enabled, let the player scroll to the right segment
       if ( options.value.transcription === true ) {
         event.tcin = unixToTimestamp(event.tcin) - options.value.jump_before_offset
-        moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event)
+        if ( !options.value.ctrlWordClick || event.event?.ctrlKey) {
+          moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode(event);
+        }
       }
     }
 

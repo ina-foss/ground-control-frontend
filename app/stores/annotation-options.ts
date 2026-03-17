@@ -1,21 +1,21 @@
-import { defineStore } from 'pinia';
+import { z } from 'zod'
 
-export type Options =  {
+const optionsSchema = z.strictObject({
   /**
    * If the video is sync to the transcription scrolling
    * @defaultValue `true`
    */
-  player: boolean
+  player: z.boolean(),
 
   /** If the click on the transcription update video time
    * @defaultValue `true`
    */
-  transcription: boolean
+  transcription: z.boolean(),
 
   /** If the player stops at the end of the selected segment
    * @defaultValue `false`
    */
-  loop_bloc: boolean
+  loop_bloc: z.boolean(),
 
   /**
   * Number of seconds to rewind before the target jump position.
@@ -24,7 +24,7 @@ export type Options =  {
   * @example If set to 2 and user jumps to 2m04s, playback starts at 2m02s
   * @defaultValue 2
   */
-  jump_before_offset: number
+  jump_before_offset: z.number(),
 
   /**
   * Number of seconds to rewind before the target jump position.
@@ -33,38 +33,47 @@ export type Options =  {
   * @example If set to 2 and user jumps to 2m04s, playback starts at 2m02s
   * @defaultValue 2
   */
-  jump_after_offset: number
+  jump_after_offset: z.number(),
+
+  /**
+   * Whether or not the user need to hold down the Ctrl Key when clicking a word to jump in the media
+   *
+   * @defaultValue `true`
+   */
+  ctrlWordClick: z.boolean(),
 
   /** if the span are displayed
    * @defaultValue `true`
    */
-  span : boolean
+  span: z.boolean(),
 
   /** if the timecode are showed for each bloc
    * @defaultValue `true`
    */
-  timecode_bloc: boolean
+  timecode_bloc: z.boolean(),
 
   /** if the timecode are showed for each segment
    * @defaultValue `false`
    */
-  timecode_segment: boolean
+  timecode_segment: z.boolean(),
 
   /** if the annotations are divided by bloc
    * @defaultValue `false`
    */
-  bloc: boolean
+  bloc: z.boolean(),
 
   /** if the number are showed for each segment
    * @defaultValue `false`
    */
-  number_segment: boolean
+  number_segment: z.boolean(),
 
   /** if you can create a span without any label
   * @defaultValue true
   */
-  unlabelled_span: boolean
-}
+  unlabelled_span: z.boolean(),
+});
+
+export type Options = z.infer<typeof optionsSchema>
 
 
 export type AnnotationMode = 'read' | 'edit' | 'none'
@@ -81,11 +90,28 @@ export const useOptions = defineStore("annotation-options",() => {
       loop_bloc: false,
       jump_before_offset: 2,
       jump_after_offset: 2,
+      ctrlWordClick: true,
       number_segment:false,
       unlabelled_span: true,
     })
 
+    const videoOptionPM = usePersistence<Options>('span-video-option',options, optionsSchema)
+
+    watch(
+      () => options,
+      (newValue) => {
+        videoOptionPM.save(newValue)
+      },
+      { deep: true },
+    );
+
+    onMounted(()=>{
+        const previousOptions = videoOptionPM.get()?.items
+        if(previousOptions) Object.assign(options, previousOptions)
+        else videoOptionPM.save(options)
+    })
+
     return {
-      options,
+      options
   }
 })

@@ -79,16 +79,21 @@ export default defineComponent({
     let doubleClickTimeout : NodeJS.Timeout | null = null
 
     function handleWordClick (event: {tcin: number | string, event: MouseEvent}){
-      if(doubleClickTimeout){ // if the handler is triggered 2 times in less than 500ms
-        clearTimeout(doubleClickTimeout) // cancel the timeout
-        doubleClickTimeout = null
-      }
-      else {
-        if(window.getSelection()?.rangeCount){ // won't emit if user selected the word
-          doubleClickTimeout = setTimeout(()=>{
+      if (options.value.ctrlWordClick) {
+        emit('on-segment-click', event)
+      } else {
+        if (doubleClickTimeout) {
+          // if the handler is triggered 2 times in less than 500ms
+          clearTimeout(doubleClickTimeout); // cancel the timeout
+          doubleClickTimeout = null
+        } else {
+          if (window.getSelection()?.rangeCount) {
+            // won't emit if user selected the word
+            doubleClickTimeout = setTimeout(() => {
               emit('on-segment-click', event)
               doubleClickTimeout = null
-          },500)
+            }, 500);
+          }
         }
       }
 

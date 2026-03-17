@@ -605,7 +605,7 @@ function createSpanService (){
     if (!selection || selection.rangeCount === 0) return []
     const range = selection.getRangeAt(0)
     let container = range.commonAncestorContainer as HTMLElement
-    while (container && container.nodeName !== "SPAN-TRANSCRIPTION-WRAPPER") {
+    while (container && container.nodeName !== "SPAN-TRANSCRIPTION-WRAPPER" && container.firstElementChild?.nodeName !== "TRANSCRIPTION-CONTAINER") {
       container = container.parentNode as HTMLElement
     }
 
@@ -713,7 +713,7 @@ function createSpanService (){
     if (!text) return '';
     return text.charAt(0).toUpperCase() + text.slice(1);
   }
-  
+
   const resetSpansChanged = () => {
     spansChanged.value = false
   }

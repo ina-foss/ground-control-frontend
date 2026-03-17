@@ -2,6 +2,8 @@
  * Data persistence: localStorage and JSON export
  */
 
+import { ZodError, type ZodObject } from "zod";
+
 const AUTOSAVE_MAX_AGE_HOURS = 24
 
 
@@ -9,7 +11,12 @@ export class PersistenceManager<T> {
   /**
    * Data you want to persist
    */
-  items: T | null ;
+  items: T | null;
+
+  /**
+   * Zod Schema used for validation
+   */
+  schema: ZodObject | undefined;
 
   /**
    * Timer ID for the autosave interval
@@ -43,9 +50,11 @@ export class PersistenceManager<T> {
   constructor(
     items: T,
     storageKey?: string,
+    schema?: ZodObject,
     autoSaveInterval?: number,
   ) {
     this.items = items;
+    this.schema = schema;
     if (storageKey) {
       this.storage_key = storageKey;
       this.autosave_key = `${storageKey}-autosave`;
@@ -82,20 +91,32 @@ export class PersistenceManager<T> {
   get() {
     const saved = localStorage.getItem(this.storage_key);
     if (!saved) {
-      return null
+      return null;
     }
 
     let data;
     try {
       data = JSON.parse(saved) as { items: T; timestamp: string };
+      if (this.schema) {
+        this.schema.parse(data.items);
+      }
     } catch (e) {
-      console.error(
-        'The data retrieved from localStorage are not available : ',
-        e,
-      );
+      if (e instanceof ZodError) {
+        console.warn('Validation Error : ', ...e.issues);
+      }
+      else{
+        console.warn(
+          'The data retrieved from localStorage could not be parsed',
+          {cause: e}
+        );
+      }
+      return null
     }
-    if (!data || !('items' in data) || !('timestamp' in data))
-      throw new Error('The data retrieved from localStorage is empty');
+    if (!data || !('items' in data) || !('timestamp' in data)){
+      console.warn("The data retrieved from localStorage were not in the expected format")
+      return null
+    }
+
     return data;
   }
 
