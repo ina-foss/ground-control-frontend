@@ -16,10 +16,8 @@ export default defineComponent({
       { deep: true },
     );
 
-    onMounted(()=>{
-        const previousOptions = videoOptionPM.get()?.items
-        if(previousOptions) options.value = previousOptions
-    })
+    const previousOptions = videoOptionPM.get()?.items
+    if(previousOptions) options.value = previousOptions
 
     return{
       options

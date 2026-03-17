@@ -80,7 +80,7 @@ export type AnnotationMode = 'read' | 'edit' | 'none'
 
 export const useOptions = defineStore("annotation-options",() => {
 
-    const options = reactive<Options>({
+    const options = ref<Options>({
       span: true,
       timecode_bloc: true,
       timecode_segment:false,
@@ -95,10 +95,10 @@ export const useOptions = defineStore("annotation-options",() => {
       unlabelled_span: true,
     })
 
-    const videoOptionPM = usePersistence<Options>('span-video-option',options, optionsSchema)
+    const videoOptionPM = usePersistence<Options>('span-annotation-option',options.value, optionsSchema)
 
     watch(
-      () => options,
+      () => options.value,
       (newValue) => {
         videoOptionPM.save(newValue)
       },
@@ -108,7 +108,7 @@ export const useOptions = defineStore("annotation-options",() => {
     onMounted(()=>{
         const previousOptions = videoOptionPM.get()?.items
         if(previousOptions) Object.assign(options, previousOptions)
-        else videoOptionPM.save(options)
+        else videoOptionPM.save(options.value)
     })
 
     return {

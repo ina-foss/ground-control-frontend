@@ -26,7 +26,8 @@ export default defineComponent({
 
     const { $application } = useService()
     const { timestampToUnix, unixToTimestamp } = $application
-    const { options } = storeToRefs(useOptions())
+    const store = useOptions()
+    const { options } = storeToRefs(store)
 
     const {$amalia}  = useService()
 

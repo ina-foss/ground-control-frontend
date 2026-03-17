@@ -41,10 +41,7 @@ export default defineComponent({
     const selectedCategories = ref([]);
 
 
-    let amaliaOptionPM = usePersistence<typeof selectedCategories.value>(
-      'ground-control-amalia-preference',
-      selectedCategories.value,
-    );
+    let amaliaOptionPM
 
     function retrieveLocalStorage() {
       const localStorageValues = amaliaOptionPM.get()?.items;
