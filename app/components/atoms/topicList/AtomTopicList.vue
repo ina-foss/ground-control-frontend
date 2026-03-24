@@ -2,12 +2,7 @@
   <div class=" rounded-b-md  w-full gap-3 bg-white h-full ">
     <div class="flex flex-col gap-[10px] text-title p-lg  !h-full">
       <div v-if="cleanedColors?.length != 0" :items="cleanedColors" :itemSize="50" class="w-full h-full  ">
-        <ScrollPanel
-class="h-full" :dt="{
-          bar: {
-            background: 'var(--primary-color)',
-            size: '3px'
-          },
+        <ScrollPanel class="h-full" :dt="{
           barY: {
             style: 'right: -10px;'
           }

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./theme.css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -142,7 +143,14 @@
   --radius-xl: 16px;
 }
 
+@utility markdown {
+  @apply prose; prose-h1:text-6xl;  prose-h2:text-5xl;  prose-h3:text-4xl;  prose-h4:text-3xl;  prose-h5:text-2xl; prose-h6:text-xl;
+  @apply prose-h1:text-title;
+  @apply dark:prose-invert;
+
+  --tw-prose-body: var(--color-text);
+}
+
 /* Custom xs breakpoint (max-width) */
 --breakpoint-xs:769px
 
-@plugin "@tailwindcss/typography";

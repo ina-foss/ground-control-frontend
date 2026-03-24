@@ -49,6 +49,5 @@ export default {
       '2xl': '1536px',
     }
   },
-  plugins: [typography],
 }
 

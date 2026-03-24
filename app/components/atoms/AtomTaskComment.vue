@@ -11,12 +11,7 @@
               <div class="flex-col">
 
             <div v-if="comments?.length != 0" :class="{'overflow-y-clip overflow-x-hidden mb-3 w-full h-fit':true, '!h-[125px]': comments?.length >3}">
-                  <ScrollPanel
-class="h-full" :dt="{
-      bar : {
-        background: 'var(--primary-color)',
-        size:'3px'
-      },
+                  <ScrollPanel class="h-full" :dt="{
       barY:{
         style : 'right: 10px;'
         }

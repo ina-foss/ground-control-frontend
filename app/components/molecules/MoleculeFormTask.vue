@@ -21,7 +21,7 @@
               </div>
               <div class="flex">
                 <label class="self-center w-24 pr-6">Instruction</label>
-                <InputText
+                <TextArea
                   v-model="instruction"
                   placeholder="Entrez l'instruction de tâche"
                   autocomplete="off"

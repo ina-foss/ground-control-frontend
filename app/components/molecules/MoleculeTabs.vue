@@ -10,18 +10,13 @@
           <Tab v-if="transcriptions" class="!bg-white" :value="4">Résumé</Tab>
           <Tab v-if="transcriptions" class="!bg-white" :value="5">Phrases</Tab>
         </TabList>
-        <ScrollPanel
-class="h-full" :dt="{
-      bar : {
-        background: 'var(--primary-color)',
-        size:'3px'
-      },
+        <ScrollPanel class="h-full" :dt="{
       barY:{
         style : 'right: -10px;'
         }
     }">
       <TabPanels  class=" md:block flex-grow h-0 max-h-full">
-        <TabPanel v-for="(tab,index) in tabs" v-if="tabs.length > 0" :key="index" :value="index">
+        <TabPanel v-for="(tab,index) in tabs" v-if="tabs.length > 0" :key="index" :value="index" class="p-sm">
             <AtomMarkdown :content="tab.text"/>
         </TabPanel>
         <TabPanel :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">

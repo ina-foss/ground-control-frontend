@@ -2,14 +2,7 @@
   <molecule-span-wrapper class="col-span-8 flex">
     <div :class="` flex flex-col h-full relative `">
       <div class="grow h-0 flex justify-center relative overflow-visible ">
-        <ScrollPanel
-class="h-full pr-2 overflow-x-visible "
-          :dt="{
-          bar : {
-            background: 'var(--primary-color)',
-            size:'4px',
-          },
-        }">
+        <ScrollPanel class="h-full pr-2 overflow-x-visible ">
           <div  ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col" >
             <Skeleton width="75ch" height="160px" />
             <Skeleton width="75ch" height="91px" />
@@ -29,16 +22,7 @@ class="h-full pr-2 overflow-x-visible "
                   <Tab value="span">Spans</Tab>
                   <Tab value="parameters">Paramètres</Tab>
                 </TabList>
-                <ScrollPanel
-class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
-      bar : {
-        background: 'var(--primary-color)',
-        size:'5px'
-      },
-      barY:{
-        style : 'right: -10px;'
-        }
-    }">
+                <ScrollPanel class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" >
                 <TabPanels class="!bg-secondary  w-full !pl-0 !pb-2 flex-1">
                   <TabPanel value="span" class="flex-col flex flex-1 items-center gap-3">
                     <Skeleton height="100px"/>

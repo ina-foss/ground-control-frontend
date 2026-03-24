@@ -179,7 +179,10 @@
   "steps": {
     "title": "Étapes",
     "statusPlaceholder": "Statut",
-    "empty": "Ce projet ne comporte aucune étape"
+    "empty": "Ce projet ne comporte aucune étape",
+    "tasks": {
+      "seeInstructions": "Cliquer pour consulter les instructions de cette tâche"
+    }
   },
   "strategy": {
     "show": "Stratégie > ",

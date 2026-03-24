@@ -153,7 +153,10 @@
   "steps": {
     "title": "Steps",
     "statusPlaceholder": "Status",
-    "empty": "This project has no steps"
+    "empty": "This project has no steps",
+    "tasks":{
+     "seeInstructions": "Click to see task instructions"
+    }
   },
   "strategy": {
     "show": "Strategy > ",

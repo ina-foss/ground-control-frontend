@@ -50,7 +50,6 @@
                         :style="{ maxHeight: '333px', height: spanOnlyArray.length < 8 ? 'auto' : '340px' }"
                         class="overflow-auto"
                         :dt="{
-                        bar: { background: 'var(--primary-color)', size: '5px' },
                         barY: { style: 'right: -5px;' }
                       }"
                     >

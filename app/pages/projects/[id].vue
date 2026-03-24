@@ -543,10 +543,22 @@ style="color: #0B7698 !important;
               class="txt"
               body-class="text-sm"
               field="instruction"
-              header="Instruction"
+              header="Instructions"
             >
               <template #body="{ data: nestedData }">
-                <AtomMarkdown :content="getFirstLine(nestedData.instruction)" />
+                <div
+                    v-if="nestedData.instruction"
+                    v-tooltip="t('steps.tasks.seeInstructions')"
+                    class="hover:bg-hover/25 rounded-full w-8.5 h-8.5 flex justify-center"
+                    @click.stop="toggleInstructionPopover($event,nestedData)"
+                >
+                  <img
+                    src="/icons/icons-svg/icons-svg/list-icon-atom.svg"
+                    style="
+                      height: 30px;
+                      width: 20px;"
+                  />
+                </div>
               </template>
             </Column>
             <Column class="txt" body-class="text-sm" field="voir" header="Voir">
@@ -563,7 +575,7 @@ style="color: #0B7698 !important;
                   <img
                     src="/icons/icons-svg/icons-svg/view-icon.svg"
                     alt="View Icon"
-                    style="height: 30px; 
+                    style="height: 30px;
                     width: 20px;"
                     />
                 </Button>
@@ -721,6 +733,14 @@ style="color: #0B7698 !important;
       }"
       @confirm="deleteTask(deleteModal.data.id)"
     />
+
+    <Popover ref="instructionPopover">
+        <ScrollPanel class=" min-h-fit h-100 w-100" >
+          <AtomMarkdown :content="instructionData" />
+        </ScrollPanel>
+    </Popover>
+
+
     <MoleculeFormTask
       v-if="dialogVisible"
       :dialog-visible="dialogVisible"
@@ -749,11 +769,9 @@ import { FilterMatchMode, FilterService } from "@primevue/core/api";
 import AtomMarkdown from "~/components/atoms/AtomMarkdown.vue";
 import {useStatusMap,type StatusOption } from "~/helpers/statusMap";
 
-const status_map = useStatusMap();
 import { useI18n } from '#imports';
 import type { Task } from "~/shared/model/task.model"
 
-const { t } = useI18n()
 
 FilterService.register("expirationFilter", (value, filter) => {
   if (!filter) return true
@@ -767,14 +785,18 @@ FilterService.register("expirationFilter", (value, filter) => {
     return value && new Date(value) < today
   }
 
-  return true
-})
+  return true;
+});
 
-const route = useRoute()
-const refreshStore = useRefreshStore()
-const toast = useToast()
-const { $application } = useService()
-const { fetchTasks } = refreshStore
+const status_map = useStatusMap();
+const { t } = useI18n()
+const route = useRoute();
+const refreshStore = useRefreshStore();
+const toast = useToast();
+const instructionPopover = ref();
+let instructionData = "";
+const { $application } = useService();
+const { fetchTasks } = refreshStore;
 const { getTasks } = storeToRefs(refreshStore)
 const dialogVisible = ref(false)
 const deleteModal = reactive({ visible: false, data: {}, loading: false })
@@ -809,13 +831,13 @@ const roleActivateTask = computed(() =>
 )
 const roleUpdateExpirationDate = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_TASK_UPDATE_EXPIRATION_DATTE),
-)
-const getFirstLine = (markdownText) => {
-  if (!markdownText) return "";
-  return markdownText.split("\n")[0];
-};
+);
 const expandedRows = ref<any[]>([])
 
+function  toggleInstructionPopover(event, data){
+  instructionPopover.value.toggle(event)
+  instructionData = data.instruction
+}
 const onRowClick = ({ data }) => {
   if(expandedRows.value.length===0)
   {

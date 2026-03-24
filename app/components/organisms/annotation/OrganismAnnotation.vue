@@ -68,7 +68,9 @@
         :media_params="data.media?.player_parameters"
         :locals="pureTranscriptions"
         @scroll-to-segment="handleVideoTimelineClick"
-      />
+      >
+        <MoleculeTabs ref="tabsRef" v-bind="tabsProps" />
+      </MoleculeAnnotationLeftPanel>
       <div :class="[layout.center, 'h-full min-h-0 flex']">
         <Suspense>
           <component

@@ -102,6 +102,17 @@ const DSINAPreset = definePreset(Lara, {
         }
       }
     },
+    scrollpanel:{
+      colorScheme:{
+       light:{
+          barBackground:'{primary.color} !important '
+       }
+      },
+      bar:{
+        size: '4px',
+
+      }
+    },
     inputnumber:{
       colorScheme:{
         light: {

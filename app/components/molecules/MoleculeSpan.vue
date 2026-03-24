@@ -5,15 +5,8 @@
         <AtomSearch class='hidden'  :spans="spanArray" />
       </div>
       <div class="grow h-0 flex justify-center relative overflow-visible ">
-        <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-33.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : state == Status.DONE ? 'Tâche Terminée ✅ ' : 'Mode Lecture 📖' " />
-        <ScrollPanel
-class="h-full pr-2 overflow-x-visible "
-          :dt="{
-          bar : {
-            background: 'var(--primary-color)',
-            size:'4px',
-          },
-        }">
+        <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-33.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : state == Status.DONE ? 'Tâche Terminée ✅ ' : 'Mode Lecture 📖' " ></span>
+        <ScrollPanel class="h-full pr-2 overflow-x-visible ">
           <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col w-fit" >
             <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :player-time="playerTime"  @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
           </div>
@@ -36,12 +29,7 @@ class="h-full pr-2 overflow-x-visible "
                   <Tab value="span">Spans</Tab>
                   <Tab value="parameters">Paramètres</Tab>
                 </TabList>
-                <ScrollPanel
-class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
-      bar : {
-        background: 'var(--primary-color)',
-        size:'5px'
-      },
+                <ScrollPanel class="pr-2 overflow-y-auto overflow-x-hidden max-h-[calc(100vh-170px)]" :dt="{
       barY:{
         style : 'right: -10px;'
         }

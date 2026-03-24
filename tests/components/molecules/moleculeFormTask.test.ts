@@ -86,7 +86,7 @@ describe('Molecule Form Task',()=>{
 
   it('click the create button', async ()=>{
       await wrapper.find('input').setValue('Task title')
-      await wrapper.findAll(`input`).at(1).setValue('Task instruction')
+      await wrapper.find('textarea').setValue('Task instruction')
 
       const file = new File(['{"asset": {"url": "http://example.com", "media_type": "video", "player_parameters": {}}}'], 'test.json', { type: 'application/json' });
       const fileUpload = wrapper.findComponent(FileUpload);

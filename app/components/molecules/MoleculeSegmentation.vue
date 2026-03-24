@@ -8,17 +8,7 @@
       <AtomProgressBar class="xs:sticky top-0 transition-all"  :colors="colors" :topics="topics" :topic-list="topicList" :total-length="locals.length" @progress-bar-jump="jumpToTopic($event)" />
     </div>
     <div class="overflow-y-clip overflow-visible h-full flex-grow flex justify-center   ">
-    <ScrollPanel
-class="h-full pr-2 overflow-x-visible "
-      :dt="{
-      bar : {
-        background: 'var(--primary-color)',
-        size:'4px',
-      },
-      barY:{
-        style : 'right: -10px;'
-        }
-    }">
+    <ScrollPanel class="h-full pr-2 overflow-x-visible " >
       <ScrollTop
         :pt="{ root: { style: 'position: fixed !important; right: calc(22%) ; bottom: 30px ; border-radius: 1000px; width: 2rem; height: 2rem; background-color: black' } }"
         :threshold="100"
