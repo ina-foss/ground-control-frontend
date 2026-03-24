@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { useService,useI18n } from '#imports';
 import { ref,watch } from 'vue';
-import settingIcon from '/icons/icons-svg/icons-svg/setting-icon.svg';
 
 export default defineComponent({
   name: "AtomVideoAmalia",

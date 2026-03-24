@@ -166,4 +166,29 @@
 .p-tooltip-top .p-tooltip-arrow {
   padding: 1.5px 0 !important;
 }
+
+.context-wrapper {
+  position: relative;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.context-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    /* Haut */
+      repeating-linear-gradient(to right, #b0b0b0 0 6px, transparent 6px 12px) top/100% 1.5px no-repeat,
+        /* Bas */
+      repeating-linear-gradient(to right, #b0b0b0 0 6px, transparent 6px 12px) bottom/100% 1.5px no-repeat,
+        /* Gauche */
+      repeating-linear-gradient(to bottom, #b0b0b0 0 6px, transparent 6px 12px) left/1.5px 100% no-repeat,
+        /* Droite */
+      repeating-linear-gradient(to bottom, #b0b0b0 0 6px, transparent 6px 12px) right/1.5px 100% no-repeat;
+
+}
 </style>

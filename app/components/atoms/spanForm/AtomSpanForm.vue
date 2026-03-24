@@ -1,19 +1,20 @@
 <template>
   <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose"  >
     <div class=" w-[700px] flex flex-col gap-6 " >
-      <context-wrapper v-if="!showContext" class="flex flex-col border-dashed border-2 rounded border-subtitle p-5 transition-all duration-300 gap-2 bg-grey-50 ">
+      <context-wrapper v-if="!showContext" class="context-wrapper flex flex-col  p-5 transition-all duration-300 gap-2 bg-grey-50 "
+>
         <context-header class="inline-flex w-full items-center justify-between pb-3">
           <span class="font-semibold  ">  {{ t('spanForm.context') }} </span>
           <context-button-wrapper class="inline-flex gap-4 justify-around items-center">
             <span
-              :class="['pi pi-minus rounded-full  border p-1 text-[10px]/3 font-bold   ',
-              !expandedContext ? 'text-disabled  border-disabled' : 'cursor-pointer border-black hover:bg-primary-50'
-            ]"
+              :class="['pi pi-minus-circle',
+              !expandedContext ? 'grey-500 border-grey-500  opacity-50' : 'cursor-pointer border-black hover:bg-primary-50'
+            ]" style="font-size: 1.5rem;"
               @click="shrinkContext"/>
             <span
-              :class="['pi pi-plus rounded-full  border p-1 text-[10px]/3 font-bold   ',
-              expandedContext ? 'text-disabled  border-disabled' : 'cursor-pointer border-black hover:bg-primary-50'
-            ]"
+              :class="['pi pi-plus-circle',
+              expandedContext ? 'grey-500 border-grey-500  opacity-50' : 'cursor-pointer border-black hover:bg-primary-50'
+            ]" style="font-size: 1.5rem;"
               @click="expandContext()"/>
           </context-button-wrapper>
         </context-header>
@@ -30,7 +31,7 @@
         <main-plugins-wrapper class="flex flex-col gap-5  ">
           <!--virtual span role-->
           <div v-if="isVirtual" class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
-            <b :class="{'pt-2 text-right ': true , 'text-error': (!virtualSpanCategory) && showErrorMessage }">{{t('spanForm.virtualSpan.role')}}</b>
+            <p :class="{'pt-2 text-right ': true , 'text-error': (!virtualSpanCategory) && showErrorMessage }">{{t('spanForm.virtualSpan.role')}}</p>
             <div class="flex flex-wrap gap-4  ">
               <div class=" w-full flex gap-3 items-center " >
                 <Button
@@ -52,12 +53,12 @@
           <plugin-iterator v-for="(plugin,index) in tidiedPluginList[isGroup ? 'group_modal' : 'span_modal_left'  ]" class="flex flex-col gap-3 ">
             <div class=""   >
               <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" :index="index" :text-span="textSpan" @update:plugin-value="pluginChangeValue(plugin,$event)" >
-                <b :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config?.main_plugin || isGroup) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </b>
+                <p :class="{'pt-2 text-right ': true , 'text-error': (plugin.display_config?.main_plugin || isGroup) && showErrorMessage }">{{ ( plugin?.display_config?.label || plugin?.name.charAt(0).toUpperCase() +  plugin?.name.slice(1) ) }} </p>
               </component>
             </div>
             <div v-for="(child,childIndex) in childPluginMap[readPluginValues(plugin)]" v-if="childPluginMap[readPluginValues(plugin)] != undefined " :key="child.id" class="">
                 <component :is="selectComponent(child).component" v-bind="selectComponent(child).props" v-model:plugin-value="pluginValues[readPluginValues(child)]" :index="childIndex" :text-span="textSpan">
-                  <b class="text-right ">{{  child?.display_config?.label || child?.name.charAt(0).toUpperCase() + child?.name.slice(1)  }}</b>
+                  <p class="text-right ">{{  child?.display_config?.label || child?.name.charAt(0).toUpperCase() + child?.name.slice(1)  }}</p>
                 </component>
             </div>
           </plugin-iterator>
@@ -65,7 +66,7 @@
           <div v-if="!isForResearch" >
             <div v-if="pluginSelected">
               <div v-if="nodesCount === 1"  class=" grid grid-cols-[100px_auto] gap-3 gap-y-5">
-                <b  :class="{'pt-2 text-right ': true , 'text-error': showErrorMessage }"> {{t('spanForm.missingWordsLabel')}} </b>
+                <p  :class="{'pt-2 text-right ': true , 'text-error': showErrorMessage }"> {{t('spanForm.missingWordsLabel')}} </p>
                 <InputNumber v-model="deletedNum" :placeholder="t('spanForm.missingWordsPlaceholder')" class="w-[250px]"/>
               </div>
               <label v-else class="block text-center text-red-500" >{{suppWarning}}</label>
@@ -73,9 +74,9 @@
           </div>
 
           <div v-if="isForResearch" class="grid grid-cols-[100px_auto] gap-3 gap-y-5">
-            <b :class="{'pt-2 text-right ': true , 'text-error': (!defaultLabel) && showErrorMessage }">
+            <p :class="{'pt-2 text-right ': true , 'text-error': (!defaultLabel) && showErrorMessage }">
               {{t('spanForm.correctedTerm')}}
-            </b>
+            </p>
             <InputText
               v-model="defaultLabel"
               :placeholder="t('spanForm.correctedTermPlaceholder')"
@@ -86,9 +87,9 @@
             v-if="showLabelInput && !isForResearch && getPluginList.length !==0"
             class="grid grid-cols-[100px_auto] gap-3 gap-y-5"
           >
-            <b class="pt-2 text-right">
+            <p class="pt-2 text-right">
               {{labelTitle}}
-            </b>
+            </p>
 
             <InputText
               v-model="defaultLabel"
@@ -105,7 +106,7 @@
         {{t('spanForm.deleteConfirm')}}
       </delete-wrapper>
 
-      <div class="flex flex-row justify-end gap-2">
+      <div class="flex flex-row justify-end gap-4">
         <Button outlined severity="primary" icon="pi pi-times" :label="t('actions.cancel')" @click=" close()" />
         <Button :label="t('actions.confirm')" icon="pi pi-check" @click=" handleConfirmationButton() " />
       </div>
@@ -133,4 +134,5 @@
       background-position: left;
     }
   }
+
 </style>

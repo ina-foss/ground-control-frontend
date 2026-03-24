@@ -64,6 +64,7 @@
     "spanHeader": "Span: properties",
     "selectSpanType": "Select a span type from these groups",
     "virtualSpan": {
+      "buttonTitle": "Virtual span",
       "virtualSpanHeader": "Span: virtual span creation",
       "role": "Role",
       "dialog": {
@@ -112,6 +113,7 @@
     "yes": "Yes"
   },
   "actions": {
+    "add": "Add",
     "edit": "Edit",
     "archive":"Archive",
     "finish":"Finish",

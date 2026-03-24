@@ -143,7 +143,13 @@
                       :class="['pi pi-list text-2xl cursor-pointer pt-1', layout == 'list' ? 'opacity-100' : 'opacity-50']"
                       @click.stop="switchGroupLayout('list')"/>
                     <div class="flex items-center gap-1 cursor-pointer" @click.stop="openVirtualSpanForm">
-                      <span class="pi pi-plus-circle text-xl"/>Span virtuel
+
+                      <img
+                          src="/icons/icons-svg/icons-svg/virtual-icon.svg"
+                          alt="Virtual Icon"
+                          class="btn-svg-icon icon-color"
+                      />
+                        <b>{{t('spanForm.virtualSpan.buttonTitle')}}</b>
                     </div>
                   </layout-button-wrapper>
                 </div>
@@ -153,14 +159,15 @@
                 :style="{ 'grid-template-rows': groupIsSelected ? '1fr' : '0fr' }">
                 <selected-group-content v-show="selectedGroup" :style="{ 'min-height': 0 }">
                   <role-wrapper v-if="selectedGroup?.plugins[mainGroupPluginIndex]?.[0]?.categories?.length" class="grid" :style="`grid-template-columns: ${groupLayoutSytle};`">
-                    <div v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0]?.categories"
-                      :key="category" class="p-2 border-surface-200 text-center min-w-0 flex flex-col gap-3">
-                      <role-title-wrapper class="flex justify-center relative">
+                    <div v-for="category in selectedGroup?.plugins[mainGroupPluginIndex]?.[0].categories"
+                      :key="category" class="p-2 border-surface-200  text-center min-w-0 flex flex-col gap-3">
+                      <div class="flex flex-col gap-3 justify-center relative bg-secondary-color context-wrapper">
+                      <role-title-wrapper class="flex justify-center relative  pt-3">
                         <role-span-title class="text-center font-bold">{{ category.label }}</role-span-title>
                       </role-title-wrapper>
-                      <ScrollPanel class="h-[150px] border-2 border-dashed border-surface-400 rounded-md min-w-0">
+                      <ScrollPanel class="h-[150px] min-w-0">
                         <role-dropzone
-                          class="flex flex-col text-start min-h-full w-full gap-[10px] p-[10px] bg-secondary-color min-w-0 relative"
+                          class="flex flex-col text-start min-h-full w-full gap-[10px] p-[10px]  min-w-0 relative"
                           @drop="dropSpan($event, selectedGroup, category)" @dragover="event => event.preventDefault()"
                           @dragenter="previewSpanDrop" @dragleave="unpreviewSpanDrop">
                           <group-linked-span
@@ -183,6 +190,7 @@
                           </group-linked-span>
                         </role-dropzone>
                       </ScrollPanel>
+                    </div>
                     </div>
                   </role-wrapper>
                   <role-error-container v-else class="flex justify-center" >
@@ -226,17 +234,9 @@
                             option-label="label"
                         />
                       </group-filter>
-                      <Button
-                          icon="pi pi-plus"
-                          icon-pos="right"
-                          :disabled="!isAnnotationEditable"
-                          label="Ajouter"
-                          rounded
-                          outlined
-                          size="small"
-                          class="self-end"
-                          @click.stop="openGroupForm"
-                      />
+                      <div :disabled="!isAnnotationEditable" class="flex items-center gap-1 cursor-pointer" @click.stop="openGroupForm">
+                        <span class="pi pi-plus-circle pr-2" style="font-size: 1.5rem;"/><b>{{t('actions.add')}}</b>
+                      </div>
                     </group-filtergroup-filter-wrapper>
                   </category-header>
                 </template>
@@ -253,7 +253,7 @@
                     <span class="shrink-0" @click.stop="handleRemoveGroup(group)">
                       <img
                           style="height:18px;width:18px;filter: brightness(0) saturate(100%) invert(48%) sepia(72%) saturate(4640%) hue-rotate(337deg) brightness(98%) contrast(91%);"
-                          src="/icons/icons-svg/icons-svg/trash-icon.svg"
+                          src="/icons/icons-svg/icons-svg/trashIcon.svg"
                           alt="Trash Icon"
                       >
                     </span>
