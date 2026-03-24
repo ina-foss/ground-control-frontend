@@ -41,7 +41,7 @@ export default defineComponent({
       }, 50);
     })
 
-    const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM, spansChanged, resetSpansChanged} = useSpanService()
+    const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
 
     onUnmounted(()=>{
       clearInterval(intervalCheckTime)
@@ -50,11 +50,9 @@ export default defineComponent({
     const {pluginList } = storeToRefs(usePluginStore())
     const moleculeSpanControlPanelRef = ref()
 
-    watch(spansChanged, (val) => {
-      if (val) {
-        emit('update:spansChanged', true)
-        resetSpansChanged()
-      }
+
+    watch(() => spanArray.value.length, () => {
+      emit('update:spansChanged', true)
     })
 
     const blockArray = ref<HTMLDivElement|null>(null)

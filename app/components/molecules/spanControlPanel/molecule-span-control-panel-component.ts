@@ -261,7 +261,7 @@ export default defineComponent({
 
           if(isAuthorized || span?.label =="" || category?.authorized_types == undefined){
             if(!_.some(group.spans,span=>_.isEqual(span,{spanId: parseInt(spanId), role: category}))){
-              group.spans = [...group.spans, {spanId: parseInt(spanId), role: category}]
+              group.spans.push({spanId: parseInt(spanId), role: category})
             }
           }
           else{
