@@ -60,22 +60,6 @@ function createSpanService (){
   })
 
 
-  // ----- Watchers ------
-  watch(()=>newFocus.value,(newValue, oldValue)=>{
-    if(oldValue != undefined){
-      const oldElementArray = spanArray.value[oldValue]?.nodes
-      if(!oldElementArray){ // on deselectionne un groupe
-        recolorSpan(spanArray.value[oldValue])
-      }
-    }
-    if(newValue != undefined){
-      const elementArray = spanArray.value[newValue]?.nodes
-      if(!elementArray) { // On a selectionne un groupe
-          decolorSpan(spanArray.value[newValue])
-      }
-    }
-  })
-
   // ------ Computed -------
   const pluginOptionsList = computed(()=>pluginStore.pluginOptionsList)
 
@@ -308,41 +292,6 @@ function createSpanService (){
     spanArray.value[spanMenuSelected.value] = undefined
 
 
-  }
-
-  function decolorSpan(group){
-    if(!group) return
-
-
-    // List des id de spans qui appartiennent au group selectionne
-    const spanIdList : Array<any> = group.spans.map(a=>a.spanId)
-    // Spans auxquels on enleve leur couleur
-    const targetSpans = spanArray.value.filter(span => !spanIdList.includes(span?.id) && span?.tcin )
-
-
-    targetSpans.forEach(span=>{
-      if(span.nodes && span.nodes.length > 0){
-        span.nodes.forEach((node,index)=>{
-          node.style.backgroundColor = 'var(--grey-200)'
-          node.querySelectorAll(`bg${span.id}`).forEach(border=>border.remove())
-          if(index == 0)  node.querySelector('tag').style.backgroundColor = 'var(--grey-200)'
-        })
-      }
-    })
-  }
-
-  function recolorSpan(group){
-    let targetSpans
-    if(group){
-      // List des id de spans qui appartiennent au group selectionne
-      const spanIdList : Array<any> = group.spans.map(a=>a.spanId)
-      // Spans auxquels on remet leur couleur
-       targetSpans = spanArray.value.filter(span => !spanIdList.includes(span?.id) && span?.tcin )
-    }
-    else targetSpans = spanArray.value.filter(span=> span?.nodes)
-    targetSpans.forEach(span=>{
-      applySpan(span)
-    })
   }
 
   function createSpanColorPalette(pluginId: number | undefined, pluginValue: any, opacity : number = 0.25){
@@ -719,9 +668,9 @@ function createSpanService (){
   }
 
   return{
-    focusGroup, recolorSpan,decolorSpan, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling, deleteSpan, loadSpan, computeColorByLabel,  newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
-    affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,hideDragPin, spansChanged, resetSpansChanged,
-    capitalizeFirstLetter
+    focusGroup, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling, deleteSpan, loadSpan, newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
+    affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,hideDragPin,capitalizeFirstLetter,
+    spansChanged, resetSpansChanged
   }
 }
 
