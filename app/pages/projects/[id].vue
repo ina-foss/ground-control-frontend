@@ -554,6 +554,7 @@ style="color: #0B7698 !important;
                 >
                   <img
                     src="/icons/icons-svg/icons-svg/list-icon-atom.svg"
+                    alt="instruction icon"
                     style="
                       height: 30px;
                       width: 20px;"
