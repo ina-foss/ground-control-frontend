@@ -483,7 +483,9 @@ function createSpanService (){
 
   function extractTextFromSpanNodes(nodesArray: Array<Node> | null): string | null {
     if (!nodesArray) return null;
-    return nodesArray.map(node => extractTextFromSpan(node)).join(' ');
+    return nodesArray.map(node => extractTextFromSpan(node)).join(' ')
+        .replace(/\s*([-–—'''])\s*/g, '$1');
+
   }
 
 
