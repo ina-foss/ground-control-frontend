@@ -10,6 +10,7 @@ import _ from 'lodash'
 import AtomTopicList from "~/components/atoms/topicList/AtomTopicList.vue";
 import type {Status} from '~/api/generate/';
 import AtomHelp from "../atoms/AtomHelp.vue";
+import { useAnnotationTypeRegistry } from '~/composables/useAnnotationTypeRegistry';
 
 
 export default defineComponent({
@@ -17,7 +18,7 @@ export default defineComponent({
   components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList,AtomHelp, AtomSpanForm},
   emits: ['on-segment-click'],
   props: {
-    result: {type: Object, default: ()=> {} },
+    block: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
     topics: {type: Array<number>, default: ()=> []},
     locals: {type: Array, default: ()=> []},
@@ -33,7 +34,7 @@ export default defineComponent({
     const segmentationRefs = ref<Array<HTMLDivElement>>([])
     const { options } = storeToRefs(useOptions())
     const { colors, topics, locals ,tcOffset } = props
-    const {result,transcriptions} = toRefs(props)
+    const {block,transcriptions} = toRefs(props)
     const isAnnotationEditable = inject('isAnnotationEditable')
 
 
@@ -179,8 +180,8 @@ export default defineComponent({
           topics[index] = phrase.data.topic
         }
       })
-      if(result.value.topic_metadata ){
-        result.value.topic_metadata.forEach((topic ) => {
+      if(block.value.topic_metadata ){
+        block.value.topic_metadata.forEach((topic ) => {
           topicList.value[topic?.id] = topic
         })
       }
@@ -192,25 +193,40 @@ export default defineComponent({
 
     const jumpToTopic = inject('jumpToTopic')
 
-    const segmentationFunction = (localSubmit: any[]) => {
-      localSubmit.forEach((phrase, index) => {
+    const segmentationFunction = (block: any) => {
+      const locals = block.localisation[0].sublocalisations.localisation
+      locals.forEach((phrase, index) => {
         if (![undefined].includes(topics[index])) {
           phrase.data.topic = topics[index]
         }
       })
-      result.value.topic_metadata = topicList.value
-      return localSubmit
+      block.topic_metadata = topicList.value
+      block.localisation[0].sublocalisations.localisation = locals
+      return block
     }
 
     const spans = inject('spans')
 
+    const registerAnnotation = useAnnotationTypeRegistry()
+
     onMounted(() => {
       loadTopics()
       loadSpan(spans)
+
+      registerAnnotation(
+        'segmentation',
+        {
+          formatForSave: (_locals,block,{timeSpent}) =>{
+            const patched = segmentationFunction(_.cloneDeep(block))
+
+            patched.timeSpent = (patched.timeSpent ?? 0) + timeSpent
+            return patched
+          }
+        })
     })
 
 
-    expose( {listRefs: segmentationRefs, annotationFunction: segmentationFunction,handleSegmentation })
+    expose( {listRefs: segmentationRefs, handleSegmentation })
 
     return {
       locals,

@@ -3,8 +3,8 @@
     <OrganismAnnotation
       :data="data"
       :all-fetched="allFetched"
-      :annotations-in="annotations_in"
-      :annotations-out="annotations_out"
+      :annotations-in="annotationsNormalized.in"
+      :annotations-out="annotationsNormalized.out"
       @skip-annotation="handleSubmit($event, 'skip')"
       @submit-annotation="handleSubmit($event, 'submit')"
       @finish-annotation="handleSubmit($event, 'end')"
@@ -12,11 +12,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts" >
 import { ref } from "vue";
+import _ from 'lodash'
 import {
   AnnotationService,
   Status as AnnotationStatus,
+  AnnotationType,
   Permission,
   ProjectService,
   Status as TaskStatus,
@@ -24,6 +26,8 @@ import {
 import { useAuth } from "~/stores/auth";
 import { storeToRefs } from "pinia";
 import OrganismAnnotation from "~/components/organisms/annotation/OrganismAnnotation.vue";
+import {getHandler, patchDataBeforeSaving} from "~/composables/useAnnotationTypeRegistry"
+
 
 const refresh = useRefreshStore();
 const route = useRoute();
@@ -38,6 +42,18 @@ const { fetchAnnotations } = refresh;
 let timeAnnotationStart;
 const data = ref(getData);
 const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
+
+
+function normalizeAnnotation(result: any){
+  return {...result, data : Array.isArray(result.data)? result.data : [result.data] }
+}
+
+const annotationsNormalized = computed(()=>{
+  return {
+    "in": annotations_in.value?.map(ano =>({...ano, result: normalizeAnnotation(ano.result) })),
+    "out": annotations_out.value?.map(ano=>({...ano, result: normalizeAnnotation(ano.result) }))
+  }
+})
 
 watchEffect(() => {
   useHead({
@@ -164,12 +180,11 @@ const annotationInfo = computed(() => {
   return info;
 });
 
-const submitExistantAnnotation = (locals, action, timeSpent, options) => {
-  const result = annotations_out.value[0].result;
-  result.data.localisation[0].sublocalisations.localisation = locals;
-  result.data.timeSpent = result.data.timeSpent
-    ? result.data.timeSpent + timeSpent
-    : timeSpent;
+
+const submitExistantAnnotation = (action, timeSpent, options) => {
+  const result = _.cloneDeep(annotationsNormalized.value.in[0].result)
+  const patchedResult = {...result, data: patchDataBeforeSaving(result.data,data.value.step.annotation_type,timeSpent)}
+
   // L'utilisateur a déjà une annotation associée à cette tâche
   let promise;
   if (action === "submit") {
@@ -177,13 +192,13 @@ const submitExistantAnnotation = (locals, action, timeSpent, options) => {
     promise =
       AnnotationService.updateAnnotationResultAnnotationAnnotationIdPatch(
         annotationInfo.value.id,
-        annotations_out.value[annotationInfo.value.index].result,
+        patchedResult
       );
   } else {
     promise =
       AnnotationService.finishAnnotationAnnotationFinishAnnotationIdPatch(
         annotationInfo.value.id,
-        annotations_out.value[annotationInfo.value.index].result,
+        patchedResult
       );
   }
   promise
@@ -244,15 +259,16 @@ const submitExistantAnnotation = (locals, action, timeSpent, options) => {
     });
 };
 
-const submitNewAnnotation = (locals, action, timeSpent, options) => {
-  const result = JSON.parse(JSON.stringify(annotations_in.value[0].result));
-  result.data.localisation[0].sublocalisations.localisation = locals;
-  result.data.timeSpent = timeSpent;
+const submitNewAnnotation = (action, timeSpent, options) => {
+  const result = _.cloneDeep(annotationsNormalized.value.in[0].result)
+
+  const patchedResult = {...result, data: patchDataBeforeSaving(result.data,data.value.step.annotation_type,timeSpent)}
+
   AnnotationService.createAnnotationAnnotationPost({
     annotation: {
       user_email: userEmail.value,
       task_id: data.value.id,
-      result: result,
+      result: patchedResult,
       annotation_status:
         action === "submit"
           ? AnnotationStatus.IN_PROGRESS
@@ -307,8 +323,6 @@ onMounted(() => {
 });
 
 const handleSubmit = async (event, action) => {
-  const locals = JSON.parse(JSON.stringify(event.locals));
-
   const timeAnnotationEnd = new Date().getTime();
 
   const timeSpentOnScreen = (timeAnnotationEnd - timeAnnotationStart) / 1000;
@@ -346,13 +360,12 @@ const handleSubmit = async (event, action) => {
   ) {
     if (annotationInfo.value != null) {
       submitExistantAnnotation(
-        locals,
         action,
         timeSpentOnScreen,
         event.options,
       );
     } else {
-      submitNewAnnotation(locals, action, timeSpentOnScreen, event.options);
+      submitNewAnnotation(action, timeSpentOnScreen, event.options);
     }
   }
 };

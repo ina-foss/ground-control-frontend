@@ -181,6 +181,15 @@ describe('OrganismAnnotationComponent', () => {
               }
             }
           },
+          annotationsIn: [
+            {
+              result: {
+                asset: { url: 'http://video.test' },
+                data: mockedReturn
+              }
+            }
+          ],
+          annotationsOut: [],
           allFetched: true,
           ...props
         }

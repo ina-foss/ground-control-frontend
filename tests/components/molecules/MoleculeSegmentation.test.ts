@@ -78,7 +78,7 @@ describe('Molecule Segmentation', ()=>{
         locals: mockedTransciptionsWithoutTopics,
         colors: ['#BEBEBE'],
         topics: [],
-        result: mockedReturn,
+        block: mockedReturn,
         transcriptions: []
       },
     })
@@ -100,7 +100,7 @@ describe('Molecule Segmentation', ()=>{
         locals: mockedTransciptionsWithTopics,
         colors: ['#BEBEBE'],
         topics: [],
-        result: mockedReturn,
+        block: mockedReturn,
         transcriptions: []
       },
     })

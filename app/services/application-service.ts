@@ -151,7 +151,7 @@ export default class ApplicationService {
   }
 
   public extractTextFromSpan(node: Element | Node |null): string {
-    if (node !== null) {
+    if (node !== null && node instanceof Node) {
 
       const clone = node.cloneNode(true) as Element;
 

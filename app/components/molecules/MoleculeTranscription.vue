@@ -134,7 +134,21 @@ const transcriptionFunction = () => {
   return locals
 }
 
-defineExpose({locals: localChanges, listRefs: transcriptionsRef, annotationFunction: transcriptionFunction, carouselNavTo: carouselNavTo  })
+const registerAnnotation = useAnnotationTypeRegistry()
+
+onMounted(()=>{
+    registerAnnotation(
+    'transcription',
+    {
+      formatForSave: (_locals,block,_meta) => {
+        const patched = _.cloneDeep(block)
+        patched.localisation[0].sublocalisations.localisation = transcriptionFunction()
+        return patched
+    }
+  })
+})
+
+defineExpose({locals: localChanges, listRefs: transcriptionsRef, carouselNavTo: carouselNavTo  })
 
 </script>
 <style scoped lang="postcss">

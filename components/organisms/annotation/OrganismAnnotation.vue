@@ -55,7 +55,7 @@
       </MoleculeAnnotationLeftPanel>
       <div :class="[layout.center, 'h-full min-h-0 flex']">
         <Suspense>
-        <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef"  :state="annotationsOut[annotationInfo?.index]?.annotation_status" v-on="annotationComponent.events" />
+        <component :is="annotationComponent.component" v-bind="annotationComponent.props" ref="moleculeAnnotationRef" @update:locals="registerLocals"  :state="annotationsOut[annotationInfo?.index]?.annotation_status" v-on="annotationComponent.events" />
         <template #fallback>
           <SpanSkeleton/>
         </template>

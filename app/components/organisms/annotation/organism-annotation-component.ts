@@ -100,6 +100,13 @@ export default defineComponent({
       TaskStatus.SKIPPED
     ]
 
+    function getMetadataBlock(result: any,type: string){
+      if( !Array.isArray(result.data)) return result.data
+      if( result.data.length == 1) return result.data[0]
+      return  result.data.find(block => block.type == type)
+
+    }
+
     const allow_skip = computed(() => getParameters.value.allow_skip && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE)
     const isAnnotationEditable = computed(()=> route.query.mode !='read' && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE &&
      (isAdmin.value && !route.query.email || !isAdmin.value))
@@ -110,10 +117,9 @@ export default defineComponent({
     const userAnnotations = computed(() => { // return array of users annotations
       let response = []
       if (allFetched && annotationInfo.value != null) {
-        const annotation = annotationsOut.value[annotationInfo.value.index];
 
-        if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
-          response = [...annotation.result.data.localisation[0].sublocalisations.localisation].filter(el=>el?.data);
+        if (getMetadataBlock(result.value,'transcription').localisation?.[0]?.sublocalisations?.localisation) {
+          response = [...getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation].filter(el=>el?.data);
         }  }
       return response
     })
@@ -121,19 +127,16 @@ export default defineComponent({
     const spans = computed(()=>{
       let response = []
       if (allFetched && annotationInfo.value != null) {
-        const annotation = annotationsOut.value[annotationInfo.value.index];
 
-        if (annotation?.result?.data?.localisation?.[0]?.sublocalisations?.localisation) {
-          response = [...annotation.result.data.localisation[0].sublocalisations.localisation].filter(el=>!el.data);
+        if (getMetadataBlock(result.value,'transcription').localisation?.[0]?.sublocalisations?.localisation) {
+          response = [...getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation].filter(el=>!el.data);
         }  }
       return response
     })
 
     const locals = computed(() => {
       if(allFetched.value){
-        let l = (annotationInfo.value == null || data.value?.step?.annotation_type == 'auto-summary')
-          ? _.sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
-          : _.sortBy(annotationsOut.value[annotationInfo.value.index]?.result.data.localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
+        const l = _.sortBy(getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
         return l.filter(e=> e != null || undefined )
       }
       return []
@@ -142,15 +145,16 @@ export default defineComponent({
     const result = computed(() => {
       if(allFetched.value){
       return (annotationInfo.value == null)
-        ? annotationsIn.value[0]?.result.data
-        : annotationsOut.value[annotationInfo.value.index]?.result.data
+        ? annotationsIn.value[0]?.result
+        : annotationsOut.value[annotationInfo.value.index]?.result
       }
       return {}
     })
 
 
   const pureTranscriptions = computed(()=>{
-      return sortBy(annotationsIn.value[0]?.result.data.localisation[0].sublocalisations.localisation.filter(el=>el != null && el.data),(el)=>unixToTimestamp(el.tcin))
+      const block = getMetadataBlock(result.value,'transcription')
+      return sortBy(block.localisation[0].sublocalisations.localisation.filter(el=>el != null && el.data),(el)=>unixToTimestamp(el.tcin))
   })
 
   const transcriptions = computed(() => { // format array to have all transcription version in the same array element
@@ -164,10 +168,10 @@ export default defineComponent({
           })
         })
       } else if(annotation_type == 'auto-summary'){
-          annotationsIn.value[0].result.data.topic_metadata.forEach((topic)=>{
+          getMetadataBlock(annotationsIn.value[0].result,'transcription').topic_metadata.forEach((topic)=>{
             if(topic){
               const firstTransciprtionInTopic = _.find(
-                annotationsIn.value[0].result.data.localisation[0].sublocalisations.localisation,
+                getMetadataBlock(annotationsIn.value[0].result,'transcription').localisation[0].sublocalisations.localisation,
                 e=>e.data.topic == topic.id
               )
               if(firstTransciprtionInTopic){ // if the topic is used in the transcription
@@ -310,7 +314,7 @@ export default defineComponent({
       case 'segmentation':
       case 'auto-summary':
           return {component: MoleculeSegmentation, props: {
-            result: result.value,
+            block: getMetadataBlock(result.value,'transcription'),
             locals: locals.value,
             colors: colors.value,
             topics: topics.value,
@@ -341,34 +345,15 @@ export default defineComponent({
 })
 
   const handleSubmit = ({ showToast = true, message = null }: { showToast?: boolean; message?: string | null })  => {
-    let savingLocals
-    if(annotation_type == 'auto-summary'){
-      savingLocals = tabsRef.value.moleculeAnnotationRef.annotationFunction(tabsRef.value.moleculeAnnotationRef.locals)
-      savingLocals = spanService.saveSpan(savingLocals)
-    }
-    else {
-      const localSubmit = locals
-      if (moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
-      savingLocals = moleculeAnnotationRef.value.annotationFunction(localSubmit.value)
-    }
-    emit('submit-annotation', { locals: savingLocals, options: { showToast, message}  })
+    emit('submit-annotation', { options: { showToast, message}  })
   }
 
   const handleFinish = () => {
-    let savingLocals
-    if(annotation_type == 'auto-summary'){
-      savingLocals = tabsRef.value.moleculeAnnotationRef.annotationFunction(tabsRef.value.moleculeAnnotationRef.locals)
-      savingLocals = spanService.saveSpan(savingLocals)
-    }
-    else {
-      const localSubmit = locals
-      if (moleculeAnnotationRef.value.locals) localSubmit.value = moleculeAnnotationRef.value.locals
-      savingLocals = moleculeAnnotationRef.value.annotationFunction(localSubmit.value)
-    }
-    emit('finish-annotation', { locals: savingLocals, options: {showToast: true} })
+    emit('finish-annotation', { options: {showToast: true} })
   }
 
   const handleSkip = () => emit('skip-annotation', { locals: {}, options: { showToast: true } })
+
   let autoSaveInterval = null;
 
    onMounted(()=>{

@@ -485,7 +485,6 @@ function createSpanService (){
     if (!nodesArray) return null;
     return nodesArray.map(node => extractTextFromSpan(node)).join(' ')
         .replace(/\s*([-–—'''])\s*/g, '$1');
-
   }
 
 

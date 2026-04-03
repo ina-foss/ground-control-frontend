@@ -12,6 +12,7 @@ import atomVideoOption from '../atoms/atom-video-option.vue';
 import AtomSpanForm from '../atoms/spanForm/AtomSpanForm.vue'
 import MoleculeSpanControlPanel from './spanControlPanel/MoleculeSpanControlPanel.vue'
 import {Status} from "~/api/generate";
+import { useAnnotationTypeRegistry } from "~/composables/useAnnotationTypeRegistry";
 
 
 export default defineComponent({
@@ -98,12 +99,31 @@ export default defineComponent({
 
     }
 
+    const registerAnnotation = useAnnotationTypeRegistry()
+
     onMounted(async () => {
       await nextTick()
       appendAllSpansToDOM()
+
+    registerAnnotation(
+        'span',
+        {
+          formatForSave: (locals,block,meta) => {
+            const patched = _.cloneDeep(block)
+
+            patched.localisation[0].sublocalisations.localisation = saveSpan(locals)
+
+            patched.timeSpent = (patched.timeSpent ?? 0) + meta.timeSpent
+
+            return patched
+          }
+        }
+      )
+
+
     })
 
-    expose({annotationFunction: saveSpan, listRefs: listSegment })
+    expose({listRefs: listSegment })
 
     await loadSpan(locals)
 
