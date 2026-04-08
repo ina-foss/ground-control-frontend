@@ -1,6 +1,24 @@
 import {defineVitestConfig} from '@nuxt/test-utils/config';
 
 export default defineVitestConfig({
+  assetsInclude: ['**/*.svg'],   // ← let Vite serve SVGs as static assets
+  plugins: [
+    {
+      name: 'mock-public-svg',
+      enforce: 'pre',
+      resolveId(id) {
+        if (id.endsWith('.svg') && !id.startsWith('/')) {
+          return '\0mock-svg:' + id
+        }
+      },
+      load(id) {
+        if (id.startsWith('\0mock-svg:')) {
+          const originalPath = id.slice('\0mock-svg:'.length)
+          return `export default "${originalPath}"`
+        }
+      },
+    },
+  ],
   test: {
     css: true,
     watch: false,

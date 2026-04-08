@@ -58,7 +58,7 @@ describe('AtomAvatarHeader', () => {
   it('affiche l’avatar avec l’icône', () => {
     const img = wrapper.find('img')
     expect(img.exists()).toBe(true)
-    expect(img.attributes('src')).toContain('svg')
+    expect(img.attributes('src')).toContain('account-icon.svg')
   })
 
   it('appelle menu.toggle lors du clic', async () => {
