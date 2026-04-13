@@ -10,10 +10,15 @@
 <script setup lang="js">
   import AtomVideoAmalia from '../atoms/videoAmalia/AtomVideoAmalia.vue';
   import { useService } from '#imports';
+  import { usePlayer } from '~/composables/usePlayer';
 
 
-  const {$amalia, $application}  = useService()
+  const {$application}  = useService()
   const { options } = useOptions()
+
+  let $amalia
+
+
 
   const props = defineProps({
     media_params: {
@@ -59,7 +64,8 @@
   const checkCurrentTime = () => {
       currentTime.value = $amalia.callSeek();
   };
-  onMounted(() => {
+  onMounted(async() => {
+    $amalia = await usePlayer()
     const interval = setInterval(() => {
       checkCurrentTime();
     }, 200);

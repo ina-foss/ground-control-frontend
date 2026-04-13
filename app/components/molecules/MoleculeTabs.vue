@@ -52,7 +52,7 @@ import AtomMarkdown from "../atoms/AtomMarkdown.vue";
 import AtomTimecodeList from "../atoms/AtomTimecodeList.vue";
 import AtomSentence from "../atoms/sentence/AtomSentence.vue"
 import MoleculeTranscription from "./MoleculeTranscription.vue"
-import {Status as AnnotationStatus} from '../../api/generate';
+import {Status as Status} from '../../api/generate';
 
 const carouselRef = ref()
 const currentPage = computed(()=>carouselRef.value.d_page)
@@ -91,7 +91,7 @@ const tabs=ref<tabItem[]>([])
 const props = defineProps({
   status: {
     type: String,
-    default: AnnotationStatus.DRAFT
+    default: Status.DRAFT
   },
   data: {
     type: Object,

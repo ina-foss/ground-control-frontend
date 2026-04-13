@@ -4,13 +4,14 @@ import MoleculeSpan from "~/components/molecules/MoleculeSpan.vue";
 import MoleculeSegmentation from "~/components/molecules/MoleculeSegmentation.vue";
 import MoleculeTranscription from "~/components/molecules/MoleculeTranscription.vue";
 import _,{sortBy} from 'lodash';
-import {Status as AnnotationStatus, Permission, Status as TaskStatus} from '~/api/generate';
 import { useService, useI18n } from "#imports";
 import MoleculeTabs from "~/components/molecules/MoleculeTabs.vue";
 import {useTcOffset} from "~/composables/useTcOffset";
+import useTimeline from "~/composables/useTimeline";
 import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
 import SpanSkeleton from "~/components/molecules/SpanSkeleton.vue";
 import MoleculeDialogConfirm from "~/components/molecules/moleculeDialogConfirm/MoleculeDialogConfirm.vue";
+import MoleculeVideoSegmentation from "~/components/molecules/videoSegmentation/MoleculeVideoSegmentation.vue"
 
 export default defineComponent({
   name: "OrganismAnnotation",
@@ -22,7 +23,8 @@ export default defineComponent({
     AtomSearch,
     MoleculeTranscription,
     SpanSkeleton,
-    MoleculeDialogConfirm
+    MoleculeDialogConfirm,
+    MoleculeVideoSegmentation
   },
   props: {
     data: {
@@ -45,6 +47,7 @@ export default defineComponent({
   setup(props, {emit}) {
 
     const { data, annotationsIn, annotationsOut, allFetched } = toRefs(props)
+
     const { t } = useI18n()
     const authStore = useAuth()
     const optionStore = useOptions()
@@ -60,6 +63,7 @@ export default defineComponent({
     const finishDialog = ref(false)
     const isPlaying  = ref(false)
     const currentTime = ref(0);
+    const moleculeAnnotationRef = ref()
 
     const isPlayerFocused = ref(false)
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
@@ -73,20 +77,22 @@ export default defineComponent({
         return _.uniq(moleculeAnnotationRef.value?.listRefs)
     });
 
-    const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
+    const isAdmin = computed(() => {
+      const admin =  $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN)
+      return admin
+    });
     const colors = ref(['#BEBEBE'])
     const topics = ref([])
     const videoSrc = ref(annotationsIn.value?.[0]?.result.asset.url)
-    const moleculeAnnotationRef = ref()
     const moleculeAnnotationLeftPanelRef= ref()
     const { userEmail } = storeToRefs(authStore)
     const { options } = storeToRefs(optionStore)
-    const annotationStatus = AnnotationStatus.DONE
+    const annotationStatus = Status.DONE
     const config = ref(null)
     const route = useRoute();
     let bestIndex = 0
     const annotationInfo = computed< {index: number, id: number} | null>(() => {
-      if (!allFetched) return null;
+      if (!allFetched.value) return null;
       return annotationsOut.value.reduce<{index: number, id: number} | null>((info, annotation, index) => {
         if (annotation.user_email == userEmail.value || annotation.user_email == route.query.email) {
           return { index, id: annotation.id };
@@ -96,8 +102,8 @@ export default defineComponent({
     });
 
     const forbiddenStatuses = [
-      TaskStatus.ARCHIVED,
-      TaskStatus.SKIPPED
+     Status.ARCHIVED,
+     Status.SKIPPED
     ]
 
     function getMetadataBlock(result: any,type: string){
@@ -107,8 +113,8 @@ export default defineComponent({
 
     }
 
-    const allow_skip = computed(() => getParameters.value.allow_skip && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE)
-    const isAnnotationEditable = computed(()=> route.query.mode !='read' && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != AnnotationStatus.DONE &&
+    const allow_skip = computed(() => getParameters.value.allow_skip && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != Status.DONE)
+    const isAnnotationEditable = computed(()=> route.query.mode !='read' && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != Status.DONE &&
      (isAdmin.value && !route.query.email || !isAdmin.value))
 
     const annotation_type = data.value.step.annotation_type
@@ -116,7 +122,8 @@ export default defineComponent({
 
     const userAnnotations = computed(() => { // return array of users annotations
       let response = []
-      if (allFetched && annotationInfo.value != null) {
+      if (allFetched.value && annotationInfo.value != null) {
+        const annotation = annotationsOut.value[annotationInfo.value.index];
 
         if (getMetadataBlock(result.value,'transcription').localisation?.[0]?.sublocalisations?.localisation) {
           response = [...getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation].filter(el=>el?.data);
@@ -126,7 +133,7 @@ export default defineComponent({
 
     const spans = computed(()=>{
       let response = []
-      if (allFetched && annotationInfo.value != null) {
+      if (allFetched.value && annotationInfo.value != null) {
 
         if (getMetadataBlock(result.value,'transcription').localisation?.[0]?.sublocalisations?.localisation) {
           response = [...getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation].filter(el=>!el.data);
@@ -302,8 +309,7 @@ export default defineComponent({
         }
         return acc
       },[] ).findIndex(topic => topic == event.topic)
-      if(tabsRef.value.moleculeAnnotationRef) tabsRef.value.sentenceCarouselFunction(firstTopicListIndex)
-      tabsRef.value.moleculeAnnotationRef?.carouselNavTo(firstTopicListIndex)
+      if(tabsRef.value?.moleculeAnnotationRef) tabsRef.value.sentenceCarouselFunction(firstTopicListIndex)
       moleculeAnnotationLeftPanelRef.value?.updateVideoTimecode({tcin:locals.value[firstTranscriptionIndex].tcin,tcout:locals.value[firstTranscriptionIndex].tcout,})
       moleculeAnnotationLeftPanelRef.value?.videoPlayer.seek()
       if (firstTranscriptionIndex >= 0) moleculeAnnotationRef.value.listRefs[firstTranscriptionIndex].firstElementChild.scrollIntoView({ behavior: "smooth"})
@@ -339,10 +345,38 @@ export default defineComponent({
                       spansChanged.value = val
                     }
              }
+          }
+      case 'video-segmentation':
+        return {
+          transcription: {
+              component: MoleculeSegmentation,
+              props:{
+                block: getMetadataBlock(result.value,'transcription'),
+                locals: locals.value,
+                colors: colors.value,
+                topics: topics.value,
+                tcOffset : data.value.media?.player_parameters?.tc_offset ?? 0,
+              },
+              events:{
+                'on-segment-click': handleSegmentClick,
+                'segmentation': segmentationCallback,
+              }
+            },
+            video : {
+              component: MoleculeVideoSegmentation,
+
+            }
+        }
     }
 
-  }
 })
+
+    function segmentationCallback(event){
+      const timecodeMs = event.tc * 1000
+      const segment = useTimeline().segmentManager.getSegmentsByTime(timecodeMs,1)[0];
+
+      useTimeline().segmentManager.splitItem(timecodeMs,segment.id)
+    }
 
   const handleSubmit = ({ showToast = true, message = null }: { showToast?: boolean; message?: string | null })  => {
     emit('submit-annotation', { options: { showToast, message}  })
@@ -386,6 +420,9 @@ export default defineComponent({
     clearInterval(autoSaveInterval);
   });
 
+  function triggerResize() {
+    window.dispatchEvent(new Event('resize'));
+  }
 
   const globalKeydown=(event) =>{
     if((event.key && event.target.tagName != "INPUT") && (event.key && event.target.tagName != "TEXTAREA") ){
@@ -514,6 +551,7 @@ export default defineComponent({
   return {
     annotationInfo,
     isAdmin,
+    annotation_type,
     annotationStatus,
     handleSubmit,
     handleFinish,
@@ -547,7 +585,8 @@ export default defineComponent({
     layout,
     t,
     abondanDialog,
-    finishDialog
+    finishDialog,
+    triggerResize
   }
 },
 })

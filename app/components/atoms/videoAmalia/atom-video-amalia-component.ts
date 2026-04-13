@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import { useService,useI18n } from '#imports';
 import { ref,watch } from 'vue';
+import AmaliaPlayerService from '~/services/amalia-player-service';
+import { usePlayer } from '~/composables/usePlayer';
 
 export default defineComponent({
   name: "AtomVideoAmalia",
@@ -25,14 +27,18 @@ export default defineComponent({
   },
   setup(props, { emit,expose }) {
 
-    const {$amalia, $application} = useService()
+    const settingIcon = '/icons/icons-svg/icons-svg/setting-icon.svg'
+
+    let $amalia : AmaliaPlayerService
+    const {$application} = useService()
     const { media_params,locals,videoSrc } = toRefs(props)
     const { t } = useI18n();
     const myplayer = ref()
     let lastIndex = 0
-    let dynamicSrc = ref()
-    let dynamicTumbnails = ref()
-    let waveformUrl = ref()
+    const dynamicSrc = ref()
+    const dynamicTumbnails = ref()
+    const downloadUrl = ref()
+    const waveformUrl = ref()
     const {unixToTimestamp} = $application
     const {getHistory, consumeTimecode} = useTimecodeHistory()
 
@@ -77,40 +83,34 @@ export default defineComponent({
     const isCompact = ref(false)
     let observer: ResizeObserver | null = null
 
-    const visibleRight = ref(false);
-    const audioCategories = computed(() => [
-      { name: t('player.config.audio.backwardSecond'), key: "backward-second" },
-      { name: t('player.config.audio.forwardSecond'), key: "forward-second" }
-    ]);
+  const visibleRight = ref(false);
+  const audioCategories = computed(() => [
+    { name: t('player.config.audio.backwardSecond'), key: "backward-second" },
+    { name: t('player.config.audio.forwardSecond'), key: "forward-second" }
+  ]);
 
-    const videoCategories = computed(() => [
-      { name: t('player.config.video.backwardStart'), key: "backward-start" },
-      { name: t('player.config.video.forwardEnd'), key: "forward-end" },
-      { name: t('player.config.video.forward'), key: "forward" },
-      { name: t('player.config.video.backward5Seconds'), key: "backward-5seconds" },
-      { name:  t('player.config.video.forward5Seconds'), key: "forward-5seconds" },
-      { name: t('player.config.video.volume'), key: "volume" },
-      { name: t('player.config.video.toggleFullScreen'), key: "toggleFullScreen" }
-    ]);
+
+  const videoCategories = computed(() => [
+    { name: t('player.config.video.backward5Seconds'), key: "backward-5seconds" },
+    { name:  t('player.config.video.forward5Seconds'), key: "forward-5seconds" },
+    { name: t('player.config.video.backwardFrame'), key: "backward-frame" },
+    { name: t('player.config.video.forwardFrame'), key: "forward-frame" },
+    { name: t('player.config.video.slowBackward'), key: "slow-backward" },
+    { name: t('player.config.video.slowForward'), key: "slow-forward" }
+  ]);
 
     watch([selectedCategories, visibleRight], async () => {
       const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
-      if (visibleRight.value === false) {
-        await Promise.all([hlsPlayer(), playerParams()]).then(()=>{
-
-          if (dynamicSrc.value) {
-            myplayer.value.removeChild(myplayer.value.firstChild);
-            myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "",  getMediaType(videoSrc),waveformUrl?.value ||"",unselectedCategories))
-          }
-        });
+      if (visibleRight.value === false && $amalia && $amalia.reloadConfig)  {
+        $amalia.reloadConfig(unselectedCategories)
       }
     }, { deep: true });
 
 
     onMounted(async () => {
-      await Promise.all([hlsPlayer(), playerParams()]).then(()=>{
+      await Promise.all([hlsPlayer(), playerParams()]).then(async ()=>{
         if (dynamicSrc.value) {
-          const mediaType = getMediaType(videoSrc);
+          const mediaType = getMediaType(videoSrc.value);
 
           if (mediaType === 'audio') {
             categories.value = audioCategories.value;
@@ -118,13 +118,15 @@ export default defineComponent({
             categories.value = videoCategories.value;
           }
           selectedCategories.value = categories.value.map(cat => cat.key);
-
           amaliaOptionPM = usePersistence(
                 `ground-control-amalia-${mediaType}-preference`,
                 selectedCategories.value,
               );
           retrieveLocalStorage()
-          myplayer.value?.appendChild($amalia.createPlayer('PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "",  getMediaType(videoSrc),waveformUrl?.value ||"")) // add amalia player once src is ready
+
+          const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
+          $amalia = await usePlayer(myplayer.value,'PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc.value),waveformUrl?.value ||"", unselectedCategories)
+
         }
       });
       if (!actionsRef.value) return
@@ -157,8 +159,9 @@ export default defineComponent({
       return videoHls;
     }
 
-    const getMediaType=(url:string) => {
-      const parsedUrl = new URL(url.value);
+    const getMediaType=(url:string)=>{
+      console.log(url)
+      const parsedUrl = new URL(url);
       return parsedUrl.searchParams.get("typemedia")??""
     }
 

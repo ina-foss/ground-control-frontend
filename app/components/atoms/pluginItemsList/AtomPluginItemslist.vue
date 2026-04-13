@@ -2,7 +2,7 @@
   <div v-if="!groupButtonLayout" class=" grid grid-cols-[100px_auto] gap-3 gap-y-5 " >
     <slot />
     <div class="flex flex-wrap gap-4">
-      <div class=" w-full flex gap-3 " >
+      <div class=" flex flex-wrap gap-3 " >
         <ToggleButton
             v-for="option in visibleOptions"
             :key="option.label"
@@ -18,7 +18,7 @@
         />
       </div>
       <Select
-          v-if="isForResearch && dropdownOptions.length"
+          v-if="dropdownOptions.length"
           v-model="pluginValue"
           :options="dropdownOptions"
           :placeholder="`Choisir un autre ${plugin.name} `"
@@ -33,20 +33,21 @@
     <div>
       <b>{{t('spanForm.selectSpanType')}}</b>
     </div>
-    <div class="flex flex-row gap-4 ">
-      <group-wrapper v-for="(group,name) in groupByOptions" :key="group" class="flex flex-col gap-5 p-lg bg-grey-50 rounded-lg last:grow ">
+    <div class="flex flex-row gap-4 items-stretch">
+      <group-wrapper v-for="(group,name) in groupByOptions" :key="group" class="flex flex-col gap-5 p-lg bg-grey-50 rounded-lg flex-1 min-w-0">
         <group-name class="flex justify-between items-center">
           <p>{{name ?? plugin.display_config.label }}</p>
           <span class="bg-disabled rounded-full p-3 text-sm/2">{{group.length}}</span>
         </group-name>
-        <group-options-wrapper class="flex flex-col gap-3">
+        <group-options-wrapper class="flex flex-col gap-3" >
           <ToggleButton
               v-for="option in group"
               :key="option.label"
               :model-value="isEqual(pluginValue, option)"
-              class="h-[33px] w-fit rounded-[6px] "
+              class="h-[33px] w-full whitespace-nowrap rounded-[6px] !justify-start"
               :class="{ 'selected': isEqual(pluginValue, option) }"
               :outlined="!isEqual(pluginValue,option)"
+              v-tooltip="option.tooltip"
               :label="customizedLabel(option)"
               :on-label="customizedLabel(option)"
               :off-label="customizedLabel(option)"

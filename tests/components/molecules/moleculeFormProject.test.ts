@@ -60,14 +60,14 @@ const mocks = vi.hoisted(()=>{
   }
 })
 
-vi.mock('~/api/generate/',async (importOrigial)=>{
+vi.mock('~/api/generate/sdk.gen',async (importOrigial)=>{
   const original = await importOrigial()
   return {
     ...original,
-    StepService: {
+    Step: {
       createStepStepPost: mocks.createStepStepPost,
     },
-    ProjectService:  {
+    Project:  {
       createProjectProjectPost: mocks.createProjectProjectPost,
       updateProjectProjectProjectIdPut: mocks.updateProjectProjectProjectIdPut,
     },
@@ -176,7 +176,7 @@ describe('Molecule Form Project for new Project', ()=>{
     await createButton.trigger('click')
     await flushPromises()
 
-    expect(mocks.createProjectProjectPost).toHaveBeenCalledWith({
+    expect(mocks.createProjectProjectPost).toHaveBeenCalledWith({body: {
       title:"Title test",
       description: "Description test",
       allow_skip: true,
@@ -186,10 +186,10 @@ describe('Molecule Form Project for new Project', ()=>{
       is_published: false,
       pinned_at: null,
       status: "draft",
-    })
-    expect(StepService.createStepStepPost).toHaveBeenCalledTimes(2)
-    expect(StepService.createStepStepPost).toHaveBeenCalledWith(
-       expect.objectContaining({
+    }})
+    expect(Step.createStepStepPost).toHaveBeenCalledTimes(2)
+    expect(Step.createStepStepPost).toHaveBeenCalledWith(
+       expect.objectContaining({body:{
             title: `Step #1`,
             description: 'Step description',
             annotation_type: 'span',
@@ -200,7 +200,7 @@ describe('Molecule Form Project for new Project', ()=>{
             completeness_rate: 100.0,
             allow_empty_annotation: true,
             max_tasks_per_person: 1
-    }))
+    }}))
 
   })
 
@@ -335,9 +335,9 @@ describe('Molecule Form Project for existing Project', ()=>{
 
     await createButton.trigger('click')
     await flushPromises()
-    expect(mocks.updateProjectProjectProjectIdPut).toHaveBeenCalledWith(
-      mockedProject.id,
-      {
+    expect(mocks.updateProjectProjectProjectIdPut).toHaveBeenCalledWith({
+      path: { project_id: mockedProject.id},
+      body : {
         title: mockedProject.title,
         description: mockedProject.description,
         is_published: mockedProject.is_published,
@@ -346,9 +346,10 @@ describe('Molecule Form Project for existing Project', ()=>{
         control_weights: mockedProject.control_weights,
         pinned_at: mockedProject.pinned_at,
         created_by: "user",
-  })
+      }
+    })
     expect(mocks.createStepStepPost).toHaveBeenCalledTimes(2)
-    expect(mocks.createStepStepPost).toHaveBeenCalledWith({
+    expect(mocks.createStepStepPost).toHaveBeenCalledWith({body:{
             title: `Step #3`,
             description: 'Step description',
             annotation_type: 'auto-summary',
@@ -356,7 +357,7 @@ describe('Molecule Form Project for existing Project', ()=>{
             status: 'draft',
             project_id: 8,
 
-    })
+    }})
 
   })
 

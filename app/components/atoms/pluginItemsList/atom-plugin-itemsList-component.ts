@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import type { PluginWithIdDto } from '~/api/generate'
-import { PluginService } from '~/api/generate'
+import { Plugin } from '~/api/generate'
 import { useI18n } from '#imports'
 
 export default defineComponent({
@@ -20,7 +20,7 @@ export default defineComponent({
 
     const {groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
 
-    const { data } = useAsyncData(`${plugin.value.name}`,async ()=> await PluginService.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id,""),{immediate: false})
+    const { data } = useAsyncData(`${plugin.value.name}`,async ()=> await Plugin.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id,""),{immediate: false})
 
     const all_entities_plugin =  {
       id: "",
@@ -39,7 +39,6 @@ export default defineComponent({
     ))
 
     const visibleOptions  = computed(() => {
-      if(!isForResearch.value) return allOptions.value
       return allOptions.value.slice(0, plugin.value?.display_config?.max_items ?? 4)
     })
 
@@ -75,10 +74,12 @@ export default defineComponent({
      */
 
     function customizedLabel(object:any) {
-      const group = object.group.toLowerCase().replace(/s$/, "");
-      if (object.label.toLowerCase().includes(group)) {
-        const newLabel= object.label.replace(new RegExp(group, "i"), "").replace(/\s+/g, " ").trim();
-        return newLabel.charAt(0).toUpperCase() + newLabel.slice(1);
+      if(isForResearch.value) {
+        const group = object.group.toLowerCase().replace(/s$/, "");
+        if (object.label.toLowerCase().includes(group)) {
+          const newLabel = object.label.replace(new RegExp(group, "i"), "").replace(/\s+/g, " ").trim();
+          return newLabel.charAt(0).toUpperCase() + newLabel.slice(1);
+        }
       }
       return object.label
     }
@@ -88,7 +89,6 @@ export default defineComponent({
       pluginValue,
       groupDisplay,
       allOptions,
-      isForResearch,
       visibleOptions,
       dropdownOptions,
       all_entities_plugin,

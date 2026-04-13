@@ -1,11 +1,10 @@
 import PrimeVue from 'primevue/config';
-import {expect, describe, it }  from 'vitest'
+import {expect, describe, it, vi }  from 'vitest'
 import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { mockNuxtImport} from "@nuxt/test-utils/runtime";
 import { Button, Dialog, StepList,Stepper, StepPanels, Step, FileUpload} from 'primevue';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
-import { TaskDataType, AnnotationService, TaskService, MediaService, Status as TaskStatus, Status as AnnotationStatus } from '~/api/generate';
 
 
 const mockedStepObject = {
@@ -43,13 +42,13 @@ describe('Molecule Form Task',()=>{
       }
     })
 
-    vi.mock('~/api/generate/',async (importOrigial)=>{
+    vi.mock('~/api/generate/sdk.gen',async (importOrigial)=>{
       const original = await importOrigial()
       return {
         ...original,
-        TaskService: {createTaskTaskPost: vi.fn().mockResolvedValue({id: 1}) },
-        MediaService:  {createMediaMediaPost: vi.fn().mockResolvedValue({id: 2}) },
-        AnnotationService: {createAnnotationAnnotationPost: vi.fn().mockResolvedValue({id: 3}) },
+        Task: {createTaskTaskPost: vi.fn().mockResolvedValue({id: 1}) },
+        Media:  {createMediaMediaPost: vi.fn().mockResolvedValue({id: 2}) },
+        Annotation: {createAnnotationAnnotationPost: vi.fn().mockResolvedValue({id: 3}) },
       }
     })
   })
@@ -97,20 +96,20 @@ describe('Molecule Form Task',()=>{
       await wrapper.vm.$nextTick()
 
       await wrapper.find('button[aria-label="Créer"]').trigger('click')
-      expect(MediaService.createMediaMediaPost).toHaveBeenCalledOnce()
-      expect(MediaService.createMediaMediaPost).toHaveBeenLastCalledWith({url: "http://example.com", type: "video", player_parameters: {}})
-      expect(TaskService.createTaskTaskPost).toHaveBeenCalledOnce()
-      expect(TaskService.createTaskTaskPost).toHaveBeenLastCalledWith({name: 'Task title',
-        expiration_date : null, instruction:'Task instruction', data_type: TaskDataType.AMALIA, status: TaskStatus.DRAFT, lead_time: null, step_id: mockedStepObject.id, media_id: 2  })
+      expect(Media.createMediaMediaPost).toHaveBeenCalledOnce()
+      expect(Media.createMediaMediaPost).toHaveBeenLastCalledWith({body:{url: "http://example.com", type: "video", player_parameters: {}}})
+      expect(Task.createTaskTaskPost).toHaveBeenCalledOnce()
+      expect(Task.createTaskTaskPost).toHaveBeenLastCalledWith({body:{name: 'Task title',
+        expiration_date : null, instruction:'Task instruction', data_type: TaskDataType.AMALIA, status:Status.DRAFT, lead_time: null, step_id: mockedStepObject.id, media_id: 2  }})
 
       // Wait for all asynchronous operations to complete
       await flushPromises()
 
-      expect(AnnotationService.createAnnotationAnnotationPost).toHaveBeenCalledOnce()
-      expect(AnnotationService.createAnnotationAnnotationPost).toHaveBeenCalledWith({
+      expect(Annotation.createAnnotationAnnotationPost).toHaveBeenCalledOnce()
+      expect(Annotation.createAnnotationAnnotationPost).toHaveBeenCalledWith({body:{
       annotation:{
         user_email: 'user@localhost.com',
-        annotation_status: AnnotationStatus.DRAFT,
+        annotation_status: Status.DRAFT,
         version: 0,
         result: {
           asset : {
@@ -126,7 +125,7 @@ describe('Molecule Form Task',()=>{
         task_id : 1,
         direction: 'in'
       }
-    })
+    }})
 
       expect(wrapper.emitted()).toHaveProperty('toggle-dialog')
       expect(wrapper.emitted()).toHaveProperty('refresh-data')

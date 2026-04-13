@@ -4,7 +4,6 @@ import type { VueWrapper } from '@vue/test-utils'
 import { mockNuxtImport,mountSuspended } from "@nuxt/test-utils/runtime";
 import { DataTable, Tag, Select, Button} from 'primevue';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
-import {TaskService} from '../../app/api/generate';
 
 
 const mockedProjectView = ref({
@@ -396,7 +395,7 @@ describe('Project detail view',()=>{
     expect(wrapper.findAllComponents(MoleculeFormTask).length).toBe(0)
 
     // Click on the button to create a new task
-    await wrapper.findComponent(Button).trigger('click')
+    await wrapper.findAllComponents(Button)[1].trigger('click')
 
     // Check if the Form component has been mounted
     expect(wrapper.findAllComponents(MoleculeFormTask).length).toBe(1)

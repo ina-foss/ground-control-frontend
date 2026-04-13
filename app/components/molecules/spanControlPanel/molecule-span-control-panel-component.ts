@@ -284,8 +284,6 @@ export default defineComponent({
       const saved = localStorage.getItem('blocks-order')
       if (saved != "undefined" && saved != null) {
         blocks.value = JSON.parse(saved)
-      } else {
-        blocks.value =blocks.value
       }
     })
 

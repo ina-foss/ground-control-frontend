@@ -10,4 +10,5 @@ export enum AnnotationType {
     TRANSCRIPTION = 'transcription',
     SPAN = 'span',
     AUTO_SUMMARY = 'auto-summary',
+    VIDEO_SEGMENTATION = 'video-segmentation',
 }

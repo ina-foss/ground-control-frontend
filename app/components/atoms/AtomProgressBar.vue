@@ -4,7 +4,7 @@
       class="bg-gradient-to-t flex flex-col overflow-hidden from-surface-200 to-surface-200 h-full w-7 rounded-lg">
       <div
         v-for="(group, index) in groupedTopics" :key="index" v-tooltip="preventDefaultTitle(topicList[parseInt(group.topic)])"
-        :class="{ 'cursor-pointer': topicList[parseInt(group.topic)] != undefined,  'w-full h-[--length] bg-[--color] hover:opacity-50': true }" :style="`--color:${colors[parseInt(group.topic)]}; --length:${((100 / totalLength) * group.count) + '%'}`"
+        :class="{ 'cursor-pointer': topicList[parseInt(group.topic)] != undefined,  'w-full h-(--length) bg-(--color) hover:opacity-50': true }" :style="`--color:${colors[parseInt(group.topic)]}; --length:${((100 / totalLength) * group.count) + '%'}`"
         @click="$emit('progressBarJump',{topic: group.topic, event: $event})"/>
 
     </div>
@@ -60,7 +60,6 @@ const groupedTopics = computed(() => {
       }
     }
   });
-
 
   return Object.entries(grouped).map(([topic, count]) => ({
     topic,

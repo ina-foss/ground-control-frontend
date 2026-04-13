@@ -1,16 +1,36 @@
 import OrganismAnnotationComponent from "~/components/organisms/annotation/OrganismAnnotation.vue";
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { shallowMount, mount } from '@vue/test-utils'
-import { computed,nextTick } from 'vue'
+import { computed,nextTick,ref } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import { useAuth } from '~/stores/auth'
 import { useOptions } from '~/stores/annotation-options'
 import {mockedReturn} from "../../../mock";
+import { useService } from '~/composables/useService'
 
 vi.mock('~/stores/auth', () => ({
   useAuth: vi.fn()
 }))
+
+// vi.mock('pinia', async (importOriginal) => {
+//   const mod = await importOriginal<any>()
+//   return {
+//     ...mod,
+//     storeToRefs: vi.fn(() => ({
+//       access_token: { value: 'GC-token' },
+//       userEmail: ref('email@ina.fr'),
+//       options: ref({
+//         player: true,
+//         transcription: true,
+//         timecode_bloc: true,
+//         timecode_segment: true,
+//         number_segment: true,
+//         allow_skip: true
+//       })
+//     }))
+//   }
+// })
 
 vi.mock('~/stores/annotation-options', () => ({
   useOptions: vi.fn()
@@ -30,15 +50,20 @@ const i18n = createI18n({
 vi.mock('~/composables/useTcOffset', () => ({ useTcOffset: () => ({ setTcOffset: vi.fn() }) }))
 vi.mock('~/composables/useTopicList', () => ({ useTopicList: () => ({ topicList: [] }) }))
 
-const mockHasRole = vi.fn()
-const mockedUseService = vi.fn().mockReturnValue({
-  $application: {
-    hasRole: mockHasRole,
-    unixToTimestamp: vi.fn()
-  }
-})
+vi.mock('~/stores/refresh', () => ({
+  useRefreshStore: () => ({
+    getParameters: ref({ allow_skip: false })
+  })
+}))
 
-vi.mock('#imports', () => ({ useService: mockedUseService }))
+vi.mock('~/composables/useService', () => ({
+  useService: vi.fn().mockReturnValue({
+    $application: {
+      hasRole: vi.fn().mockReturnValue(false),
+      unixToTimestamp: vi.fn()
+    }
+  })
+}))
 
 
 
@@ -54,15 +79,15 @@ vi.mock('vue-router', async () => {
 })
 
 
-vi.mock('~/api/generate', async (importOriginal) => {
+vi.mock('~/api/generate/sdk.gen', async (importOriginal) => {
   const mod = await importOriginal()
   return {
     ...mod,
-    PluginService: {
+    Plugin: {
       readPluginsPluginsStepStepIdPluginTypeDisplayZoneGet: vi.fn().mockResolvedValue([]),
       searchPluginsPluginsPluginIdSearchGet: vi.fn().mockResolvedValue([]),
     },
-    AnnotationStatus: {
+    Status: {
       DRAFT: 'draft',
       FINAL: 'final'
     }
@@ -88,9 +113,6 @@ describe('OrganismAnnotationComponent', () => {
     useAuth.mockReturnValue(authMock)
     useOptions.mockReturnValue(optionsMock)
 
-    mockHasRole.mockImplementation((role) => {
-      return computed(() => role === 'ANNOTATOR')
-    })
   })
   const factory = (props = {}) => {
     const pinia = createPinia()

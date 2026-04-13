@@ -59,7 +59,7 @@
       @unselect="handleSelection"
     />
 
-    <div class="xs:grid xs:grid-cols-10 flex h-full flex-col gap-5">
+    <div v-if="annotation_type != 'video-segmentation'" class="xs:grid xs:grid-cols-10 flex h-full flex-col gap-5">
       <MoleculeAnnotationLeftPanel
         ref="moleculeAnnotationLeftPanelRef"
         :class="layout.left"
@@ -87,6 +87,43 @@
         </Suspense>
       </div>
     </div>
+
+    <div v-else class="h-full ">
+      <Splitter class="h-full" layout="vertical" state-storage='local' state-key="ground-control-video-segmentation-bottom-ratio" @resize="triggerResize">
+          <SplitterPanel class="flex items-center justify-center">
+              <Splitter layout="horizontal" class="h-full" state-storage='local' state-key="ground-control-video-segmentation-top-ratio" @resize="triggerResize">
+                  <SplitterPanel class="flex items-center justify-center " :min-size="30">
+                  <MoleculeAnnotationLeftPanel
+                    ref="moleculeAnnotationLeftPanelRef"
+                    class="grow"
+                    :video-src="videoSrc"
+                    :media_params="data.media?.player_parameters"
+                    :locals="locals"
+                    @scroll-to-segment="handleVideoTimelineClick"
+                  />
+                </SplitterPanel>
+                  <SplitterPanel class="flex items-center justify-center bg-secondary" :min-size="30">
+                    <component
+                      :is="annotationComponent.transcription.component"
+                      ref="moleculeAnnotationRef"
+                      v-bind="annotationComponent.transcription.props"
+                      :state="annotationsOut[annotationInfo?.index]?.annotation_status"
+                      v-on="annotationComponent.transcription.events"
+                    />
+                  </SplitterPanel>
+            </Splitter>
+          </SplitterPanel>
+          <SplitterPanel class="flex items-center justify-center" :min-size="15">
+              <component
+                :is="annotationComponent.video.component"
+                v-bind="annotationComponent.video.props"
+                :state="annotationsOut[annotationInfo?.index]?.annotation_status"
+              />
+        </SplitterPanel>
+      </Splitter>
+    </div>
+
+
   </div>
   <MoleculeDialogConfirm
     v-model:visible="abondanDialog"
@@ -191,4 +228,14 @@
       repeating-linear-gradient(to bottom, #b0b0b0 0 6px, transparent 6px 12px) right/1.5px 100% no-repeat;
 
 }
+
+.p-splitter-vertical .p-splitter-gutter {
+  height: 14px;
+  width: 100%;
+}
+.p-splitter-horizontal .p-splitter-gutter {
+  width: 14px;
+  height: 100%;
+}
+
 </style>

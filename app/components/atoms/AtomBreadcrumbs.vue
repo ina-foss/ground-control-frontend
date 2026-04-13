@@ -24,7 +24,6 @@
 </template>
 
 <script setup>
-import { Permission } from '~/api/generate';
 import { useI18n } from '#imports'
 
 const { t } = useI18n()

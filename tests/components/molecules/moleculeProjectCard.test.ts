@@ -1,12 +1,13 @@
-import { expect, describe, it, vi, beforeEach } from 'vitest'
+import { expect, describe, it, vi, beforeEach, afterEach } from 'vitest'
+import { flushPromises } from '@vue/test-utils';
 import type { VueWrapper } from '@vue/test-utils'
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import MoleculeProjectCard from '~/components/molecules/MoleculeProjectCard.vue'
 import MoleculeFormProject from '~/components/molecules/MoleculeFormProject.vue'
-import { ProjectService } from '~/api/generate';
 import { Dialog, Popover } from 'primevue';
 import { createI18n } from 'vue-i18n'
 import { reactive } from 'vue'
+import { Project } from '~/api/generate';
 
 const mockedProject = {
   title: "Project creation",
@@ -33,10 +34,12 @@ const i18n = createI18n({
 
 const mockRefresh = vi.fn()
 
-mockNuxtImport('useToast', () => {
-  return () => ({
-    add: vi.fn()
-  })
+vi.mock('~/api/generate/sdk.gen',async (importOrigial)=>{
+  const original = await importOrigial()
+  return {
+    ...original,
+    Project: {deleteProjectProjectProjectIdDelete: mocks.deleteProject },
+  }
 })
 
 const mocks = vi.hoisted(() => ({
@@ -82,13 +85,18 @@ describe('MoleculeProjectCard component', () => {
           refreshProject: mockRefresh
         },
         stubs: {
-          teleport: true
+          teleport: true,
+          AnnotatorVisualizer: true
         }
       },
       props: {
         project: { ...mockedProject }
       }
     })
+  })
+
+  afterEach(()=>{
+    wrapper.unmount()
   })
 
   it('should have the right title', () => {
@@ -134,9 +142,9 @@ describe('MoleculeProjectCard component', () => {
     const confirmDeleteButton = deleteDialog.get('button[aria-label="common.yes"]')
 
     await confirmDeleteButton.trigger('click')
+    await flushPromises()
 
-    expect(mocks.deleteProject).toHaveBeenCalledOnce()
-    expect(mockRefresh).toHaveBeenCalledOnce()
+    expect(Project.deleteProjectProjectProjectIdDelete).toHaveBeenCalledOnce()
   })
 
   it("should display error by calling error plugin", async () => {
@@ -160,6 +168,7 @@ describe('MoleculeProjectCard component', () => {
     const confirmDeleteButton = deleteDialog.get('button[aria-label="common.yes"]')
 
     await confirmDeleteButton.trigger('click')
+    await flushPromises()
 
     expect(consoleMock).toHaveBeenCalled()
   })

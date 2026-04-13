@@ -126,7 +126,9 @@
     "delete": "Supprimer",
     "next": "Suivant",
     "previous": "Précédent",
-    "create": "Créer"
+    "create": "Créer",
+    "upload": "Télécharger",
+    "configure": "Configurer"
   },
   "player": {
     "actions": {
@@ -204,6 +206,61 @@
       "deleteTask": "Supprimer la tâche",
       "noEligibleActivate": "Aucune tâche éligible à activer",
       "noEligibleDeactivate": "Aucune tâche éligible à désactiver"
+    },
+    "export": "Exporter",
+    "createTask": "Créer une tâche",
+    "addconfig": "Ajouter une configuration" ,
+    "uploadConfig": "Télécharger la configuration",
+    "seeConfigurations": "Cliquer pour consulter les configurations",
+    "uploadLimit": "Vous ne pouvez télécharger qu’une seule configuration. Supprimez-la pour en téléverser une nouvelle."
+  },
+  "plugin": {
+    "tab": {
+      "upload": "Uploader",
+      "manualConfig": "Configuration manuelle"
+    },
+    "editor": {
+      "tabForm": "Formulaire",
+      "tabJson": "JSON brut",
+      "generalInfo": "Informations générales",
+      "configData": "Configuration des données",
+      "displayConfig": "Configuration d’affichage",
+      "responseKeys": "Clés de réponse",
+      "availablePlugins": "Plugins disponibles",
+      "availablePluginKey": "extId du type (ex: 14)",
+      "availablePluginValue": "Nom du plugin enfant",
+      "noAvailablePlugins": "Aucun plugin disponible configuré",
+      "children": "Plugins enfants",
+      "addChild": "Ajouter un enfant",
+      "addRow": "Ajouter une ligne",
+      "applyJson": "Appliquer le JSON"
+    },
+    "fields": {
+      "name": "Nom",
+      "type": "Type",
+      "displayZone": "Zone d’affichage",
+      "dataProperty": "Propriété de données",
+      "dataCategories": "Catégories de données",
+      "enableSearch": "Recherche activée",
+      "configType": "Type de source",
+      "dataSource": "URL source",
+      "staticData": "Données statiques",
+      "searchQuery": "Requête de recherche (JSON)",
+      "tokenUrl": "URL Token",
+      "clientId": "Client ID",
+      "clientSecret": "Client Secret",
+      "label": "Libellé",
+      "order": "Ordre",
+      "maxItems": "Nombre max d’éléments",
+      "multipleValues": "Valeurs multiples",
+      "mainPlugin": "Plugin principal"
+    },
+    "delete": {
+      "title": "Supprimer le plugin",
+      "confirm": "Êtes-vous sûr de vouloir supprimer le plugin « {name} » ?"
+    },
+    "edit": {
+      "title": "Modifier la configuration"
     }
   }
 }

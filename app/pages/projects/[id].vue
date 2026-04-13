@@ -199,15 +199,35 @@
       />
       <Column header=" " style="width: 17rem" body-class="">
         <template #body="slotProps">
-          <div class="flex min-w-[240px] txt">
+          <div class="flex txt">
+            <Button
+              v-if="slotProps.data.plugins?.length > 0 && roleReadPlugins"
+              icon="pi pi-list"
+              outlined
+              v-tooltip="t('task.seeConfigurations')"
+              class="mr-1"
+              style="color: #0B7698; border-color: #0B7698;"
+              @click.stop="togglePluginsPopover($event, slotProps.data)"
+            />
+            <Button
+              v-if="roleCreatePlugin"
+              class="text-sm font-bold mr-1"
+              :label="t('task.addconfig')"
+              outlined
+              style="color: #0B7698 !important;
+              border-color: #0B7698 !important;
+              white-space: nowrap;"
+              @click="createConfig(slotProps.data.id)"
+            />
             <Button
               class="text-sm font-bold mr-1"
               :disabled="slotProps.data.status == Status.ARCHIVED"
-              label="Créer une tâche"
+              :label="t('task.createTask')"
               outlined
               style="color: #0B7698 !important;
-  border-color: #0B7698 !important;"
-                @click="stepCreate(slotProps.data.id)"
+              border-color: #0B7698 !important;
+              white-space: nowrap;"
+              @click="stepCreate(slotProps.data.id)"
             />
             <div
               class="flex items-center cursor-pointer txt"
@@ -215,10 +235,9 @@
             >
               <Button
 style="color: #0B7698 !important;
-  border-color: #0B7698 !important;" label="Exporter" icon-pos="right" icon="pi pi-chevron-down" outlined @click.capture.stop="clickButtonMenu($event, slotProps.data)" />
+  border-color: #0B7698 !important;" :label="t('task.export')" icon-pos="right" icon="pi pi-chevron-down" outlined @click.capture.stop="clickButtonMenu($event, slotProps.data)" />
               <TieredMenu ref="buttonMenu" :model="buttonItems" :popup="true"  breakpoint="200px" />
             </div>
-
           </div>
         </template>
       </Column>
@@ -407,30 +426,7 @@ style="color: #0B7698 !important;
               style="width: 12rem"
             >
               <template #body="{ data: nestedData }">
-                <div class="flex justify-start gap-2">
-                  <Avatar
-                    v-for="(annotation, index) in nestedData.annotations"
-                    :key="index"
-                    v-tooltip.top="annotation.user_email"
-                    :label="annotation.user_email.charAt(0).toUpperCase()"
-                    shape="circle"
-                    style="
-                      background-color: #0057ff;
-                      color: white;
-                      font-weight: 500;
-                      height: 24px;
-                      width: 24px;
-                    "
-                    :style="{
-                      backgroundColor: getColorForAnnotation(
-                        annotation.annotation_status,
-                        annotation.user_email,
-                        annotation.skipped_by
-                      ),
-                    }"
-                    @click="handleRowClick(annotation.user_email)"
-                  />
-                </div>
+                <AnnotatorVisualizer :userHasAnnotationReview="isTaskReviewer" :annotationList="nestedData.annotations" @avatar-click="event=> email_clicked = event "   />
               </template>
             </Column>
             <Column
@@ -749,29 +745,77 @@ style="color: #0B7698 !important;
       @refresh-data="refresh()"
       @toggle-dialog="dialogVisible = false"
     />
+    <MoleculeDialogConfigPlugin
+      v-if="selectedStepId && showDialogConfig"
+      v-model:visible="showDialogConfig"
+      :step-id="selectedStepId"
+      :plugin-id="editingPluginId"
+      :initial-json="editingPluginInitialJson"
+      :title="editingPluginId ? t('plugin.edit.title') : t('task.addconfig')"
+      @select="onFilesSelected"
+      @plugin-created="refresh"
+    />
+    <MoleculeDialogConfirm
+      v-model:visible="showDeletePluginConfirm"
+      :title="t('plugin.delete.title')"
+      :message="t('plugin.delete.confirm', { name: pluginToDelete?.display_config?.label || pluginToDelete?.name || '' })"
+      :cancel-button="{ label: t('actions.cancel'), severity: 'secondary', variant: 'text' }"
+      :confirm-button="{ label: t('actions.delete'), icon: 'pi pi-trash', severity: 'danger' }"
+      @confirm="deletePlugin"
+    />
+    <Popover ref="pluginsPopover">
+      <div class="min-w-64 max-w-xs">
+        <ul class="flex flex-col divide-y divide-gray-100">
+          <li
+            v-for="plugin in currentPopoverStep?.plugins"
+            :key="plugin.id"
+            class="flex items-center justify-between gap-3 px-3 py-2 hover:bg-gray-50"
+          >
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="pi pi-tag text-gray-400 text-xs flex-shrink-0" />
+              <span class="text-sm font-medium truncate">
+                {{ plugin.display_config?.label || plugin.name }}
+              </span>
+              <Tag :value="plugin.type" severity="secondary" class="!text-[10px] flex-shrink-0" />
+            </div>
+            <div class="flex gap-0.5 flex-shrink-0">
+              <Button
+                v-if="roleCreatePlugin"
+                icon="pi pi-pencil"
+                text
+                size="small"
+                severity="secondary"
+                v-tooltip="t('actions.edit')"
+                @click="editPlugin(plugin)"
+              />
+              <Button
+                v-if="roleCreatePlugin"
+                icon="pi pi-trash"
+                text
+                size="small"
+                severity="danger"
+                v-tooltip="t('actions.delete')"
+                @click="confirmDeletePlugin(plugin)"
+              />
+            </div>
+          </li>
+        </ul>
+      </div>
+    </Popover>
   </div>
 </template>
 
 <script setup lang="ts">
-import _ from "lodash"
-import { ref } from "vue"
-import {
-  AnnotationService,
-  Status,
-  TaskService,
-  Permission,
-  ProjectService,
-  type TaskWithIdDto,
-  type StepDetailDto,
-  type AnnotationDto,
-} from "~/api/generate";
+import _ from "lodash";
+import { ref } from "vue";
 import MoleculeFormTask from "~/components/molecules/MoleculeFormTask.vue";
+import MoleculeDialogConfigPlugin from "~/components/molecules/moleculeDialogConfigPlugin/MoleculeDialogConfigPlugin.vue";
 import { FilterMatchMode, FilterService } from "@primevue/core/api";
 import AtomMarkdown from "~/components/atoms/AtomMarkdown.vue";
-import {useStatusMap,type StatusOption } from "~/helpers/statusMap";
-
 import { useI18n } from '#imports';
-import type { Task } from "~/shared/model/task.model"
+import { Project } from "~/api/generate/sdk.gen";
+import {Status, Task, type TaskWithIdDto } from "~/api/generate/index.js";
+import {useStatusMap} from "~/helpers/statusMap"
 
 
 FilterService.register("expirationFilter", (value, filter) => {
@@ -800,6 +844,7 @@ const { $application } = useService();
 const { fetchTasks } = refreshStore;
 const { getTasks } = storeToRefs(refreshStore)
 const dialogVisible = ref(false)
+const showDialogConfig = ref(false)
 const deleteModal = reactive({ visible: false, data: {}, loading: false })
 const clickedRowData = ref(null)
 const formStepClick = ref()
@@ -810,6 +855,13 @@ const selectedStatus = ref(null)
 const showStrategy = ref(false)
 const { $handleApiError } = useNuxtApp()
 const statusOptions = ref<StatusOption[]>([])
+const selectedStepId = ref<number | null>(null)
+const pluginsPopover = ref()
+const currentPopoverStep = ref<any>(null)
+const editingPluginId = ref<number | null>(null)
+const editingPluginInitialJson = ref<Record<string, any> | null>(null)
+const showDeletePluginConfirm = ref(false)
+const pluginToDelete = ref<any>(null)
 const toggleStrategy = () => {
   showStrategy.value = !showStrategy.value
 }
@@ -821,9 +873,9 @@ const filters = ref<DataTableFilterMeta>({
   status: { value: null, matchMode: FilterMatchMode.EQUALS },
 })
 
-const isAdmin = computed(() =>
-  $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN),
-)
+const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
+const isTaskReviewer = computed(()=> $application.hasRole(Permission.GROUND_CONTROL_ANNOTATION_REVIEW))
+
 const roleDeleteTask = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_TASK_DELETE),
 )
@@ -832,7 +884,17 @@ const roleActivateTask = computed(() =>
 )
 const roleUpdateExpirationDate = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_TASK_UPDATE_EXPIRATION_DATTE),
-);
+)
+const roleCreatePlugin = computed(() =>
+  $application.hasRole(Permission.GROUND_CONTROL_PLUGIN_CREATE),
+)
+const roleReadPlugins = computed(() =>
+  $application.hasRole(Permission.GROUND_CONTROL_PLUGIN_READ_ALL),
+)
+const getFirstLine = (markdownText) => {
+  if (!markdownText) return "";
+  return markdownText.split("\n")[0];
+};
 const expandedRows = ref<any[]>([])
 
 function  toggleInstructionPopover(event, data){
@@ -862,10 +924,12 @@ const { data, refresh, status } = useAsyncData(
 const { data: projectParameters, status: statusParameters } = useAsyncData(
   `project_${route.params.id}_parameters`,
   async () =>
-    await ProjectService.readProjectParametersProjectIdParametersGet(
-      Number(route.params.id),
-    ),
-)
+    await Project.readProjectParametersProjectIdParametersGet({
+      path:{
+        project_id: Number(route.params.id)
+      }
+    }),
+);
 watch(projectParameters, (newVal) => {
   if (newVal && !_.isEqual(newVal, refreshStore.strategy_parameters)) {
     refreshStore.setParameters(newVal)
@@ -897,29 +961,6 @@ const filteredTasks = computed(() => {
 
 const buttonItems = [
   {
-    label: "Exporter au format d'import",
-    items: [
-      {
-        label: "Un seul fichier",
-        command: () => {
-          exportOut(selectedRow.value, "one");
-        },
-      },
-      {
-        label: "Regrouper par tâche",
-        command: () => {
-          exportOut(selectedRow.value, "task");
-        },
-      },
-      {
-        label: "Fichiers séparés",
-        command: () => {
-          exportOut(selectedRow.value, "all");
-        },
-      },
-    ]
-  },
-  {
     label: "Export total",
     items: [
       {
@@ -941,6 +982,29 @@ const buttonItems = [
         },
       },
     ]
+  },
+  {
+    label: "Export au format d'import",
+    items: [
+      {
+        label: "Un seul fichier",
+        command: () => {
+          exportOut(selectedRow.value, "one");
+        },
+      },
+      {
+        label: "Regrouper par tâche",
+        command: () => {
+          exportOut(selectedRow.value, "task");
+        },
+      },
+      {
+        label: "Fichiers séparés",
+        command: () => {
+          exportOut(selectedRow.value, "all");
+        },
+      },
+    ]
   }
 ]
 
@@ -949,6 +1013,19 @@ const showDeleteTaskModal = (rowData) => {
   deleteModal.visible = true
   deleteModal.data = rowData
 }
+
+const activateTask = (task: TaskWithIdDto) => {
+Task.updateTaskStatusTaskTaskIdStatusPost({
+    path: {
+      task_id: task.id
+    },
+    query:{
+      status: Status.IN_PROGRESS
+    }
+
+  })
+    .then(() => refresh());
+};
 
 const activateTasks = (activate = true) => {
   const selectedTaskStatus = filters.value?.status?.value ?? null
@@ -967,7 +1044,9 @@ const activateTasks = (activate = true) => {
   const tasks_id = tasksToUpdate.map((task) => task.id)
   const new_status = activate ? Status.PENDING : Status.DRAFT
 
-  TaskService.updateTasksStatusTasksStatusPost(new_status, tasks_id)
+  Task.updateTaskStatusTaskTaskIdStatusPost({
+    path: { task_id, new_status }
+  })
     .then(() => {
       const count  = tasks_id.length
       refresh()
@@ -993,29 +1072,16 @@ const activateTasks = (activate = true) => {
     })
 }
 
-const activateTask = (task) => {
-  const { id, status } = task
-  console.log({ id, status })
-
-  const new_status =
-    status === Status.DRAFT || status === Status.SKIPPED
-      ? Status.PENDING
-      : status === Status.PENDING
-        ? Status.DRAFT
-        : status
-  TaskService.updateTaskStatusTaskTaskIdStatusPost(id, new_status).then(() =>
-    refresh(),
-  )
-}
-
 const hideDeleteTaskModal = () => {
   deleteModal.visible = false
   deleteModal.data = {}
 }
 
-const deleteTask = (task_id) => {
-  deleteModal.loading = true
-  TaskService.deleteTaskTaskTaskIdDelete(task_id)
+const deleteTask = (task_id: number) => {
+  deleteModal.loading = true;
+  Task.deleteTaskTaskTaskIdDelete({
+    path: { task_id }
+  })
     .then(() => refresh())
     .then(() => hideDeleteTaskModal())
 }
@@ -1052,11 +1118,13 @@ const exportOut = async (step: StepDetailDto , group : 'task' | 'all' | 'one', m
     try {
       // Fetch annotation data
       const annotations =
-        await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(
-          task.id,
-          "",
-          "out",
-        )
+        await Annotation.getAnnotationByTaskIdAnnotationsTaskIdGet({
+          path: { task_id: task.id },
+          query: {
+            user_email: "",
+            direction: "out"
+          }
+        });
       if (annotations.length > 0) {
         if (group == "task") triggerDownload(annotations, task.name,mode);
         else if (group == "all")
@@ -1132,13 +1200,52 @@ const stepCreate = (stepId) => {
   dialogVisible.value = true
 }
 
+const createConfig = (stepId) => {
+  editingPluginId.value = null
+  editingPluginInitialJson.value = null
+  selectedStepId.value = stepId
+  showDialogConfig.value = true
+}
+
+function togglePluginsPopover(event: any, stepData: any) {
+  currentPopoverStep.value = stepData
+  pluginsPopover.value.toggle(event)
+}
+
+function editPlugin(plugin: any) {
+  pluginsPopover.value.hide()
+  editingPluginId.value = plugin.id
+  editingPluginInitialJson.value = _.cloneDeep(plugin)
+  selectedStepId.value = currentPopoverStep.value?.id
+  showDialogConfig.value = true
+}
+
+function confirmDeletePlugin(plugin: any) {
+  pluginToDelete.value = plugin
+  showDeletePluginConfirm.value = true
+}
+
+async function deletePlugin() {
+  if (!pluginToDelete.value) return
+  try {
+    await PluginService.deletePluginPluginPluginIdDelete(pluginToDelete.value.id)
+    pluginsPopover.value.hide()
+    refresh()
+  }
+  catch (error: any) {
+    $handleApiError(error)
+  }
+  finally {
+    pluginToDelete.value = null
+  }
+}
+
+const onFilesSelected = (files: File[]) => {
+  if (!selectedStepId.value) return
+}
+
 let email_clicked: string | undefined;
 const handleRowClick = (event : string | {originalEvent: MouseEvent , data: TaskWithIdDto } ) => {
-  // callback when the event is triggered by Avatar in the task List
-  if (typeof event == "string" && isAdmin.value){
-    email_clicked = event;
-    return
-  }
   // callback when the event is triggered by the Task
   if (event.data?.status === "draft") return;
   clickedRowData.value = event.data;
@@ -1160,9 +1267,14 @@ const onExpirationDateChange = async (value: Date, row: any) => {
   const oldValue = row.expiration_date
   row.expiration_date = value.toISOString().split("T")[0]
   try {
-    await TaskService.updateDataTaskTaskTaskIdPatch(row.id, {
-      expiration_date: row.expiration_date,
-    })
+    await Task.updateDataTaskTaskTaskIdPatch({
+      path: {
+        task_id: row.id
+      },
+      body: {
+        expiration_date: row.expiration_date
+      }
+    });
   } catch (err: any) {
     console.error("❌ Error updating expiration date:", err)
     $handleApiError(err)

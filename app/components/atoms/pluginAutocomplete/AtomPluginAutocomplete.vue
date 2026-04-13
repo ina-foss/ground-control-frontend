@@ -1,28 +1,30 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class=" grid grid-cols-[100px_calc(100%-220px)] gap-3 gap-y-5 items-center " >
-    <slot />
+  <div v-if="indexPlugin<3 && !source" class=" flex gap-3 gap-y-5 items-center " >
+    <plugin-title v-if="$slots.default" class="basis-[100px] shrink-0">
+    <slot  />
+    </plugin-title>
     <AutoComplete
-ref="autoCompleteRef" v-model="pluginValue" :suggestions="sortedOptionsByFilter"
-                  option-label="label" multiple
-                  class="w-full"
-                  :delay="300"
-                  :disabled="!isAnnotationEditable"
-                  :dropdown="pluginValue?.length < max_length" dropdown-mode="current"
-                  input-id="autocomplete-input"
-                  :scroll-height="maximumScrollHeight + 'px'"
-                  :placeholder="pluginValue?.length < max_length ? 'Taper pour rechercher' : ''"
-                  :loading="showSkeleton"
-                  @complete="handleFilter"
-                  @dropdown-click="onDropdownOpen">
+      ref="autoCompleteRef" v-model="selectedValue" :suggestions="options"
+      option-label="label" multiple
+      :class="{'basis-[calc(100%-220px)]': $slots.default}"
+      :delay="300"
+      :disabled="!isAnnotationEditable"
+      :dropdown="!pluginValue?.length || multipleValues" dropdown-mode="current"
+      input-id="autocomplete-input"
+      :scroll-height="maximumScrollHeight + 'px'"
+      :placeholder=" (!pluginValue?.length || multipleValues) ? 'Taper pour rechercher' : ''"
+      :loading="showSkeleton"
+      @complete="handleFilter"
+      @dropdown-click="onDropdownOpen">
       <template #option="slotProps">
-        <div class="flex items-start space-x-2 w-[450px] overflow-auto ">
+        <div class="flex items-start space-x-2 w-[450px] overflow-auto gap-2 ">
           <img
               v-if="slotProps.option.image"
               :src="slotProps.option.image"
               alt="icon"
               class="w-14 h-14 object-contain"
         >
-        <div class="flex flex-col pt-2">
+        <div class="flex flex-col py-2">
             <span class="font-medium text-gray-900">
               {{ slotProps.option.label }}
             </span>

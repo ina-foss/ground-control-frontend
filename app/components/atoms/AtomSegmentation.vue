@@ -1,11 +1,10 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <div
-ref="segment" :style="`${dynamicStyle(computeColor(topicIndex).hex)} `" :tcin="phrase.tcin" :class="`bg-gray-300 transition-all ${index == 0 ? '!mt-0': ''}  group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg ' : ' scroll-mt-16'} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `"
-    @dragstart="startDrag" @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop"
-    @dragend="endDrag">
-    <div v-if="isTopicFirstSegment" ref="firstSegmentPadding" :class="`flex transition-all  justify-center items-center h-[40px] sticky top-0  w-fit`"/>
-    <div
-v-if="isTopicFirstSegment" ref="titleContainer"
+  <div :style="`${dynamicStyle(computeColor(topicIndex).hex)} `" ref="segment" :tcin="phrase.tcin" :data-drag-over="isDragOver"  @dragstart="startDrag"
+    @dragover="computeDrag" @dragenter="previewDrop" @dragleave="handleDragLeave" @drop="handleDrop" @dragend="endDrag"
+    :class="`bg-gray-300 transition-all ${index == 0 ? '!mt-0': ''}  group relative mt-3 max-w-[700px] last:gap-0 px-sm pt-sm ${topicIndex == undefined || isTopicsLastSegment ? 'pb-sm' : ''} flex flex-col ${topicIndex == 0 ? 'text-gray-400' : ''} ${isTopicFirstSegment || topicIndex == undefined ? 'rounded-t-lg ' : ' scroll-mt-16'} ${isTopicsLastSegment ? 'rounded-b-lg' : ''} `">
+    <div v-if="isTopicFirstSegment" ref="firstSegmentPadding" :class="`flex transition-all  justify-center items-center h-[40px] sticky top-0  w-fit`">
+    </div>
+    <div v-if="isTopicFirstSegment" ref="titleContainer"
       class=" w-[calc(100%)] pointer-events-none absolute flex justify-center z-50 top-0 left-0   ">
       <div ref="topicHeader" :class="`w-full sticky top-[-1px] min-h-[54px] h-fit left-0 bg-secondary rounded-t-lg pointer-events-auto z-50 transition-all `">
         <div
@@ -99,13 +98,11 @@ v-if="options.number_segment"
     </div>
     <div class="relative gap-0  w-[calc(100%+20px)] z-40 ">
       <div
-        :class="`absolute z-50 w-full ${ !isTopicsLastSegment ? 'top-[-10px]' : '' }  left-[-10px] h-6 over pointer-events-auto cursor-pointer`"
+        :class="`absolute z-50 w-full left-[-10px] h-6 over pointer-events-auto cursor-pointer  transition rounded-full`"
         @click="handleSegmentation">
-        <div
-v-if="isAnnotationEditable" ref="ruptureTemplate"
-          :class="` justify-center rupture w-full border-t-2 border-dashed text-white relative  h-0 hidden  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`">
-          <i
-v-if="!isTopicsLastSegment || topicIndex == undefined"
+        <div ref="ruptureTemplate" v-if="isAnnotationEditable"
+          :class="` justify-center w-full border-t-2 border-dashed text-white relative drag-over:flex  h-0 ${isDragOver ? 'flex' : 'hidden group-hover:flex' }  ${isTopicsLastSegment && topicIndex != undefined ? 'border-t-primary' : ' border-t-error'}  translate-y-[10px] group-hover:flex items-center   transition`">
+          <i v-if="!isTopicsLastSegment || topicIndex == undefined"
             class="pi pi-hashtag  translate-y-[-1px] bg-error p-[5px] rounded  hover:bg-red-600 " />
           <div v-else class="flex justify-around w-[80px]">
             <div
@@ -136,7 +133,6 @@ style="height:16px;width:16px;" src="/icons/icons-svg/icons-svg/trash-icon.svg"
 </template>
 
 <script setup lang="ts">
-import commentIcon from '/icons/icons-svg/icons-svg/comment-icon.svg';
 
 import _, { remove } from 'lodash'
 import { defineExpose } from 'vue';
@@ -144,14 +140,16 @@ import AtomPluginBlock from './pluginBlock/AtomPluginBlock.vue';
 import AtomComment from './AtomComment.vue';
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
 import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";
-import type {PluginAutocompleteValueDTO} from "~/api/generate"
+import type {PluginAutocompleteValueDTO, TaskDataType} from "~/api/generate"
+
+const commentIcon = '/icons/icons-svg/icons-svg/comment-icon.svg';
 
 const { phrase, colors, topics, index, topicList, segmentationRefs,tcOffset, transcriptions} = defineProps(['phrase', 'colors', 'topics', 'index', 'topicList', 'segmentationRefs','tcOffset','transcriptions'])
 const emit = defineEmits(['segmentation', 'on-segment-click','activateTopic', 'deactivateTopic','dragging-start','dragging-end','create-span'])
 const { $application } = useService()
 const { userEmail } = useAuth()
 const { options } = useOptions()
-const { timestampToUnix , unixToTimestamp } = $application
+const { timestampToUnix , unixToTimestamp, extractRGB } = $application
 const jumpToTopic = inject('jumpToTopic',null)
 const segment = ref(null)
 const toast = useToast()
@@ -173,9 +171,9 @@ const title = computed(()=>{
   else return null
 })
 
-const annotation_type = inject('annotation_type')
+const annotation_type = inject('annotation_type') as TaskDataType
 const autoSummaries = inject('transcriptions')
-const isAnnotationEditable = inject('isAnnotationEditable') && annotation_type == 'segmentation'
+const isAnnotationEditable = inject('isAnnotationEditable') && annotation_type.includes('segmentation')
 
 
 type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
@@ -271,7 +269,6 @@ function getDeepElement(element,deep){
 }
 
 function handleDrop(event: DragEvent) {
-  document.querySelector('.customHover')?.classList.remove('customHover')
   event.preventDefault()
   event.stopPropagation()
   const target: HTMLDivElement = event.target as HTMLDivElement
@@ -279,10 +276,7 @@ function handleDrop(event: DragEvent) {
   const listLiElement : HTMLCollection = result.list
   const index = Array.from(listLiElement).filter((el)=>el.type!='button').indexOf(getDeepElement(target,result.deep-1))
   if( index != -1) emit('dragging-end')
-  const hoverList: NodeList = document.querySelectorAll('.customHover')
-  hoverList.forEach((el)=>{
-    el.classList?.remove('customHover')
-  } )
+  isDragOver.value = false
 }
 
 function toggleComment(event) {
@@ -302,28 +296,21 @@ function endDrag(event: DragEvent) {
 }
 
 
+const isDragOver = ref(false)
 
 function previewDrop(event: DragEvent) {
   event.preventDefault()
   event.stopPropagation()
-  const target: HTMLDivElement = event.target as HTMLDivElement
-  const mainDiv: HTMLDivElement = target.parentElement
-  if (!target.classList.contains('customHover')) {
-    target.classList.add('customHover')
-    target?.nextElementSibling?.classList.add('customHover')
-  }
+  isDragOver.value = true
 }
 
 function handleDragLeave(event: DragEvent) {
   event.preventDefault()
   event.stopPropagation()
-  const target: HTMLDivElement = event.target as HTMLDivElement
-  const mainDiv: HTMLDivElement = target.parentElement
-  if (target.classList.contains('customHover')) {
-    target.classList.remove('customHover')
-    target?.nextElementSibling?.classList.remove('customHover')
-
+  if(segment.value && !segment.value.contains(event.relatedTarget as Node)){
+      isDragOver.value = false
   }
+
 }
 
 
@@ -419,7 +406,9 @@ function dynamicStyle(color) {
   }
 }
 function reduceOpacityOfColor(rgbaColor, opacity) {
-  const rgbaMatch = rgbaColor?.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)/);
+  const rgbaMatch = rgbaColor?.match(
+    /rgba?\((\d{1,3}), ?(\d{1,3}), ?(\d{1,3}), ?((?:0?\.\d+)|1|0)\)/
+  );
   if (rgbaMatch) {
     const r = parseInt(rgbaMatch[1]);
     const g = parseInt(rgbaMatch[2]);
@@ -429,11 +418,6 @@ function reduceOpacityOfColor(rgbaColor, opacity) {
     return `rgba(${r}, ${g}, ${b}, ${a})`;
   }
   return rgbaColor;
-}
-function extractRGB(hexColor) {
-  const rgbaColor = hexToRgba(hexColor, 0.5);
-  const rgba = rgbaColor?.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
-  return rgba.slice(0, 3);
 }
 function hexToRgba(hex, opacity) {
   let r = 0, g = 0, b = 0;
@@ -475,26 +459,15 @@ img{
 
 </style>
 
-<style lang="postcss">
+<style >
+  @reference "tailwindcss";
 
-.customHover .rupture,
-.customHover + .rupture {
-  @apply flex
-}
+  @custom-variant drag-over (:where([data-drag-over="true"]) &, [data-drag-over="true"] &);
 
-.customHover + div {
-  @extend .customHover
-}
-
-
-
-.over:hover .rupture {
-  @apply flex
-}
-.single-line-tooltip {
-  white-space: nowrap !important;
-  max-width: none !important;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .single-line-tooltip {
+    white-space: nowrap !important;
+    max-width: none !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 </style>

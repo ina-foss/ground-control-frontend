@@ -16,7 +16,7 @@ import { useAnnotationTypeRegistry } from '~/composables/useAnnotationTypeRegist
 export default defineComponent({
   name: 'MoleculeSegmentation',
   components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList,AtomHelp, AtomSpanForm},
-  emits: ['on-segment-click'],
+  emits: ['on-segment-click','segmentation'],
   props: {
     block: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
@@ -145,6 +145,7 @@ export default defineComponent({
         topics[currentIndex] = topic
         currentIndex--
       } while ((currentIndex >= 0) && (topTopic == topics[currentIndex]))
+      emit('segmentation',{tc: locals[index].tcout})
     }
 
     const removeBreak = (index: number) : void => {

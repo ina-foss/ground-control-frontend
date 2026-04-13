@@ -1,7 +1,5 @@
 import {defineStore} from 'pinia'
-
-import {ProjectService, TaskService} from '../api/generate'
-import { getApplicationConfiguration } from '~/services/dynamic-configuration-service'
+import { Project, Task } from '~/api/generate'
 
 interface ProjectParametersResponse {
   redundancy: number
@@ -33,15 +31,9 @@ export const useRefreshStore = defineStore('refresh', {
       //store works
       this.data = newData
     },
-    setProjectNumber(newNumber:number){
+    setProjectNumber(newNumber:number | null){
+      if(!newNumber) throw new TypeError("newNumber should be a valid number")
       this.project_number = newNumber
-    },
-    async totalRecords(){
-      const res = await ProjectService.readProjectsProjectsGet()
-      const data =  res
-      this.project_number = data.length
-
-      return data.length;
     },
     setParameters(newParams: Partial<ProjectParametersResponse>) {
       this.strategy_parameters = { ...this.strategy_parameters, ...newParams }
@@ -49,15 +41,20 @@ export const useRefreshStore = defineStore('refresh', {
     async fetchProjects(skip: number, limit: number) {
       const default_limit = window.innerWidth > 1600 ? 20 : 16
       const { access_token } = storeToRefs(useAuth())
-      const res = await $fetch(`${getApplicationConfiguration()['apiBasePath']}/projects/summary`,{
-          query: {skip:  skip  ?? this.last_index , limit: limit ?? default_limit  },
-          headers: {Authorization: 'Bearer ' + access_token.value },
-          raw: true,
-          method: 'get',
-          async onResponse({response}){
-            if(response.headers.get('x-total-count') != null) useRefreshStore().setProjectNumber(parseInt(response.headers.get('x-total-count')))
-          }
-        })
+      const res = await client.get({
+        query: {
+          skip: skip ?? this.last_index,
+          limit: limit ?? default_limit,
+        },
+        url: '/projects/summary',
+        headers: { Authorization: `Bearer ${access_token.value}` },
+        onResponse: (context) => {
+          if (context.response.headers.get('x-total-count') != null)
+            useRefreshStore().setProjectNumber(
+              parseInt(context.response.headers.get('x-total-count')),
+            );
+        },
+      });
 
       if(skip != undefined) this.last_index = skip
       const data =  res
@@ -66,7 +63,7 @@ export const useRefreshStore = defineStore('refresh', {
       return data
     },
     async fetchTasks(projectid: number) {
-      const res = await ProjectService.readProjectProjectProjectIdGet(projectid)
+      const res = await Project.readProjectProjectProjectIdGet({path:{project_id : projectid}})
       const data =  res
       const tasks = (data.steps || [])
         .flatMap((step: any) => step.tasks || [])
@@ -77,7 +74,7 @@ export const useRefreshStore = defineStore('refresh', {
       return data
     },
     async fetchAnnotations(taskid: number){
-      const res = await TaskService.readTaskTaskTaskIdGet(taskid)
+    const res = await Task.readTaskTaskTaskIdGet({path:{task_id: taskid}})
       this.data = res
       return res
     },

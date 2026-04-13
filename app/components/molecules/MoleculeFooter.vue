@@ -12,10 +12,9 @@
 <script setup>
 import AtomLogo from "~/components/atoms/AtomLogo.vue";
 import { getApplicationConfiguration } from '~/services/dynamic-configuration-service';
-import { ManagementService } from "~/api/generate"
 
 const config = getApplicationConfiguration()
-const {data} = useAsyncData('health',async()=>await ManagementService.getHealthManagementHealthGet())
+const {data} = useAsyncData('health',async()=>await getHealthManagementHealthGet())
 
 </script>
 <style>

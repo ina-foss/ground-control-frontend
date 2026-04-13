@@ -12,22 +12,14 @@
   </div>
 </template>
 
-<script setup lang="ts" >
+<script setup lang="ts">
 import { ref } from "vue";
 import _ from 'lodash'
-import {
-  AnnotationService,
-  Status as AnnotationStatus,
-  AnnotationType,
-  Permission,
-  ProjectService,
-  Status as TaskStatus,
-} from "~/api/generate";
 import { useAuth } from "~/stores/auth";
 import { storeToRefs } from "pinia";
 import OrganismAnnotation from "~/components/organisms/annotation/OrganismAnnotation.vue";
+import { Annotation } from "~/api/generate/"
 import {getHandler, patchDataBeforeSaving} from "~/composables/useAnnotationTypeRegistry"
-
 
 const refresh = useRefreshStore();
 const route = useRoute();
@@ -81,9 +73,11 @@ const { data: project } = await useAsyncData(
 const { data: dataProject, execute: loadProject } = useLazyAsyncData(
   `project_${route.query.project_id}`,
   async () => {
-    const project = await ProjectService.readProjectProjectProjectIdGet(
-      route.query.project_id,
-    );
+    const project = await Project.readProjectProjectProjectIdGet({
+      path:{
+        project_id : route.query.project_id,
+      }
+    });
     return project;
   },
   {
@@ -99,11 +93,15 @@ const annotation_bool = reactive({
 const { data: annotations_in, status: status_in } = useLazyAsyncData(
   `annotations_in_${project.value.id}`,
   async () =>
-    await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(
-      data.value.id,
-      "",
-      "in",
-    ),
+    await Annotation.getAnnotationByTaskIdAnnotationsTaskIdGet({
+      path: {
+        task_id: data.value.id
+      },
+      query: {
+        user_email: userEmail.value,
+        direction: "in"
+      }
+    }),
   {
     server: false,
   },
@@ -116,13 +114,15 @@ const {
 } = useAsyncData(
   'annotation_out',
   async () =>
-    await AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(
-      data.value.id,
-      route.query.email
-        ? route.query.email
-        : userEmail.value,
-      "out",
-    ),
+    await Annotation.getAnnotationByTaskIdAnnotationsTaskIdGet({
+      path: {
+        task_id: data.value.id
+      },
+      query: {
+        user_email: route.query.email || userEmail.value,
+        direction: "out"
+      }
+    }),
   {
     server: false,
   },
@@ -160,24 +160,19 @@ const allFetched = computed(() => {
 });
 
 const annotationInfo = computed(() => {
-  let info = null;
-  if (annotations_out.value) {
-    annotations_out.value.forEach((annotation, index) => {
-      if (
-        annotation.user_email == userEmail.value ||
-        annotation.user_email == route.query.email
-      ) {
-        info = {
-          index: index,
-          id: annotation.id,
-          status: annotation.annotation_status,
-          email: annotation.user_email,
-        };
-      }
-    });
-  }
+  const annotation = annotations_out.value?.find(
+    (a) => a.user_email == userEmail.value || a.user_email == route.query.email
+  );
 
-  return info;
+  if (!annotation) return null;
+
+  const index = annotations_out.value!.indexOf(annotation);
+  return {
+    index,
+    id: annotation.id,
+    status: annotation.annotation_status,
+    email: annotation.user_email,
+  };
 });
 
 
@@ -190,15 +185,21 @@ const submitExistantAnnotation = (action, timeSpent, options) => {
   if (action === "submit") {
     refresh_out()
     promise =
-      AnnotationService.updateAnnotationResultAnnotationAnnotationIdPatch(
-        annotationInfo.value.id,
-        patchedResult
+      Annotation.updateAnnotationResultAnnotationAnnotationIdPatch({
+        path: {
+          annotation_id: annotationInfo.value?.id
+        },
+        body: patchedResult,
+      }
       );
   } else {
     promise =
-      AnnotationService.finishAnnotationAnnotationFinishAnnotationIdPatch(
-        annotationInfo.value.id,
-        patchedResult
+      Annotation.finishAnnotationAnnotationFinishAnnotationIdPatch({
+        path: {
+          annotation_id: annotationInfo.value?.id
+        },
+        body: patchedResult,
+      }
       );
   }
   promise
@@ -212,7 +213,7 @@ const submitExistantAnnotation = (action, timeSpent, options) => {
               : "Cette annotation est terminée",
           life: 4000,
         });
-        if (annotations_out.value[annotationInfo.value.index].annotation_status === AnnotationStatus.SKIPPED) {
+        if (annotations_out.value[annotationInfo.value.index].annotation_status === Status.SKIPPED) {
           toast.add({
             severity: "warn",
             summary:"Cette tâche a été abandonnée par un autre utilisateur. Vous pouvez toujours continuer à annoter si vous le souhaitez.",
@@ -242,11 +243,15 @@ const submitExistantAnnotation = (action, timeSpent, options) => {
       window.onbeforeunload = null;
     })
     .then(() => {
-      AnnotationService.getAnnotationByTaskIdAnnotationsTaskIdGet(
-        data.value.id,
-        userEmail.value,
-        "out",
-      )
+      Annotation.getAnnotationByTaskIdAnnotationsTaskIdGet({
+        path: {
+          task_id: data.value.id
+        },
+        query: {
+          user_email: userEmail.value,
+          direction: "out"
+        }
+      })
         .then((res) => (annotations_out.value = res))
         .then(() => (annotation_bool.out = true));
     })
@@ -264,22 +269,24 @@ const submitNewAnnotation = (action, timeSpent, options) => {
 
   const patchedResult = {...result, data: patchDataBeforeSaving(result.data,data.value.step.annotation_type,timeSpent)}
 
-  AnnotationService.createAnnotationAnnotationPost({
-    annotation: {
-      user_email: userEmail.value,
-      task_id: data.value.id,
-      result: patchedResult,
-      annotation_status:
-        action === "submit"
-          ? AnnotationStatus.IN_PROGRESS
-          : AnnotationStatus.DONE,
-      version: 1,
-    },
-    association: {
-      annotation_id: 0,
-      task_id: data.value.id,
-      direction: "out",
-    },
+  Annotation.createAnnotationAnnotationPost({
+    body:{
+      annotation: {
+        user_email: userEmail.value,
+        task_id: data.value.id,
+        result: patchedResult,
+        annotation_status:
+          action === "submit"
+            ? Status.IN_PROGRESS
+            : Status.DONE,
+        version: 1,
+      },
+      association: {
+        annotation_id: 0,
+        task_id: data.value.id,
+        direction: "out",
+      }
+    }
   })
     .then(() => {
       refresh_out();
@@ -331,8 +338,12 @@ const handleSubmit = async (event, action) => {
   if (action === "skip") {
     try {
       const annotationId = annotationInfo.value?.id;
-      await AnnotationService.skipAnnotationAnnotationSkipAnnotationIdPatch(
-        annotationId,
+      await Annotation.skipAnnotationAnnotationSkipAnnotationIdPatch(
+        {
+          path:{
+            annotation_id : annotationId
+          }
+        }
       );
       if (event.options?.showToast) {
         toast.add({
@@ -355,8 +366,8 @@ const handleSubmit = async (event, action) => {
 
   if (
     mode != "read" &&
-    data.value.status != TaskStatus.ARCHIVED &&
-    data.value.status != TaskStatus.SKIPPED
+    data.value.status != Status.ARCHIVED &&
+    data.value.status != Status.SKIPPED
   ) {
     if (annotationInfo.value != null) {
       submitExistantAnnotation(

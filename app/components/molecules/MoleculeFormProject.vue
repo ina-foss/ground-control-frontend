@@ -141,8 +141,7 @@
 <script setup>
 
 
-import {AnnotationType, ProjectService, Status , StepService } from '~/api/generate';
-import {useRefreshStore, useI18n } from '#imports';
+import {useRefreshStore} from '#imports';
 import {useAuth} from '../../stores/auth';
 
 const { t } = useI18n()
@@ -179,27 +178,34 @@ const headerTitle = computed(() => {
     toast.add({severity: "error", detail: 'Le titre est requis', summary: 'Erreur détectée'});
   } else {
     try {
-      const response = await ProjectService.updateProjectProjectProjectIdPut(project?.id, {
-        title: title.value,
-        description: description.value,
-        is_published: isPublished.value,
-        empty_annotations: emptyAnnotations.value,
-        allow_skip: allowSkip.value,
-        control_weights: 10,
-        pinned_at: null,
-        created_by: userEmail
+      const response = await Project.updateProjectProjectProjectIdPut({
+        path: {
+          project_id: project?.id
+        },
+        body: {
+          title: title.value,
+          description: description.value,
+          is_published: isPublished.value,
+          empty_annotations: emptyAnnotations.value,
+          allow_skip: allowSkip.value,
+          control_weights: 10,
+          pinned_at: null,
+          created_by: userEmail
+        }
       });
 
       // Assuming response is a promise
       selectedType.value.forEach((type, index) => {
         if (!project?.steps?.find(element => element.annotation_type === type)) {
-          StepService.createStepStepPost({
-            title: `Step #${index + 1}`,
-            description: 'Step description',
-            annotation_type: type,
-            pinned_at: null,
-            status: Status.DRAFT,
-            project_id: response.id,
+          Step.createStepStepPost({
+            body:{
+              title: `Step #${index + 1}`,
+              description: 'Step description',
+              annotation_type: type,
+              pinned_at: null,
+              status: Status.DRAFT,
+              project_id: response.id,
+            }
           }).catch((err) => {
               console.error(err)
               $handleApiError(err)
@@ -218,32 +224,36 @@ const createProject = async () => {
     toast.add({severity: "error", detail: "Le titre est requis", summary: "Erreur détectée"})
   } else {
     const {userEmail} = useAuth()
-    const response = ProjectService.createProjectProjectPost({
-      title: title.value,
-      description: description.value,
-      status: Status.DRAFT,
-      is_published: false,
-      empty_annotations: emptyAnnotations.value,
-      allow_skip: allowSkip.value,
-      control_weights: 10,
-      pinned_at: null,
-      created_by: userEmail,
+    const response = Project.createProjectProjectPost({
+      body: {
+        title: title.value,
+        description: description.value,
+        status: Status.DRAFT,
+        is_published: false,
+        empty_annotations: emptyAnnotations.value,
+        allow_skip: allowSkip.value,
+        control_weights: 10,
+        pinned_at: null,
+        created_by: userEmail,
+      }
     })
 
     response
       .then(async(res) => {
         selectedType.value.forEach(async(type, index) => {
-          await StepService.createStepStepPost({
-            title: `Step #${index + 1}`,
-            description: 'Step description',
-            annotation_type: type,
-            pinned_at: null,
-            status: Status.DRAFT,
-            project_id: res.id,
-            redundancy: parseInt(redundancy.value, 10),
-            completeness_rate: parseFloat(completeness_rate.value),
-            allow_empty_annotation: emptyAnnotations.value,
-            max_tasks_per_person: parseInt(max_tasks_per_person.value, 10)
+          await Step.createStepStepPost({
+            body: {
+              title: `Step #${index + 1}`,
+              description: 'Step description',
+              annotation_type: type,
+              pinned_at: null,
+              status: Status.DRAFT,
+              project_id: res.id,
+              redundancy: parseInt(redundancy.value, 10),
+              completeness_rate: parseFloat(completeness_rate.value),
+              allow_empty_annotation: emptyAnnotations.value,
+              max_tasks_per_person: parseInt(max_tasks_per_person.value, 10)
+            }
           }).catch((err) => {
             console.error(err)
             $handleApiError(err)

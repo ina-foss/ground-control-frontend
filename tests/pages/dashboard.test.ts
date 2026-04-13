@@ -96,7 +96,7 @@ describe('dashboard.vue', () => {
     expect(wrapper.html()).toContain('right-[5px]')
 
   })
-  ,
+
   it('should change the max number of project on window size', async ()=>{
     expect(wrapper.vm.paginatorSize).toBe(16) // default value
     global.innerWidth = 2600

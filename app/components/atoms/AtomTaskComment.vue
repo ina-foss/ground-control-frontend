@@ -92,7 +92,7 @@ class="h-auto" label="Envoyer" icon="pi pi-arrow-right" icon-pos="left"
 </template>
 
 <script setup lang="ts">
-import {TaskCommentService, type TaskCommentDto} from '~/api/generate';
+import { TaskComment, type TaskCommentDto } from '~/api/generate';
 import {useAuth} from "~/stores/auth";
 import {useService} from "~/composables/useService";
 
@@ -118,8 +118,8 @@ function handleClearComment() {
 
 function handleCreateComment() {
   if (comment.value != '') {
-    TaskCommentService.createTaskCommentTaskCommentPost({comment: comment.value, task_id: getData.id, created_by: userEmail}).then(() => toast.add({detail: 'Votre commentaire à été envoyé', summary: 'Envoie réussi', life: 3000}))
-        .then(() => TaskCommentService.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id).then((comment) => comments.value = comment))
+    createTaskCommentTaskCommentPost({comment: comment.value, task_id: getData.id, created_by: userEmail}).then(() => toast.add({detail: 'Votre commentaire à été envoyé', summary: 'Envoie réussi', life: 3000}))
+        .then(() => readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id).then((comment) => comments.value = comment))
   }
   comment.value = ""
 }
@@ -129,8 +129,8 @@ const handleDeleteComment = async (id) => {
   const { execute } = await useAsyncData(
     `deleteComment-${id}`,
     async () => {
-      await TaskCommentService.deleteTaskCommentTaskCommentTaskCommentIdDelete(id);
-      comments.value = await TaskCommentService.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id);
+      await TaskComment.deleteTaskCommentTaskCommentTaskCommentIdDelete(id);
+      comments.value = await TaskComment.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id);
 
     },
     { immediate: false,

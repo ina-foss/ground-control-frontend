@@ -27,8 +27,9 @@ v-model:visible="visibleRight" header="Raccourcis clavier" position="right"
 
 <script setup>
 
-import helpIcon from '/icons/icons-svg/icons-svg/help-icon.svg';
 import { ref } from 'vue';
+
+const helpIcon = '/icons/icons-svg/icons-svg/help-icon.svg';
 const visibleRight = ref(false);
 const shortcutList = [
   { key: "V", value: "Avance de 1 segments" },

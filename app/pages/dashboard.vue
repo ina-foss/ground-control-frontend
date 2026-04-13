@@ -68,8 +68,9 @@ import MoleculeFooter from '~/components/molecules/MoleculeFooter.vue';
 import {useRefreshStore} from '../stores/refresh';
 import {storeToRefs} from 'pinia'
 import {Permission} from "../api/generate";
-import MoleculeProjectCard from "../components/molecules/MoleculeProjectCard.vue";
+import MoleculeProjectCard from "~/components/molecules/MoleculeProjectCard.vue";
 import {useStatusMap} from "~/helpers/statusMap";
+import { useI18n } from '#imports'
 
 const status_map = useStatusMap();
 const refreshStore = useRefreshStore()

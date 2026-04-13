@@ -43,7 +43,7 @@
 <script setup>
 import AtomTrancription from '../atoms/AtomTrancription.vue';
 import AtomVideoOption from '../atoms/atom-video-option.vue'
-import {Status as AnnotationStatus} from '../../api/generate';
+import {Status as Status} from '../../api/generate';
 const emits = defineEmits(['on-segment-click'])
 let isChanged = false
 const carouselRef = ref()
@@ -64,7 +64,7 @@ const {transcriptions, algos, userAnnotations, status} = defineProps({
   },
   status: {
     type: String,
-    default: AnnotationStatus.DRAFT
+    default: Status.DRAFT
   }
 })
 const localChanges = ref([]) // store all the annotations confirmed by user before submitting

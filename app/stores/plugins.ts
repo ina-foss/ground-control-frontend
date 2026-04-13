@@ -1,10 +1,13 @@
-import type { PluginAutocompleteValueDTO, PluginWithIdDto } from "~/api/generate"
-import { PluginService, DisplayZone  } from "~/api/generate"
-import AtomPluginAutocomplete from '../app/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
-import AtomPluginLabel from '../app/components/atoms/pluginLabel/AtomPluginLabel.vue'
+import type { PluginWithIdDto, PluginAutocompleteValueDto } from "~/api/generate"
+import { Plugin, DisplayZone  } from "~/api/generate"
+import AtomPluginAutocomplete from '~/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
+import AtomPluginLabel from '~/components/atoms/pluginLabel/AtomPluginLabel.vue'
 import AtomPluginItemslist from "~/components/atoms/pluginItemsList/AtomPluginItemslist.vue"
 import _ from 'lodash'
 import { defineStore } from "pinia"
+import AtomPluginInputLabel from "~/components/atoms/pluginInputLabel/AtomPluginInputLabel.vue";
+import AtomPluginSuggestionList
+  from "~/components/atoms/pluginSuggestionList/AtomPluginSuggestionList.vue";
 
 export const usePluginStore = defineStore('plugin',{
   state: () =>{
@@ -16,7 +19,7 @@ export const usePluginStore = defineStore('plugin',{
       /**
        * List of options array for each plugin
        **/
-      pluginOptionsList: [] as{data: PluginAutocompleteValueDTO[], id :number}[],
+      pluginOptionsList: [] as{data: PluginAutocompleteValueDto[], id :number}[],
     }
   },
   actions: {
@@ -35,6 +38,7 @@ export const usePluginStore = defineStore('plugin',{
       switch(annotation_type){
         case  'segmentation' :
         case  'auto-summary' :
+        case  'video-segmentation' :
           availableZones = [DisplayZone.BLOC]
           break;
         case 'span':
@@ -44,7 +48,8 @@ export const usePluginStore = defineStore('plugin',{
           availableZones = []
       }
 
-      const response = PluginService.readAllPluginsPluginsStepStepIdDisplayGet(step_id,availableZones)
+      if(!availableZones.length) return
+      const response = Plugin.readAllPluginsPluginsStepStepIdDisplayGet({path:{step_id} ,query: {zone: availableZones}})
       const plugins = await response
       this.setPluginList(plugins)
     },
@@ -52,7 +57,7 @@ export const usePluginStore = defineStore('plugin',{
     async initialFetch(){
       const result = Promise.all(
         this.pluginList.map(async (item) => {
-          const result = await PluginService.searchPluginsPluginsPluginIdSearchGet(item.id, ' ')
+          const result = await Plugin.searchPluginsPluginsPluginIdSearchGet({path:{plugin_id: item.id},query:{query:' ' }})
           return {
             id: item.id,
             data: result,
@@ -70,10 +75,17 @@ export const usePluginStore = defineStore('plugin',{
           return {component: AtomPluginAutocomplete, props : { pluginItemsConfig:itemlist, plugin: pluginConfig } }
         }
         case 'label':
+          const label= this.pluginOptionsList.find((item) => item.id === pluginConfig.id).data
           return {component: AtomPluginLabel, props : { isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:pluginItemsConfig } }
         case 'listitems':{
           const itemlist= this.pluginOptionsList.find((item) => item.id === pluginConfig.id).data
           return {component: AtomPluginItemslist, props:{pluginItemsConfig: itemlist, plugin: pluginConfig}}
+        }
+        case 'inputlabel':{
+          return {component: AtomPluginInputLabel, props:{plugin: pluginConfig}}
+        }
+        case 'suggestionlist':{
+          return {component: AtomPluginSuggestionList, props:{plugin: pluginConfig}}
         }
         default:
           break;
@@ -85,7 +97,7 @@ export const usePluginStore = defineStore('plugin',{
     getPluginList(state): PluginWithIdDto[]{
       return state.pluginList
     },
-    getAllPluginOptionList(state): {data:PluginAutocompleteValueDTO[], id:number}[] {
+    getAllPluginOptionList(state): {data:PluginAutocompleteValueDto[], id:number}[] {
       return state.pluginOptionsList
     }
   }

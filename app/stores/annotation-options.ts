@@ -76,6 +76,7 @@ const optionsSchema = z.strictObject({
 export type Options = z.infer<typeof optionsSchema>
 
 
+
 export type AnnotationMode = 'read' | 'edit' | 'none'
 
 export const useOptions = defineStore("annotation-options",() => {

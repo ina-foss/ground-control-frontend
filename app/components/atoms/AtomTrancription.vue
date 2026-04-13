@@ -20,7 +20,7 @@ style="border: 1px solid #0057FF; color: #0057FF;background-color: white;font-we
           {{ topicList[transcriptions[0].data.topic]?.title }}
         </span>
       </div>
-      <Button v-if="status!==AnnotationStatus.DONE" icon="pi pi-pencil" size="small" severity="secondary" text @click="onExpand()"/> </div>
+      <Button v-if="status!==Status.DONE" icon="pi pi-pencil" size="small" severity="secondary" text @click="onExpand()"/> </div>
 
     <!-- In EDIT Mode -->
     <div v-if="isExpand == true" class="flex flex-col gap-2 ">
@@ -83,7 +83,7 @@ import Textarea from 'primevue/textarea';
 import { useService } from '#imports';
 
 import { useTopicList } from '../../composables/useTopicList'
-import {Status as AnnotationStatus} from '../../api/generate';
+import {Status as Status} from '../../api/generate';
 const emits = defineEmits(['confirm', 'onSegmentClick'])
 const toast = useToast()
 const { $application }  = useService()

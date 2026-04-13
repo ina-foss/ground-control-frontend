@@ -57,16 +57,4 @@ describe('ApplicationService', () => {
     });
   });
 
-  describe('getDefaultHeader', () => {
-    it('should return the correct Authorization header', () => {
-      const mockAuthStore = {
-        access_token: { value: 'test_token' },
-      };
-      storeToRefs.mockReturnValue(mockAuthStore);
-
-      const header = applicationService.getDefaultHeader();
-
-      expect(header).toEqual({ Authorization: 'Bearer test_token' });
-    });
-  });
 });

@@ -119,7 +119,7 @@ ref="templateRef"
 
               </template>
 
-            </FileUpload>
+ g           </FileUpload>
 
           </div>
           <div class="flex justify-between pt-8">
@@ -144,13 +144,12 @@ class="button button-prev mr-4" label="Précédent" icon="pi pi-arrow-left" icon
 
 <script setup>
 
-import {Status as TaskStatus, TaskService, TaskDataType, MediaService, AnnotationService, Status as AnnotationStatus} from '~/api/generate';
 import {useRefreshStore, useAuth} from '#imports';
 import _ from 'lodash';
 
 const refreshStore = useRefreshStore()
 const authStore = useAuth()
-const emits = defineEmits(['toggle-dialog', 'refreshData'])
+const emits = defineEmits(['toggle-dialog', 'refresh-data'])
 const {dialogVisible, stepObject} = defineProps(['dialogVisible', 'stepObject'])
 const {userEmail} = storeToRefs(authStore)
 const { $handleApiError } = useNuxtApp()
@@ -205,51 +204,49 @@ const onReaderLoad = (event) => {
 }
 
 const createTask = async () => {
-  try {
-  MediaService.createMediaMediaPost({
-    url: fileData.value[0].asset.url,
-    type: fileData.value[0].asset.media_type,
-    player_parameters: fileData.value[0].asset.player_parameters
-  }).then((res) => {
+    const media = await Media.createMediaMediaPost({
+      body: {
+        url: fileData.value[0].asset.url,
+        type: fileData.value[0].asset.media_type,
+        player_parameters: fileData.value[0].asset.player_parameters
+      }
+    })
 
-    TaskService.createTaskTaskPost({
-      name: name.value,
-      instruction: instruction.value,
-      data_type: TaskDataType.AMALIA,
-      status: TaskStatus.DRAFT,
-      expiration_date: endDate.value,
-      lead_time: null,
-      step_id: stepObject.id,
-      media_id: res.id
-    }
-    ).catch((err) => {
-      console.error(err)
-      $handleApiError(err)
-    }).then((res) => {
-      fileData.value.forEach(file => {
-        AnnotationService.createAnnotationAnnotationPost({
-          annotation: {
-            user_email: userEmail.value,
-            annotation_status: AnnotationStatus.DRAFT,
-            version: 0,
-            result: file,
-            task_id: res.id
-          },
-          association: {
-            annotation_id: 0,
-            task_id: res.id,
-            direction: 'in'
+    const task = await Task.createTaskTaskPost({
+      body: {
+        name: name.value,
+        instruction: instruction.value,
+        data_type: TaskDataType.AMALIA,
+        status: Status.DRAFT,
+        expiration_date: endDate.value,
+        lead_time: null,
+        step_id: stepObject.id,
+        media_id: media.id
+      }
+    })
+
+    await Promise.all(
+      fileData.value.map(async file => {
+        Annotation.createAnnotationAnnotationPost({
+          body: {
+            annotation: {
+              user_email: userEmail.value,
+              annotation_status: Status.DRAFT,
+              version: 0,
+              result: file,
+              task_id: task.id
+            },
+            association: {
+              annotation_id: 0,
+              task_id: task.id,
+              direction: 'in'
+            }
           }
-        }).catch(error=>$handleApiError(error))
+        })
       })
-    }).then(() => emits('refresh-data')) // fetchTasks(stepObject.project_id))
-      .then(() => emits('toggle-dialog')) // fetchTasks(stepObject.project_id))
-  })
-  }catch(error){
-
-      $handleApiError(error,)
-  }
-
+    )
+    emits('toggle-dialog')
+    emits('refresh-data')
 }
 
 </script>

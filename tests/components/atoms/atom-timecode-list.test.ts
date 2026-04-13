@@ -34,7 +34,7 @@ vi.mock('#imports', async () => {
 
 vi.mock('nuxt/app', () => ({
   useFetch: vi.fn(() => ({
-    data: ref('http://mocked-thumbnail-url.com/thumb.jpg'),
+    data: ref('https://mocked-thumbnail-url.com/thumb.jpg'),
   })),
 }));
 
@@ -47,7 +47,7 @@ describe('AtomTimecodeList.vue', () => {
 
   const wrapper = mount(AtomTimecodeList, {
     props: {
-      thumbnailUrl: 'http://mock.url/video:media-id?params',
+      thumbnailUrl: 'https://mock.url/video:media-id?params',
     },
     global: {
       provide: {

@@ -126,7 +126,9 @@
     "delete": "Delete",
     "next": "Next",
     "previous": "Previous",
-    "create": "Create"
+    "create": "Create",
+    "upload": "Upload",
+    "configure": "Configure"
   },
   "player": {
     "actions": {
@@ -204,6 +206,61 @@
       "deleteTask": "Delete task",
       "noEligibleActivate": "No task eligible for activation",
       "noEligibleDeactivate": "No task eligible for deactivation"
+    },
+    "export": "Export",
+    "createTask": "Create task",
+    "addconfig": "Add configuration",
+    "uploadConfig": "Upload Configuration",
+    "seeConfigurations": "Click to see configurations",
+    "uploadLimit": "You can upload only one configuration. Delete the existing one to upload a new one."
+  },
+  "plugin": {
+    "tab": {
+      "upload": "Upload",
+      "manualConfig": "Manual configuration"
+    },
+    "editor": {
+      "tabForm": "Form",
+      "tabJson": "Raw JSON",
+      "generalInfo": "General information",
+      "configData": "Data configuration",
+      "displayConfig": "Display configuration",
+      "responseKeys": "Response keys",
+      "availablePlugins": "Available plugins",
+      "availablePluginKey": "Type extId (e.g. 14)",
+      "availablePluginValue": "Child plugin name",
+      "noAvailablePlugins": "No available plugins configured",
+      "children": "Child plugins",
+      "addChild": "Add child",
+      "addRow": "Add row",
+      "applyJson": "Apply JSON"
+    },
+    "fields": {
+      "name": "Name",
+      "type": "Type",
+      "displayZone": "Display zone",
+      "dataProperty": "Data property",
+      "dataCategories": "Data categories",
+      "enableSearch": "Enable search",
+      "configType": "Source type",
+      "dataSource": "Source URL",
+      "staticData": "Static data",
+      "searchQuery": "Search query (JSON)",
+      "tokenUrl": "Token URL",
+      "clientId": "Client ID",
+      "clientSecret": "Client Secret",
+      "label": "Label",
+      "order": "Order",
+      "maxItems": "Max items",
+      "multipleValues": "Multiple values",
+      "mainPlugin": "Main plugin"
+    },
+    "delete": {
+      "title": "Delete plugin",
+      "confirm": "Are you sure you want to delete the plugin \"{name}\"?"
+    },
+    "edit": {
+      "title": "Edit configuration"
     }
   }
 }

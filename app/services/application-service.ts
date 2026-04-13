@@ -1,11 +1,11 @@
-import { OpenAPI } from "../api/generate";
+import { client } from '~/api/generate/client.gen'
 import { getApplicationConfiguration } from "./dynamic-configuration-service";
 import { useAuth } from "../stores/auth";
 import { storeToRefs } from "pinia";
-import { UserService } from "../api/generate/services/UserService";
 import { floor, padStart, padEnd } from "lodash";
 import {useTcOffset} from "../composables/useTcOffset";
 import { useI18n } from '#imports'
+import { User } from '~/api/generate';
 
 /**
  * Services used throught the application
@@ -14,7 +14,6 @@ import { useI18n } from '#imports'
  *  authStore (Store) : Instance of the pinia store which handles users.
  *
  * Mehthods
- *  - getDefaultHeader() -> void
  *  - checkUser() -> void
  *  - setupHeader() -> void
  */
@@ -31,8 +30,29 @@ export default class ApplicationService {
 
   private authStore = useAuth();
 
-  public getDefaultHeader() {
+  public setupHeader() {
     const { access_token } = storeToRefs(this.authStore);
+
+    try{
+      const config = getApplicationConfiguration()
+      if (!config['apiBasePath']) {
+        throw new Error('API base path is not defined')
+      }
+
+      client.setConfig({
+        auth : () => access_token.value,
+        baseURL: config['apiBasePath'] as string
+      })
+
+      // client.interceptors.request.use(request=>{
+      //   request.headers.set("Authorization",`Bearer ${access_token.value}`)
+      //   return request
+      // })
+
+    } catch(e){
+      console.error('Failed to setup application service headers: ', e)
+    }
+
     return { Authorization: `Bearer ${access_token?.value}` };
   }
 
@@ -43,7 +63,7 @@ export default class ApplicationService {
    */
   public extractRGB(hexColor) {
     const rgbaColor = hexToRgba(hexColor, 0.5);
-    const rgba = rgbaColor?.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
+    const rgba = rgbaColor?.replace(/(?:^rgba?\()|\s+|(?:\)$)/g, '').split(',');
     return rgba.slice(0, 3);
   }
 
@@ -97,19 +117,15 @@ export default class ApplicationService {
 
     const role = user.value.profile.roles ? user.value.profile.roles[2] : 'default';
 
-    const response = ref(await UserService.getUserByEmailUserGet(userEmail.value));
+    const response = ref(await User.getUserByEmailUserGet({query: {email: userEmail.value}}));
     if (response.value == null) {
-      UserService.createUserUserPost({
-        email: userEmail.value,
-        role: role
+      await User.createUserUserPost({
+        body: {
+          email: userEmail.value,
+          role: role
+        }
       }).then((response));
     }
-  }
-
-  public setupHeader() {
-    const config = getApplicationConfiguration();
-    OpenAPI.BASE = config['apiBasePath'];
-    OpenAPI.HEADERS = this.getDefaultHeader();
   }
 
   /**
@@ -129,7 +145,8 @@ export default class ApplicationService {
           return null;
         }
       };
-      return parseJwt(this.getDefaultHeader()['Authorization'])?.realm_access?.roles;
+      const { access_token } = storeToRefs(this.authStore);
+      return parseJwt(access_token.value)?.realm_access?.roles;
     }
 
     public hasRole(role: string): boolean {

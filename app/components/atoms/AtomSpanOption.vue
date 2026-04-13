@@ -55,11 +55,11 @@ watch(()=>bloc.value,(value)=>{
 },{})
 
 watch(()=>number_segment.value,(value)=>{
-  timecode_segment.value == true? timecode_segment.value=!value:timecode_segment.value;
+  if(value && timecode_segment.value) timecode_segment.value = false
 })
 
 watch(()=>timecode_segment.value,(value)=>{
-  number_segment.value == true? number_segment.value=!value:number_segment.value;
+  if(value && number_segment.value) number_segment.value = false
 })
 
 </script>

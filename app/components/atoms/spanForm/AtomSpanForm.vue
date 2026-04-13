@@ -1,6 +1,6 @@
 <template>
   <Dialog v-model:visible="visible" modal :header="modalHeader" @after-hide="onClose"  >
-    <div class=" w-[700px] flex flex-col gap-6 " >
+    <div class=" w-[950px] flex flex-col gap-6 " >
       <context-wrapper v-if="!showContext" class="context-wrapper flex flex-col  p-5 transition-all duration-300 gap-2 bg-grey-50 "
 >
         <context-header class="inline-flex w-full items-center justify-between pb-3">

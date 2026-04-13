@@ -4,6 +4,7 @@ import {usePluginStore} from '~/stores/plugins'
 import {DisplayZone} from '~/api/generate'
 import { useI18n } from '#imports'
 import AtomDialogFilterGroup from "~/components/atoms/dialogFilterGroup/atom-dialog-filter-group-component";
+import { cleanText } from '~/utils/span';
 
 
 export default defineNuxtComponent({
@@ -62,8 +63,8 @@ export default defineNuxtComponent({
 
 
     function pluginChangeValue(plugin: PluginWithIdDto,event){
-      if( (plugin.display_config.main_plugin || isGroup.value ) && event.length != 0 && event[0] != null   ) showErrorMessage.value = false
-      else if( (plugin.display_config.main_plugin || isGroup.value) && ( event.length == 0 || event[0] == null)) showErrorMessage.value = true
+      if( (plugin.display_config.main_plugin || isGroup.value || plugin.display_config.required_value ) && event.length != 0 && event[0] != null   ) showErrorMessage.value = false
+      else if( (plugin.display_config.main_plugin || isGroup.value || plugin.display_config.required_value ) && ( event.length == 0 || event[0] == null)) showErrorMessage.value = true
     }
 
     const nodes = ref<Nodes[]>([])
@@ -127,7 +128,7 @@ export default defineNuxtComponent({
         if(selected){
           if(currentSpan.value?.label && currentSpan.value.label !== "")defaultLabel.value=currentSpan.value?.label
           else {
-            defaultLabel.value=selected.copyable ==='false'? "":(textSpan.value)?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
+            defaultLabel.value=selected.copyable ==='false'? "":cleanText(textSpan.value)
 
           }
         }
@@ -224,13 +225,15 @@ export default defineNuxtComponent({
         )
         ||
         // validation for span case (with mainPlugin only)
-        ( mainPluginIndex.value && !isGroup.value && (pluginValues[mainPluginIndex.value].length == 0 || !pluginValues[mainPluginIndex.value][0] ) )
+        // ( mainPluginIndex.value && !isGroup.value && (pluginValues[mainPluginIndex.value].length == 0 || !pluginValues[mainPluginIndex.value][0] ) )
+        // ||
+        !Object.values(checkPluginValues()).every(value=>value)
         ||
         // validation for deletedNum when isForResearch is false (with suppression plugin selected)
         (!isForResearch.value && childPluginMap.value &&  pluginSelected.value !== '' && (nodesCount.value > 1
           || !deletedNum.value || deletedNum.value === 0))
       ) {
-        showErrorMessage.value = true
+        showErrorMessage.value = checkPluginValues()
       }
       else{
         if (isGroup.value) {
@@ -247,6 +250,21 @@ export default defineNuxtComponent({
 
       // Close the modal if no error
       if(!showErrorMessage.value) close()
+    }
+
+    function checkPluginValues(){
+     const result =  tidiedPluginList.value[isGroup.value ? 'group_modal' : 'span_modal_left']?.reduce((acc,plugin) => {
+        const pluginCheck = ( !plugin.display_config?.required_value && !plugin.display_config?.main_plugin) || isGroup.value  ||  Boolean(pluginValues[readPluginValues(plugin)]?.length )
+        acc[plugin.name] = pluginCheck // store check value for main plugins
+        plugin.children?.filter(child=>plugin.available_plugins?.[pluginValues[readPluginValues(plugin)]?.[0]?.ext_id] == child.name).forEach((child)=>{
+         const childCheck = !child.display_config?.required_value ||  Boolean(pluginValues[readPluginValues(child)].length)
+         acc[child.name] = childCheck // store check value for current child plugin
+        })
+        return acc
+      },{})
+
+      return result
+
     }
 
     /**
@@ -267,7 +285,7 @@ export default defineNuxtComponent({
       // labelSelected.value = spanArray.value[spanId]?.type ?? []
       nodes.value = span.nodes ?? []
       textSpan.value=extractTextFromSpanNodes(nodes.value)
-      defaultLabel.value =  (span?.label ?? textSpan.value)?.replace(/^[.,';\s]+|[.,';\s]+$/g, " ").trim()
+      defaultLabel.value =  cleanText(span?.label ?? textSpan.value)
       nodesCount.value = nodes.value.length
       if(isSpan(span)){
         prevNodes.value = reccursiveSibling(nodes.value[0], -20 )

@@ -192,7 +192,6 @@
 import { defineEmits } from "vue";
 import MoleculeFormProject from "./MoleculeFormProject.vue";
 import { useService ,useI18n} from "#imports";
-import { Permission, Status , ProjectService } from "~/api/generate";
 import type { PropType } from "vue";
 import type { ProjectDetailDto } from "~/api/generate";
 import {useStatusMap} from "~/helpers/statusMap";
@@ -228,7 +227,7 @@ const roleUnarchiveProject = computed(() =>
   $application.hasRole(Permission.GROUND_CONTROL_PROJECT_UNARCHIVE),
 );
 const roleUpdateProject = computed(() =>
-  $application.hasRole(Permission.GROUND_CONTROL_PROJECT),
+  $application.hasRole(Permission.GROUND_CONTROL_PROJECT_UPDATE),
 );
 const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
 const linkTarget = computed(() => {
@@ -268,7 +267,7 @@ defineEmits(["refreshData"]);
 
 const deleteProject = async () => {
   try {
-    await ProjectService.deleteProjectProjectProjectIdDelete(project.id);
+    await Project.deleteProjectProjectProjectIdDelete({path:{project_id:project.id}});
     await refresh();
     deleteDialog.value = false;
   } catch (err) {
@@ -279,7 +278,7 @@ const deleteProject = async () => {
 
 const finishProject = async () => {
   try {
-    await ProjectService.finishProjectProjectIdFinishPost(project.id);
+    await Project.finishProjectProjectIdFinishPost({path:{project_id:project.id}});
     await refresh();
   } catch (err) {
     console.error("Error finishing project:", err);
@@ -291,7 +290,7 @@ const finishProject = async () => {
 
 const archiveProject = async () => {
   try {
-    await ProjectService.archiveProjectProjectIdArchivePost(project.id);
+    await Project.archiveProjectProjectIdArchivePost({path:{project_id:project.id}});
     await refresh();
   } catch (err) {
     console.error("Error archiving project:", err);
@@ -303,7 +302,7 @@ const archiveProject = async () => {
 
 const unarchiveProject = async () => {
   try {
-    await ProjectService.unarchiveProjectProjectIdUnarchivePost(project.id);
+    await Project.unarchiveProjectProjectIdUnarchivePost({path:{project_id:project.id}});
     await refresh();
   } catch (err) {
     console.error("Error archiving project:", err);
@@ -316,9 +315,11 @@ watch(
   async (open) => {
     if (!open) return
     progressedTasksCount.value =
-      await ProjectService.getProgressedTasksCountForProjectProjectIdProgressedTasksCountPost(
-        Number(project.id)
-      )
+      await Project.getProgressedTasksCountForProjectProjectIdProgressedTasksCountPost({
+        path:{
+          project_id: project.id
+        }
+      })
   }
 )
 

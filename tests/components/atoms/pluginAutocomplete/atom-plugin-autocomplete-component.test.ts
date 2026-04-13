@@ -19,7 +19,7 @@ vi.mock('~/api/generate',async (importOriginal) => {
   const actual =  await importOriginal()
   return {
     ...actual,
-    PluginService: {
+    Plugin: {
       searchPluginsPluginsPluginIdSearchGet: vi.fn().mockResolvedValue([
         { id: 1, label: 'Option A', ext_id: 'a' }
       ])
@@ -32,7 +32,7 @@ describe('AtomPluginAutocomplete.vue', () => {
   let pluginItemsConfigMock: any
 
   beforeEach(() => {
-    pluginMock = ref({ id: 1, name: 'Plugin test' })
+    pluginMock = ref({ id: 1, name: 'Plugin test', config_data:{type:"plugin_static_data"} })
     chipListMock = ref([])
     pluginItemsConfigMock = ref([
       { id: 1, ext_id: 'ext1', label: 'Option A' },
@@ -95,11 +95,13 @@ describe('AtomPluginAutocomplete.vue', () => {
   it('met à jour le filtre et trie les options', async () => {
     const wrapper = createWrapper()
     await flushPromises()
-    wrapper.vm.handleFilter({ value: 'B' })
+    expect(wrapper.vm.sortedOptionsByFilter.length).toBe(2)
+    wrapper.vm.handleFilter({ query: 'B' })
     await nextTick()
 
     const sorted = wrapper.vm.sortedOptionsByFilter
-    expect(sorted[0].label).toBe('Option A')
+    expect(sorted.length).toBe(1)
+    expect(sorted[0].label).toBe('Option B')
   })
 
   it('met à jour chipList si un élément est retiré', async () => {

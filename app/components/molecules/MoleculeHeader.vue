@@ -33,7 +33,6 @@ import AtomLogo from '../atoms/AtomLogo.vue';
 import AtomIcon from '../atoms/AtomIcon.vue';
 import AtomAvatarHeader from '../atoms/AtomAvatarHeader.vue';
 import MoleculeFormProject from './MoleculeFormProject.vue';
-import { Permission } from '~/api/generate';
 import {useI18n} from "#imports";
 const dialogVisible = ref(false);
 const { $application } = useService();

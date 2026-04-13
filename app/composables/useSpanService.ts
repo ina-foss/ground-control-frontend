@@ -328,14 +328,57 @@ function createSpanService (){
       else if (!span.label) return markRaw(defaultLabel.value)
     })()
     deletedNum.value = null
-    const color = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value])
 
-    if (span?.plugins[mainPluginIndex.value] && (span?.plugins[mainPluginIndex.value]?.[0]) !== undefined && !createdPluginOptionsList.value.some(p=>p.id === ((span?.plugins[mainPluginIndex.value]?.[0]).id))) {
+    if (span?.plugins[mainPluginIndex.value] && (span?.plugins[mainPluginIndex.value]?.[0]) !== undefined && !createdPluginOptionsList.value.some(p=>p.id === span?.plugins[mainPluginIndex.value]?.[0]?.id)) {
       createdPluginOptionsList.value.push((span?.plugins[mainPluginIndex.value])?.[0])
     }
 
-    const borderColor = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value],1)
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
+      styleNode(element,span, elementIndex)
+    })
+    initPluginValues(pluginList.value)
+  }
+
+  function styleHeadNode(element: HTMLDivElement, bgElement: HTMLDivElement, color:string, borderColor: string, span: Span, plugins: PluginAutocompleteValueDTO[] ){
+    const spanId = span.id
+    bgElement.classList.add('border-l-2')
+    bgElement.style.borderRadius = "4px 0px 0px 4px"
+    const tag = document.createElement('tag')
+    const tag_label = plugins[0]?.tag_label
+    tag.innerText = tag_label || plugins?.map(spanPlugin=>spanPlugin.label).join(', ') || ''
+    tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded', 'text-text')
+    tag.style.left= '0px'
+    tag.draggable = true
+    tag.style.backgroundColor = color
+    tag.style.borderColor = borderColor
+    tag.setAttribute('spanId',spanId)
+    tag.style.zIndex= '50'
+    element.appendChild(tag)
+    tag.addEventListener('dragstart',event=> {
+      event.dataTransfer.setData('span',spanId)
+    })
+    tag.addEventListener('contextmenu', (event )=>{
+      spanMenuSelected.value = spanId
+      spanMenu.value.show(event)
+      })
+    const tagCoord = tag.getBoundingClientRect()
+
+    // Check for existing tag being overlap by the new tag on the LEFT side
+    let elements = document.elementsFromPoint(tagCoord.x,tagCoord.y)
+    const overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+    avoidOverlap(tag,overlapingTags)
+
+    // Check for existing tag being overlap by the new tag on the RIGHT side
+    elements = document.elementsFromPoint(tagCoord.right+50,tagCoord.y)
+    const overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
+    if(overlapingEndTags.length > 0 )
+    if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
+}
+
+  function styleNode(element: HTMLDivElement, span: Span, nodeIndex: number ){
+      const spanId = span.id
+      const color = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value])
+      const borderColor = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value],1)
       const bgElement = document.createElement(`bg${spanId}`)
       bgElement.classList.add('absolute', 'min-w-full', 'h-[16px]','left-0','top-[-2px]','mix-blend-multiply','py-2','pointer-events-none')
       // add context menu listener to the word element
@@ -354,43 +397,12 @@ function createSpanService (){
       element.style.lineHeight = '14px'
       element.style.userSelect = 'text'
       element.classList.add('relative')
-      if(elementIndex == span.nodes.length-1) {
+      if(nodeIndex == span.nodes.length-1) {
         bgElement.classList.add('border-r-2','pr-4')
         bgElement.style.borderRadius = "0px 4px 4px 0px"
       }
-      if(elementIndex == 0) {
-        bgElement.classList.add('border-l-2')
-        bgElement.style.borderRadius = "4px 0px 0px 4px"
-        const tag = document.createElement('tag')
-        const tag_label = span.plugins[mainPluginIndex.value][0]?.tag_label
-        tag.innerText = tag_label || span.plugins[mainPluginIndex.value]?.map(spanPlugin=>spanPlugin.label).join(', ') || ''
-        tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded', 'text-text')
-        tag.style.left= '0px'
-        tag.draggable = true
-        tag.style.backgroundColor = color
-        tag.style.borderColor = borderColor
-        tag.setAttribute('spanId',spanId)
-        tag.style.zIndex= '50'
-        element.appendChild(tag)
-        tag.addEventListener('dragstart',event=> {
-          event.dataTransfer.setData('span',spanId)
-        })
-        tag.addEventListener('contextmenu', (event )=>{
-          spanMenuSelected.value = spanId
-          spanMenu.value.show(event)
-          })
-        const tagCoord = tag.getBoundingClientRect()
-
-        // Check for existing tag being overlap by the new tag on the LEFT side
-        let elements = document.elementsFromPoint(tagCoord.x,tagCoord.y)
-        const overlapingTags = elements.filter(element => element.tagName == "TAG" && element != tag )
-        avoidOverlap(tag,overlapingTags)
-
-        // Check for existing tag being overlap by the new tag on the RIGHT side
-        elements = document.elementsFromPoint(tagCoord.right+50,tagCoord.y)
-        const overlapingEndTags = elements.filter(element => element.tagName == "TAG" && element != tag )
-        if(overlapingEndTags.length > 0 )
-        if(overlapingEndTags.length >0 ) avoidOverlap(overlapingEndTags[0],[tag])
+      if(nodeIndex == 0) {
+        styleHeadNode(element,bgElement,color,borderColor,span, span.plugins[mainPluginIndex.value])
       }
       // Apply radius on every corner for 1 word span
       if(span.nodes.length == 1) bgElement.style.borderRadius = "4px"
@@ -406,8 +418,6 @@ function createSpanService (){
           }
         }
       }
-    })
-    initPluginValues(pluginList.value)
   }
 
   /**
@@ -484,7 +494,7 @@ function createSpanService (){
   function extractTextFromSpanNodes(nodesArray: Array<Node> | null): string | null {
     if (!nodesArray) return null;
     return nodesArray.map(node => extractTextFromSpan(node)).join(' ')
-        .replace(/\s*([-–—'''])\s*/g, '$1');
+      .replace(/ ?([-–—''']) ?/g, '$1')
   }
 
 

@@ -12,6 +12,66 @@ export default class AmaliaPlayerService {
   private sourceLoaded = false;
   public playerConfiguration: any;
 
+  public serviceReady : Promise<void>
+
+  public mediaPlayerElement  = null
+
+  public playerContainer: HTMLElement | undefined
+  public  playerId: string | null = null
+  public  src: string | null = null
+  public media_params: any
+  public dynamicTumbnails: string | null = null
+  public downloadUrl: string | null = null
+  public mediaType:string | null = null
+  public waveformUrl:string | null = null
+  public customConfig?:Array<string> | null = null
+
+  public constructor(playerContainer: HTMLElement, playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string,waveformUrl:string,customConfig?:Array<string>){
+
+    const rejectTimeout = setTimeout(() => {
+      clearInterval(interval)
+      reject(new Error('AmaliaPlayerService: timed out waiting for mediaElement'))
+    }, 15000)
+
+    // update serviceReady when mediaPlayerElement exists
+    this.serviceReady = new Promise((resolve)=>{
+      const interval =  setInterval(()=>{
+        if ( this.getPlayers()?.[0]?.mediaPlayerElement?.getMediaPlayer()?.mediaElement?.duration ){
+          clearInterval(interval)
+          clearTimeout(rejectTimeout)
+          this.mediaPlayerElement = this.getPlayers()[0].mediaPlayerElement
+          resolve()
+        }
+      },50)
+
+      // add player to the DOM
+      const playerElement = this.createPlayer(playerId, src,media_params,dynamicTumbnails ,downloadUrl, mediaType,waveformUrl,customConfig);
+      playerContainer.appendChild(playerElement)
+
+      this.playerContainer = playerContainer
+      this.playerId = playerId
+      this.customConfig = customConfig
+      this.downloadUrl = downloadUrl
+      this.waveformUrl = waveformUrl
+      this.downloadUrl = downloadUrl
+      this.mediaType = mediaType
+      this.src = src
+      this.dynamicTumbnails = dynamicTumbnails
+
+    })
+
+  }
+
+  waitUntilServiceReady(): Promise<void> {
+    return this.serviceReady
+  }
+
+  public reloadConfig(newConfig: Array<string>){
+    const updatedPlayer = this.createPlayer(this.playerId, this.src,this.media_params,this.dynamicTumbnails ,this.downloadUrl, this.mediaType,this.waveformUrl,newConfig);
+    this.playerContainer.removeChild(this.playerContainer.firstChild);
+    this.playerContainer?.appendChild(updatedPlayer)
+  }
+
   private loadSource() {
     if (this.sourceLoaded) {
       return;
@@ -148,7 +208,17 @@ export default class AmaliaPlayerService {
     }
   }
 
-  public updateCurrentTc(tc: any) {
+  public getDuration(
+    {inMs}:{
+      /** Whether you want the returned value in seconds or milliseconds */
+      inMs?: boolean
+    } = {}){
+    const durationInMs = this.getPlayers()[0]?.mediaPlayerElement?.getMediaPlayer()?.getDuration()
+    return inMs ? durationInMs : durationInMs * 1000
+  }
+
+
+  public updateCurrentTc(tc: number) {
     const players = this.getPlayers()
     players[0].mediaPlayerElement.getMediaPlayer().setCurrentTime(tc);
   }

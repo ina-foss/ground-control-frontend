@@ -13,6 +13,8 @@ import AtomSpanForm from '../atoms/spanForm/AtomSpanForm.vue'
 import MoleculeSpanControlPanel from './spanControlPanel/MoleculeSpanControlPanel.vue'
 import {Status} from "~/api/generate";
 import { useAnnotationTypeRegistry } from "~/composables/useAnnotationTypeRegistry";
+import { usePlayer } from "~/composables/usePlayer";
+import type AmaliaPlayerService from "~/services/amalia-player-service";
 
 
 export default defineComponent({
@@ -30,19 +32,19 @@ export default defineComponent({
     const store = useOptions()
     const { options } = storeToRefs(store)
 
-    const {$amalia}  = useService()
+    let $amalia : Promise<AmaliaPlayerService> | AmaliaPlayerService
 
     const playerTime = ref()
-
     let intervalCheckTime : NodeJS.Timeout
 
-    onMounted(() => {
-      intervalCheckTime = setInterval(() => {
+    const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM, spansChanged, resetSpansChanged} = useSpanService()
+
+    onMounted(async()=>{
+      $amalia = await usePlayer()
+      const interval = setInterval(() => {
         playerTime.value = $amalia.callSeek()
       }, 50);
     })
-
-    const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM} = useSpanService()
 
     onUnmounted(()=>{
       clearInterval(intervalCheckTime)

@@ -12,11 +12,12 @@
     "generate": "nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare && cp -r node_modules/@ina/amalia public/",
-    "update-api": "openapi --input http://localhost:8001/docs/openapi.json --output ./app/api/generate",
+    "update-api": "openapi-ts --input http://localhost:8000/docs/openapi.json --output ./app/api/generate",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@hey-api/nuxt": "^0.2.1",
     "@ina/amalia": "file:libs/amalia-2.1.11-develop.tgz",
     "@nuxtjs/color-mode": "^3.4.1",
     "@nuxtjs/i18n": "^10.2.3",
@@ -36,6 +37,7 @@
     "primeicons": "^7.0.0",
     "primevue": "^4.1.1",
     "tailwindcss": "^4.1.16",
+    "vis-timeline": "^8.5.0",
     "vue": "^3.5.12",
     "vue-lodash": "^2.1.2",
     "vue-router": "^4.3.0",
@@ -43,7 +45,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@hey-api/openapi-ts": "^0.42.1",
+    "@hey-api/openapi-ts": "0.92.4",
     "@nuxt/eslint": "^1.9.0",
     "@nuxt/test-utils": "^3.23.0",
     "@nuxtjs/tailwindcss": "^6.12.2",

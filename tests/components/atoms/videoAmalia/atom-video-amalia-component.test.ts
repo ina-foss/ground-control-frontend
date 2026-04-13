@@ -9,17 +9,22 @@ const unixToTimestampMock = vi.fn(() => 789)
 const updateCurrentTcMock = vi.fn()
 vi.mock('#imports', () => ({
   useService: () => ({
-    $amalia: {
-      createPlayer: vi.fn(() => document.createElement('div')),
-      updateCurrentTc: updateCurrentTcMock,
-      callSeek: vi.fn(() => 123.456)
-    },
     $application: {
       timestampToUnix: vi.fn(),
       unixToTimestamp: unixToTimestampMock
     }
   })
 }))
+
+vi.mock('~/composables/usePlayer',()=>({
+  usePlayer: ()=>({
+      createPlayer: vi.fn(() => document.createElement('div')),
+      updateCurrentTc: updateCurrentTcMock,
+      callSeek: vi.fn(() => 123.456)
+  })
+})
+)
+
 
 vi.mock('@/components/atoms/videoAmalia/atom-video-amalia-component.ts', () => ({
   initAmaliaPlayer: vi.fn(() => ({
