@@ -213,8 +213,7 @@ const headerTitle = computed(() => {
         }
       });
       emits('toggle-dialog');
-      useAsyncData('projects-summary',async ()=> await refreshStore.fetchProjects(),{server:false})
-    } catch (error) {
+      await refreshNuxtData('projects-summary')    } catch (error) {
       $handleApiError(error)
     }
   }
@@ -261,7 +260,7 @@ const createProject = async () => {
         })
       }).catch((error) => {
         $handleApiError(error)
-      }) .finally(()=>{
+      }) .finally(async()=>{
         // reset dialog values of create new project
         title.value = '',
         description.value = '',
@@ -274,7 +273,7 @@ const createProject = async () => {
         max_tasks_per_person.value = 1
 
         emits('toggle-dialog')
-        useAsyncData('projects-summary',async ()=> await refreshStore.fetchProjects(),{server:false})
+      await refreshNuxtData('projects-summary')
     })
   }
 }
@@ -298,7 +297,7 @@ label{
 .custom-dropdown {
   height: 33px;
   display: flex;
-  align-items: center; 
+  align-items: center;
 }
 
 .custom-dropdown .p-dropdown-label

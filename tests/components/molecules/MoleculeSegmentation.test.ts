@@ -142,7 +142,7 @@ describe('Molecule Segmentation', ()=>{
     expect(wrapper.text()).not.toContain('Topic 1')
     expect(wrapper.findComponent(AtomPluginBlock).exists()).toBeFalsy()
 
-    expect(window.onbeforeunload).toBeUndefined()
+    expect(window.onbeforeunload).toBeFalsy()
 
     const segmentationWrapper = wrapper.findComponent(AtomSegmentation)
     await segmentationWrapper.vm.$emit('segmentation',{index: 0})
@@ -152,8 +152,7 @@ describe('Molecule Segmentation', ()=>{
     expect(spy).toHaveBeenCalledOnce()
     expect(wrapper.text()).toContain('Topic 1')
     expect(wrapper.findComponent(AtomPluginBlock).exists()).toBeTruthy()
-    expect(window.onbeforeunload).not.toBeUndefined()
-
+    expect(window.onbeforeunload).toBeTypeOf('function')
   })
 
   it('should divide existing topic', async()=>{

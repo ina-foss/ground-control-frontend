@@ -130,7 +130,10 @@ describe('MoleculeProjectCard component', () => {
       global: {
         plugins: [i18n],
         provide: { refreshProject: mockRefresh },
-        stubs: { teleport: true }
+        stubs: {
+          teleport: true,
+          AnnotatorVisualizer: true
+        }
       },
       props: { project: { ...mockedProject } }
     })
@@ -155,8 +158,11 @@ describe('MoleculeProjectCard component', () => {
       global: {
         plugins: [i18n],
         provide: { refreshProject: mockRefresh },
-        stubs: { teleport: true }
-      },
+        stubs: {
+          teleport: true,
+          AnnotatorVisualizer: true
+        }
+        },
       props: { project: { ...mockedProject } }
     })
 
