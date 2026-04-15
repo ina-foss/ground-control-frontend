@@ -67,7 +67,14 @@
             <div v-if="pluginSelected">
               <div v-if="nodesCount === 1"  class=" grid grid-cols-[100px_auto] gap-3 gap-y-5">
                 <p  :class="{'pt-2 text-right ': true , 'text-error': showErrorMessage }"> {{t('spanForm.missingWordsLabel')}} </p>
-                <InputNumber v-model="deletedNum" :placeholder="t('spanForm.missingWordsPlaceholder')" class="w-[250px]"/>
+                <InputNumber v-model="deletedNum" :placeholder="t('spanForm.missingWordsPlaceholder')" class="w-[250px]" showButtons buttonLayout="stacked" :min="0" >
+                  <template #incrementbuttonicon>
+                    <span class="pi pi-plus" />
+                  </template>
+                  <template #decrementbuttonicon>
+                    <span class="pi pi-minus" />
+                  </template>
+                </InputNumber>
               </div>
               <label v-else class="block text-center text-red-500" >{{suppWarning}}</label>
             </div>
