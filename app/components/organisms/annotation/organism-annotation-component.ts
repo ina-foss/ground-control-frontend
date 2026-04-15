@@ -84,6 +84,7 @@ export default defineComponent({
     const colors = ref(['#BEBEBE'])
     const topics = ref([])
     const videoSrc = ref(annotationsIn.value?.[0]?.result.asset.url)
+    const media_type = ref(annotationsIn.value?.[0]?.result.asset.media_type)
     const moleculeAnnotationLeftPanelRef= ref()
     const { userEmail } = storeToRefs(authStore)
     const { options } = storeToRefs(optionStore)
@@ -404,6 +405,7 @@ export default defineComponent({
     watch(()=> allFetched.value,() => {
         if(allFetched.value == true){
           videoSrc.value = annotationsIn.value[0]?.result.asset.url
+          media_type.value = annotationsIn.value[0]?.result.asset.media_type
           const tcOffset = data.value.media?.player_parameters?.tc_offset ?? 0;
           setTcOffset(tcOffset);
         }
@@ -586,7 +588,8 @@ export default defineComponent({
     t,
     abondanDialog,
     finishDialog,
-    triggerResize
+    triggerResize,
+    media_type
   }
 },
 })

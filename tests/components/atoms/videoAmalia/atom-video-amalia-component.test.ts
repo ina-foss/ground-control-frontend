@@ -167,7 +167,8 @@ describe('AtomVideoAmalia', () => {
         { tcin: 2000 },
         { tcin: 3000 }
       ],
-      videoSrc: 'https://example.com/stream.m3u8?typemedia=video'
+      videoSrc: 'https://example.com/stream.m3u8?typemedia=video',
+      media_type:MediaType.HLS
     },
     global: {
       stubs: ['Button'],

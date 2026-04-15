@@ -22,11 +22,13 @@ export default class AmaliaPlayerService {
   public media_params: any
   public dynamicTumbnails: string | null = null
   public downloadUrl: string | null = null
+  public dynamicBackwardsSrc: string | null = null
+  public media_type: string | null = null
   public mediaType:string | null = null
   public waveformUrl:string | null = null
   public customConfig?:Array<string> | null = null
 
-  public constructor(playerContainer: HTMLElement, playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string,waveformUrl:string,customConfig?:Array<string>){
+  public constructor(playerContainer: HTMLElement, playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string,waveformUrl:string,dynamicBackwardsSrc:string,media_type:string,customConfig?:Array<string>){
 
     const rejectTimeout = setTimeout(() => {
       clearInterval(interval)
@@ -45,7 +47,7 @@ export default class AmaliaPlayerService {
       },50)
 
       // add player to the DOM
-      const playerElement = this.createPlayer(playerId, src,media_params,dynamicTumbnails ,downloadUrl, mediaType,waveformUrl,customConfig);
+      const playerElement = this.createPlayer(playerId, src,media_params,dynamicTumbnails ,downloadUrl, mediaType,waveformUrl,dynamicBackwardsSrc,media_type,customConfig);
       playerContainer.appendChild(playerElement)
 
       this.playerContainer = playerContainer
@@ -53,7 +55,8 @@ export default class AmaliaPlayerService {
       this.customConfig = customConfig
       this.downloadUrl = downloadUrl
       this.waveformUrl = waveformUrl
-      this.downloadUrl = downloadUrl
+      this.dynamicBackwardsSrc = dynamicBackwardsSrc
+      this.media_type = media_type
       this.mediaType = mediaType
       this.src = src
       this.dynamicTumbnails = dynamicTumbnails
@@ -67,7 +70,7 @@ export default class AmaliaPlayerService {
   }
 
   public reloadConfig(newConfig: Array<string>){
-    const updatedPlayer = this.createPlayer(this.playerId, this.src,this.media_params,this.dynamicTumbnails ,this.downloadUrl, this.mediaType,this.waveformUrl,newConfig);
+    const updatedPlayer = this.createPlayer(this.playerId, this.src,this.media_params,this.dynamicTumbnails ,this.downloadUrl, this.mediaType,this.waveformUrl,this.dynamicBackwardsSrc,this.media_type,newConfig);
     this.playerContainer.removeChild(this.playerContainer.firstChild);
     this.playerContainer?.appendChild(updatedPlayer)
   }
@@ -91,10 +94,14 @@ export default class AmaliaPlayerService {
       track: number,
       language: string,
       isDefault: boolean
-    }>, tcOffset = 0, startTc = 0,waveformUrl?:string,customConfig?:Array<string>) {
+    }>, tcOffset = 0, startTc = 0,waveformUrl?:string,
+                         media_type?:string,customConfig?:Array<string>) {
     this.playerConfiguration = mediaType == 'video' ? new VideoPlayerConfig() : new AudioPlayerConfig();
     this.playerConfiguration.player.src = mediaSrc;
     this.playerConfiguration.player.hls.config.startPosition = Math.max(0, startTc);
+    if(media_type ===MediaType.HLS){
+      this.playerConfiguration.player.hls.enable= true;
+    }
     if (urlStreamPlayBack) {
       this.playerConfiguration.player.backwardsSrc = urlStreamPlayBack;
     }
@@ -151,11 +158,20 @@ export default class AmaliaPlayerService {
   }
 
 
-  public createPlayer(playerId: string, src: string,media_params:any,dynamicTumbnails:string,mediaType:string,waveformUrl:string,customConfig?:Array<string>): HTMLElement {
+  public createPlayer(playerId: string,
+                      src: string,
+                      media_params:any,
+                      dynamicTumbnails:string,
+                      downloadUrl:string,
+                      mediaType:string,
+                      waveformUrl:string,
+                      dynamicBackwardsSrc:string,
+                      media_type:string,
+                      customConfig?:Array<string>): HTMLElement {
     this.loadSource();
     if (!this.playerConfiguration || customConfig) {
-      this.configurePlayer(src,undefined,dynamicTumbnails,mediaType,undefined,
-          undefined,media_params?.tc_offset,undefined,waveformUrl,customConfig)
+      this.configurePlayer(src,dynamicBackwardsSrc,dynamicTumbnails,mediaType,undefined,
+          undefined,media_params?.tc_offset,undefined,waveformUrl,media_type,customConfig)
     }
     // Create web component
     this.player = document.createElement(AmaliaPlayerService.TAG_PLAYER_TAG);

@@ -12,6 +12,9 @@ export default defineComponent({
       type: Object,
       default: () => null
     },
+    media_type: {
+      type: MediaType
+    },
     locals: {
       type: Object,
       default: () => null
@@ -31,12 +34,13 @@ export default defineComponent({
 
     let $amalia : AmaliaPlayerService
     const {$application} = useService()
-    const { media_params,locals,videoSrc } = toRefs(props)
+    const { media_params,media_type,locals,videoSrc } = toRefs(props)
     const { t } = useI18n();
     const myplayer = ref()
     let lastIndex = 0
     const dynamicSrc = ref()
     const dynamicTumbnails = ref()
+    let dynamicBackwardsSrc = ref()
     const downloadUrl = ref()
     const waveformUrl = ref()
     const {unixToTimestamp} = $application
@@ -125,7 +129,7 @@ export default defineComponent({
           retrieveLocalStorage()
 
           const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
-          $amalia = await usePlayer(myplayer.value,'PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc.value),waveformUrl?.value ||"", unselectedCategories)
+          $amalia = await usePlayer(myplayer.value,'PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc.value),waveformUrl?.value ||"",dynamicBackwardsSrc?.value || "",media_type?.value || "", unselectedCategories)
 
         }
       });
@@ -148,9 +152,14 @@ export default defineComponent({
     }
 
     const hlsPlayer = async () => {
-      const content = await fetchVideoStream(videoSrc)
-      const src = `data:application/vnd.apple.mpegurl;base64,${content}`
-      dynamicSrc.value = src
+      if(media_type.value ===MediaType.HLS){
+        const content = await fetchVideoStream(videoSrc)
+        const src = `data:application/vnd.apple.mpegurl;base64,${content}`
+        dynamicSrc.value = src
+      }
+      else{
+        dynamicSrc.value = videoSrc.value
+      }
     }
 
     async function fetchVideoStream(url) {
@@ -160,8 +169,9 @@ export default defineComponent({
     }
 
     const getMediaType=(url:string)=>{
-      console.log(url)
       const parsedUrl = new URL(url);
+      if(media_type.value ===MediaType.MP4) return 'video'
+      if(media_type.value ===MediaType.MP3) return 'audio'
       return parsedUrl.searchParams.get("typemedia")??""
     }
 
@@ -171,6 +181,9 @@ export default defineComponent({
       }
       if (media_params.value?.waveform_base_url) {
         waveformUrl.value = await fetchRedirectUrl(media_params.value?.waveform_base_url)
+      }
+      if (media_params.value?.backwardsSrc_url) {
+        dynamicBackwardsSrc.value = await fetchRedirectUrl(media_params.value?.backwardsSrc_url)
       }
     }
 

@@ -5,7 +5,7 @@ export class VideoPlayerConfig {
     src: '',
     autoplay: false,
     hls: {
-      enable: true,
+      enable: false,
       config: {
         maxBufferLength: 12,
         maxMaxBufferLength: 60,
@@ -13,7 +13,7 @@ export class VideoPlayerConfig {
         enableWorker: false
       }
     },
-    crossOrigin: 'anonymous',
+    crossOrigin: undefined,
   };
 
   thumbnail = {

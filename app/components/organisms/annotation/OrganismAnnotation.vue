@@ -66,6 +66,7 @@
         :panel-size="panelSize"
         :video-src="videoSrc"
         :media_params="data.media?.player_parameters"
+        :media_type="media_type"
         :locals="pureTranscriptions"
         @scroll-to-segment="handleVideoTimelineClick"
       >

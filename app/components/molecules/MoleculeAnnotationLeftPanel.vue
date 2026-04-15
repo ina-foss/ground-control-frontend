@@ -1,7 +1,7 @@
 <template>
   <div :class="[ 'flex-col flex pl-5 max-h-full', panelSize  ]">
 
-    <AtomVideoAmalia ref="videoPlayer"  v-model:focus-player="isPlayerFocused" :video-src="videoSrc" :media_params="media_params" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
+    <AtomVideoAmalia ref="videoPlayer"  v-model:focus-player="isPlayerFocused" :video-src="videoSrc" :media_params="media_params" :media_type="media_type" :locals="locals" @timecode-update="emits('scroll-to-segment',$event)" />
 
     <slot/>
   </div>
@@ -25,6 +25,9 @@
       type: Object,
       default: () => null
     },
+    media_type: {
+      type: MediaType
+    },
     locals: {
       type: Object,
       default: () => null
@@ -38,7 +41,7 @@
       default : 'large'
     }
   });
-  const { locals, videoSrc, panelSize } = props;
+  const { locals, videoSrc, media_type, panelSize } = props;
 
 
   const videoPlayer = ref(AtomVideoAmalia|null)
