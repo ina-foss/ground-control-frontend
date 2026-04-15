@@ -18,7 +18,7 @@
               @click="expandContext()"/>
           </context-button-wrapper>
         </context-header>
-        <div v-if="!groupDisplay" :class="['w-full  justify-center items-center  gap-1 text-sm/6 ', expandedContext ? 'inline'  : 'flex']"  >
+        <div :class="['w-full  justify-center items-center  gap-1 text-sm/6 ', expandedContext ? 'inline'  : 'flex']"  >
           <span :class="[!expandedContext ?  ' truncate ' : '  text-justify']" :style="{'direction': expandedContext ? 'ltr' : 'rtl'}" style="flex: 0 1 content; min-width: 0px; " > {{ prevNodes.map(n=>n.firstChild?.nodeValue).join(' ') + " " }}</span>
           <span :class="[ ' max-w-full text-justify rounded px-2 border-2 !border-[--extra-1]  ', expandedContext ? '' : 'truncate' ]" style="flex: 0 0 content; background-color: #86d4ff40 ;" >
             {{extractTextFromSpanNodes(nodes)}}
@@ -102,6 +102,22 @@
               v-model="defaultLabel"
               :placeholder="labelTitle"
               class="w-[calc(100%-110px)]"
+            />
+
+          </div>
+          <!--if 0 plugin -->
+          <div
+              v-if="getPluginList.length ===0"
+              class="grid grid-cols-[100px_auto] gap-3 gap-y-5"
+          >
+            <b class="pt-2 text-right">
+              Label
+            </b>
+
+            <InputText
+                v-model="defaultLabel"
+                placeholder="Label"
+                class="w-[calc(100%-110px)]"
             />
 
           </div>

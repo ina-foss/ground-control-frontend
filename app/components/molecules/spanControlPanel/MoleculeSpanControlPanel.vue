@@ -66,9 +66,9 @@
                       >
                         <span-number class="font-bold self-center px-2">{{index+1}}</span-number>
                         <AtomSpanTag
-                            :plugin-id="mainPluginId"
-                            :plugin-value="span?.plugins?.[mainPluginIndex]"
-                            :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')"
+                            :plugin-id="mainPluginId ?? 0"
+                            :plugin-value="span?.plugins?.[mainPluginIndex]?? null"
+                            :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')??'Span'"
                             expandable
                             @contextmenu="openSpanMenu($event, span)"
                         />

@@ -5,7 +5,7 @@
     <div class="flex items-center">
       <AtomLogo size="md" />
       <div>
-        <NuxtLink class="self-center text-title text-3xl font-black p-6 pr-2" to="/">Ground Control</NuxtLink>
+        <NuxtLink class="self-center text-title text-3xl font-black p-6 pr-2" :to="localePath('/dashboard')">Ground Control</NuxtLink>
       </div>
       <AtomIcon class="self-center" />
     </div>
@@ -37,6 +37,7 @@ import {useI18n} from "#imports";
 const dialogVisible = ref(false);
 const { $application } = useService();
 const { t } = useI18n()
+const localePath = useLocalePath()
 const roleCreateProject = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_CREATE));
 const route = useRoute()
 

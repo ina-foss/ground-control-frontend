@@ -817,6 +817,8 @@ import { Project } from "~/api/generate/sdk.gen";
 import {Status, Task, type TaskWithIdDto } from "~/api/generate/index.js";
 import {useStatusMap} from "~/helpers/statusMap"
 
+const { t } = useI18n()
+const localePath = useLocalePath()
 
 FilterService.register("expirationFilter", (value, filter) => {
   if (!filter) return true
@@ -834,7 +836,6 @@ FilterService.register("expirationFilter", (value, filter) => {
 });
 
 const status_map = useStatusMap();
-const { t } = useI18n()
 const route = useRoute();
 const refreshStore = useRefreshStore();
 const toast = useToast();
@@ -1185,7 +1186,7 @@ const navigateToTask = (
   email?: string | null
 ) => {
   navigateTo({
-    path: `/tasks/${id}`,
+    path: localePath(`/tasks/${id}`),
     query: {
       email: email,
       project_id: route.params.id,

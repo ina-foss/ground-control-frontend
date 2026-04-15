@@ -27,10 +27,11 @@
 import { useI18n } from '#imports'
 
 const { t } = useI18n()
+const localePath = useLocalePath()
 const { $application } = useService();
 const home = computed(() => ({
   label: t('project.title'),
-  route: '/dashboard'
+  route: localePath('/dashboard')
 }))
 const isAdmin = computed(() => $application.hasRole(Permission.GROUND_CONTROL_PROJECT_ADMIN));
 const refresh = useRefreshStore()
@@ -42,22 +43,22 @@ const newBreadCrumbs = computed(()=>{
     bd.push({
       label: getData.value.step.project.title,
       route: isAdmin.value
-        ? `/projects/${getData.value.step.project.id}`
-        : '/dashboard'
+        ? localePath(`/projects/${getData.value.step.project.id}`)
+        : localePath('/dashboard')
     })
     bd.push({
       label:("( "+getData.value?.step_id+" ) "+getData.value?.name ),
       route: isAdmin.value
-       ?`/tasks/${getData.value?.id}`
-       : '/dashboard'
+       ?localePath(`/tasks/${getData.value?.id}`)
+       : localePath('/dashboard')
        })
   }
   else{
     bd.push({
       label:getData.value?.title,
       route: isAdmin.value
-        ? `/projects/${getData.value?.id}`
-        : '/dashboard'
+        ? localePath(`/projects/${getData.value?.id}`)
+        : localePath('/dashboard')
       })
   }
 

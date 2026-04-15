@@ -227,7 +227,7 @@ export default defineNuxtComponent({
         // validation for span case (with mainPlugin only)
         // ( mainPluginIndex.value && !isGroup.value && (pluginValues[mainPluginIndex.value].length == 0 || !pluginValues[mainPluginIndex.value][0] ) )
         // ||
-        !Object.values(checkPluginValues()).every(value=>value)
+        !Object.values(checkPluginValues()?? {}).every(value=>value)
         ||
         // validation for deletedNum when isForResearch is false (with suppression plugin selected)
         (!isForResearch.value && childPluginMap.value &&  pluginSelected.value !== '' && (nodesCount.value > 1

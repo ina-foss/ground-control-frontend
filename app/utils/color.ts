@@ -136,3 +136,7 @@ export function getAbsolutePluginColor(
   }
   else return `rgba(170,170,170,${opacity})`
 }
+
+export function getColorWithOpacity(opacity: number) {
+  return `rgba(183, 177, 255, ${opacity})`
+}

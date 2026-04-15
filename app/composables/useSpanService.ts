@@ -2,7 +2,8 @@ import _ from 'lodash'
 import {TypePlugin, type PluginAutocompleteValueDTO, type PluginWithIdDto} from '~/api/generate'
 import {useOptions} from '~/stores/annotation-options'
 import {usePluginStore} from "~/stores/plugins";
-import { useI18n } from '#imports'
+import {computeColorByLabel, useI18n} from '#imports'
+import {getColorWithOpacity} from "~/utils/color";
 const nuxtApp = useNuxtApp()
 
 export type PluginAutocompleteValueWithMetadata = PluginAutocompleteValueDTO & {
@@ -296,6 +297,7 @@ function createSpanService (){
 
   function createSpanColorPalette(pluginId: number | undefined, pluginValue: any, opacity : number = 0.25){
     const index = pluginList.value.findIndex(plugin=>plugin.id == pluginId)
+    if(index !== -1){
     const [plugin, options]= [pluginList.value[index], pluginOptionsList.value[index]]
     if(options.data.length <= DEFAULT_COLOR_CYLCLING.length){ // absolute color based only on plugin
       return getAbsolutePluginColor(pluginValue,options,plugin,opacity)
@@ -303,6 +305,8 @@ function createSpanService (){
     else{ // color depends on already picked plugin values
       return getRelativePluginColor(pluginValue,mainPluginId.value == pluginId ? mainPluginValueOccurence.value : mainGroupPluginValueOccurence.value, opacity)
     }
+    }
+    else return getColorWithOpacity(opacity)
   }
 
   function applySpan(spanOrId : number | Span){
@@ -344,7 +348,7 @@ function createSpanService (){
     bgElement.classList.add('border-l-2')
     bgElement.style.borderRadius = "4px 0px 0px 4px"
     const tag = document.createElement('tag')
-    const tag_label = plugins[0]?.tag_label
+    const tag_label = plugins? plugins[0]?.tag_label:"Span"
     tag.innerText = tag_label || plugins?.map(spanPlugin=>spanPlugin.label).join(', ') || ''
     tag.classList.add('absolute',  'px-2', 'py-1' , 'font-bold', 'top-[-20px]', 'text-[0.75rem]', 'cursor-pointer', 'leading-[0.8]', 'truncate' , 'w-max','max-w-[80px]','border-2', 'rounded', 'text-text')
     tag.style.left= '0px'
