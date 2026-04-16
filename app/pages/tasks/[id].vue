@@ -98,7 +98,6 @@ const { data: annotations_in, status: status_in } = useLazyAsyncData(
         task_id: data.value.id
       },
       query: {
-        user_email: userEmail.value,
         direction: "in"
       }
     }),
