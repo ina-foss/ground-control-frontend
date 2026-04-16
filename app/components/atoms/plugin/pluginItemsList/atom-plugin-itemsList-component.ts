@@ -11,14 +11,15 @@ export default defineComponent({
     },
     plugin: {type :Object as PropType<PluginWithIdDto>, required: true},
     pluginItemsConfig: {},
-    groupDisplay: {}
+    groupDisplay: {},
+    error:{type: Boolean, required: false}
   },
   emits:['update:pluginValue'],
   setup(props, {emit}) {
     const { isForResearch } = useSpanService()
     const { t } = useI18n()
 
-    const {groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
+    const {error,groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
 
     const { data } = useAsyncData(`${plugin.value.name}`,async ()=> await Plugin.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id,""),{immediate: false})
 
@@ -56,6 +57,8 @@ export default defineComponent({
         get: () => Array.isArray(props.pluginValue) ? props.pluginValue[0] : props.pluginValue,
         set : newValue => Array.isArray(newValue) ? emit('update:pluginValue',newValue) : emit('update:pluginValue',[newValue])
     })
+
+
 
     /**
       Generates a customized label by removing the object's group name from its label.
@@ -95,6 +98,7 @@ export default defineComponent({
       groupButtonLayout,
       groupByOptions,
       customizedLabel,
+      error,
       t
     }
   },

@@ -6,7 +6,7 @@ import { formatTime } from '~/utils/utils';
 
 export const INITIAL_GROUPS = [
     { id: 1, content: "Thematique", style: "color: red" },
-    { id: 2, content: "Mediathique", style: "color: #22c55e" },
+    { id: 2, content: "Mediatique", style: "color: #22c55e" },
     { id: 3, content: "Autres", style: "color: blue" },
 ];
 

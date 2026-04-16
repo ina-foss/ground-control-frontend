@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import {useService} from "~/composables/useService.js";
-import AtomPluginBlock from "./pluginBlock/AtomPluginBlock.vue";
+import AtomPluginBlock from "./plugin/pluginBlock/AtomPluginBlock.vue";
 import type { PluginAutocompleteValueWithMetadata } from "~/composables/useSpanService";
 
 const props = defineProps<{

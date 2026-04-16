@@ -1,5 +1,5 @@
 import _, {isEqual} from 'lodash'
-import AtomPluginItemslist from "../pluginItemsList/AtomPluginItemslist.vue";
+import AtomPluginItemslist from "../plugin/pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
 import {DisplayZone} from '~/api/generate'
 import { useI18n } from '#imports'
@@ -19,6 +19,7 @@ export default defineNuxtComponent({
     const textSpan=ref()
     const visible = ref()
     const labelTitle = ref()
+    const showErrorMessage = ref(false)
     const nodesCount=ref<number>()
     const suppWarning = computed(() =>
       t('spanForm.suppressionWarning')
@@ -28,16 +29,8 @@ export default defineNuxtComponent({
     let filteredPlugins=[]
     const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, deleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex } = useSpanService()
     const {$application} = useService()
-    const tidiedPluginList = computed(()=>{
-      const listPlugin= getPluginList.value
-      const childIds = new Set(
-          listPlugin.flatMap(plugin => plugin.children?.map(child => child.id) ?? [])
-      );
-       filteredPlugins = listPlugin.filter(plugin => !childIds.has(plugin.id));
-      return Object.groupBy( filteredPlugins,({display_zone})=>display_zone)
-    })
-    const showErrorMessage = ref(false)
 
+    const pluginComponent = ref()
 
     const showContext = computed(()=>nodes.value.length == 0)
     const isGroup = computed(()=>isSpanGroup(currentSpan.value))
@@ -57,16 +50,6 @@ export default defineNuxtComponent({
     })
 
 
-    onMounted(()=>{
-      initPluginValues(getPluginList.value)
-    })
-
-
-    function pluginChangeValue(plugin: PluginWithIdDto,event){
-      if( (plugin.display_config.main_plugin || isGroup.value || plugin.display_config.required_value ) && event.length != 0 && event[0] != null   ) showErrorMessage.value = false
-      else if( (plugin.display_config.main_plugin || isGroup.value || plugin.display_config.required_value ) && ( event.length == 0 || event[0] == null)) showErrorMessage.value = true
-    }
-
     const nodes = ref<Nodes[]>([])
     const prevNodes = ref<Nodes[]>([])
     const nextNodes = ref<Nodes[]>([])
@@ -74,50 +57,6 @@ export default defineNuxtComponent({
     const deleteLayout = ref(false)
     const pluginSelected=ref('');
 
-    const extIdMap = computed(()=>{
-      const newVal = pluginValues
-      const firstObj = Array.isArray(newVal) ? newVal[0] ?? {} : newVal ?? {};
-      const result = Object.entries(firstObj).reduce<Record<string, string>>((acc, [dataProperty, value]) => {
-        const val = Array.isArray(value) ? value[0] : value;
-        acc[dataProperty] = "";
-        if (val && typeof val === "object" && "ext_id" in val) {
-          acc[dataProperty] = val.ext_id;
-        }
-        return acc;
-      }, {})
-      return result
-    })
-
-
-    const childPluginMap = computed(()=>{
-      const result = {}
-      Object.entries(extIdMap.value).forEach(([dataProperty, extId]) => {
-        const usedPlugin = getPluginList.value?.find(
-          plugin =>{
-            return readPluginValues(plugin) === dataProperty
-          }
-        );
-        if (usedPlugin?.available_plugins && usedPlugin.children?.length !== 0) {
-          const pName = (usedPlugin.available_plugins as Record<string, any>)[extId];
-          if (pName) {
-            const childrenPlugin = getPluginList.value?.find(plugin => plugin.name === pName);
-            if (childrenPlugin) {
-              if (!result[dataProperty]) {
-                result[dataProperty] = [];
-                pluginSelected.value = "";
-              }
-              result[dataProperty].push(childrenPlugin);
-            } else {
-              pluginSelected.value = pName;
-            }
-          }
-          else{
-            pluginSelected.value = "";
-          }
-        }
-      });
-      return result
-    })
 
     const showLabelInput = computed(() => {
       if(!isForResearch.value) {
@@ -203,69 +142,46 @@ export default defineNuxtComponent({
 
     }
 
-    /**
-     * Callback after clicking on the "Confirmed" button
-     */
-    function handleConfirmationButton (){
-      if(currentSpan.value) currentSpan.value.plugins = _.cloneDeep(pluginValues)
-      showErrorMessage.value = false
+     /**
+      * Callback after clicking on the "Confirmed" button
+      */
+     function handleConfirmationButton (){
+       if(currentSpan.value) currentSpan.value.plugins = _.cloneDeep(pluginValues)
+       showErrorMessage.value = false
 
-      // When delete modal, don't check for validation
-      if (deleteLayout.value) {
-        deleteSpan(currentSpan.value)
-      }
-      else if (
-        //validation for virtual span case (check every plugin in the form with label)
-        (isVirtual.value && (!virtualSpanCategory.value ||  !defaultLabel.value) )
-       ||
-        // validation for group case (check every plugin in the form)
-        isGroup.value && tidiedPluginList.value[DisplayZone.GROUP_MODAL]?.every( groupPlugin =>
-          pluginValues[readPluginValues(groupPlugin)].length == 0 ||
-          pluginValues[readPluginValues(groupPlugin)][0]?.id == ''
-        )
+       // When delete modal, don't check for validation
+       if (deleteLayout.value) {
+         deleteSpan(currentSpan.value)
+       }
+       else if (
+         //validation for virtual span case (check every plugin in the form with label)
+         (isVirtual.value && (!virtualSpanCategory.value ||  !defaultLabel.value) )
         ||
-        // validation for span case (with mainPlugin only)
-        // ( mainPluginIndex.value && !isGroup.value && (pluginValues[mainPluginIndex.value].length == 0 || !pluginValues[mainPluginIndex.value][0] ) )
-        // ||
-        !Object.values(checkPluginValues()?? {}).every(value=>value)
-        ||
-        // validation for deletedNum when isForResearch is false (with suppression plugin selected)
-        (!isForResearch.value && childPluginMap.value &&  pluginSelected.value !== '' && (nodesCount.value > 1
-          || !deletedNum.value || deletedNum.value === 0))
-      ) {
-        showErrorMessage.value = checkPluginValues()
-      }
-      else{
-        if (isGroup.value) {
-          createGroup()
-        } else if(isVirtual.value){
-          createSpanVirtuel()
-        }
-          else {
-          createSpan()
-        }
-          emit('update:spansChanged', true)
-          close()
-      }
+         !Object.values(pluginComponent.value.checkPluginValues({check_all: isGroup.value}) ?? {} ).every(value=>value)
+         ||
+         // validation for deletedNum when isForResearch is false (with suppression plugin selected)
+         (!isForResearch.value  &&  pluginSelected.value !== '' && (nodesCount.value > 1
+           || !deletedNum.value || deletedNum.value === 0))
+       ) {
+         showErrorMessage.value = pluginComponent.value.checkPluginValues({check_all: isGroup.value})
+       }
+       else{
+         if (isGroup.value) {
+           createGroup()
+         } else if(isVirtual.value){
+           createSpanVirtuel()
+         }
+           else {
+           createSpan()
+         }
+           emit('update:spansChanged', true)
+           close()
+       }
 
-      // Close the modal if no error
-      if(!showErrorMessage.value) close()
-    }
+       // Close the modal if no error
+       if(!showErrorMessage.value) close()
+     }
 
-    function checkPluginValues(){
-     const result =  tidiedPluginList.value[isGroup.value ? 'group_modal' : 'span_modal_left']?.reduce((acc,plugin) => {
-        const pluginCheck = ( !plugin.display_config?.required_value && !plugin.display_config?.main_plugin) || isGroup.value  ||  Boolean(pluginValues[readPluginValues(plugin)]?.length )
-        acc[plugin.name] = pluginCheck // store check value for main plugins
-        plugin.children?.filter(child=>plugin.available_plugins?.[pluginValues[readPluginValues(plugin)]?.[0]?.ext_id] == child.name).forEach((child)=>{
-         const childCheck = !child.display_config?.required_value ||  Boolean(pluginValues[readPluginValues(child)].length)
-         acc[child.name] = childCheck // store check value for current child plugin
-        })
-        return acc
-      },{})
-
-      return result
-
-    }
 
     /**
       * Open the span form in a Primevue Dialog
@@ -313,16 +229,17 @@ export default defineNuxtComponent({
     expose({open})
 
     return {
+      handleConfirmationButton,
       computeColorByLabel,
       visible,
       labelSelected,
-      handleConfirmationButton,
       createSpan,
       nodes,
       prevNodes,
       nextNodes,
       close,
       computeColor,
+      showErrorMessage,
       defaultLabel,
       isGroup,
       showContext,
@@ -337,15 +254,11 @@ export default defineNuxtComponent({
       deletedNum,
       nodesCount,
       suppWarning,
-      tidiedPluginList,
       selectComponent,
       pluginValues,
       pluginSelected,
-      childPluginMap,
       textSpan,
       readPluginValues,
-      showErrorMessage,
-      pluginChangeValue,
       extractTextFromSpanNodes,
       selectedGroupValue,
       mainGroupPluginIndexValue,
@@ -356,6 +269,7 @@ export default defineNuxtComponent({
       showLabelInput,
       labelTitle,
       getPluginList,
+      pluginComponent,
       t
     }
   },

@@ -7,7 +7,7 @@ import { mount } from '@vue/test-utils';
 import type { VueWrapper } from '@vue/test-utils';
 import AtomTopicList  from '@/components/atoms/topicList/AtomTopicList.vue'
 import AtomProgressBar  from '@/components/atoms/AtomProgressBar.vue';
-import AtomPluginBlock from '~/components/atoms/pluginBlock/AtomPluginBlock.vue';
+import AtomPluginBlock from '~/components/atoms/plugin/pluginBlock/AtomPluginBlock.vue';
 import AtomSegmentation from "~/components/atoms/AtomSegmentation.vue";
 import AtomSpanOption from '@/components/atoms/AtomSpanOption.vue';
 import AtomVideoOption from '@/components/atoms/atom-video-option.vue';

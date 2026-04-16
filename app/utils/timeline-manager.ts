@@ -17,13 +17,15 @@ import { media } from "happy-dom/lib/PropertySymbol";
 import KeyboardShortcuts from './keyboard-shortcuts';
 import { EventEmitter } from "events"
 import { usePlayer } from "~/composables/usePlayer";
+import type {PluginAutocompleteValueDto} from "~/api/generate";
 
 export type TimelineParameters =  {
   handlers : Record<string,void> | undefined
 }
 
 type TimelineEvent = {
-  "select" : [event: {items: number[], event: Event}]
+  "select" : [event: {items: number[], event: Event}],
+  "doubleClick" : [event: any]
 }
 
 export default class TimelineManager extends EventEmitter<SegmentManagerEvent & TimelineEvent> {
@@ -31,7 +33,7 @@ export default class TimelineManager extends EventEmitter<SegmentManagerEvent & 
   public elements: VideoElements
   public timeline: Timeline
   public groups: DataSet
-  public items: DataSet<{id:number,group:number,start:number,end:number},"id">
+  public items: DataSet<{id:number,group:number,start:number,end:number,plugins?:Record<string,PluginAutocompleteValueDto>},"id">
   public videoSync: VideoSync
   public video: AmaliaPlayerService
   public keyboard: KeyboardShortcuts
@@ -74,6 +76,10 @@ export default class TimelineManager extends EventEmitter<SegmentManagerEvent & 
         this.initShortcuts(parameters?.handlers)
         this.forwardAllEvents(this.segmentManager,this)
         this.timeline.on('select',(event) => this.emit('select',event))
+        this.timeline.on('',(event) => this.emit('select',event))
+        this.timeline.on('doubleClick', (event) => {
+          this.emit('doubleClick', event);
+        })
         // this.initModules();
         // this.bindcvents();
         // this.checkAutosave();

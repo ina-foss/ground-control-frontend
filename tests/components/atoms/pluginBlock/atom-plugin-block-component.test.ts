@@ -1,9 +1,10 @@
 import { shallowMount} from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import AtomPluginBlock from '@/components/atoms/pluginBlock/AtomPluginBlock.vue'
-import AtomPluginAutocomplete from '@/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
-import AtomPluginLabel from '@/components/atoms/pluginLabel/AtomPluginLabel.vue'
+import {DisplayZone} from '~/api/generate/'
+import AtomPluginBlock from '@/components/atoms/plugin/pluginBlock/AtomPluginBlock.vue'
+import AtomPluginAutocomplete from '@/components/atoms/plugin/pluginAutocomplete/AtomPluginAutocomplete.vue'
+import AtomPluginLabel from '@/components/atoms/plugin/pluginLabel/AtomPluginLabel.vue'
 
 // Mocks
 vi.mock('~/composables/useTopicList', () => ({
@@ -53,9 +54,9 @@ const  pluginItemsMock = [
 ]
 
  const configMock = [
-  { id: 'autocomplete', type: 'autocomplete', name: 'Autocomplete Plugin' },
-  { id: 'label', type: 'label', name: 'Label Plugin' },
-  { id: 'other', type: 'other', name: 'other Plugin' }
+  { id: 'autocomplete', type: 'autocomplete', name: 'Autocomplete Plugin', display_zone: DisplayZone.BLOC },
+  { id: 'label', type: 'label', name: 'Label Plugin', display_zone: DisplayZone.BLOC  },
+  { id: 'other', type: 'other', name: 'other Plugin', display_zone: DisplayZone.BLOC  }
 ]
 
 

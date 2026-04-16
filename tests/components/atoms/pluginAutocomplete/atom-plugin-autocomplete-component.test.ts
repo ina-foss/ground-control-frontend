@@ -1,6 +1,6 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import AtomPluginAutocomplete from '@/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
+import AtomPluginAutocomplete from '@/components/atoms/plugin/pluginAutocomplete/AtomPluginAutocomplete.vue'
 import PrimeVue from 'primevue/config'
 import { AutoComplete } from 'primevue'
 import { nextTick, ref } from 'vue'

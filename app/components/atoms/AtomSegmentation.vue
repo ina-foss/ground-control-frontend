@@ -136,7 +136,7 @@ style="height:16px;width:16px;" src="/icons/icons-svg/icons-svg/trash-icon.svg"
 
 import _, { remove } from 'lodash'
 import { defineExpose } from 'vue';
-import AtomPluginBlock from './pluginBlock/AtomPluginBlock.vue';
+import AtomPluginBlock from './plugin/pluginBlock/AtomPluginBlock.vue';
 import AtomComment from './AtomComment.vue';
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
 import AtomTranscriptionSpan from "../atoms/AtomTranscriptionSpan.vue";

@@ -31,7 +31,7 @@
   </div>
   <div v-else  class="flex flex-col gap-4 " >
     <div>
-      <b>{{t('spanForm.selectSpanType')}}</b>
+      <b :class="{'text-error': error == false}" >{{t('spanForm.selectSpanType')}}</b>
     </div>
     <div class="flex flex-row gap-4 items-stretch">
       <group-wrapper v-for="(group,name) in groupByOptions" :key="group" class="flex flex-col gap-5 p-lg bg-grey-50 rounded-lg flex-1 min-w-0">

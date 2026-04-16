@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import AtomPluginLabel from '@/components/atoms/pluginLabel/AtomPluginLabel.vue'
+import AtomPluginLabel from '@/components/atoms/plugin/pluginLabel/AtomPluginLabel.vue'
 import { nextTick, ref } from 'vue'
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 

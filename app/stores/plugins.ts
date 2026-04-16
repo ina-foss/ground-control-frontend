@@ -1,13 +1,13 @@
 import type { PluginWithIdDto, PluginAutocompleteValueDto } from "~/api/generate"
 import { Plugin, DisplayZone  } from "~/api/generate"
-import AtomPluginAutocomplete from '~/components/atoms/pluginAutocomplete/AtomPluginAutocomplete.vue'
-import AtomPluginLabel from '~/components/atoms/pluginLabel/AtomPluginLabel.vue'
-import AtomPluginItemslist from "~/components/atoms/pluginItemsList/AtomPluginItemslist.vue"
+import AtomPluginAutocomplete from '~/components/atoms/plugin/pluginAutocomplete/AtomPluginAutocomplete.vue'
+import AtomPluginLabel from '~/components/atoms/plugin/pluginLabel/AtomPluginLabel.vue'
+import AtomPluginItemslist from "~/components/atoms/plugin/pluginItemsList/AtomPluginItemslist.vue"
 import _ from 'lodash'
 import { defineStore } from "pinia"
-import AtomPluginInputLabel from "~/components/atoms/pluginInputLabel/AtomPluginInputLabel.vue";
+import AtomPluginInputLabel from "~/components/atoms/plugin/pluginInputLabel/AtomPluginInputLabel.vue";
 import AtomPluginSuggestionList
-  from "~/components/atoms/pluginSuggestionList/AtomPluginSuggestionList.vue";
+  from "~/components/atoms/plugin/pluginSuggestionList/AtomPluginSuggestionList.vue";
 
 export const usePluginStore = defineStore('plugin',{
   state: () =>{
@@ -38,11 +38,13 @@ export const usePluginStore = defineStore('plugin',{
       switch(annotation_type){
         case  'segmentation' :
         case  'auto-summary' :
-        case  'video-segmentation' :
           availableZones = [DisplayZone.BLOC]
           break;
         case 'span':
           availableZones = [DisplayZone.SPAN_MODAL_LEFT,DisplayZone.SPAN_MODAL_RIGHT,DisplayZone.GROUP_MODAL]
+        break;
+        case  'video-segmentation' :
+          availableZones = [DisplayZone.SPAN_MODAL_LEFT,DisplayZone.BLOC]
           break;
         default:
           availableZones = []

@@ -21,23 +21,33 @@ export default class AmaliaPlayerService {
   public  src: string | null = null
   public media_params: any
   public dynamicTumbnails: string | null = null
-  public downloadUrl: string | null = null
   public dynamicBackwardsSrc: string | null = null
-  public media_type: string | null = null
-  public mediaType:string | null = null
+  public mediaType: string | null = null
   public waveformUrl:string | null = null
   public customConfig?:Array<string> | null = null
 
-  public constructor(playerContainer: HTMLElement, playerId: string, src: string,media_params:any,dynamicTumbnails:string,downloadUrl:string,mediaType:string,waveformUrl:string,dynamicBackwardsSrc:string,media_type:string,customConfig?:Array<string>){
+  public constructor(
+    playerContainer: HTMLElement,
+    playerId: string,
+    src: string,
+    media_params:any,
+    dynamicTumbnails:string,
+    readonly media_type: string,
+    readonly waveform_url:string ,
+    readonly dynamic_backwards_src:string,
+    customConfig?:Array<string>
+  ){
+
+    let interval: NodeJS.Timeout | undefined
 
     const rejectTimeout = setTimeout(() => {
-      clearInterval(interval)
-      reject(new Error('AmaliaPlayerService: timed out waiting for mediaElement'))
+      clearTimeout(interval)
+      throw new Error('AmaliaPlayerService: timed out waiting for mediaElement')
     }, 15000)
 
     // update serviceReady when mediaPlayerElement exists
     this.serviceReady = new Promise((resolve)=>{
-      const interval =  setInterval(()=>{
+      interval =  setInterval(()=>{
         if ( this.getPlayers()?.[0]?.mediaPlayerElement?.getMediaPlayer()?.mediaElement?.duration ){
           clearInterval(interval)
           clearTimeout(rejectTimeout)
@@ -47,17 +57,15 @@ export default class AmaliaPlayerService {
       },50)
 
       // add player to the DOM
-      const playerElement = this.createPlayer(playerId, src,media_params,dynamicTumbnails ,downloadUrl, mediaType,waveformUrl,dynamicBackwardsSrc,media_type,customConfig);
+      const playerElement = this.createPlayer(playerId, src,media_params,dynamicTumbnails , media_type,waveform_url,dynamic_backwards_src,media_type,customConfig);
       playerContainer.appendChild(playerElement)
 
       this.playerContainer = playerContainer
       this.playerId = playerId
       this.customConfig = customConfig
-      this.downloadUrl = downloadUrl
-      this.waveformUrl = waveformUrl
-      this.dynamicBackwardsSrc = dynamicBackwardsSrc
-      this.media_type = media_type
-      this.mediaType = mediaType
+      this.waveformUrl = waveform_url
+      this.dynamicBackwardsSrc = dynamic_backwards_src
+      this.mediaType = media_type
       this.src = src
       this.dynamicTumbnails = dynamicTumbnails
 
@@ -70,7 +78,7 @@ export default class AmaliaPlayerService {
   }
 
   public reloadConfig(newConfig: Array<string>){
-    const updatedPlayer = this.createPlayer(this.playerId, this.src,this.media_params,this.dynamicTumbnails ,this.downloadUrl, this.mediaType,this.waveformUrl,this.dynamicBackwardsSrc,this.media_type,newConfig);
+    const updatedPlayer = this.createPlayer(this.playerId, this.src,this.media_params,this.dynamicTumbnails , this.media_type,this.waveform_url,this.dynamicBackwardsSrc,this.media_type,newConfig);
     this.playerContainer.removeChild(this.playerContainer.firstChild);
     this.playerContainer?.appendChild(updatedPlayer)
   }
@@ -162,7 +170,6 @@ export default class AmaliaPlayerService {
                       src: string,
                       media_params:any,
                       dynamicTumbnails:string,
-                      downloadUrl:string,
                       mediaType:string,
                       waveformUrl:string,
                       dynamicBackwardsSrc:string,

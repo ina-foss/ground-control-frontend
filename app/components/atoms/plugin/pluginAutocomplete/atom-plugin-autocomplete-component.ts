@@ -123,7 +123,15 @@ export default defineComponent({
 
     const { data, status, execute: executeSearch } = useAsyncData(
       `plugin-search-${plugin.value?.id}`,
-      async () => await Plugin.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id, filterString.value || ""), { immediate: false })
+      async () => await Plugin.searchPluginsPluginsPluginIdSearchGet({
+        path:{
+          plugin_id: plugin.value?.id,
+        },
+        query:{
+          query: filterString.value || ""
+        }
+      })
+      ,{ immediate: false })
 
     const showSkeleton = computed(() => {
       return status.value == 'pending'

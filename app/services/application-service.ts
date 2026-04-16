@@ -87,7 +87,7 @@ export default class ApplicationService {
    * @param time
    * @returns {string}
    */
-  public timestampToUnix(timeArg: number | string): string {
+  public timestampToUnix(timeArg: number | string, isMillisecond? =false): string {
     const  {getTcOffset} = useTcOffset();
     let time : number
     if ( typeof timeArg == "string" ){
@@ -98,13 +98,14 @@ export default class ApplicationService {
 
     time = time + getTcOffset()
     const optionalTime : Array<number> = []
-    const hour: number = floor(time/3600)
-    const minute: number = floor((time % 3600 )/60)
-    const second: number = floor(time % 60)
+    const timeInSecond = isMillisecond ? time/1000 : time
+    const hour: number = floor(timeInSecond/3600)
+    const minute: number = floor((timeInSecond % 3600 )/60)
+    const second: number = floor(timeInSecond % 60)
     optionalTime.push(hour)
     optionalTime.push(minute)
     optionalTime.push(second)
-    const milli: number = floor(time % 1,2)
+    const milli: number = floor(timeInSecond % 1,2)
     return `${optionalTime.map((el)=> padStart(el.toString(),2,'0')).filter((el,index)=> el != '00' || index != 0 ).join(':')}.${padEnd(milli.toString().split('.')[1],3,'0')}`
   }
 

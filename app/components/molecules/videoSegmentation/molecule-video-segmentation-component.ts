@@ -2,14 +2,17 @@ import useTimeline from '~/composables/useTimeline';
 import { usePlayer } from '~/composables/usePlayer';
 import type AmaliaPlayerService from '~/services/amalia-player-service';
 import TimelineManager from '~/utils/timeline-manager';
+import AtomSegmentForm from '~/components/atoms/segmentForm/AtomSegmentForm.vue';
 
 export default defineComponent({
   name: 'MoleculeVideoSegmentation',
+  components: {AtomSegmentForm},
   setup() {
     let timelineManager: TimelineManager;
 
     const player = ref<AmaliaPlayerService>();
     const selectedSegment = ref<any>();
+    const segmentForm = ref()
 
     const splitOverride = () => {
       if (selectedSegment.value.group == 2) {
@@ -35,12 +38,28 @@ export default defineComponent({
         timelineManager.on('select', (event) => {
           const segmentId = event.items[0];
           const segment = timelineManager.items.get(segmentId);
+
           selectedSegment.value = segment;
         });
+        timelineManager.on('doubleClick', (event) => {
+          doubleClickCallback(event)
+        })
       } catch (e) {
         console.error(e);
       }
     });
+
+    function doubleClickCallback(event) {
+        const segment = timelineManager.segmentManager.getSegmentsByTime(event.time, event.group)[0]
+        if(segment.start == 0 && segment.end == timelineManager.video.getDuration()) return
+        console.log(segment)
+        segmentForm.value.open(segment)
+    }
+
+    function createSegment(segment){
+      segment.content = Object.values(segment.plugins).find(plugin=>plugin.length)[0].label
+      timelineManager.items.update(segment)
+    }
 
     function callbackReportSplitting(id: number) {
       const splittedSegment = timelineManager.items.get(id);
@@ -60,6 +79,8 @@ export default defineComponent({
 
     return {
       player,
+      segmentForm,
+      createSegment
     };
   },
 });

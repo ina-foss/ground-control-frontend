@@ -2,7 +2,6 @@ import { defineComponent } from 'vue'
 import AtomPluginAutocomplete from '../pluginAutocomplete/AtomPluginAutocomplete.vue'
 import AtomPluginLabel from '../pluginLabel/AtomPluginLabel.vue'
 import { usePluginStore } from '~/stores/plugins'
-import type {PluginAutocompleteValueDTO} from "~/api/generate"
 import type { PluginAutocompleteValueWithMetadata } from '~/composables/useSpanService'
 
 
@@ -26,7 +25,7 @@ export default defineComponent({
         set : newValue  => emit('update:pluginValues',newValue)
     })
 
-    const config = getPluginList.value
+    const config = getPluginList.value.filter(plugin=>plugin.display_zone==DisplayZone.BLOC)
 
     return {
       config,

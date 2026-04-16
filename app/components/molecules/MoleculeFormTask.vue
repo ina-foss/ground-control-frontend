@@ -204,6 +204,7 @@ const onReaderLoad = (event) => {
 }
 
 const createTask = async () => {
+  try {
     const media = await Media.createMediaMediaPost({
       body: {
         url: fileData.value[0].asset.url,
@@ -247,6 +248,9 @@ const createTask = async () => {
     )
     emits('toggle-dialog')
     emits('refresh-data')
+  }catch(error){
+    $handleApiError(error)
+  }
 }
 
 </script>

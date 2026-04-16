@@ -47,9 +47,11 @@
       }
     }
   },
+  "pluginForm":{
+    "selectValueError": "Veuillez sélectionner une valeur"
+  },
   "spanForm": {
     "context": "Contexte",
-    "selectValueError": "Veuillez sélectionner une valeur",
     "missingWordsLabel": "Nombre de mots manquants",
     "missingWordsPlaceholder": "Entrez le nombre de mots manquants",
     "correctedTerm": "Terme corrigé",

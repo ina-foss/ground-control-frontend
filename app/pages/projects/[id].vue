@@ -813,7 +813,7 @@ import MoleculeDialogConfigPlugin from "~/components/molecules/moleculeDialogCon
 import { FilterMatchMode, FilterService } from "@primevue/core/api";
 import AtomMarkdown from "~/components/atoms/AtomMarkdown.vue";
 import { useI18n } from '#imports';
-import { Project } from "~/api/generate/sdk.gen";
+import { Project, Permission } from "~/api/generate";
 import {Status, Task, type TaskWithIdDto } from "~/api/generate/index.js";
 import {useStatusMap} from "~/helpers/statusMap"
 
