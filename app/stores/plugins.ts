@@ -57,30 +57,31 @@ export const usePluginStore = defineStore('plugin',{
     },
 
     async initialFetch(){
-      const result = Promise.all(
-        this.pluginList.map(async (item) => {
-          const result = await Plugin.searchPluginsPluginsPluginIdSearchGet({path:{plugin_id: item.id},query:{query:' ' }})
-          return {
-            id: item.id,
-            data: result,
-          };
+      const SEARCHABLE_TYPES = ['autocomplete', 'listitems']
+      const searchablePlugins = this.pluginList.filter(p => SEARCHABLE_TYPES.includes(p.type))
+      const results = await Promise.allSettled(
+        searchablePlugins.map(async (item) => {
+          const data = await Plugin.searchPluginsPluginsPluginIdSearchGet({ path: { plugin_id: item.id }, query: { query: '' } })
+          return { id: item.id, data }
         })
-      );
-      this.pluginOptionsList = await result
+      )
+      this.pluginOptionsList = results
+        .filter((r): r is PromiseFulfilledResult<{ id: number; data: any }> => r.status === 'fulfilled')
+        .map(r => r.value)
     },
 
     selectComponent(pluginConfig: PluginWithIdDto) {
-      if (this.pluginOptionsList.length == 0) return null;
       switch (pluginConfig.type) {
         case 'autocomplete':{
-          const itemlist= this.pluginOptionsList.find((item) => item.id === pluginConfig.id).data
+          const itemlist = this.pluginOptionsList.find((item) => item.id === pluginConfig.id)?.data ?? []
           return {component: AtomPluginAutocomplete, props : { pluginItemsConfig:itemlist, plugin: pluginConfig } }
         }
-        case 'label':
-          const label= this.pluginOptionsList.find((item) => item.id === pluginConfig.id).data
-          return {component: AtomPluginLabel, props : { isTopicFirstSegment: isTopicFirstSegment,pluginItemsConfig:pluginItemsConfig } }
+        case 'label': {
+          const itemlist = this.pluginOptionsList.find((item) => item.id === pluginConfig.id)?.data ?? []
+          return {component: AtomPluginLabel, props : { pluginItemsConfig: itemlist, plugin: pluginConfig } }
+        }
         case 'listitems':{
-          const itemlist= this.pluginOptionsList.find((item) => item.id === pluginConfig.id).data
+          const itemlist = this.pluginOptionsList.find((item) => item.id === pluginConfig.id)?.data ?? []
           return {component: AtomPluginItemslist, props:{pluginItemsConfig: itemlist, plugin: pluginConfig}}
         }
         case 'inputlabel':{
@@ -90,7 +91,7 @@ export const usePluginStore = defineStore('plugin',{
           return {component: AtomPluginSuggestionList, props:{plugin: pluginConfig}}
         }
         default:
-          break;
+          return null
       }
     }
 

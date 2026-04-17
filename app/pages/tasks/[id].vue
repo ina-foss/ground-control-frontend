@@ -145,7 +145,7 @@ if (!pluginFetched.value) {
       pluginFetched.value = true;
     } catch (error) {
       console.error(error);
-      pluginFetched.value = false;
+      pluginFetched.value = true;
     }
   })();
 }

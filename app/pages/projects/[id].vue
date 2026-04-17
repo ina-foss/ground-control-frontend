@@ -814,7 +814,7 @@ import { FilterMatchMode, FilterService } from "@primevue/core/api";
 import AtomMarkdown from "~/components/atoms/AtomMarkdown.vue";
 import { useI18n } from '#imports';
 import { Project, Permission } from "~/api/generate";
-import {Status, Task, type TaskWithIdDto } from "~/api/generate/index.js";
+import {Status, Task, type TaskWithIdDto, Plugin } from "~/api/generate/index.js";
 import {useStatusMap} from "~/helpers/statusMap"
 
 const { t } = useI18n()
@@ -1229,7 +1229,7 @@ function confirmDeletePlugin(plugin: any) {
 async function deletePlugin() {
   if (!pluginToDelete.value) return
   try {
-    await PluginService.deletePluginPluginPluginIdDelete(pluginToDelete.value.id)
+    await Plugin.deletePluginPluginPluginIdDelete({ path: { plugin_id: pluginToDelete.value.id } })
     pluginsPopover.value.hide()
     refresh()
   }

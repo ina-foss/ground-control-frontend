@@ -21,7 +21,7 @@ export default defineComponent({
 
     const {error,groupDisplay,plugin,pluginItemsConfig : pluginItemsConfig} = toRefs(props)
 
-    const { data } = useAsyncData(`${plugin.value.name}`,async ()=> await Plugin.searchPluginsPluginsPluginIdSearchGet(plugin.value?.id,""),{immediate: false})
+    const { data } = useAsyncData(`${plugin.value.name}`, async () => await Plugin.searchPluginsPluginsPluginIdSearchGet({ path: { plugin_id: plugin.value?.id }, query: { query: '' } }), { immediate: false })
 
     const all_entities_plugin =  {
       id: "",

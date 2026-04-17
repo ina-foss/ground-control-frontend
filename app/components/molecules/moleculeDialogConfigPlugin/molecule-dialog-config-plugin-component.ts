@@ -97,7 +97,7 @@ export default defineComponent({
         const text = await file?.text()
         const jsonData = JSON.parse(text)
         injectStepId(jsonData)
-        await Plugin.createPluginPluginPost(jsonData)
+        await Plugin.createPluginPluginPost({ body: jsonData })
         emit('plugin-created')
         emit('update:visible', false)
       }
@@ -112,10 +112,10 @@ export default defineComponent({
       try {
         const jsonData = JSON.parse(JSON.stringify(editorJson.value))
         injectStepId(jsonData)
-        await Plugin.createPluginPluginPost(jsonData)
+        await Plugin.createPluginPluginPost({ body: jsonData })
         // Mode édition : supprimer l'ancien plugin après création réussie
         if (props.pluginId) {
-          await Plugin.deletePluginPluginPluginIdDelete(props.pluginId)
+          await Plugin.deletePluginPluginPluginIdDelete({ path: { plugin_id: props.pluginId } })
         }
         emit('plugin-created')
         emit('update:visible', false)
