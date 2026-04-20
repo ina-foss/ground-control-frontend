@@ -1,5 +1,6 @@
 import {expect, describe, it, vi, beforeEach }  from 'vitest'
 import PrimeVue from 'primevue/config';
+import {computed} from 'vue'
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
 import MoleculeSegmentation from '~/components/molecules/MoleculeSegmentation.vue'
 import {mockedReturn, mockedTransciptionsWithoutTopics, mockedTransciptionsWithTopics} from '../../mock';
@@ -8,7 +9,7 @@ import type { VueWrapper } from '@vue/test-utils';
 import AtomTopicList  from '@/components/atoms/topicList/AtomTopicList.vue'
 import AtomProgressBar  from '@/components/atoms/AtomProgressBar.vue';
 import AtomPluginBlock from '~/components/atoms/plugin/pluginBlock/AtomPluginBlock.vue';
-import AtomSegmentation from "~/components/atoms/AtomSegmentation.vue";
+import AtomSegmentation from "~/components/atoms/segmentation/AtomSegmentation.vue";
 import AtomSpanOption from '@/components/atoms/AtomSpanOption.vue';
 import AtomVideoOption from '@/components/atoms/atom-video-option.vue';
 import { createI18n } from 'vue-i18n'
@@ -70,7 +71,7 @@ describe('Molecule Segmentation', ()=>{
         provide: {
           jumpToTopic: vi.fn(),
           annotation_type: 'segmentation',
-          isAnnotationEditable: true,
+          isAnnotationEditable: computed(()=>true),
         }
       },
       props: {
@@ -92,7 +93,7 @@ describe('Molecule Segmentation', ()=>{
           },
           jumpToTopic: vi.fn(),
           annotation_type: 'segmentation',
-          isAnnotationEditable: true,
+          isAnnotationEditable: computed(()=>true),
         }
       },
       props: {
@@ -191,16 +192,16 @@ describe('Molecule Segmentation', ()=>{
     const firstTopic1 = wrapper2.text().match(/Topic 1/)?.index
 
     // fire drag events to move the rupture
-    await segmentationWrapper1.vm.$emit('dragging-start')
-    await segmentationWrapper2.vm.$emit('dragging-end')
+    await segmentationWrapper1.vm.$emit('dragging-start',0)
+    await segmentationWrapper2.vm.$emit('dragging-end',1)
 
     // get  postion of 'Topic 1' string after dragging the rupture
     let secondTopic1 = wrapper2.text().match(/Topic 1/)?.index
 
     expect(firstTopic1).toBeLessThan(secondTopic1)
 
-    await segmentationWrapper1.vm.$emit('dragging-end')
-    await segmentationWrapper2.vm.$emit('dragging-start')
+    await segmentationWrapper1.vm.$emit('dragging-end',0)
+    await segmentationWrapper2.vm.$emit('dragging-start',1)
 
     secondTopic1 = wrapper2.text().match(/Topic 1/)?.index
 

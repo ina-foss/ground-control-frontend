@@ -1,6 +1,6 @@
 import { defineComponent } from 'vue';
 import { useOptions } from "~/stores/annotation-options";
-import AtomSegmentation from "~/components/atoms/AtomSegmentation.vue";
+import AtomSegmentation from "~/components/atoms/segmentation/AtomSegmentation.vue"
 import AtomProgressBar from "~/components/atoms/AtomProgressBar.vue";
 import AtomSpanOption from "~/components/atoms/AtomSpanOption.vue";
 import AtomSpanForm from "~/components/atoms/spanForm/AtomSpanForm.vue";
@@ -16,7 +16,7 @@ import { useAnnotationTypeRegistry } from '~/composables/useAnnotationTypeRegist
 export default defineComponent({
   name: 'MoleculeSegmentation',
   components: { AtomTaskComment ,AtomSegmentation, AtomProgressBar, AtomSpanOption, atomVideoOption ,AtomTopicList,AtomHelp, AtomSpanForm},
-  emits: ['on-segment-click','segmentation'],
+  emits: {onSegmentClick : (payload: {tcin: string|number, tcout: string|number, index:number}) => true  ,segmentation: (payload: {tc: number|string}) => true ,fusion: (payload: {tc:number|string}) => true},
   props: {
     block: {type: Object, default: ()=> {} },
     colors:{ type:  Array<string>, default: () => ['#BEBEBE']},
@@ -88,6 +88,10 @@ export default defineComponent({
       if(dragging.start != null && dragging.end != null){
         if(dragging.start != dragging.end){
           let {start,end} = dragging
+          // FIX: Effet de bord: deplace le segment sur la gauche, a voir quand on aura les annotations en +
+          emit('fusion',{tc: locals[start].tcout})
+          emit('segmentation',{tc: locals[end].tcout})
+
           const diff = end - start
           while(start != end){
             if ( diff > 0){
@@ -158,6 +162,7 @@ export default defineComponent({
         topics[currentIndex] = bottomTopic == undefined ? null : bottomTopic
         currentIndex--
       } while ((currentIndex >= 0) && (topTopic == topics[currentIndex]))
+      emit('fusion', { tc: locals[index].tcout });
     }
 
 
@@ -167,6 +172,18 @@ export default defineComponent({
       colors.push(randomColor)
       return result
 
+    }
+
+    function handleDragStart(event){
+       if(isAnnotationEditable.value){
+          dragging.start = event
+      }
+    }
+
+    function handleDragEnd(event){
+      if(isAnnotationEditable.value){
+        dragging.end = event
+      }
     }
 
 
@@ -250,6 +267,8 @@ export default defineComponent({
       handleSelectionV2,
       contextMenuOptions,
       spanMenu,
+      handleDragStart,
+      handleDragEnd
     }
 
 

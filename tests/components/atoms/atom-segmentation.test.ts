@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
-import SegmentComponent from '@/components/atoms/AtomSegmentation.vue'
+import AtomSegmentation from '~/components/atoms/segmentation/AtomSegmentation.vue'
 import PrimeVue from 'primevue/config'
 import Tag from 'primevue/tag'
 import Button from 'primevue/button'
@@ -39,7 +39,7 @@ describe('SegmentComponent', () => {
   let wrapper: any
 
   beforeEach(() => {
-    wrapper = mount(SegmentComponent, {
+    wrapper = mount(AtomSegmentation, {
       global: {
         plugins: [PrimeVue],
         components: {
@@ -83,7 +83,7 @@ describe('SegmentComponent', () => {
   })
 
   it('affiche le titre quand index egale a 0', () => {
-    const wrapper = mount(SegmentComponent, {
+    const wrapper = mount(AtomSegmentation, {
       global: {
         plugins: [PrimeVue],
         components: {
@@ -125,7 +125,7 @@ describe('SegmentComponent', () => {
   })
 
   it('title = null si isTopicFirstSegment est false', () => {
-    const wrapper = mount(SegmentComponent, {
+    const wrapper = mount(AtomSegmentation, {
       props: { phrase: {
           tcin: 123,
           tcout: 456,
@@ -165,7 +165,7 @@ describe('SegmentComponent', () => {
       { labels: ['labelD', 'labelE'] }
     ]
 
-    const wrapper = mount(SegmentComponent, {
+    const wrapper = mount(AtomSegmentation, {
       props: {
         phrase: {
           tcin: 123,

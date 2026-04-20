@@ -35,6 +35,7 @@ export default defineComponent({
         }
         timelineManager = useTimeline({handlers:{"split":splitOverride}});
         timelineManager.on('split', callbackReportSplitting);
+        timelineManager.on('fusion',callbackReportFusion)
         timelineManager.on('select', (event) => {
           const segmentId = event.items[0];
           const segment = timelineManager.items.get(segmentId);
@@ -75,6 +76,12 @@ export default defineComponent({
         splittedSegment.start,
         targetSegment.id,
       );
+    }
+
+    function callbackReportFusion(tc: number,newItem: any){
+      if(newItem.group == 3) return
+      const segments = timelineManager.segmentManager.getSegmentsByTime(tc,3)
+      timelineManager.segmentManager.fusionItems(...segments)
     }
 
     return {

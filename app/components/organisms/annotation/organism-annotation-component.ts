@@ -361,6 +361,7 @@ export default defineComponent({
               events:{
                 'on-segment-click': handleSegmentClick,
                 'segmentation': segmentationCallback,
+                'fusion': fusionCallback
               }
             },
             video : {
@@ -377,6 +378,14 @@ export default defineComponent({
       const segment = useTimeline().segmentManager.getSegmentsByTime(timecodeMs,1)[0];
 
       useTimeline().segmentManager.splitItem(timecodeMs,segment.id)
+    }
+
+    function fusionCallback({tc} : {tc: string|number}){
+      const timecodeMs = (typeof tc == 'number') ? tc * 1000 : unixToTimestamp(tc) * 1000
+      const segments = useTimeline().segmentManager.getSegmentsByTime(timecodeMs,1)
+
+      useTimeline().segmentManager.fusionItems(...segments)
+
     }
 
   const handleSubmit = ({ showToast = true, message = null }: { showToast?: boolean; message?: string | null })  => {

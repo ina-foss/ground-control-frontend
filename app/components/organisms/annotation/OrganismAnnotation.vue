@@ -98,6 +98,7 @@
                     ref="moleculeAnnotationLeftPanelRef"
                     class="grow"
                     :video-src="videoSrc"
+                    :media_type="media_type"
                     :media_params="data.media?.player_parameters"
                     :locals="locals"
                     @scroll-to-segment="handleVideoTimelineClick"

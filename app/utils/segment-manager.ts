@@ -8,9 +8,11 @@ import type { DataSet } from "vis-data"
 import type {Timeline } from 'vis-timeline/standalone'
 import type { VideoSync } from './video-sync'
 import { EventEmitter } from "events"
+import { reduceRight } from "lodash";
 
 export interface SegmentManagerEvent {
   "split": [id: number];
+  "fusion": [tc: number, newItem: any]
 }
 
 export class SegmentManager extends EventEmitter<SegmentManagerEvent> {
@@ -56,10 +58,12 @@ export class SegmentManager extends EventEmitter<SegmentManagerEvent> {
     getSegmentsByTime(time:number,group:number): Array<any>{
      return this.items.get({
         filter: (item):boolean => {
-          return item.group == group && item.start < time && item.end > time;
+          return item.group == group && item.start <= time && item.end >= time;
         }
       });
-  }
+    }
+
+
     add(startTime, duration = 10000) {
         const newItem = {
             id: this.idCounter++,
@@ -146,9 +150,8 @@ export class SegmentManager extends EventEmitter<SegmentManagerEvent> {
         this.items.update({ id: item.id, end: newEnd });
 
         const newItem = {
+            ...item,
             id: this.idCounter++,
-            group: item.group,
-            content: '',
             start: newEnd,
             end: finalEnd
         };
@@ -157,6 +160,24 @@ export class SegmentManager extends EventEmitter<SegmentManagerEvent> {
 
        this.emit("split",newItem.id)
         return newItem;
+    }
+
+    // TODO: revoir les parametres, et faire en sorte que ca marche pour plus que 2  ;)
+    fusionItems(...segments : any[] ){
+      if(segments.length > 2) throw new Error("fusion isn't implement for more than 2 segment")
+      if(segments.length < 2) throw new Error("Tried to fusion only one items, required at least 2", {cause: segments})
+      const [leftSegment, rightSegment] = segments.sort(
+        (a, b) => a.start - b.start,
+      );
+      const commonTc = leftSegment.end
+
+      this.items.update({...rightSegment,start: leftSegment.start})
+
+      this.items.remove(leftSegment)
+
+      this.emit('fusion',commonTc,rightSegment)
+
+
     }
 
     deleteSelected() {
