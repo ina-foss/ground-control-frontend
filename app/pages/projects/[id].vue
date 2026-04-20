@@ -1171,7 +1171,7 @@ function triggerDownload(data: AnnotationDto, name: string, mode: 'dump'|'import
     toast.add({
       severity: "success",
       summary: t('toast.exportDone.summary'),
-      detail: t('toast.exportDone.detail', { file: a.download }),
+      detail: t('toast.exportDone.detail', { file: link.download }),
       life: 5000,
     })
   }
