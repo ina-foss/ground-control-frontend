@@ -48,10 +48,12 @@ v-model:plugin-values="pluginValues" :topic-index="topicIndex" :is-topic-first-s
                 <b>Ignoré</b>
               </div>
             </div>
-            <Button v-if="topicIndex != 0 && isAnnotationEditable" class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text :disabled="!isAnnotationEditable" @click="dialogVisible = true" />
+            <div v-if="showSecondaryButtons">
+              <Button class="min-w-[33px] " icon="pi pi-ellipsis-h" severity="contrast" text :disabled="!isAnnotationEditable" @click="dialogVisible = true" />
+              <Button severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
+              <Button severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
+            </div>
             <AtomPluginAutocompleteList v-model:plugin-values="pluginValues" :phrase="phrase" :title="title" :topic-index="topicIndex" :is-topic-first-segment="isTopicFirstSegment" :dialog-visible="dialogVisible" @toggle-dialog="dialogVisible = false"/>
-            <Button  v-if="topicIndex != 0 && isAnnotationEditable" severity="contrast" icon="pi pi-ban" text @click="emit('deactivateTopic', { index: index })" />
-            <Button  v-else-if="isAnnotationEditable" severity="contrast" icon="pi pi-check" text @click="emit('activateTopic', { index: index })" />
           </div>
               <div v-if=" chipList?.length > 0 " class="px-2 py-1 border-dashed border border-black inline-flex flex-wrap gap-2  ">
                 <Chip

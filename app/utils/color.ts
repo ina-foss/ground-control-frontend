@@ -46,6 +46,52 @@ export function computeColor(seed: number | null | undefined){
 }
 
 /**
+ * @brief Return an array of RGB values given the string in parameter
+ **/
+export function parseRgba(color) {
+  if (!color) return null;
+
+  const str = color.trim();
+
+  // Check prefix
+  const isRgba = str.startsWith("rgba(");
+  const isRgb = !isRgba && str.startsWith("rgb(");
+  if (!isRgba && !isRgb) return null;
+
+  // Check closing paren
+  if (!str.endsWith(")")) return null;
+
+  // Extract inner content: "255, 128, 0, 0.5"
+  const inner = str.slice(isRgba ? 5 : 4, -1);
+
+  const parts = inner.split(",");
+  const expectedParts = isRgba ? 4 : 3;
+  if (parts.length !== expectedParts) return null;
+
+  const [rStr, gStr, bStr, aStr] = parts;
+
+  const r = parseInt(rStr.trim(), 10);
+  const g = parseInt(gStr.trim(), 10);
+  const b = parseInt(bStr.trim(), 10);
+
+  if (
+    isNaN(r) || isNaN(g) || isNaN(b) ||
+    r < 0 || r > 255 ||
+    g < 0 || g > 255 ||
+    b < 0 || b > 255
+  ) return null;
+
+  if (isRgba) {
+    const a = parseFloat(aStr.trim());
+    if (isNaN(a) || a < 0 || a > 1) return null;
+    return [r, g, b, a];
+  }
+
+  return [r, g, b];
+}
+
+
+/**
  * @brief Return the hex code and tailwind expression of the color depending on the position of `label` in `labels`
  * @param labels list of labels
  * @param label label that must be included in `labels`

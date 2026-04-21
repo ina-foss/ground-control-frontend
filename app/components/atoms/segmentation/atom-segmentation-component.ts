@@ -6,7 +6,9 @@ import AtomPluginBlock from '~/components/atoms/plugin/pluginBlock/AtomPluginBlo
 import AtomComment from '~/components/atoms/AtomComment.vue';
 import AtomPluginAutocompleteList from "~/components/atoms/AtomPluginAutocompleteList.vue";
 import AtomTranscriptionSpan from "~/components/atoms/AtomTranscriptionSpan.vue";
-import type {PluginAutocompleteValueDTO, TaskDataType} from "~/api/generate"
+import type {PluginAutocompleteValueDTO} from "~/api/generate"
+import {DisplayZone, AnnotationType} from "~/api/generate"
+import {parseRgba} from '~/utils/color'
 
 export default defineComponent({
   name: "AtomSegmentation",
@@ -19,7 +21,7 @@ export default defineComponent({
   const { $application } = useService()
   const { userEmail } = useAuth()
   const { options } = storeToRefs(useOptions())
-  const { timestampToUnix , unixToTimestamp } = $application
+  const { timestampToUnix , unixToTimestamp,extractRGB,  } = $application
   const jumpToTopic = inject('jumpToTopic',null)
   const segment = ref(null)
   const toast = useToast()
@@ -41,10 +43,13 @@ export default defineComponent({
     else return null
   })
 
-  const annotation_type = inject('annotation_type') as TaskDataType
+  const annotation_type = inject('annotation_type') as AnnotationType
   const autoSummaries = inject('transcriptions')
   const isAnnotationEditable = inject('isAnnotationEditable') && annotation_type.includes('segmentation')
 
+  const showSecondaryButtons = computed(()=>{
+    return topicIndex != 0 && isAnnotationEditable && annotation_type == AnnotationType.SEGMENTATION
+    })
 
   type pluginValues= Record<string,PluginAutocompleteValueDTO[]>
 
@@ -276,38 +281,12 @@ export default defineComponent({
     }
   }
   function reduceOpacityOfColor(rgbaColor, opacity) {
-    const rgbaMatch = rgbaColor?.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*(\d*\.?\d+)\)/);
-    if (rgbaMatch) {
-      const r = parseInt(rgbaMatch[1]);
-      const g = parseInt(rgbaMatch[2]);
-      const b = parseInt(rgbaMatch[3]);
-      let a = parseFloat(rgbaMatch[4]);
-      a = Math.max(a - opacity, 0); // Réduire l'opacité sans descendre en dessous de 0
-      return `rgba(${r}, ${g}, ${b}, ${a})`;
-    }
-    return rgbaColor;
+    const [r,g,b,a] = parseRgba(rgbaColor) ?? []
+    const newOpacity = Math.max(a - opacity, 0); // Réduire l'opacité sans descendre en dessous de 0
+    return `rgba(${r}, ${g}, ${b}, ${newOpacity})`;
   }
-  function extractRGB(hexColor) {
-    const rgbaColor = hexToRgba(hexColor, 0.5);
-    const rgba = rgbaColor?.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
-    return rgba.slice(0, 3);
-  }
-  function hexToRgba(hex, opacity) {
-    let r = 0, g = 0, b = 0;
-    // Handle 3 digit hex
-    if (hex.length === 4) {
-      r = parseInt(hex[1] + hex[1], 16);
-      g = parseInt(hex[2] + hex[2], 16);
-      b = parseInt(hex[3] + hex[3], 16);
-    }
-    // Handle 6 digit hex
-    else if (hex.length === 7) {
-      r = parseInt(hex[1] + hex[2], 16);
-      g = parseInt(hex[3] + hex[4], 16);
-      b = parseInt(hex[5] + hex[6], 16);
-    }
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  }
+
+
   const handleSegmentation = () => {
     emit('segmentation', { index: index })
     iconBool.value = topicIndex.value === 0 ? 'pi pi-bookmark' : ''
@@ -361,7 +340,9 @@ export default defineComponent({
       titleContainer,
       title,
       toast,
-      dialogVisible
+      dialogVisible,
+      showSecondaryButtons,
+      topicHeader,
     }
   }
 })
