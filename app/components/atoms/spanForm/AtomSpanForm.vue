@@ -51,7 +51,7 @@
 
         </div>
 
-        <MoleculePlugins ref="pluginComponent" v-model:error-message="showErrorMessage" :zone="isGroup ? DisplayZone.GROUP_MODAL : DisplayZone.SPAN_MODAL_LEFT "  />
+        <MoleculePlugins ref="pluginComponent" v-model:error-message="showErrorMessage" :zone="isGroup ? DisplayZone.GROUP_MODAL : DisplayZone.SPAN_MODAL_LEFT " :textSpan="textSpan"  />
 
         <div v-if="!isForResearch" >
           <div v-if="pluginComponent?.pluginSelected">

@@ -12,7 +12,11 @@ export default defineComponent({
     errorMessage: {
       type: Object as PropType<Record<string,boolean>> ,
       required: true,
-    }
+    },
+    textSpan:{
+      type: String,
+      required: true
+    },
   },
   setup(props,{emit,expose}) {
     const { t } = useI18n()
@@ -20,14 +24,13 @@ export default defineComponent({
     const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, deleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex } = useSpanService()
     const {getPluginList} = storeToRefs(usePluginStore())
 
-    const {zone} = props
+    const {zone,textSpan} = props
 
     const showErrorMessage = computed(({
       get: () => props.errorMessage,
       set: (value) => emit('update:errorMessage',value) ,
     }))
 
-    const textSpan=ref()
     let filteredPlugins=[]
     const pluginSelected=ref('');
 
@@ -69,7 +72,6 @@ export default defineComponent({
         })
         return acc
       },{})
-
       return result
     }
 
