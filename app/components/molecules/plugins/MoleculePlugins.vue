@@ -1,6 +1,6 @@
 <template>
       <plugin-wrapper  class="flex flex-col gap-5  ">
-        <main-plugins-wrapper class="flex flex-col gap-5  ">
+        <main-plugins-wrapper class="flex flex-col gap-5  " v-if="tidiedPluginList.length ===0">
           <plugin-iterator v-for="(plugin,index) in tidiedPluginList[zone]" class="flex flex-col gap-3 ">
             <div class="" >
               <component :is="selectComponent(plugin).component" v-bind="selectComponent(plugin).props" v-model:plugin-value="pluginValues[readPluginValues(plugin)]" :index="index" :text-span="textSpan" @update:plugin-value="pluginChangeValue(plugin,$event)" :error="showErrorMessage?.[plugin.name]" >
@@ -15,6 +15,22 @@
           </plugin-iterator>
 
         </main-plugins-wrapper>
+        <!--if 0 plugin -->
+        <div
+            v-else
+            class="grid grid-cols-[100px_auto] gap-3 gap-y-5"
+        >
+          <b class="pt-2 text-right">
+            Label
+          </b>
+
+          <InputText
+              v-model="defaultLabel"
+              placeholder="Label"
+              class="w-[calc(100%-110px)]"
+          />
+
+        </div>
 
       </plugin-wrapper>
 </template>

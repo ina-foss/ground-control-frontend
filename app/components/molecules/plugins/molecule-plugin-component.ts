@@ -131,6 +131,7 @@ export default defineComponent({
       pluginValues,
       pluginSelected,
       textSpan,
+      defaultLabel,
       t
     }
   }

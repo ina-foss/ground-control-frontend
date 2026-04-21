@@ -189,6 +189,7 @@ export default defineNuxtComponent({
       * @param suppression If true, the form will ask whether or not you want to delete the {span}
       */
     function open(args:{span: Span, suppression?: boolean,  role: {value: string, label:string},selectedGroup?:any,mainGroupPluginIndex?:number} ){
+      console.log(pluginValues)
       if (!args || !args.span) return
       const {span, suppression, role,selectedGroup,mainGroupPluginIndex} = args
       currentSpan.value = span

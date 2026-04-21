@@ -57,25 +57,16 @@
           <div v-if="pluginComponent?.pluginSelected">
             <div v-if="nodesCount === 1"  class=" grid grid-cols-[100px_auto] gap-3 gap-y-5">
               <p  :class="{'pt-2 text-right ': true , 'text-error': showErrorMessage }"> {{t('spanForm.missingWordsLabel')}} </p>
-              <InputNumber v-model="deletedNum" :placeholder="t('spanForm.missingWordsPlaceholder')" class="w-[250px]"/>
+              <InputNumber v-model="deletedNum" :placeholder="t('spanForm.missingWordsPlaceholder')" class="w-[250px]" showButtons buttonLayout="stacked" :min="0" >
+                <template #incrementbuttonicon>
+                  <span class="pi pi-plus" />
+                </template>
+                <template #decrementbuttonicon>
+                  <span class="pi pi-minus" />
+                </template>
+              </InputNumber>
             </div>
             <label v-else class="block text-center text-red-500" >{{suppWarning}}</label>
-          </div>
-          <!--if 0 plugin -->
-          <div
-              v-if="getPluginList.length ===0"
-              class="grid grid-cols-[100px_auto] gap-3 gap-y-5"
-          >
-            <b class="pt-2 text-right">
-              Label
-            </b>
-
-            <InputText
-                v-model="defaultLabel"
-                placeholder="Label"
-                class="w-[calc(100%-110px)]"
-            />
-
           </div>
         </div>
 
@@ -90,7 +81,7 @@
           />
         </div>
         <div
-          v-if="showLabelInput && !isForResearch && getPluginList.length !==0"
+          v-if="showLabelInput && !isForResearch && pluginValues && Object.keys(pluginValues).length !==0"
           class="grid grid-cols-[100px_auto] gap-3 gap-y-5"
         >
           <p class="pt-2 text-right">
