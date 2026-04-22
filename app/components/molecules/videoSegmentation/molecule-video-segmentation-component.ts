@@ -15,6 +15,7 @@ export default defineComponent({
     const segmentForm = ref()
 
     const splitOverride = () => {
+      if(selectedSegment.value == undefined) return
       if (selectedSegment.value.group == 2) {
         const currentTime = timelineManager.video.callSeek() * 1000;
         timelineManager.segmentManager.splitItem(
@@ -51,9 +52,10 @@ export default defineComponent({
     });
 
     function doubleClickCallback(event) {
+        // open the segment modal
         const segment = timelineManager.segmentManager.getSegmentsByTime(event.time, event.group)[0]
+        if(segment.group != 0) return // use transcription to annotate those segments
         if(segment.start == 0 && segment.end == timelineManager.video.getDuration()) return
-        console.log(segment)
         segmentForm.value.open(segment)
     }
 

@@ -11,11 +11,12 @@ export default defineComponent({
     const {t} = useI18n()
     const {$application} = useService()
     const {timestampToUnix} = $application
+    const {pluginList} = storeToRefs(usePluginStore())
     const isOpen = ref(false)
     const currentSegment = ref(null)
     const showErrorMessage = ref(false)
     const pluginComponent = ref()
-    const {pluginValues,affectPluginValues} = useSpanService()
+    const {pluginValues,affectPluginValues, initPluginValues} = useSpanService()
 
     function open(segment){
       isOpen.value = true
@@ -33,6 +34,7 @@ export default defineComponent({
 
     function onClose(){
       showErrorMessage.value = false
+      initPluginValues(pluginList.value)
     }
 
 
