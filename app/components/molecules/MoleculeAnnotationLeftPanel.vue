@@ -64,18 +64,22 @@
 
   }
 
+  let intervalCheckTime
+
   const checkCurrentTime = () => {
       currentTime.value = $amalia.callSeek();
   };
+
   onMounted(async() => {
     $amalia = await usePlayer()
-    const interval = setInterval(() => {
+    intervalCheckTime = setInterval(() => {
       checkCurrentTime();
     }, 200);
 
-    onUnmounted(() => {
-      clearInterval(interval);
-    });
+  });
+
+  onUnmounted(() => {
+    clearInterval(intervalCheckTime);
   });
 
   watch(()=>currentTime.value,(newTime,oldTime) => {

@@ -54,7 +54,7 @@ export default defineComponent({
     function doubleClickCallback(event) {
         // open the segment modal
         const segment = timelineManager.segmentManager.getSegmentsByTime(event.time, event.group)[0]
-        if(segment.group != 0) return // use transcription to annotate those segments
+        if(segment.group == 1) return // use transcription to annotate those segments
         if(segment.start == 0 && segment.end == timelineManager.video.getDuration()) return
         segmentForm.value.open(segment)
     }

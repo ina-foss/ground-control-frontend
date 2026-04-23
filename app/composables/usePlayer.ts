@@ -14,10 +14,8 @@ export const usePlayer = ((...params?)=>{
   // if called with parameters
   // create the instance and return it when ready
   if(params?.length){
-    if (!instance) {
-      instance = new AmaliaPlayerService(...params);
-      initPromise = instance.waitUntilServiceReady().then(()=>instance!)
-    }
+    instance = new AmaliaPlayerService(...params);
+    initPromise = instance.waitUntilServiceReady().then(()=>instance!)
     return instance;
   }
 

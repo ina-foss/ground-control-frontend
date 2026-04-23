@@ -41,7 +41,7 @@ export default defineComponent({
 
     onMounted(async()=>{
       $amalia = await usePlayer()
-      const interval = setInterval(() => {
+      intervalCheckTime = setInterval(() => {
         playerTime.value = $amalia.callSeek()
       }, 50);
     })
