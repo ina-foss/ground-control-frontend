@@ -109,9 +109,7 @@ export default defineComponent({
 
     function getMetadataBlock(result: any,type: string){
       if( !Array.isArray(result.data)) return result.data
-      if( result.data.length == 1) return result.data[0]
       return  result.data.find(block => block.type == type)
-
     }
 
     const allow_skip = computed(() => getParameters.value.allow_skip && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != Status.DONE)
@@ -137,7 +135,7 @@ export default defineComponent({
       if (allFetched.value && annotationInfo.value != null) {
 
         if (getMetadataBlock(result.value,'transcription').localisation?.[0]?.sublocalisations?.localisation) {
-          response = [...getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation].filter(el=>!el.data);
+          response = [...getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation].filter(el=>!el?.data);
         }  }
       return response
     })
@@ -322,7 +320,7 @@ export default defineComponent({
       case 'auto-summary':
           return {component: MoleculeSegmentation, props: {
             block: getMetadataBlock(result.value,'transcription'),
-            locals: locals.value,
+            locals: pureTranscriptions.value,
             colors: colors.value,
             topics: topics.value,
             tcOffset : data.value.media?.player_parameters?.tc_offset ?? 0,
@@ -353,7 +351,7 @@ export default defineComponent({
               component: MoleculeSegmentation,
               props:{
                 block: getMetadataBlock(result.value,'transcription'),
-                locals: locals.value,
+                locals: pureTranscriptions.value,
                 colors: colors.value,
                 topics: topics.value,
                 tcOffset : data.value.media?.player_parameters?.tc_offset ?? 0,
@@ -366,7 +364,9 @@ export default defineComponent({
             },
             video : {
               component: MoleculeVideoSegmentation,
-
+              props: {
+                block: getMetadataBlock(result.value,'timeline'),
+              }
             }
         }
     }

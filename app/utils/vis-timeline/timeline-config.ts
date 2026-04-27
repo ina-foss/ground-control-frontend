@@ -15,10 +15,10 @@ export function createTimelineOptions(checkOverlapFn, duration: number): Timelin
         selectable: true,
         height: "100%",
         editable: {
-            add: true,
+            add: false,
             updateTime: false,
             updateGroup: false,
-            remove: true
+            remove: false
         },
         groupEditable: true,
         horizontalScroll: true,

@@ -14,3 +14,24 @@ declare interface VideoElements {
     editStart: HTMLElement | null;
     editEnd: HTMLElement | null;
 }
+
+declare interface Segment {
+  start: number,
+  end: number,
+  id: number,
+  content? : string
+  group: number,
+  plugins?: Record<string,PluginAutocompleteValueDto[]>
+}
+
+declare interface AmaliaSegment {
+  tclevel: number,
+  tcin: number,
+  tcout: number,
+  data: {
+    id: number,
+    group: number,
+    content? : string,
+    plugins?: Record<string,PluginAutocompleteValueDto[]>
+  }
+}

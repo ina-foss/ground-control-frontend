@@ -3,7 +3,7 @@
  */
 
 import AmaliaPlayerService from '~/services/amalia-player-service.js';
-import { formatTimeDetailed, formatDate } from './utils';
+import { formatTimeDetailed, formatDate } from '../utils';
 import type {Timeline, TimelineEventPropertiesResult} from "vis-timeline/standalone"
 
 export class VideoSync {

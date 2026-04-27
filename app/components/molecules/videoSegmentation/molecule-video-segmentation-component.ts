@@ -1,18 +1,29 @@
 import useTimeline from '~/composables/useTimeline';
 import { usePlayer } from '~/composables/usePlayer';
 import type AmaliaPlayerService from '~/services/amalia-player-service';
-import TimelineManager from '~/utils/timeline-manager';
+import TimelineManager from '~/utils/vis-timeline/timeline-manager';
 import AtomSegmentForm from '~/components/atoms/segmentForm/AtomSegmentForm.vue';
+import _ from 'lodash'
+import {extractVideoSegments, convertDatasetToAmalia} from '~/utils/vis-timeline/video';
 
 export default defineComponent({
   name: 'MoleculeVideoSegmentation',
   components: {AtomSegmentForm},
-  setup() {
+  props:{
+    block: Object
+  },
+  setup(props) {
+
+    const {block} = props
+
     let timelineManager: TimelineManager;
 
     const player = ref<AmaliaPlayerService>();
     const selectedSegment = ref<any>();
     const segmentForm = ref()
+
+
+    const annotationRegister = useAnnotationTypeRegistry()
 
     const splitOverride = () => {
       if(selectedSegment.value == undefined) return
@@ -25,27 +36,49 @@ export default defineComponent({
       }
     };
 
-    onMounted(() => {
+    onMounted(async () => {
       try {
-        const playerOrPromise = usePlayer();
+            player.value = await usePlayer();
+            timelineManager = useTimeline({items: extractVideoSegments(block),handlers:{"split":splitOverride}});
+            timelineManager.on('split', callbackReportSplitting);
+            timelineManager.on('fusion',callbackReportFusion)
+            timelineManager.on('select', (event) => {
+              const segmentId = event.items[0];
+              const segment = timelineManager.items.get(segmentId);
 
-        if (playerOrPromise instanceof Promise) {
-          playerOrPromise.then((value) => {
-            player.value = value;
-          });
-        }
-        timelineManager = useTimeline({handlers:{"split":splitOverride}});
-        timelineManager.on('split', callbackReportSplitting);
-        timelineManager.on('fusion',callbackReportFusion)
-        timelineManager.on('select', (event) => {
-          const segmentId = event.items[0];
-          const segment = timelineManager.items.get(segmentId);
+              selectedSegment.value = segment;
+            });
+            timelineManager.on('doubleClick', (event) => {
+              doubleClickCallback(event)
+            })
+            annotationRegister(
+              'timeline',
+              {
+                formatForSave: (locals,block,meta)=>{
+                  if(block){
+                    const patched = _.cloneDeep(block)
 
-          selectedSegment.value = segment;
-        });
-        timelineManager.on('doubleClick', (event) => {
-          doubleClickCallback(event)
-        })
+                    patched.localisation[0].sublocalisations.localisation = convertDatasetToAmalia(timelineManager.items)
+
+                    return patched
+                  }
+                  else console.log('pas de block')
+                }
+              }
+            )
+            annotationRegister(
+            'init-STREAMedia',
+            {
+              formatForSave: (data,block,meta)=>{
+                if(!data.find( d => d.type == 'timline') && data.length == 1 ) {
+                  data.push({...data[0],localisation:[{sublocalisations:{localisation:[]}}],type:'timeline'})
+                }
+               return data
+              }
+          }
+        )
+
+
       } catch (e) {
         console.error(e);
       }
@@ -85,6 +118,7 @@ export default defineComponent({
       const segments = timelineManager.segmentManager.getSegmentsByTime(tc,3)
       timelineManager.segmentManager.fusionItems(...segments)
     }
+
 
     return {
       player,

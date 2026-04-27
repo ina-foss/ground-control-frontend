@@ -20,6 +20,7 @@ import { usePlayer } from "~/composables/usePlayer";
 import type {PluginAutocompleteValueDto} from "~/api/generate";
 
 export type TimelineParameters =  {
+  items?: Segment[],
   handlers : Record<string,void> | undefined
 }
 
@@ -33,7 +34,7 @@ export default class TimelineManager extends EventEmitter<SegmentManagerEvent & 
   public elements: VideoElements
   public timeline: Timeline
   public groups: DataSet
-  public items: DataSet<{id:number,group:number,start:number,end:number,plugins?:Record<string,PluginAutocompleteValueDto>},"id">
+  public items: DataSet<Segment,"id">
   public videoSync: VideoSync
   public video: AmaliaPlayerService
   public keyboard: KeyboardShortcuts
@@ -54,7 +55,7 @@ export default class TimelineManager extends EventEmitter<SegmentManagerEvent & 
         else{
             this.video = playerOrPromise
             this.elements = this.getElements();
-            this.initTimeline()
+            this.initTimeline(parameters)
         }
   }
 
@@ -67,9 +68,9 @@ export default class TimelineManager extends EventEmitter<SegmentManagerEvent & 
   }
 
 
-    initTimeline( parameters?: TimelineParameters){
+    initTimeline( parameters?: TimelineParameters,){
         const mediaDurationMs = this.video.getDuration()
-        this.initDatasets(mediaDurationMs);
+        this.initDatasets(mediaDurationMs,parameters?.items);
         this.timeline = this.createTimelineElement(mediaDurationMs);
         this.videoSync = new VideoSync(this.elements.video,this.timeline,this.elements,this.video);
         this.segmentManager = new SegmentManager(this.items,this.timeline,this.videoSync)
@@ -104,10 +105,10 @@ export default class TimelineManager extends EventEmitter<SegmentManagerEvent & 
         };
     }
 
-    initDatasets(duration: number) {
+    initDatasets(duration: number,alreadySavedSegnment?: Segment[]) {
         this.groups = new DataSet(INITIAL_GROUPS);
-        const fillingTimelineItems = new Set(INITIAL_GROUPS.map((group)=>({id:group.id, group:group.id,start: 0, end: duration })))
-        this.items = new DataSet([...fillingTimelineItems.keys()]);
+        const fillingTimelineItems =   new Set(INITIAL_GROUPS.map((group)=>({id:group.id, group:group.id,start: 0, end: duration })))
+        this.items = new DataSet(alreadySavedSegnment?.length ? alreadySavedSegnment :  [...fillingTimelineItems.keys()]);
     }
 
     createTimelineElement(duration: number) {
