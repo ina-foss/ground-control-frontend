@@ -5,9 +5,19 @@ import _ from "lodash"
 export default defineComponent({
   name: "AtomSegmentForm",
   emits: ['create:segment'],
+  props: {
+    zone:{
+      type: String  as PropType<DisplayZone>,
+    },
+    textSpan:{
+      type: String,
+      required: true
+    },
+  },
   components:{MoleculePlugins},
   setup(props, {emit,expose} ) {
 
+    const {zone,textSpan} = toRefs(props)
     const {t} = useI18n()
     const {$application} = useService()
     const {timestampToUnix} = $application
@@ -37,19 +47,19 @@ export default defineComponent({
       initPluginValues(pluginList.value)
     }
 
-
     expose({open})
 
     return {
       isOpen,
-      DisplayZone,
+      zone,
       handleConfirmationButton,
       showErrorMessage,
       pluginComponent,
       currentSegment,
       timestampToUnix,
       onClose,
-      t
+      t,
+      textSpan
     }
   },
 })

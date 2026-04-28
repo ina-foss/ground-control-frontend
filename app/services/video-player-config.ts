@@ -33,6 +33,21 @@ export class VideoPlayerConfig {
           priority: 1
         },
         {
+          label: 'Playback rate custom steps',
+          control: 'playbackRateCustomSteps'
+        },
+        {
+          label: 'Playback rate steps',
+          control: 'playbackRateSteps'
+        },
+        {
+          label: 'Playback Rate',
+          control: 'playbackRate',
+          zone: 1,
+          priority: 1,
+          order: 3
+        },
+        {
           label: 'Aller au début du média',
           icon: 'backward-start',
           control: 'backward-start',
@@ -96,12 +111,20 @@ export class VideoPlayerConfig {
           key: 'f'
         },
         {
+          label: 'Plus d\'options',
+          control: 'menu',
+          icon: 'dots',
+          zone: 3,
+          //priority: 1,
+          //order: 1,
+          key: 'r'
+        },
+        {
           label: 'Figer',
           control: 'pinControls',
           icon: 'pin',
           zone: 3,
           priority: 1,
-          order: 1,
           key: 'g',
         },
         {
@@ -110,19 +133,10 @@ export class VideoPlayerConfig {
           icon: 'slider',
           zone: 3,
           priority: 2,
-          order: 1,
           key: 'v',
-        },
-        {
-          label: 'Plus d\'options',
-          control: 'menu',
-          icon: 'dots',
-          zone: 3,
-          key: 'r'
         }
 
-      ],
-      pinnedControls: true,
+      ]
     }
   };
 }

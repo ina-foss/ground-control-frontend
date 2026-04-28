@@ -254,7 +254,10 @@
       "order": "Order",
       "maxItems": "Max items",
       "multipleValues": "Multiple values",
-      "mainPlugin": "Main plugin"
+      "mainPlugin": "Main plugin",
+      "chooseRole": "Choose a role",
+      "getName": "Enter the name",
+      "personName": "name of person"
     },
     "delete": {
       "title": "Delete plugin",

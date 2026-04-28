@@ -26,7 +26,7 @@
       default: () => null
     },
     media_type: {
-      type: MediaType
+      type: String
     },
     locals: {
       type: Object,

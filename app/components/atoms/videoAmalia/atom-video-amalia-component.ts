@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useService,useI18n } from '#imports';
+import {useService, useI18n} from '#imports';
 import { ref,watch } from 'vue';
 import AmaliaPlayerService from '~/services/amalia-player-service';
 import { usePlayer } from '~/composables/usePlayer';
@@ -13,7 +13,7 @@ export default defineComponent({
       default: () => null
     },
     media_type: {
-      type: MediaType
+      type: String as PropType<MediaType>
     },
     locals: {
       type: Object,
@@ -129,7 +129,7 @@ export default defineComponent({
           retrieveLocalStorage()
 
           const unselectedCategories=categories.value.filter(cat => !selectedCategories.value.includes(cat.key)).map(cat => cat.key);
-          $amalia = await usePlayer(myplayer.value,'PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", downloadUrl?.value || "", getMediaType(videoSrc.value),waveformUrl?.value ||"",dynamicBackwardsSrc?.value || "",media_type?.value || "", unselectedCategories)
+          $amalia = await usePlayer(myplayer.value,'PLAYER', dynamicSrc.value, media_params.value, dynamicTumbnails?.value || "", getMediaType(videoSrc.value),waveformUrl?.value ||"",dynamicBackwardsSrc?.value || "",media_type?.value || null, unselectedCategories)
 
         }
       });

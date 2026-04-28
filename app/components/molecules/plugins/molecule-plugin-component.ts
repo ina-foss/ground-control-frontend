@@ -6,11 +6,11 @@ export default defineComponent({
   emits: ['update:errorMessage'],
   props:{
     zone:{
-      type: Object as PropType<DisplayZone>,
+      type: String as PropType<DisplayZone>,
       required: true
     },
     errorMessage: {
-      type: Object as PropType<Record<string,boolean>> ,
+      type: [Object, Boolean] as PropType<Record<string,boolean>> ,
       required: true,
     },
     textSpan:{
@@ -21,7 +21,7 @@ export default defineComponent({
   setup(props,{emit,expose}) {
     const { t } = useI18n()
     const { selectComponent } = usePluginStore()
-    const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, deleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex } = useSpanService()
+    const {readPluginValues,pluginValues,defaultLabel } = useSpanService()
     const {getPluginList} = storeToRefs(usePluginStore())
 
     const {zone,textSpan} = props
@@ -43,6 +43,7 @@ export default defineComponent({
       return Object.groupBy( filteredPlugins,({display_zone})=>display_zone)
     })
 
+
     const extIdMap = computed(()=>{
       const newVal = pluginValues
       const firstObj = Array.isArray(newVal) ? newVal[0] ?? {} : newVal ?? {};
@@ -58,9 +59,6 @@ export default defineComponent({
     })
 
 
-    type checkPluginOption = {
-      check_all?: boolean
-    }
 
     function checkPluginValues(checkPluginOption?){
      const result =  tidiedPluginList.value[zone]?.reduce((acc,plugin) => {

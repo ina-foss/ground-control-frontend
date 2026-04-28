@@ -21,6 +21,7 @@ export default defineComponent({
     const player = ref<AmaliaPlayerService>();
     const selectedSegment = ref<any>();
     const segmentForm = ref()
+    const currentZone = ref<String>(DisplayZone.SPAN_MODAL_LEFT)
 
 
     const annotationRegister = useAnnotationTypeRegistry()
@@ -62,7 +63,7 @@ export default defineComponent({
 
                     return patched
                   }
-                  else console.log('pas de block')
+                  else console.warn('pas de block')
                 }
               }
             )
@@ -89,6 +90,17 @@ export default defineComponent({
         const segment = timelineManager.segmentManager.getSegmentsByTime(event.time, event.group)[0]
         if(segment.group == 1) return // use transcription to annotate those segments
         if(segment.start == 0 && segment.end == timelineManager.video.getDuration()) return
+        switch (segment.group) {
+          case 2:
+            currentZone.value = DisplayZone.SPAN_MODAL_LEFT
+            break;
+          case 3:
+            currentZone.value = DisplayZone.SPAN_MODAL_RIGHT
+            break;
+          default:
+            currentZone.value = undefined
+            break;
+        }
         segmentForm.value.open(segment)
     }
 
@@ -123,7 +135,8 @@ export default defineComponent({
     return {
       player,
       segmentForm,
-      createSegment
+      createSegment,
+      currentZone,
     };
   },
 });

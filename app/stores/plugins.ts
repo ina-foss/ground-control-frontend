@@ -8,6 +8,7 @@ import { defineStore } from "pinia"
 import AtomPluginInputLabel from "~/components/atoms/plugin/pluginInputLabel/AtomPluginInputLabel.vue";
 import AtomPluginSuggestionList
   from "~/components/atoms/plugin/pluginSuggestionList/AtomPluginSuggestionList.vue";
+import {AtomPluginEntityListInput, AtomPluginMultiSelectOptions} from "#components";
 
 export const usePluginStore = defineStore('plugin',{
   state: () =>{
@@ -44,7 +45,7 @@ export const usePluginStore = defineStore('plugin',{
           availableZones = [DisplayZone.SPAN_MODAL_LEFT,DisplayZone.SPAN_MODAL_RIGHT,DisplayZone.GROUP_MODAL]
         break;
         case  'video-segmentation' :
-          availableZones = [DisplayZone.SPAN_MODAL_LEFT,DisplayZone.BLOC]
+          availableZones = [DisplayZone.SPAN_MODAL_LEFT,DisplayZone.BLOC,DisplayZone.SPAN_MODAL_RIGHT]
           break;
         default:
           availableZones = []
@@ -89,6 +90,12 @@ export const usePluginStore = defineStore('plugin',{
         }
         case 'suggestionlist':{
           return {component: AtomPluginSuggestionList, props:{plugin: pluginConfig}}
+        }
+        case 'entitylistinput':{
+          return {component: AtomPluginEntityListInput, props:{plugin: pluginConfig}}
+        }
+        case 'multiselectoptions':{
+          return {component: AtomPluginMultiSelectOptions, props:{plugin: pluginConfig}}
         }
         default:
           return null

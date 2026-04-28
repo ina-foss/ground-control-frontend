@@ -1,5 +1,6 @@
 import {VideoPlayerConfig} from './video-player-config';
 import {AudioPlayerConfig} from "./audio-player-config";
+import type {MediaType} from "~/api/generate";
 
 export default class AmaliaPlayerService {
   public static TAG_PLAYER_TAG = 'amalia-player';
@@ -22,7 +23,8 @@ export default class AmaliaPlayerService {
   public media_params: any
   public dynamicTumbnails: string | null = null
   public dynamicBackwardsSrc: string | null = null
-  public mediaType: string | null = null
+  public mediatype: string | null = null
+  public media_Type: string | null = null
   public waveformUrl:string | null = null
   public customConfig?:Array<string> | null = null
 
@@ -35,6 +37,7 @@ export default class AmaliaPlayerService {
     readonly media_type: string,
     readonly waveform_url:string ,
     readonly dynamic_backwards_src:string,
+    mediatype:string,
     customConfig?:Array<string>
   ){
 
@@ -57,7 +60,7 @@ export default class AmaliaPlayerService {
       },50)
 
       // add player to the DOM
-      const playerElement = this.createPlayer(playerId, src,media_params,dynamicTumbnails , media_type,waveform_url,dynamic_backwards_src,media_type,customConfig);
+      const playerElement = this.createPlayer(playerId, src,media_params,dynamicTumbnails , media_type,waveform_url,dynamic_backwards_src,mediatype,customConfig);
       playerContainer.appendChild(playerElement)
 
       this.playerContainer = playerContainer
@@ -65,7 +68,8 @@ export default class AmaliaPlayerService {
       this.customConfig = customConfig
       this.waveformUrl = waveform_url
       this.dynamicBackwardsSrc = dynamic_backwards_src
-      this.mediaType = media_type
+      this.media_Type = media_type
+      this.mediatype = mediatype
       this.src = src
       this.dynamicTumbnails = dynamicTumbnails
 
@@ -78,7 +82,7 @@ export default class AmaliaPlayerService {
   }
 
   public reloadConfig(newConfig: Array<string>){
-    const updatedPlayer = this.createPlayer(this.playerId, this.src,this.media_params,this.dynamicTumbnails , this.media_type,this.waveform_url,this.dynamicBackwardsSrc,this.media_type,newConfig);
+    const updatedPlayer = this.createPlayer(this.playerId, this.src,this.media_params,this.dynamicTumbnails , this.media_type,this.waveform_url,this.dynamicBackwardsSrc,this.mediatype,newConfig);
     this.playerContainer.removeChild(this.playerContainer.firstChild);
     this.playerContainer?.appendChild(updatedPlayer)
   }
@@ -107,7 +111,7 @@ export default class AmaliaPlayerService {
     this.playerConfiguration = mediaType == 'video' ? new VideoPlayerConfig() : new AudioPlayerConfig();
     this.playerConfiguration.player.src = mediaSrc;
     this.playerConfiguration.player.hls.config.startPosition = Math.max(0, startTc);
-    if(media_type ===MediaType.HLS){
+    if(media_type as MediaType ===MediaType.HLS){
       this.playerConfiguration.player.hls.enable= true;
     }
     if (urlStreamPlayBack) {

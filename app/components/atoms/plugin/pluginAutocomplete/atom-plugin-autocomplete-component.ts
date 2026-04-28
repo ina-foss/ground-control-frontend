@@ -15,7 +15,7 @@ export default defineComponent({
     index: {},
     source: { required: false, default: () => false },
     pluginValue: { type: Array<any> },
-    textSpan: { type: String },
+    textSpan: { type: String,  default:()=> "" },
     /**
      * Whether or not does the input will show the selectied options as showChips
      */

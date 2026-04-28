@@ -12,7 +12,7 @@
         <Message class="w-fit" severity="error" icon="pi pi-exclamation-triangle" >  {{ t('pluginForm.selectValueError') }}</Message>
       </message-wrapper>
 
-      <MoleculePlugins ref="pluginComponent" v-model:error-message="showErrorMessage" :zone="DisplayZone.SPAN_MODAL_LEFT"  />
+      <MoleculePlugins ref="pluginComponent" v-model:error-message="showErrorMessage" :zone="zone" :textSpan="textSpan" />
 
       <div class="flex justify-end gap-2">
         <Button outlined severity="primary" icon="pi pi-times" :label="t('actions.cancel')" @click="isOpen = false"/>

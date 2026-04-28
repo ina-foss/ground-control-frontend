@@ -1,5 +1,5 @@
 <template>
-  <div v-if="indexPlugin<3 && !source" class=" flex gap-3 gap-y-5 items-center " >
+  <div v-if="!source" class=" flex gap-3 gap-y-5 items-center " >
     <plugin-title v-if="$slots.default" class="basis-[100px] shrink-0">
     <slot  />
     </plugin-title>

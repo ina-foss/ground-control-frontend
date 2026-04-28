@@ -80,11 +80,6 @@ describe('AtomPluginAutocomplete.vue', () => {
     wrapper.vm.keepDropdownOpen()
   })
 
-  it('ne rend pas le AutoComplete principal si index >= 3', () => {
-    const wrapper = createWrapper({ index: 3 })
-    expect(wrapper.findComponent(AutoComplete).exists()).toBe(false)
-  })
-
   it('charge les options depuis pluginItemsConfig', async () => {
     const wrapper = createWrapper()
     await flushPromises()

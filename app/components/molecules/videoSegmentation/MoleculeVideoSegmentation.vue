@@ -2,7 +2,7 @@
   <molecule-video-segmentaion-wrapper class="flex h-full w-full bg-secondary">
     <Skeleton v-if="!player" height="100%" />
     <timeline  id="visualization" />
-    <AtomSegmentForm ref="segmentForm" @create:segment="createSegment"  />
+    <AtomSegmentForm ref="segmentForm" @create:segment="createSegment" :zone="currentZone" />
   </molecule-video-segmentaion-wrapper>
 </template>
 
