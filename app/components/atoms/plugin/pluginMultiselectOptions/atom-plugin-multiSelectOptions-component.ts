@@ -25,6 +25,7 @@ export default defineComponent({
 
         const rawOptions = ref<any[]>([])
         const rows = ref<any[]>([])
+        let nextId = 1
         let isUpdating = false
         const parseDataSource = (source: any) => {
             if (!source) return []
@@ -61,7 +62,7 @@ export default defineComponent({
 
         function createRow() {
             const row: any = {
-                id: Date.now() + Math.random(),
+                id: nextId++,
                 showType: false
             }
 
@@ -96,7 +97,7 @@ export default defineComponent({
                 if (!Array.isArray(pluginValue.value)) return
                 rows.value = pluginValue.value?.map((item: any) => {
                     const row: any = {
-                        id: Date.now() + Math.random(),
+                        id: nextId++,
                         showType: false
                     }
 
