@@ -19,10 +19,6 @@ export const usePlayer = ((...params?)=>{
     return instance;
   }
 
-  // if instance already exists, just return it synchronously
-  if (instance) return instance;
-
-  // if no instance available
   // create a promise which resovle when usePlayer is called with parameters
   initPromise = new Promise<AmaliaPlayerService>((resolve)=>{
     const interval = setInterval(async()=>{
@@ -35,4 +31,9 @@ export const usePlayer = ((...params?)=>{
   })
 
   return initPromise
+})
+
+export const resetPlayer = (()=>{
+  instance = null
+  initPromise = null
 })

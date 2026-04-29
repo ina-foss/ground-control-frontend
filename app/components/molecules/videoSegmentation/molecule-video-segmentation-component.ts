@@ -1,4 +1,4 @@
-import useTimeline from '~/composables/useTimeline';
+import useTimeline, {resetTimeline} from '~/composables/useTimeline';
 import { usePlayer } from '~/composables/usePlayer';
 import type AmaliaPlayerService from '~/services/amalia-player-service';
 import TimelineManager from '~/utils/vis-timeline/timeline-manager';
@@ -22,6 +22,10 @@ export default defineComponent({
     const selectedSegment = ref<any>();
     const segmentForm = ref()
     const currentZone = ref<String>(DisplayZone.SPAN_MODAL_LEFT)
+
+    onUnmounted(() => {
+      resetTimeline();
+    });
 
 
     const annotationRegister = useAnnotationTypeRegistry()

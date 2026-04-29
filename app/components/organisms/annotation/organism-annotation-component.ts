@@ -12,6 +12,8 @@ import AtomSearch from "~/components/atoms/search/AtomSearch.vue";
 import SpanSkeleton from "~/components/molecules/SpanSkeleton.vue";
 import MoleculeDialogConfirm from "~/components/molecules/moleculeDialogConfirm/MoleculeDialogConfirm.vue";
 import MoleculeVideoSegmentation from "~/components/molecules/videoSegmentation/MoleculeVideoSegmentation.vue"
+import AmaliaPlayerService from "~/services/amalia-player-service";
+import {resetPlayer} from "~/composables/usePlayer";
 
 export default defineComponent({
   name: "OrganismAnnotation",
@@ -532,6 +534,10 @@ export default defineComponent({
 
   }
 
+  onUnmounted(()=>{
+    resetPlayer()
+  })
+
   const spanService = useSpanService(true)
   provide('spanService',spanService)
 
@@ -598,7 +604,7 @@ export default defineComponent({
     abondanDialog,
     finishDialog,
     triggerResize,
-    media_type
+    media_type,
   }
 },
 })

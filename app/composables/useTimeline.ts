@@ -7,3 +7,7 @@ export default function useTimeline(parameters? : TimelineParameters) {
   return timelineManager
 
 }
+
+export function resetTimeline(){
+  timelineManager = null
+}
