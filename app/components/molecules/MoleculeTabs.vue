@@ -6,7 +6,7 @@
           <Tab  v-for="(tab,index) in tabs" v-if="tabs.length > 0" :key="index" :value="index" class="!bg-white">
             {{ tab.title }}
           </Tab>
-          <Tab class="!bg-white" :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">Derniers Timecodes</Tab>
+          <Tab v-if="withTC" class="!bg-white" :value="(tabs.length > 0 && tabs.length==2)?2:(tabs.length > 0 && tabs.length==1)?1:0">Derniers Timecodes</Tab>
           <Tab v-if="transcriptions" class="!bg-white" :value="4">Résumé</Tab>
           <Tab v-if="transcriptions" class="!bg-white" :value="5">Phrases</Tab>
         </TabList>
@@ -105,6 +105,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  withTC: {                
+    type: Boolean,
+    default: true
+  }
 })
 
 const  { transcriptions } = props

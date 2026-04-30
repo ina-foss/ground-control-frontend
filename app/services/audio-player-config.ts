@@ -1,5 +1,6 @@
 export class AudioPlayerConfig {
   tcOffset = 0;
+  loadMetadataOnDemand= true;
   player = {
     backwardsSrc: '',
     src: '',

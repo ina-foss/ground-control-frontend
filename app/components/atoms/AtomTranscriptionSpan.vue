@@ -1,5 +1,5 @@
 <template>
-  <transcription-container class="flex flex-col gap-2 ">
+  <transcription-container class="flex flex-col gap-2 w-full min-w-0">
     <Tag
       v-if="options.timecode_bloc"
       severity="secondary"
@@ -7,11 +7,10 @@
       class="w-fit bg-surface-200 cursor-pointer"
       @click="$emit('handleWordClick',{tcin: local.tcin, tcout:local.tcout, event: $event})"
     />
-    <span-transcription-wrapper class=" bg-white rounded-md scroll-m-12 inline-flex flex-wrap gap-y-6 w-[75ch] border-l-inherit py-6 px-2 " >
-      <div
-v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))"
+    <span-transcription-wrapper class="bg-white rounded-md scroll-m-12 flex flex-wrap gap-y-6 w-full max-w-full min-w-0 border-l-inherit py-6 px-2">      <div
+        v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))"
         :key="word.tcin" :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)"
-        :class="{'inline-block px-[2px] hover:bg-surface-200 relative  ': true, 'text-active  ': playerTime > unixToTimestamp(word.tcin),}" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev"
+        :class="{'inline px-[2px] break-words hover:bg-surface-200 relative  ': true, 'text-active  ': playerTime > unixToTimestamp(word.tcin),}" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev"
         @click="$emit('handleWordClick',{tcin: word.tcin, event: $event, tcout:word.tcout})">
         {{ word.data.text[0] }}
       </div>

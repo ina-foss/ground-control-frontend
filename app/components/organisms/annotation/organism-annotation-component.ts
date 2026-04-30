@@ -47,7 +47,7 @@ export default defineComponent({
   },
   emits: [ 'submit-annotation', 'finish-annotation', 'skip-annotation' ],
   setup(props, {emit}) {
-
+    const transcriptionContainer = ref<HTMLElement | null>(null)
     const { data, annotationsIn, annotationsOut, allFetched } = toRefs(props)
 
     const { t } = useI18n()
@@ -111,7 +111,8 @@ export default defineComponent({
 
     function getMetadataBlock(result: any,type: string){
       if( !Array.isArray(result.data)) return result.data
-      return  result.data.find(block => block.type == type)
+      if( result.data.length == 1) return result.data[0]
+      return  result.data.find(block => block.type == type) ?? null
     }
 
     const allow_skip = computed(() => getParameters.value.allow_skip && !forbiddenStatuses.includes(data.value.status) && annotationsOut.value?.[0]?.annotation_status != Status.DONE)
@@ -120,14 +121,27 @@ export default defineComponent({
 
     const annotation_type = data.value.step.annotation_type
 
+    const typeBlock = annotation_type === "span" ? "summary" : "transcription"
+    const amaliaTranscriptionData = computed(() => {
+      const result = annotationsIn.value?.[0]?.result;
+      if (!result?.data) return null;
+      if (annotation_type === "span" && result.data.length !== 1) {
+        return result.data[1];
+      }
+      return null;
+    });
+
+    const isEvaluatedSpan = computed(() => {
+      return Boolean(amaliaTranscriptionData.value);
+    });
 
     const userAnnotations = computed(() => { // return array of users annotations
       let response = []
       if (allFetched.value && annotationInfo.value != null) {
         const annotation = annotationsOut.value[annotationInfo.value.index];
 
-        if (getMetadataBlock(result.value,'transcription').localisation?.[0]?.sublocalisations?.localisation) {
-          response = [...getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation].filter(el=>el?.data);
+        if (getMetadataBlock(result.value, typeBlock).localisation?.[0]?.sublocalisations?.localisation) {
+          response = [...getMetadataBlock(result.value, typeBlock).localisation[0].sublocalisations.localisation].filter(el=>el?.data);
         }  }
       return response
     })
@@ -144,7 +158,7 @@ export default defineComponent({
 
     const locals = computed(() => {
       if(allFetched.value){
-        const l = _.sortBy(getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
+        const l = _.sortBy(getMetadataBlock(result.value, typeBlock).localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
         return l.filter(e=> e != null || undefined )
       }
       return []
@@ -161,7 +175,7 @@ export default defineComponent({
 
 
   const pureTranscriptions = computed(()=>{
-      const block = getMetadataBlock(result.value,'transcription')
+      const block = getMetadataBlock(result.value, typeBlock)
       return sortBy(block.localisation[0].sublocalisations.localisation.filter(el=>el != null && el.data),(el)=>unixToTimestamp(el.tcin))
   })
 
@@ -205,7 +219,7 @@ export default defineComponent({
     const res = []
     if (allFetched.value) {
       annotationsIn.value.forEach((annotation) => {
-        res.push(annotation.result.data.algorithm)
+        res.push(annotation.result.data[0]?.algorithm)
       })
     }
     if (res.length == 0) return null
@@ -400,8 +414,30 @@ export default defineComponent({
 
   const handleSkip = () => emit('skip-annotation', { locals: {}, options: { showToast: true } })
 
-  let autoSaveInterval = null;
+  onMounted(async () => {
+    try {
+      const player = await usePlayer()
+      if (AmaliaPlayerService.TAG_TRANSCRIPTION !== amaliaTranscriptionData.value.id) {
+        console.error(
+          `${amaliaTranscriptionData.value.id} should be the same as plugin id ${AmaliaPlayerService.TAG_TRANSCRIPTION}`
+        )
+        return
+      }
 
+      const metadataManager = player?.mediaPlayerElement?.metadataManager
+      metadataManager?.addMetadata(amaliaTranscriptionData.value)
+      const isLoaded = metadataManager?.hasMetadataKey(
+        amaliaTranscriptionData.value.id
+      )
+
+      if (!transcriptionContainer.value || !isLoaded) return
+      player.createTranscription(transcriptionContainer.value)
+    } catch (err) {
+      console.error('Failed to load player metadata:', err)
+    }
+  })
+
+  let autoSaveInterval = null;
    onMounted(()=>{
     autoSaveInterval = setInterval(() => {
       const lastAutoSave = new Date().toLocaleTimeString('fr-FR')
@@ -563,7 +599,7 @@ export default defineComponent({
    locals :  locals
   })
 
-    provide('isPlayerFocused', isPlayerFocused)
+  provide('isPlayerFocused', isPlayerFocused)
 
   return {
     annotationInfo,
@@ -605,6 +641,8 @@ export default defineComponent({
     finishDialog,
     triggerResize,
     media_type,
+    transcriptionContainer,
+    isEvaluatedSpan
   }
 },
 })

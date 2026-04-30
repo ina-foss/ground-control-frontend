@@ -6,6 +6,7 @@ export default class AmaliaPlayerService {
   public static TAG_PLAYER_TAG = 'amalia-player';
   public static TAG_CONTROL_BAR = 'amalia-control-bar';
   public static TAG_HISTOGRAM = 'amalia-histogram';
+  public static TAG_TRANSCRIPTION = 'amalia-transcription';
   public player!: HTMLElement;
   /**
    * True when source loaded
@@ -198,6 +199,7 @@ export default class AmaliaPlayerService {
     if (mediaType ==="audio") {
       this.createHistogram(this.player,playerId);
     }
+    
     return this.player;
   }
 
@@ -205,6 +207,27 @@ export default class AmaliaPlayerService {
     const histogram = document.createElement(AmaliaPlayerService.TAG_HISTOGRAM);
     histogram.setAttribute('player-id', playerId);
     this.player.appendChild(histogram);
+  }
+
+  public createTranscription(container: HTMLElement): void {
+    const transcription = document.createElement(AmaliaPlayerService.TAG_TRANSCRIPTION);
+    transcription.setAttribute(
+      'plugin-configuration',
+      JSON.stringify({
+        metadataIds: [AmaliaPlayerService.TAG_TRANSCRIPTION],
+        data: {
+          title: 'Transcription',
+          description: 'Audio transcription',
+          parseLevel: 1,
+          autoScroll: true,
+          progressBar: true,
+          withSubLocalisations: true,
+          key:"Enter",
+          label: 'Transcription'
+        }
+      })
+    );
+    container.appendChild(transcription);
   }
 
   public getPlayers(){

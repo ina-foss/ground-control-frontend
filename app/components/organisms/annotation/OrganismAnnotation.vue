@@ -58,38 +58,7 @@
       @find-element="handleFocusElement"
       @unselect="handleSelection"
     />
-
-    <div v-if="annotation_type != 'video-segmentation'" class="xs:grid xs:grid-cols-10 flex h-full flex-col gap-5">
-      <MoleculeAnnotationLeftPanel
-        ref="moleculeAnnotationLeftPanelRef"
-        :class="layout.left"
-        :panel-size="panelSize"
-        :video-src="videoSrc"
-        :media_params="data.media?.player_parameters"
-        :media_type="media_type"
-        :locals="pureTranscriptions"
-        @scroll-to-segment="handleVideoTimelineClick"
-      >
-        <MoleculeTabs ref="tabsRef" v-bind="tabsProps" />
-      </MoleculeAnnotationLeftPanel>
-      <div :class="[layout.center, 'h-full min-h-0 flex']">
-        <Suspense>
-          <component
-            :is="annotationComponent.component"
-            ref="moleculeAnnotationRef"
-            v-bind="annotationComponent.props"
-            :state="annotationsOut[annotationInfo?.index]?.annotation_status"
-            v-on="annotationComponent.events"
-          />
-
-          <template #fallback>
-            <SpanSkeleton />
-          </template>
-        </Suspense>
-      </div>
-    </div>
-
-    <div v-else class="h-full ">
+    <div v-if="annotation_type == 'video-segmentation'" class="h-full ">
       <Splitter class="h-full" layout="vertical" state-storage='local' state-key="ground-control-video-segmentation-bottom-ratio" @resize="triggerResize">
           <SplitterPanel class="flex items-center justify-center">
               <Splitter layout="horizontal" class="h-full" state-storage='local' state-key="ground-control-video-segmentation-top-ratio" @resize="triggerResize">
@@ -124,8 +93,93 @@
         </SplitterPanel>
       </Splitter>
     </div>
+    <div v-else-if="annotation_type == 'span'" class="h-full w-full">
+      <Splitter class="h-full" state-storage='local' state-key="ground-control-span-h" @resize="triggerResize">
+        <SplitterPanel class="flex h-full items-center justify-center bg-secondary" :size="20">
+          <Splitter
+            v-if="isEvaluatedSpan"
+            layout="vertical"
+            state-storage="local"
+            state-key="ground-control-span-v"
+            style="height: calc(100vh - 100px);"
+            @resize="triggerResize"
+            class="bg-secondary"
+          >
+            <SplitterPanel class="flex bg-secondary min-h-0" :size="30" :minSize="0">
+              <MoleculeAnnotationLeftPanel
+                ref="moleculeAnnotationLeftPanelRef"
+                class="h-full w-full"
+                :video-src="videoSrc"
+                :media_type="media_type"
+                :media_params="data.media?.player_parameters"
+                :locals="locals"
+                @scroll-to-segment="handleVideoTimelineClick"
+              ><MoleculeTabs :withTC="false" ref="tabsRef" v-bind="tabsProps" /></MoleculeAnnotationLeftPanel>
+            </SplitterPanel>
+            <SplitterPanel class=" min-h-0" :size="70">
+              <div
+                ref="transcriptionContainer"
+                class="overflow-auto h-full min-h-0 bg-secondary"
+              />
+            </SplitterPanel>
+          </Splitter>
+            <MoleculeAnnotationLeftPanel
+                v-else
+                ref="moleculeAnnotationLeftPanelRef"
+                class="h-full w-full"
+                :video-src="videoSrc"
+                :media_type="media_type"
+                :media_params="data.media?.player_parameters"
+                :locals="locals"
+                @scroll-to-segment="handleVideoTimelineClick"
+              ><MoleculeTabs ref="tabsRef" v-bind="tabsProps" />
+            </MoleculeAnnotationLeftPanel>
+        </SplitterPanel>
+        <SplitterPanel class="flex items-center justify-center" :size="80" :min-size="50">
+        <Suspense>
+          <component
+            :is="annotationComponent.component"
+            ref="moleculeAnnotationRef"
+            v-bind="annotationComponent.props"
+            :state="annotationsOut[annotationInfo?.index]?.annotation_status"
+            v-on="annotationComponent.events"
+          />
 
+          <template #fallback>
+            <SpanSkeleton />
+          </template>
+        </Suspense>
+        </SplitterPanel>
+      </Splitter>
+    </div>
+    <div v-else class="xs:grid xs:grid-cols-10 flex h-full flex-col gap-5">
+      <MoleculeAnnotationLeftPanel
+        ref="moleculeAnnotationLeftPanelRef"
+        :class="layout.left"
+        :panel-size="panelSize"
+        :video-src="videoSrc"
+        :media_params="data.media?.player_parameters"
+        :locals="pureTranscriptions"
+        @scroll-to-segment="handleVideoTimelineClick"
+      >
+        <MoleculeTabs ref="tabsRef" v-bind="tabsProps" />
+      </MoleculeAnnotationLeftPanel>
+      <div :class="[layout.center, 'h-full min-h-0 flex']">
+        <Suspense>
+          <component
+            :is="annotationComponent.component"
+            ref="moleculeAnnotationRef"
+            v-bind="annotationComponent.props"
+            :state="annotationsOut[annotationInfo?.index]?.annotation_status"
+            v-on="annotationComponent.events"
+          />
 
+          <template #fallback>
+            <SpanSkeleton />
+          </template>
+        </Suspense>
+      </div>
+    </div>
   </div>
   <MoleculeDialogConfirm
     v-model:visible="abondanDialog"
@@ -231,13 +285,20 @@
 
 }
 
-.p-splitter-vertical .p-splitter-gutter {
+.p-splitter-vertical > .p-splitter-gutter {
   height: 14px;
   width: 100%;
 }
-.p-splitter-horizontal .p-splitter-gutter {
+.p-splitter-horizontal > .p-splitter-gutter {
   width: 14px;
   height: 100%;
+}
+
+.transcription-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100% - 50px);
 }
 
 </style>

@@ -30,9 +30,6 @@ v-model:visible="visibleRight"  :header="t('player.config.title')" position="lef
       </template>
     </Button>
     <Button
-v-if="annotation_type ==='span'"  v-tooltip="isCompact ? resizeLabel : null" class="player-btn " :icon="resizeIcon" text  :label="isCompact ? '' : resizeLabel"
-             style="color: #212529 !important;" @click="focusPlayerModel = !focusPlayerModel"/>
-    <Button
       v-tooltip="isCompact ? t('player.actions.configButton') : null"
       class="player-btn"
       text
