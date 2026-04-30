@@ -1,6 +1,6 @@
 <template>
   <Dialog v-model:visible="isOpen" modal  header="Segment video: proprietes" @after-hide="onClose" >
-    <div class="flex flex-col gap-4 w-[600px]">
+    <div class="flex flex-col gap-4 w-[950px]">
 
       <div class="w-full flex justify-between p-lg items-center gap-lg ">
         <span>{{ timestampToUnix(currentSegment?.start,true) }}</span>

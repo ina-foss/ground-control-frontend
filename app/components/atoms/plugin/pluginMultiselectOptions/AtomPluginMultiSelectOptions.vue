@@ -1,5 +1,5 @@
 <template>
-  <div class=" grid grid-cols-[100px_auto] pt-2 gap-4 gap-y-5 items-center" >
+  <div class=" grid grid-cols-[100px_auto] gap-4 gap-y-2 items-center" >
 
       <div class="col-span-2">
 
@@ -7,14 +7,14 @@
 
     <div v-for="(row, index) in rows"
          :key="row.id"
-         class="group-row pb-2 "
+         class="intervenant-row-wrapper"
     >
-            <plugin-title v-if="$slots.default && index === 0" class="basis-[90px] shrink-0 pb-3">
+      <div class="intervenant-row">
+            <plugin-title v-if="$slots.default " class="basis-[90px] shrink-0 ">
               <slot  />
             </plugin-title>
+      <p class="pt-2"> {{ index + 1 }}</p>
 
-      <div v-else ></div>
-      <div class="content-cell pl-1">
         <Button
             v-if="groups.length"
             :label="getGroupLabel(row, groups[0])"
@@ -30,7 +30,7 @@
             :options="optionsByGroup[group]"
             optionLabel="label"
             :placeholder="group"
-            :class="{'basis-[calc(100%-210px)]': $slots.default}"
+            :class="{'basis-[calc(100%-360px)]': $slots.default}"
             :maxSelectedLabels="0"
             :selectedItemsLabel="getGroupLabel(row, group)"
             :label="getGroupLabel(row, groups[0])"
@@ -54,11 +54,13 @@
               @click="removeRow(row.id)"
           />
         </div>
+      </div>
         <!-- CHECKBOX -->
         <div
             v-if="groups.length && row.showType"
             class="checkbox-row"
         >
+
           <div
               v-for="option in optionsByGroup[groups[0]]"
               :key="option.id"
@@ -74,7 +76,7 @@
 
 
 
-      </div>
+
     </div>
       </TransitionGroup>
     </div>
@@ -85,6 +87,11 @@
 
 <script src="./atom-plugin-multiSelectOptions-component.ts"></script>
 <style scoped>
+.intervenant-row-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
 .action-cell {
   display: flex;
   flex-direction: column;
@@ -97,20 +104,8 @@
   grid-template-columns: repeat(3, auto);
   gap: 0.5rem;
   margin-top: 0.5rem;
+  padding-left: 110px;
 }
-.group-row {
-  display: grid;
-  grid-template-columns: 100px 1fr 40px;
-  margin-bottom: 1rem;
-  align-items: start;
-  gap: 0.4rem;
-}
-.content-cell {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
 
 .btn-remove {
   width: 2rem !important;
@@ -125,5 +120,14 @@
   height: 2rem !important;
 }
 
+.intervenant-row {
+  margin-bottom: 1rem;
+  align-items: start;
+  display: flex;
+  gap: 0.4rem;
+}
 
+.intervenant-row :deep(.p-select) {
+  width: 150px;
+}
 </style>

@@ -257,7 +257,7 @@
       "mainPlugin": "Main plugin",
       "chooseRole": "Choose a role",
       "getName": "Enter the name",
-      "personName": "name of person"
+      "personName": "Enter the person's name"
     },
     "delete": {
       "title": "Delete plugin",

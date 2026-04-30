@@ -1,5 +1,5 @@
 <template>
-  <div class=" grid grid-cols-[100px_auto] pt-3 gap-4 gap-y-5 items-center" >
+  <div class=" grid grid-cols-[100px_auto] gap-4 gap-y-2 items-center" >
 
       <div class="col-span-2">
 
@@ -7,7 +7,7 @@
           <div
               v-for="(intervenant, index) in intervenants"
               :key="intervenant._id"
-              class="intervenant-row pb-5"
+              class="intervenant-row"
           >
             <plugin-title v-if="$slots.default" class="basis-[90px] shrink-0">
               <slot  />
@@ -16,7 +16,7 @@
 
             <InputText
                 v-model="intervenant.nom"
-                :placeholder="t('plugin.fields.personName')+(index + 1)"
+                :placeholder="t('plugin.fields.personName')"
                 @blur="updateIntervenant(intervenant._id)"
             />
 
@@ -26,7 +26,7 @@
                 :options="roles"
                 option-label="label"
                 option-value="id"
-                :placeholder="t('spanForm.virtualSpan.role')+String.fromCharCode(64 + index + 1)"
+                :placeholder="t('spanForm.virtualSpan.role')"
                 @update:model-value="updateIntervenant(intervenant._id)"
             />
 
@@ -64,6 +64,7 @@
 <style scoped>
 
 .intervenant-row {
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -88,6 +89,11 @@
   box-shadow: none !important;
   border-color: #ccc !important;
 }
-
+.action-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
 
 </style>

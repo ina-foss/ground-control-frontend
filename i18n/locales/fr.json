@@ -255,7 +255,7 @@
       "maxItems": "Nombre max d’éléments",
       "multipleValues": "Valeurs multiples",
       "mainPlugin": "Plugin principal",
-      "personName": "Nom de la perso",
+      "personName": "Taper le nom",
       "chooseRole": "Choisir un rôle",
       "getName": "Entrer le nom"
     },
