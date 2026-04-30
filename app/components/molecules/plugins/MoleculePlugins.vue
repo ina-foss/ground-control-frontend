@@ -12,7 +12,7 @@
                   <p class="text-right ">{{  child?.display_config?.label || child?.name.charAt(0).toUpperCase() + child?.name.slice(1)  }}</p>
                 </component>
             </div>
-            <div v-if="index!==Object.keys(tidiedPluginList[zone]).length" class="divider"></div>
+            <div v-if="index!==Object.keys(tidiedPluginList[zone]).length-1" class="divider"></div>
           </plugin-iterator>
         </main-plugins-wrapper>
         <!--if 0 plugin -->
@@ -36,10 +36,3 @@
 </template>
 
 <script src="./molecule-plugin-component.ts" lang="ts" ></script>
-<style>
-.divider {
-  height: 1px;
-  background-color: #ddd;
-  margin: 1rem 1rem;
-}
-</style>
