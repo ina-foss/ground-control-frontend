@@ -121,7 +121,12 @@ export default defineComponent({
 
     const annotation_type = data.value.step.annotation_type
 
-    const typeBlock = annotation_type === "span" ? "summary" : "transcription"
+    const typeBlock = computed(() =>
+      annotation_type === "span" &&
+      annotationsIn.value?.[0]?.result?.data?.length === 2
+        ? "summary"
+        : "transcription"
+    )
     const amaliaTranscriptionData = computed(() => {
       const result = annotationsIn.value?.[0]?.result;
       if (!result?.data) return null;
@@ -140,8 +145,8 @@ export default defineComponent({
       if (allFetched.value && annotationInfo.value != null) {
         const annotation = annotationsOut.value[annotationInfo.value.index];
 
-        if (getMetadataBlock(result.value, typeBlock).localisation?.[0]?.sublocalisations?.localisation) {
-          response = [...getMetadataBlock(result.value, typeBlock).localisation[0].sublocalisations.localisation].filter(el=>el?.data);
+        if (getMetadataBlock(result.value, typeBlock.value).localisation?.[0]?.sublocalisations?.localisation) {
+          response = [...getMetadataBlock(result.value, typeBlock.value).localisation[0].sublocalisations.localisation].filter(el=>el?.data);
         }  }
       return response
     })
@@ -150,15 +155,15 @@ export default defineComponent({
       let response = []
       if (allFetched.value && annotationInfo.value != null) {
 
-        if (getMetadataBlock(result.value,'transcription').localisation?.[0]?.sublocalisations?.localisation) {
-          response = [...getMetadataBlock(result.value,'transcription').localisation[0].sublocalisations.localisation].filter(el=>!el?.data);
+        if (getMetadataBlock(result.value, typeBlock.value).localisation?.[0]?.sublocalisations?.localisation) {
+          response = [...getMetadataBlock(result.value, typeBlock.value).localisation[0].sublocalisations.localisation].filter(el=>!el?.data);
         }  }
       return response
     })
 
     const locals = computed(() => {
       if(allFetched.value){
-        const l = _.sortBy(getMetadataBlock(result.value, typeBlock).localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
+        const l = _.sortBy(getMetadataBlock(result.value, typeBlock.value).localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
         return l.filter(e=> e != null || undefined )
       }
       return []
@@ -175,7 +180,7 @@ export default defineComponent({
 
 
   const pureTranscriptions = computed(()=>{
-      const block = getMetadataBlock(result.value, typeBlock)
+      const block = getMetadataBlock(result.value, typeBlock.value)
       return sortBy(block.localisation[0].sublocalisations.localisation.filter(el=>el != null && el.data),(el)=>unixToTimestamp(el.tcin))
   })
 
@@ -228,7 +233,7 @@ export default defineComponent({
 
   const tabsProps = computed(()=>{
       return {data: data.value,
-              transcriptions: data.value.step.annotation_type == 'auto-summary' ? transcriptions.value  : undefined,
+              transcriptions: data.value.step?.annotation_type == 'auto-summary' ? transcriptions.value  : undefined,
               userAnnotations: userAnnotations.value,
               algos: algos.value,
               status: annotationsOut.value[annotationInfo.value?.index]?.annotation_status
@@ -417,18 +422,18 @@ export default defineComponent({
   onMounted(async () => {
     try {
       const player = await usePlayer()
-      if (AmaliaPlayerService.TAG_TRANSCRIPTION !== amaliaTranscriptionData.value.id) {
+      const data = amaliaTranscriptionData.value
+      if (!data) return
+      if (AmaliaPlayerService.TAG_TRANSCRIPTION !== data.id) {
         console.error(
-          `${amaliaTranscriptionData.value.id} should be the same as plugin id ${AmaliaPlayerService.TAG_TRANSCRIPTION}`
+          `${data.id} should be the same as plugin id ${AmaliaPlayerService.TAG_TRANSCRIPTION}`
         )
         return
       }
 
       const metadataManager = player?.mediaPlayerElement?.metadataManager
-      metadataManager?.addMetadata(amaliaTranscriptionData.value)
-      const isLoaded = metadataManager?.hasMetadataKey(
-        amaliaTranscriptionData.value.id
-      )
+      metadataManager?.addMetadata(data)
+      const isLoaded = metadataManager?.hasMetadataKey(data.id)
 
       if (!transcriptionContainer.value || !isLoaded) return
       player.createTranscription(transcriptionContainer.value)

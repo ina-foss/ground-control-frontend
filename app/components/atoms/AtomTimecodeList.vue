@@ -49,9 +49,11 @@ function showImage( ){
 
 onMounted(async () => {
   if (thumbnailUrl.value !== '') {
-    const media_id = thumbnailUrl.value?.split(':')[2]?.split('?')[0];
-    const {data} = await useFetch(thumbnailUrl.value, {key: `thumbnailUrl-${media_id}`});
-    newThumbnailUrl.value = data.value;
+    // TODO to verify
+    //const media_id = thumbnailUrl.value?.split(':')[2]?.split('?')[0];
+    //const {data} = await useFetch(thumbnailUrl.value, {key: `thumbnailUrl-${media_id}`});
+    const {data} = await useFetch(thumbnailUrl.value);
+    newThumbnailUrl.value = data?.value;
   }
 });
 

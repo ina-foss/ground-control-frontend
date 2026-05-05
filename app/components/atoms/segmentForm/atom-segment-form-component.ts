@@ -8,22 +8,19 @@ export default defineComponent({
   props: {
     zone:{
       type: String  as PropType<DisplayZone>,
-    },
-    textSpan:{
-      type: String,
-      required: true
-    },
+    }
   },
   components:{MoleculePlugins},
   setup(props, {emit,expose} ) {
 
-    const {zone,textSpan} = toRefs(props)
+    const {zone} = toRefs(props)
     const {t} = useI18n()
     const {$application} = useService()
     const {timestampToUnix} = $application
     const {pluginList} = storeToRefs(usePluginStore())
     const isOpen = ref(false)
     const currentSegment = ref(null)
+    const textSpan = ref(null)
     const showErrorMessage = ref(false)
     const pluginComponent = ref()
     const {pluginValues,affectPluginValues, initPluginValues} = useSpanService()

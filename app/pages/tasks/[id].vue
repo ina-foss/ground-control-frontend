@@ -47,11 +47,9 @@ const annotationsNormalized = computed(()=>{
   }
 })
 
-watchEffect(() => {
-  useHead({
-    title: `${getData.value.name} - Ground Control | INA`,
-  });
-});
+useHead({
+  title: computed(() => `${getData.value.name} - Ground Control | INA`)
+})
 
 onBeforeRouteLeave((to, from, next) => {
   if (window.onbeforeunload != null) {
@@ -66,7 +64,7 @@ onBeforeRouteLeave((to, from, next) => {
 });
 
 const { data: project } = await useAsyncData(
-  `project_${route.params.id}`,
+  `annotations_${route.params.id}`,
   async () => await fetchAnnotations(route.params.id),
 );
 
