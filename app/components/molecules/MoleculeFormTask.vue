@@ -107,10 +107,10 @@
                       />
                     </div>
                     <div class="flex">
-                      <label class="self-center w-24 pr-6">{{ t('taskForm.fields.title') }}</label>
+                      <label class="self-center w-24 pr-6">{{ t('taskForm.fields.instruction') }}</label>
                       <TextArea
                         v-model="instruction"
-                        :placeholder="t('taskForm.placeholders.title')"
+                        :placeholder="t('taskForm.placeholders.instruction')"
                         autocomplete="off"
                         class="input-box flex-auto custom-placeholder"
                       />
