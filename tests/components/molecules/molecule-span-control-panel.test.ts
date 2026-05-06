@@ -55,8 +55,8 @@ const createdPluginOptionsListMock = [
 ]
 
 const configMock = [
-  { id: 4, name: 'plugin-4' },
-  { id: 2, name: 'plugin-2', display_zone: 'group_modal' }
+  { id: 4, name: 'plugin-4',available_plugins: {} ,display_config: { is_verifiable: false } },
+  { id: 2, name: 'plugin-2', display_zone: 'group_modal',available_plugins: {},display_config: { is_verifiable: false }  }
 ]
 
 

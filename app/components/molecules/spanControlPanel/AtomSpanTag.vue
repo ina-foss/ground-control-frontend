@@ -7,6 +7,14 @@
           '--computed-width' : getMinSizeText() + 'px'
         }"
       :class="{'min-w-[80px] w-[80px] hover-span': expandable ,'w-fit':fluid , ' px-2 py-1 max-w-full transition-all duration-300 font-bold rounded border-2 inline-block text-xs/4 h-fit truncate  ' : true}" >
+          <span v-if="getStatusOfVerify"
+              :style="{
+          backgroundColor: verifiedSpan? '#268750':'#FCDB00',
+          borderColor: verifiedSpan? '#268750':'black',
+          border: verifiedSpan ? '#268750':'1px solid black'
+        }"
+              class="inline-block w-2 h-2 rounded-full shrink-0"
+          />
           {{text || "None"}}
         </span>
   </div>
@@ -42,13 +50,33 @@ const props = defineProps({
   fluid: {
       type: Boolean,
       default : false
-    }
-
+    },
+  verifiedSpan:{
+    type: Boolean,
+    default : false
+  },
+  pluginList:{
+    type: Array,
+    default : () => []
+  }
 })
 
-const {pluginId,pluginValue,text, expandable,fluid} = toRefs(props)
+const {pluginId,pluginValue,text, expandable,fluid,verifiedSpan,pluginList} = toRefs(props)
 
   const {createSpanColorPalette } = useSpanService()
+
+    const getStatusOfVerify = computed(()=>{
+    const mainPlugin=pluginList?.value?.find(x=>x.id==pluginId.value)
+
+    if(mainPlugin?.available_plugins?.length!==0){
+      const pluginName=mainPlugin?.available_plugins?.[pluginValue?.value?.[0].ext_id]
+      const pluginConfig=pluginList?.value?.find(x=>x.name==pluginName)
+      return pluginConfig?.display_config.is_verifiable
+    }
+    else{
+      return mainPlugin.display_config.is_verifiable ?? false
+    }
+  })
 
   function getMinSizeText(){
     const tempDiv =  document.createElement('div')

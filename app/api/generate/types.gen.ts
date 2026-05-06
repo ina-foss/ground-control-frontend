@@ -241,6 +241,10 @@ export type DisplayConfig = {
      * Default Value
      */
     default_value?: string | null;
+    /**
+     * Is Verifiable
+     */
+    is_verifiable?: boolean | null;
 };
 
 /**
@@ -1180,7 +1184,8 @@ export const Status = {
     PENDING: 'pending',
     SKIPPED: 'skipped',
     DONE: 'done',
-    ARCHIVED: 'archived'
+    ARCHIVED: 'archived',
+    VERIFIED: 'verified'
 } as const;
 
 /**

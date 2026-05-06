@@ -1,8 +1,12 @@
 
 import type { DisplayZone } from "~/api/generate"
+import AtomVerifyToggle from "~/components/atoms/verifyToggle/AtomVerifyToggle.vue";
+import {cleanText} from "~/utils/span";
+import {Status} from "~/api/generate";
 
 export default defineComponent({
   name:"MoleculePluginComponent",
+  components: {AtomVerifyToggle},
   emits: ['update:errorMessage'],
   props:{
     zone:{
@@ -17,14 +21,20 @@ export default defineComponent({
       type: String,
       required: true
     },
+    pendingVerifiedStatus:{
+      type: String as PropType<Status.PENDING | Status.VERIFIED>
+    },
+    currentSpan:{
+
+    }
   },
   setup(props,{emit,expose}) {
     const { t } = useI18n()
     const { selectComponent } = usePluginStore()
-    const {readPluginValues,pluginValues,defaultLabel } = useSpanService()
+    const {readPluginValues,pluginValues,defaultLabel ,isForResearch,mainPluginIndex} = useSpanService()
     const {getPluginList} = storeToRefs(usePluginStore())
-
-    const {zone,textSpan} = props
+    const labelTitle = ref()
+    const {zone,textSpan,pendingVerifiedStatus,currentSpan} = props
 
     const showErrorMessage = computed(({
       get: () => props.errorMessage,
@@ -114,9 +124,54 @@ export default defineComponent({
     }
 
 
+    const verifyStatus = ref<Record<string, 'pending' | 'verified'>>({})
+
+    watch(
+        pluginValues,
+        (newValues) => {
+          //parent
+          tidiedPluginList.value[zone]?.forEach((plugin) => {
+            const key = readPluginValues(plugin)
+            if (plugin.display_config?.is_verifiable) {
+              verifyStatus.value[key] = newValues[key]?.length && newValues[key][0] != null
+                  ? Status.VERIFIED
+                  : Status.PENDING
+            }
+            //child
+            plugin.children?.forEach((child) => {
+              if (child.display_config?.is_verifiable) {
+                const childKey = readPluginValues(child)
+                verifyStatus.value[childKey] = newValues[childKey]?.length && newValues[childKey][0] != null
+                    ? Status.VERIFIED
+                    : Status.PENDING
+              }
+            })
+          })
+        },
+        { deep: true }
+    )
+
+    const showLabelInput = computed(() => {
+      if(!isForResearch.value) {
+        if (!mainPluginIndex.value) return true
+        const selected = pluginValues[mainPluginIndex.value]?.[0]
+        if (!selected || selected.editable ==="") return false
+        labelTitle.value=selected.editable
+        if(selected){
+          if(currentSpan?.label && currentSpan?.label !== "")defaultLabel.value=currentSpan.label
+          else {
+            defaultLabel.value=selected.copyable ==='false'? "":cleanText(textSpan)
+
+          }
+        }
+      }
+      return true
+    })
+
     expose({
       pluginSelected,
-      checkPluginValues
+      checkPluginValues,
+      verifyStatus
     })
 
     return{
@@ -132,7 +187,12 @@ export default defineComponent({
       pluginSelected,
       textSpan,
       defaultLabel,
-      t
+      t,
+      verifyStatus,
+      pendingVerifiedStatus,
+      isForResearch,
+      showLabelInput,
+      labelTitle
     }
   }
 })

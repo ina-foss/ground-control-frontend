@@ -43,7 +43,7 @@ export default defineComponent({
     const groupFilter = ref()
     const spanLinkFilter = ref()
     const spanFormRef = ref<InstanceType<typeof AtomSpanForm> | null>(null)
-
+    const showUnverifiedOnly = ref(false)
     const panelCollapseController = reactive({
       spanList: true,
       currentGroup: true,
@@ -125,6 +125,20 @@ export default defineComponent({
               (spanLinkFilter.value.value == 'unlinked' && groupArray.value.map(group=>group.spans).every(spanGroupArray =>{
                 return every(spanGroupArray ,spanGroup=> spanGroup.spanId != span.id) } ) )
           )
+           // filter for status to verify
+           .filter((span: Span) => {
+             if (!showUnverifiedOnly.value) return true
+             if (span.verified) return false
+             const mainPlugin = pluginList.value.find(x => x.id == mainPluginId.value)
+             if (!mainPlugin) return false
+             if (mainPlugin.available_plugins?.length !== 0) {
+               const pluginName = mainPlugin.available_plugins?.[span?.plugins?.[mainPluginIndex.value]?.[0]?.ext_id]
+               const pluginConfig = pluginList.value.find(x => x.name == pluginName)
+               return pluginConfig?.display_config?.is_verifiable === true
+             } else {
+               return mainPlugin.display_config?.is_verifiable === true
+             }
+           })
     )
 
     const spanNone = computed(()=>
@@ -386,7 +400,8 @@ export default defineComponent({
       spanCurrentGroupArray,
       t,
       getGroupLabel,
-      contextMenuModel
+      showUnverifiedOnly,
+        contextMenuModel
     }
   }
 })

@@ -12,7 +12,40 @@
                   <p class="text-right ">{{  child?.display_config?.label || child?.name.charAt(0).toUpperCase() + child?.name.slice(1)  }}</p>
                 </component>
             </div>
-            <div v-if="index!==Object.keys(tidiedPluginList[zone]).length-1" class="divider"></div>
+            <div v-if="isForResearch" class="grid grid-cols-[100px_auto] gap-3 gap-y-5 pt-2">
+              <p :class="{'pt-2 text-right ': true , 'text-error': (!defaultLabel) && showErrorMessage }">
+                {{t('spanForm.correctedTerm')}}
+              </p>
+              <InputText
+                  v-model="defaultLabel"
+                  :placeholder="t('spanForm.correctedTermPlaceholder')"
+                  class="w-[calc(100%-110px)]"
+              />
+            </div>
+
+            <div
+                v-if="showLabelInput && !isForResearch && pluginValues && Object.keys(pluginValues).length !==0"
+                class="grid grid-cols-[100px_auto] gap-3 gap-y-5 pt-2"
+            >
+              <p class="pt-2 text-right">
+                {{labelTitle}}
+              </p>
+
+              <InputText
+                  v-model="defaultLabel"
+                  :placeholder="labelTitle"
+                  class="w-[calc(100%-110px)]"
+              />
+
+            </div>
+            <template v-for="(child) in childPluginMap[readPluginValues(plugin)]">
+              <atomVerifyToggle
+                  v-if="child?.display_config?.is_verifiable"
+                  v-model:plugin-value="verifyStatus[readPluginValues(child)]"
+                  :pendingVerifiedStatus="pendingVerifiedStatus"
+              />
+            </template>
+            <Divider class="!w-[calc(100%-70px)]" v-if="index!==Object.keys(tidiedPluginList[zone]).length-1"></Divider>
           </plugin-iterator>
         </main-plugins-wrapper>
         <!--if 0 plugin -->

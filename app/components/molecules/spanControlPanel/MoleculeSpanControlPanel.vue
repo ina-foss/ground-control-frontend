@@ -32,6 +32,16 @@
                         />
                       </span-link-filter>
                       <span-filter v-if="mainPluginId" class="flex items-center gap-2 pr-3" @click.stop>
+                        {{t('project.statusPlaceholder')}}
+                        <Button
+                            :class="showUnverifiedOnly ? '' : '!bg-white !border-surface-300 !text-gray-700'"
+                            :label="showUnverifiedOnly ? t('plugin.status.toBeVerified') : t('plugin.status.all')"
+                            severity="primary"
+                            :outlined="!showUnverifiedOnly"
+                            @click.stop="showUnverifiedOnly = !showUnverifiedOnly"
+                        />
+                      </span-filter>
+                      <span-filter v-if="mainPluginId" class="flex items-center gap-2 pr-3" @click.stop>
                         {{ mainPluginName?.charAt(0).toUpperCase() + mainPluginName?.slice(1) }}
                         <Select
                             v-model="spanFilter"
@@ -69,6 +79,8 @@
                             :plugin-id="mainPluginId ?? 0"
                             :plugin-value="span?.plugins?.[mainPluginIndex]?? null"
                             :text="span?.plugins?.[mainPluginIndex]?.map(value=>value?.label).join(', ')??'Span'"
+                            :verifiedSpan="span.verified"
+                            :pluginList="pluginList"
                             expandable
                             @contextmenu="openSpanMenu($event, span)"
                         />

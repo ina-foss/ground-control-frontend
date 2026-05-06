@@ -265,6 +265,12 @@
     },
     "edit": {
       "title": "Edit configuration"
+    },
+    "status" : {
+      "verificationStatus": "Verification Status",
+      "toBeVerified": "To be verified",
+      "verified": "Verified",
+      "all": "All"
     }
   },
   "taskForm": 

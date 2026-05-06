@@ -339,6 +339,7 @@ function createSpanService (){
     if (!span) return
     removeSpanFromDOM(span)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
+    span.verified=span.verified
     span.label = (()=>{
       if (!defaultLabel.value) return span.label
       else if (span.label && defaultLabel.value) return markRaw(defaultLabel.value)
@@ -370,6 +371,33 @@ function createSpanService (){
     tag.style.borderColor = borderColor
     tag.setAttribute('spanId',spanId)
     tag.style.zIndex= '50'
+
+    //  Pastille verte/jaune
+    const mainPlugin = pluginList.value.find(p => p.id == mainPluginId.value)
+    const isVerifiable = (() => {
+      if (!mainPlugin) return false
+      if (mainPlugin.available_plugins && Object.keys(mainPlugin.available_plugins).length !== 0) {
+        const pluginName = mainPlugin.available_plugins?.[plugins?.[0]?.ext_id]
+        const pluginConfig = pluginList.value.find(p => p.name == pluginName)
+        return pluginConfig?.display_config?.is_verifiable ?? false
+      }
+      return mainPlugin?.display_config?.is_verifiable ?? false
+    })()
+
+    if (isVerifiable) {
+      const dot = document.createElement('span')
+      const isVerified = span.verified === true
+      dot.style.display = 'inline-block'
+      dot.style.width = '8px'
+      dot.style.height = '8px'
+      dot.style.marginRight = '2px'
+      dot.style.borderRadius = '50%'
+      dot.style.flexShrink = '0'
+      dot.style.backgroundColor = isVerified ? '#268750' : '#FCDB00'
+      dot.style.border = isVerified ? '1px solid #268750' : '1px solid black'
+      tag.prepend(dot)
+    }
+
     element.appendChild(tag)
     tag.addEventListener('dragstart',event=> {
       event.dataTransfer.setData('span',spanId)

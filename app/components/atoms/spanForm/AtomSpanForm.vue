@@ -47,16 +47,17 @@
 
         </div>
 
-        <MoleculePlugins ref="pluginComponent" 
-          v-model:error-message="showErrorMessage" 
-          :zone="
+        <MoleculePlugins ref="pluginComponent"
+          v-model:error-message="showErrorMessage"
+           :pendingVerifiedStatus="pendingVerifiedStatus"
+            :zone="
             isGroup
               ? DisplayZone.GROUP_MODAL
               : segmentModal
                 ? DisplayZone.SPAN_MODAL_LEFT_SEGMENT
                 : DisplayZone.SPAN_MODAL_LEFT
           "
-          :textSpan="textSpan"  />
+          :textSpan="textSpan" :currentSpan="currentSpan" />
 
         <div v-if="!isForResearch" >
           <div v-if="pluginComponent?.pluginSelected">
@@ -75,31 +76,6 @@
           </div>
         </div>
 
-        <div v-if="isForResearch" class="grid grid-cols-[100px_auto] gap-3 gap-y-5">
-          <p :class="{'pt-2 text-right ': true , 'text-error': (!defaultLabel) && showErrorMessage }">
-            {{t('spanForm.correctedTerm')}}
-          </p>
-          <InputText
-            v-model="defaultLabel"
-            :placeholder="t('spanForm.correctedTermPlaceholder')"
-            class="w-[calc(100%-110px)]"
-          />
-        </div>
-        <div
-          v-if="showLabelInput && !isForResearch && pluginValues && Object.keys(pluginValues).length !==0"
-          class="grid grid-cols-[100px_auto] gap-3 gap-y-5"
-        >
-          <p class="pt-2 text-right">
-            {{labelTitle}}
-          </p>
-
-          <InputText
-            v-model="defaultLabel"
-            :placeholder="labelTitle"
-            class="w-[calc(100%-110px)]"
-          />
-
-        </div>
 
       </plugin-wrapper>
 

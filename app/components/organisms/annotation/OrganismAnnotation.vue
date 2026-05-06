@@ -58,6 +58,21 @@
       @find-element="handleFocusElement"
       @unselect="handleSelection"
     />
+      <div
+          v-if="hasSpansToVerify && annotation_type === 'span'"
+          class="absolute left-1/2 -translate-x-1/2 z-[5] flex items-center gap-2 text-sm font-medium"
+          style="top: 82px;"
+      >
+        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white text-sm font-semibold">
+        <span>{{ t('project.statusPlaceholder') }}</span>
+
+      <span
+          class="inline-block w-2.5 h-2.5 rounded-full shrink-0 ml-3"
+          style="background-color: #FCDB00; border: 1px solid black;"
+      />
+          <span class="text-sm font-normal">{{ t('plugin.status.toBeVerified') }}</span>
+        </div>
+      </div>
     <div v-if="annotation_type == 'video-segmentation'" class="h-full ">
       <Splitter class="h-full" layout="vertical" state-storage='local' state-key="ground-control-video-segmentation-bottom-ratio" @resize="triggerResize">
           <SplitterPanel class="flex items-center justify-center">
@@ -101,7 +116,7 @@
             layout="vertical"
             state-storage="local"
             state-key="ground-control-span-v"
-            style="height: calc(90vh - 5vh);"
+            style="height: calc(100vh - 100px);"
             @resize="triggerResize"
             class="bg-secondary"
           >
@@ -135,7 +150,7 @@
               ><MoleculeTabs ref="tabsRef" v-bind="tabsProps" />
             </MoleculeAnnotationLeftPanel>
         </SplitterPanel>
-        <SplitterPanel class="flex items-center justify-center min-h-0" :size="80" :min-size="50">
+        <SplitterPanel class="flex items-center justify-center" :size="80" :min-size="50">
         <Suspense>
           <component
             :is="annotationComponent.component"
@@ -144,6 +159,7 @@
             :state="annotationsOut[annotationInfo?.index]?.annotation_status"
             v-on="annotationComponent.events"
           />
+
           <template #fallback>
             <SpanSkeleton />
           </template>
@@ -299,5 +315,10 @@
   width: 100%;
   height: calc(100% - 50px);
 }
-
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>

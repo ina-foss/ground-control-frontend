@@ -66,7 +66,7 @@ export default defineComponent({
     const isPlaying  = ref(false)
     const currentTime = ref(0);
     const moleculeAnnotationRef = ref()
-
+    const { pluginList } = storeToRefs(usePluginStore())
     const isPlayerFocused = ref(false)
     const handleFocusElement = ({ div }:{div: HTMLDivElement}) => {
         const index = _.findIndex(moleculeAnnotationRef.value.listRefs,(el)=> el == div)
@@ -575,6 +575,27 @@ export default defineComponent({
 
   }
 
+    const hasSpansToVerify = computed(() => {
+      const spanService = useSpanService()
+      const { spanArray, mainPluginIndex, mainPluginId } = spanService
+
+      return spanArray.value.some((span) => {
+        if (!span?.nodes) return false
+        if (span.verified) return false
+
+        const mainPlugin = pluginList.value.find(x => x.id == mainPluginId.value)
+        if (!mainPlugin) return false
+
+        if (mainPlugin.available_plugins?.length !== 0) {
+          const pluginName = mainPlugin.available_plugins?.[span?.plugins?.[mainPluginIndex.value]?.[0]?.ext_id]
+          const pluginConfig = pluginList.value.find(x => x.name == pluginName)
+          return pluginConfig?.display_config?.is_verifiable === true
+        } else {
+          return mainPlugin.display_config?.is_verifiable === true
+        }
+      })
+    })
+
   onUnmounted(()=>{
     resetPlayer()
   })
@@ -647,7 +668,8 @@ export default defineComponent({
     triggerResize,
     media_type,
     transcriptionContainer,
-    isEvaluatedSpan
+    isEvaluatedSpan,
+    hasSpansToVerify
   }
 },
 })

@@ -155,7 +155,7 @@
       }
     }
   },
-    "annotation": {
+  "annotation": {
     "lastAutoSave": "Sauvegarde automatique déclenchée à {time}",
     "dialogs": {
       "abandon": {
@@ -265,6 +265,12 @@
     },
     "edit": {
       "title": "Modifier la configuration"
+    },
+    "status": {
+      "verificationStatus": "Statut de vérification",
+      "toBeVerified": "À vérifier",
+      "verified": "Vérifié",
+      "all": "Tous"
     }
   },
   "taskForm":

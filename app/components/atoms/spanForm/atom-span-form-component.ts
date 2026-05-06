@@ -1,16 +1,16 @@
 import _, {isEqual} from 'lodash'
 import AtomPluginItemslist from "../plugin/pluginItemsList/AtomPluginItemslist.vue";
 import {usePluginStore} from '~/stores/plugins'
-import {DisplayZone} from '~/api/generate'
-import { useI18n } from '#imports'
+import {Status, useI18n} from '#imports'
 import AtomDialogFilterGroup from "~/components/atoms/dialogFilterGroup/atom-dialog-filter-group-component";
 import { cleanText } from '~/utils/span';
+import AtomVerifyToggle from "~/components/atoms/verifyToggle/atom-verify-toggle-component";
 
 
 export default defineNuxtComponent({
   name:'AtomSpanForm',
   methods: {isEqual},
-  components: {AtomDialogFilterGroup, AtomPluginItemslist},
+  components: {AtomVerifyToggle, AtomDialogFilterGroup, AtomPluginItemslist},
   emits:['new-group','update:spansChanged'],
   props: {
     segmentModal: {
@@ -24,7 +24,6 @@ export default defineNuxtComponent({
     const { t } = useI18n()
     const textSpan=ref()
     const visible = ref()
-    const labelTitle = ref()
     const showErrorMessage = ref(false)
     const nodesCount=ref<number>()
     const suppWarning = computed(() =>
@@ -62,23 +61,6 @@ export default defineNuxtComponent({
     const pluginSelected=ref('');
 
 
-    const showLabelInput = computed(() => {
-      if(!isForResearch.value) {
-        if (!mainPluginIndex.value) return true
-        const selected = pluginValues[mainPluginIndex.value]?.[0]
-        if (!selected || selected.editable ==="") return false
-        labelTitle.value=selected.editable
-        if(selected){
-          if(currentSpan.value?.label && currentSpan.value.label !== "")defaultLabel.value=currentSpan.value?.label
-          else {
-            defaultLabel.value=selected.copyable ==='false'? "":cleanText(textSpan.value)
-
-          }
-        }
-      }
-      return true
-    })
-
     function expandContext() {
       expandedContext.value = true
     }
@@ -103,7 +85,7 @@ export default defineNuxtComponent({
     function createSpan () {
       if(nodes.value.length > 0){ // real spans
         spanArray.value[currentSpan.value.id] = currentSpan.value
-        segmentModal? applySpanNoColor(currentSpan.value) : applySpan(currentSpan.value) 
+        segmentModal? applySpanNoColor(currentSpan.value) : applySpan(currentSpan.value)
       }
     }
     function createSpanVirtuel(){
@@ -150,7 +132,12 @@ export default defineNuxtComponent({
       * Callback after clicking on the "Confirmed" button
       */
      function handleConfirmationButton (){
-       if(currentSpan.value) currentSpan.value.plugins = _.cloneDeep(pluginValues)
+       if(currentSpan.value)
+       {
+         currentSpan.value.plugins = _.cloneDeep(pluginValues)
+         const verifiableKey = Object.keys(pluginComponent.value?.verifyStatus ?? {})[0]
+         currentSpan.value.verified = pluginComponent.value?.verifyStatus[verifiableKey] === Status.VERIFIED
+       }
        showErrorMessage.value = false
 
        // When delete modal, don't check for validation
@@ -186,6 +173,7 @@ export default defineNuxtComponent({
        if(!showErrorMessage.value) close()
      }
 
+    const pendingVerifiedStatus = ref<Status.PENDING | Status.VERIFIED>(Status.PENDING)
 
     /**
       * Open the span form in a Primevue Dialog
@@ -212,6 +200,7 @@ export default defineNuxtComponent({
         nextNodes.value = reccursiveSibling(nodes.value[nodes.value.length-1], 20 )
       }
       if(suppression) deleteLayout.value = suppression
+      pendingVerifiedStatus.value = span.verified ? Status.VERIFIED : Status.PENDING
       visible.value = true
     }
 
@@ -237,7 +226,6 @@ export default defineNuxtComponent({
       computeColorByLabel,
       visible,
       labelSelected,
-      createSpan,
       nodes,
       prevNodes,
       nextNodes,
@@ -270,11 +258,11 @@ export default defineNuxtComponent({
       isVirtual,
       unauthorizedVirtualSpan,
       authorizedTypeList,
-      showLabelInput,
-      labelTitle,
       getPluginList,
       pluginComponent,
       t,
+      pendingVerifiedStatus,
+      currentSpan,
       segmentModal
     }
   },

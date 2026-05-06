@@ -14,6 +14,7 @@ declare interface SpanBase {
 
 declare interface Span extends SpanBase {
     deletedItems: number,
+    verified:boolean
     /**
      * Text extracted from {@link nodes}
      *
