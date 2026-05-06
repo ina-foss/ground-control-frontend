@@ -33,7 +33,6 @@ export function patchDataBeforeSaving(d: any[], annotation_type: AnnotationType,
     if (!handler || !locals) return block
     return handler.formatForSave(locals, block, { timeSpent })
   })
-
 }
 
 export const useAnnotationTypeRegistry = () => {

@@ -12,8 +12,14 @@ export default defineNuxtComponent({
   methods: {isEqual},
   components: {AtomDialogFilterGroup, AtomPluginItemslist},
   emits:['new-group','update:spansChanged'],
+  props: {
+    segmentModal: {
+      type: Boolean,
+      default: false
+    }
+  },
   setup(props,{emit,expose}) {
-
+    const { segmentModal } = props
     const currentSpan = ref<AnySpan | undefined>()
     const { t } = useI18n()
     const textSpan=ref()
@@ -26,9 +32,7 @@ export default defineNuxtComponent({
     )
     const {getPluginList} = storeToRefs(usePluginStore())
     const { selectComponent } = usePluginStore()
-    let filteredPlugins=[]
-    const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, deleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex } = useSpanService()
-    const {$application} = useService()
+    const {readPluginValues,pluginValues,extractTextFromSpanNodes, affectPluginValues, initPluginValues, deleteSpan ,reccursiveSibling ,computeColorByLabel, spanMenuSelected, labelSelected, spanArray, applySpan, defaultLabel ,newFocus,isForResearch,deletedNum, mainPluginIndex, applySpanNoColor } = useSpanService()
 
     const pluginComponent = ref()
 
@@ -99,7 +103,7 @@ export default defineNuxtComponent({
     function createSpan () {
       if(nodes.value.length > 0){ // real spans
         spanArray.value[currentSpan.value.id] = currentSpan.value
-        applySpan(currentSpan.value)
+        segmentModal? applySpanNoColor(currentSpan.value) : applySpan(currentSpan.value) 
       }
     }
     function createSpanVirtuel(){
@@ -270,7 +274,8 @@ export default defineNuxtComponent({
       labelTitle,
       getPluginList,
       pluginComponent,
-      t
+      t,
+      segmentModal
     }
   },
 })

@@ -24,6 +24,7 @@ declare interface Span extends SpanBase {
     nodes: Node[],
     tcin: number | string,
     tcout: number | string,
+    isSegment?: boolean,
     plugins: PluginAutocompleteValueDTO[]
   }
 

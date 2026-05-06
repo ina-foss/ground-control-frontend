@@ -209,7 +209,7 @@
       "noEligibleDeactivate": "No task eligible for deactivation"
     },
     "export": "Export",
-    "createTask": "Create task",
+    "createTask": "Create tasks",
     "addconfig": "Add configuration",
     "uploadConfig": "Upload Configuration",
     "seeConfigurations": "Click to see configurations",
@@ -266,5 +266,32 @@
     "edit": {
       "title": "Edit configuration"
     }
-  }
+  },
+  "taskForm": 
+    {
+      "dialog":{
+          "title":"New tasks"
+      },
+      "tabs":{
+          "upload":"Upload",
+          "manual":"Create manually"
+      },
+      "upload":{
+          "import":"Import one or more tasks",
+          "jsonHint":"Upload a JSON file"
+      },
+      "steps":{
+          "info":"Information",
+          "data":"Data"
+      },
+      "fields":{
+          "title":"Title",
+          "instruction":"Instruction",
+          "endDate":"End date"
+      },
+      "placeholders":{
+          "title":"Enter task title",
+          "instruction":"Enter task instruction"
+      }
+    }
 }

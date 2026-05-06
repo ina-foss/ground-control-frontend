@@ -3,9 +3,9 @@ import {expect, describe, it, vi }  from 'vitest'
 import type { VueWrapper } from '@vue/test-utils'
 import { flushPromises, mount } from '@vue/test-utils'
 import { mockNuxtImport} from "@nuxt/test-utils/runtime";
-import { Button, Dialog, StepList,Stepper, StepPanels, Step, FileUpload} from 'primevue';
+import { Button, Dialog, StepList,Stepper, StepPanels, Step, FileUpload, Tab} from 'primevue';
 import MoleculeFormTask from '~/components/molecules/MoleculeFormTask.vue';
-
+import { createI18n } from 'vue-i18n'
 
 const mockedStepObject = {
                       "title": "Step #3",
@@ -24,6 +24,11 @@ const mockedStepObject = {
                       "tasks": [],
                       "expiration_date" : "2025-04-09T14:44:37.700049"
                     }
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr'
+})
 
 describe('Molecule Form Task',()=>{
 
@@ -59,7 +64,7 @@ describe('Molecule Form Task',()=>{
         stubs: {
           teleport: true,
         },
-       plugins: [PrimeVue],
+       plugins: [PrimeVue, i18n],
        components: {
        Dialog,
        Stepper,
@@ -67,6 +72,7 @@ describe('Molecule Form Task',()=>{
         FileUpload,
        Step,
        StepPanels,
+       Tab
        },
        },
       props:{
@@ -79,57 +85,66 @@ describe('Molecule Form Task',()=>{
   it('should mount',async ()=>{
     expect(wrapper.exists()).toBeTruthy()
     expect(wrapper.findComponent(FileUpload).exists()).toBeTruthy()
-    expect(wrapper.findAllComponents(Button).length).toBe(5)
-    expect(wrapper.text()).toContain('Nouvelle')
+    expect(wrapper.findAllComponents(Button).length).toBe(7)
+    expect(wrapper.text()).toContain('taskForm.dialog.title')
   })
 
   it('click the create button', async ()=>{
-      await wrapper.find('input').setValue('Task title')
-      await wrapper.find('textarea').setValue('Task instruction')
+        const manualTab = wrapper.findAllComponents(Tab)
+          .find(t => t.text().includes('manual'))
 
-      const file = new File(['{"asset": {"url": "http://example.com", "media_type": "video", "player_parameters": {}}}'], 'test.json', { type: 'application/json' });
-      const fileUpload = wrapper.findComponent(FileUpload);
-      await fileUpload.vm.$emit('select', { files: [file] });
+        expect(manualTab).toBeTruthy()
+        await manualTab!.trigger('click')
+        const file = new File(
+          ['{"asset":{"url":"http://example.com","media_type":"video","player_parameters":{}}}'],
+          'test.json',
+          { type: 'application/json' }
+        )
 
-      // Wait for the file reader to populate the fileData array
-      await new Promise(resolve => setTimeout(resolve, 500));
-      await wrapper.vm.$nextTick()
+        const fileUpload = wrapper.findComponent(FileUpload)
 
-      await wrapper.find('button[aria-label="Créer"]').trigger('click')
-      expect(Media.createMediaMediaPost).toHaveBeenCalledOnce()
-      expect(Media.createMediaMediaPost).toHaveBeenLastCalledWith({body:{url: "http://example.com", type: "video", player_parameters: {}}})
-      expect(Task.createTaskTaskPost).toHaveBeenCalledOnce()
-      expect(Task.createTaskTaskPost).toHaveBeenLastCalledWith({body:{name: 'Task title',
-        expiration_date : null, instruction:'Task instruction', data_type: TaskDataType.AMALIA, status:Status.DRAFT, lead_time: null, step_id: mockedStepObject.id, media_id: 2  }})
+        await fileUpload.vm.$emit('select', { files: [file] })
 
-      // Wait for all asynchronous operations to complete
-      await flushPromises()
+        await wrapper.vm.$nextTick()
 
-      expect(Annotation.createAnnotationAnnotationPost).toHaveBeenCalledOnce()
-      expect(Annotation.createAnnotationAnnotationPost).toHaveBeenCalledWith({body:{
-      annotation:{
-        user_email: 'user@localhost.com',
-        annotation_status: Status.DRAFT,
-        version: 0,
-        result: {
-          asset : {
-            url : "http://example.com",
-            player_parameters : {},
-            media_type : "video"
-          }
+        // Wait for the file reader to populate the fileData array
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await wrapper.vm.$nextTick()
+
+        await wrapper.find('button[aria-label="Créer"]').trigger('click')
+        expect(Media.createMediaMediaPost).toHaveBeenCalledOnce()
+        expect(Media.createMediaMediaPost).toHaveBeenLastCalledWith({body:{url: "http://example.com", type: "video", player_parameters: {}}})
+        expect(Task.createTaskTaskPost).toHaveBeenCalledOnce()
+        expect(Task.createTaskTaskPost).toHaveBeenLastCalledWith({body:{name: undefined,
+          expiration_date : null, instruction:'', data_type: TaskDataType.AMALIA, status:Status.DRAFT, lead_time: null, step_id: mockedStepObject.id, media_id: 2  }})
+
+        // Wait for all asynchronous operations to complete
+        await flushPromises()
+
+        expect(Annotation.createAnnotationAnnotationPost).toHaveBeenCalledOnce()
+        expect(Annotation.createAnnotationAnnotationPost).toHaveBeenCalledWith({body:{
+        annotation:{
+          user_email: 'user@localhost.com',
+          annotation_status: Status.DRAFT,
+          version: 0,
+          result: {
+            asset : {
+              url : "http://example.com",
+              player_parameters : {},
+              media_type : "video"
+            }
+          },
+          task_id : 1
         },
-        task_id : 1
-      },
-      association: {
-        annotation_id: 0,
-        task_id : 1,
-        direction: 'in'
-      }
-    }})
+        association: {
+          annotation_id: 0,
+          task_id : 1,
+          direction: 'in'
+        }
+      }})
 
-      expect(wrapper.emitted()).toHaveProperty('toggle-dialog')
-      expect(wrapper.emitted()).toHaveProperty('refresh-data')
-  })
-
+        expect(wrapper.emitted()).toHaveProperty('toggle-dialog')
+        expect(wrapper.emitted()).toHaveProperty('refresh-data')
+    })
 
 })

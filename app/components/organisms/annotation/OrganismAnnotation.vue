@@ -101,7 +101,7 @@
             layout="vertical"
             state-storage="local"
             state-key="ground-control-span-v"
-            style="height: calc(100vh - 100px);"
+            style="height: calc(90vh - 5vh);"
             @resize="triggerResize"
             class="bg-secondary"
           >
@@ -135,7 +135,7 @@
               ><MoleculeTabs ref="tabsRef" v-bind="tabsProps" />
             </MoleculeAnnotationLeftPanel>
         </SplitterPanel>
-        <SplitterPanel class="flex items-center justify-center" :size="80" :min-size="50">
+        <SplitterPanel class="flex items-center justify-center min-h-0" :size="80" :min-size="50">
         <Suspense>
           <component
             :is="annotationComponent.component"
@@ -144,7 +144,6 @@
             :state="annotationsOut[annotationInfo?.index]?.annotation_status"
             v-on="annotationComponent.events"
           />
-
           <template #fallback>
             <SpanSkeleton />
           </template>

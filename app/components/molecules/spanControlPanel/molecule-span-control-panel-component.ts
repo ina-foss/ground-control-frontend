@@ -22,7 +22,7 @@ export default defineComponent({
 
     const { t } = useI18n()
 
-    const { focusGroup, readPluginValues ,mainPluginIndex, extractTextFromSpanNodes, spanForm, spanArray, newFocus,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,capitalizeFirstLetter} = useSpanService()
+    const { focusGroup, readPluginValues ,mainPluginIndex, extractTextFromSpanNodes, spanForm, spanArray, newFocus,isForResearch , createSpanColorPalette, mainPluginId,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,spanMenuSelected,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,capitalizeFirstLetter, contextMenuOptionsSegment, spanControlPanelMenuSegment} = useSpanService()
 
     const { unixToTimestamp } = useService().$application
 
@@ -70,13 +70,16 @@ export default defineComponent({
     const groupFilledFilter = ref()
 
     const layout = ref('grid')
+    const contextMenuModel = ref([])
 
     function openSpanMenu(event: MouseEvent, span: any) {
       event.preventDefault()
       event.stopPropagation()
 
       spanMenuSelected.value = span.id
-
+      contextMenuModel.value = span?.isSegment
+        ? contextMenuOptionsSegment.value
+        : contextControlPanelMenuOptions.value
       spanControlPanelMenu.value.show(event)
     }
 
@@ -382,7 +385,8 @@ export default defineComponent({
       capitalizeFirstLetter,
       spanCurrentGroupArray,
       t,
-      getGroupLabel
+      getGroupLabel,
+      contextMenuModel
     }
   }
 })

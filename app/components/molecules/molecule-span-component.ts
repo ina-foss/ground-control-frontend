@@ -23,12 +23,13 @@ export default defineComponent({
   emits: ['on-segment-click', 'update:spansChanged'],
   props: {
     state: {type: String as PropType<Status>},
-    isAnnotationEditable: { type: Boolean, default: true }
+    isAnnotationEditable: { type: Boolean, default: true },
+    isEvaluatedSpan: { type: Boolean, default: false }
   },
   async setup(props, { emit, expose }) {
-
+    const { isEvaluatedSpan } = props
     const { $application } = useService()
-    const { timestampToUnix, unixToTimestamp } = $application
+    const { unixToTimestamp } = $application
     const store = useOptions()
     const { options } = storeToRefs(store)
 
@@ -37,7 +38,7 @@ export default defineComponent({
     const playerTime = ref()
     let intervalCheckTime : NodeJS.Timeout
 
-    const {focusGroup,newFocus,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM, spansChanged, resetSpansChanged} = useSpanService()
+    const {focusGroup,spanForm, op,spanMenuSelected, spanMenu, spanArray, handleSelectionV2,  onDeleteSpan, loadSpan, saveSpan, contextMenuOptions, mainPluginId, appendAllSpansToDOM, spansChanged, resetSpansChanged} = useSpanService()
 
     onMounted(async()=>{
       $amalia = await usePlayer()
@@ -81,7 +82,8 @@ export default defineComponent({
     let doubleClickTimeout : NodeJS.Timeout | null = null
 
     function handleWordClick (event: {tcin: number | string, event: MouseEvent}){
-      if (options.value.ctrlWordClick) {
+      if (!isEvaluatedSpan) {
+              if (options.value.ctrlWordClick) {
         emit('on-segment-click', event)
       } else {
         if (doubleClickTimeout) {
@@ -98,7 +100,7 @@ export default defineComponent({
           }
         }
       }
-
+      }
     }
 
     const registerAnnotation = useAnnotationTypeRegistry()
@@ -108,7 +110,7 @@ export default defineComponent({
       appendAllSpansToDOM()
 
     registerAnnotation(
-        'span',
+        !isEvaluatedSpan ? 'span':'summary',
         {
           formatForSave: (locals,block,meta) => {
             const patched = _.cloneDeep(block)
@@ -158,6 +160,7 @@ export default defineComponent({
       focusGroup,
       handleWordClick,
       playerTime,
+      isEvaluatedSpan
     }
 
   }

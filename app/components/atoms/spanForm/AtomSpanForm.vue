@@ -26,14 +26,10 @@
           <span :class="[!expandedContext ?  '  truncate ' : 'text-justify ']" style="flex: 0 1 content;min-width: 0px; "> {{ " " + nextNodes.map(n=>n.firstChild?.nodeValue).join(' ') }} </span>
         </div>
       </context-wrapper>
-
-
       <plugin-wrapper v-if="!deleteLayout" class="flex flex-col gap-sm">
-
         <message-wrapper v-if="showErrorMessage" class="flex justify-center">
           <Message class="w-fit" severity="error" icon="pi pi-exclamation-triangle" >  {{ t('pluginForm.selectValueError') }}</Message>
         </message-wrapper>
-
         <div v-if="isVirtual" class=" grid grid-cols-[100px_auto] items-center gap-3 gap-y-5 w-[650px]">
           <p :class="{'pt-2 text-right ': true , 'text-error': (!virtualSpanCategory) && showErrorMessage }">{{t('spanForm.virtualSpan.role')}}</p>
           <div class="flex flex-wrap gap-4  ">
@@ -51,7 +47,16 @@
 
         </div>
 
-        <MoleculePlugins ref="pluginComponent" v-model:error-message="showErrorMessage" :zone="isGroup ? DisplayZone.GROUP_MODAL : DisplayZone.SPAN_MODAL_LEFT " :textSpan="textSpan"  />
+        <MoleculePlugins ref="pluginComponent" 
+          v-model:error-message="showErrorMessage" 
+          :zone="
+            isGroup
+              ? DisplayZone.GROUP_MODAL
+              : segmentModal
+                ? DisplayZone.SPAN_MODAL_LEFT_SEGMENT
+                : DisplayZone.SPAN_MODAL_LEFT
+          "
+          :textSpan="textSpan"  />
 
         <div v-if="!isForResearch" >
           <div v-if="pluginComponent?.pluginSelected">

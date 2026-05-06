@@ -42,7 +42,7 @@ export const usePluginStore = defineStore('plugin',{
           availableZones = [DisplayZone.BLOC]
           break;
         case 'span':
-          availableZones = [DisplayZone.SPAN_MODAL_LEFT,DisplayZone.SPAN_MODAL_RIGHT,DisplayZone.GROUP_MODAL]
+          availableZones = [DisplayZone.SPAN_MODAL_LEFT,DisplayZone.SPAN_MODAL_RIGHT,DisplayZone.GROUP_MODAL,DisplayZone.SPAN_MODAL_LEFT_SEGMENT]
         break;
         case  'video-segmentation' :
           availableZones = [DisplayZone.SPAN_MODAL_LEFT,DisplayZone.BLOC,DisplayZone.SPAN_MODAL_RIGHT]

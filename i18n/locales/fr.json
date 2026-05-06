@@ -209,7 +209,7 @@
       "noEligibleDeactivate": "Aucune tâche éligible à désactiver"
     },
     "export": "Exporter",
-    "createTask": "Créer une tâche",
+    "createTask": "Créer des tâches",
     "addconfig": "Ajouter une configuration" ,
     "uploadConfig": "Télécharger la configuration",
     "seeConfigurations": "Cliquer pour consulter les configurations",
@@ -266,5 +266,32 @@
     "edit": {
       "title": "Modifier la configuration"
     }
-  }
+  },
+  "taskForm":
+    {
+      "dialog":{
+          "title":"Nouvelles tâches"
+      },
+      "tabs":{
+          "upload":"Télécharger",
+          "manual":"Créer une ou plusieurs tâches manuellement"
+      },
+      "upload":{
+          "import":"Importer une ou plusieurs tâches",
+          "jsonHint":"Téléchargez un fichier JSON"
+      },
+      "steps":{
+          "info":"Informations",
+          "data":"Données"
+      },
+      "fields":{
+          "title":"Titre",
+          "instruction":"Instruction",
+          "endDate":"Date de fin"
+      },
+      "placeholders":{
+          "title":"Entrez le titre de la tâche",
+          "instruction":"Entrez l'instruction de tâche"
+      }
+    }
 }

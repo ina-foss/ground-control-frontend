@@ -92,8 +92,12 @@
                           {{extractTextFromSpanNodes(span?.nodes)}}
                         </span>
                         </span>
-                      </span-content-wrapper>
-                      <ContextMenu v-if="isAnnotationEditable" ref="spanControlPanelMenu" :model="contextControlPanelMenuOptions"  />
+                      </span-content-wrapper> 
+                      <ContextMenu
+                        v-if="isAnnotationEditable"
+                        ref="spanControlPanelMenu"
+                        :model="contextMenuModel"
+                      />
                     </ScrollPanel>
                   </span-wrapper>
               </Panel>

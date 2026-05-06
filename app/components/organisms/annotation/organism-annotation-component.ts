@@ -294,7 +294,7 @@ export default defineComponent({
 
     const highlightSegment = (index: number) => {
         getSelectedSegment()?.classList?.remove('selected-segment')
-        moleculeAnnotationRef.value?.listRefs[index].classList.add('selected-segment')
+        !isEvaluatedSpan && moleculeAnnotationRef.value?.listRefs[index].classList.add('selected-segment')
     }
 
     const handleVideoTimelineClick = (event) => {
@@ -359,7 +359,7 @@ export default defineComponent({
 
       case 'span':
           return { component :MoleculeSpan,
-            props: { isAnnotationEditable: isAnnotationEditable.value},
+            props: { isAnnotationEditable: isAnnotationEditable.value, isEvaluatedSpan: isEvaluatedSpan.value},
             events:{ 'on-segment-click': handleSegmentClick,
                     'update:spansChanged': (val) => {
                       spansChanged.value = val

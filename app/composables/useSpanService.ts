@@ -37,6 +37,7 @@ function createSpanService (){
   const spanArray = ref<Array<AnySpan | null>>([{id:0,label:"", plugins: []}])
   const spanMenu = ref()
   const spanControlPanelMenu = ref()
+  const spanControlPanelMenuSegment = ref()
   const op = ref()
   const createdPluginOptionsList = ref([])
   const linkMode = ref(false)
@@ -49,11 +50,23 @@ function createSpanService (){
   const defaultLabel = ref()
   const deletedNum=ref<number>()
   const spanForm = ref()
+  const segmentForm = ref()
   const spansChanged = ref(false)
 
   const contextMenuOptions = ref([{label:  t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:t('contextMenu.editBounds'), command:(event)=>showDragPin(event)},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
-
   const contextControlPanelMenuOptions = ref([{label: t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,suppression: true}) }])
+  const contextMenuOptionsSegment = ref([{
+    label: t('contextMenu.editProperties'), 
+    command: ()=>segmentForm.value?.open({span:spanArray.value[spanMenuSelected.value],
+    role:spanRole,
+    selectedGroup:selectedGroupVirtual.value,
+    mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})}
+    ,{id:2, label: t('contextMenu.delete'), 
+      command: ()=>segmentForm.value?.open({span:spanArray.value[spanMenuSelected.value],
+        role:spanRole,selectedGroup:selectedGroupVirtual.value,
+        mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,
+        suppression: true}) }])
+
   const pluginValues = reactive<pluginValues>({})
   const state: State = reactive({
     selection: null,
@@ -338,7 +351,7 @@ function createSpanService (){
     }
 
     span.nodes.forEach((element: HTMLDivElement,elementIndex:number)=>{
-      styleNode(element,span, elementIndex)
+       styleNode(element,span, elementIndex)
     })
     initPluginValues(pluginList.value)
   }
@@ -380,6 +393,7 @@ function createSpanService (){
 }
 
   function styleNode(element: HTMLDivElement, span: Span, nodeIndex: number ){
+      if (span?.isSegment) return
       const spanId = span.id
       const color = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value])
       const borderColor = createSpanColorPalette(mainPluginId.value,span?.plugins[mainPluginIndex.value],1)
@@ -682,12 +696,39 @@ function createSpanService (){
     spansChanged.value = false
   }
 
+  function applySpanNoColor(spanOrId: number | Span) {
+    let span: Span
+    let spanId: number
+    
+    if (typeof spanOrId === "number") {
+      spanId = spanOrId
+      span = spanArray.value[spanId]
+    } else {
+      span = spanOrId
+      spanId = span.id
+    }
+
+    if (!span) return
+
+    removeSpanFromDOM(span)
+
+    span.deletedItems = deletedNum.value ?? span.deletedItems
+
+    span.label = defaultLabel.value ?? span.label
+    span.isSegment = true
+
+    deletedNum.value = null
+
+    initPluginValues(pluginList.value)
+  }
+
   return{
     focusGroup, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling, deleteSpan, loadSpan, newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
-    affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions,spanControlPanelMenu,appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,hideDragPin,capitalizeFirstLetter,
-    spansChanged, resetSpansChanged
+    affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions, contextMenuOptionsSegment, spanControlPanelMenu, spanControlPanelMenuSegment, appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,hideDragPin,capitalizeFirstLetter,
+    spansChanged, resetSpansChanged, applySpanNoColor, segmentForm
   }
 }
+
 
 
 /**

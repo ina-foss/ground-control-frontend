@@ -10,7 +10,7 @@
             <span v-if="!isAnnotationEditable" class="absolute flex w-full items-center gap-2 justify-center top-[-33.5px]" v-html="useRoute().query.email ? `<p>Tâche annotée par</p><span class='py-1  font-bold rounded-md'>${useRoute().query.email}</span>` : state == Status.DONE ? 'Tâche Terminée ✅ ' : 'Mode Lecture 📖' " ></span>
             <ScrollPanel class="w-full pr-2">
               <div v-if="options.bloc" ref="blockArray" class="text-sm/4 p-lg bg-grey-150 rounded-md gap-sm flex flex-col w-full max-w-full" >
-                <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :player-time="playerTime"  @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
+                <AtomTranscriptionSpan v-for="(local, index) in filteredLocal" :key="index" :local="local" :player-time="playerTime" :show-segment-span="isEvaluatedSpan" @mouseup="isAnnotationEditable && spanForm.open(handleSelectionV2($event))" @handle-word-click="handleWordClick({...$event,index})"  />
               </div>
               <div v-else>
                 <div
@@ -48,7 +48,7 @@
               <TabPanel value="parameters" class=" !w-full grid items-center gap-3"   >
                           <option-wrapper class="  grid gap-2" style="grid-template-columns: repeat(auto-fit,minmax(300px,1fr))">
                             <AtomSpanOption v-model:span="options.span"  v-model:timecode-bloc="options.timecode_bloc"   v-model:bloc="options.bloc" />
-                            <atom-video-option />
+                            <atom-video-option v-if="!isEvaluatedSpan"/>
                             <AtomTaskComment />
                         </option-wrapper>
                       </TabPanel>

@@ -1,26 +1,53 @@
 <template>
   <transcription-container class="flex flex-col gap-2 w-full min-w-0">
-    <Tag
-      v-if="options.timecode_bloc"
-      severity="secondary"
-      :value="timestampToUnix(local.tcin)"
-      class="w-fit bg-surface-200 cursor-pointer"
-      @click="$emit('handleWordClick',{tcin: local.tcin, tcout:local.tcout, event: $event})"
-    />
-    <span-transcription-wrapper class="bg-white rounded-md scroll-m-12 flex flex-wrap gap-y-6 w-full max-w-full min-w-0 border-l-inherit py-6 px-2">      <div
+    <div class="flex justify-between"         
+        @mousedown.stop
+        @mouseup.stop
+        @click.stop>
+      <Tag
+        v-if="options.timecode_bloc"
+        severity="secondary"
+        :value="timestampToUnix(local.tcin)"
+        class="w-fit bg-surface-200 cursor-none"
+      />
+      <div v-if="showSegmentSpan" class="flex items-center">
+        <Tag v-if="segmentSpanId" 
+          value="1" 
+          class="cursor-none"
+          severity="success"/>
+        <Button 
+          icon="pi pi-ellipsis-h" 
+          text 
+          rounded 
+          @click="openSegmentForm"
+          />
+      </div>
+    </div>
+    <span-transcription-wrapper class="bg-white rounded-md scroll-m-12 flex flex-wrap gap-y-6 w-full max-w-full min-w-0 border-l-inherit py-6 px-2">     
+       <div
         v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))"
-        :key="word.tcin" :data-tc="word.tcin" :tcin="unixToTimestamp(word.tcin)" :tcout="unixToTimestamp(word.tcout)"
-        :class="{'inline px-[2px] break-words hover:bg-surface-200 relative  ': true, 'text-active  ': playerTime > unixToTimestamp(word.tcin),}" @drop="handleDrop" @dragleave="removeSpanPreview" @dragover="addSpanPrewiev"
+        :key="word.tcin" 
+        :data-tc="word.tcin" 
+        :tcin="unixToTimestamp(word.tcin)" 
+        :tcout="unixToTimestamp(word.tcout)"
+        :class="{'inline px-[2px] break-words hover:bg-surface-200 relative  ': true, 'text-active  '
+        : playerTime && !showSegmentSpan && playerTime > unixToTimestamp(word.tcin),}" 
+        @drop="handleDrop" 
+        @dragleave="removeSpanPreview" 
+        @dragover="addSpanPrewiev"
         @click="$emit('handleWordClick',{tcin: word.tcin, event: $event, tcout:word.tcout})">
         {{ word.data.text[0] }}
       </div>
+      <AtomSpanForm :segmentModal="true" ref="segmentForm"/>
     </span-transcription-wrapper>
   </transcription-container>
+  
 </template>
 
 <script setup lang="ts">
 import _ from 'lodash'
 import { useService } from '#imports';
+import AtomSpanForm from '../atoms/spanForm/AtomSpanForm.vue'
 
 const { local, playerTime } = defineProps({
   local: {
@@ -30,7 +57,8 @@ const { local, playerTime } = defineProps({
   playerTime :{
     type: Number,
     default : () => 0
-  }
+  },
+  showSegmentSpan: { type: Boolean, default: false }
 })
 
 const { handleDrop, dragData } = useSpanService()
@@ -39,7 +67,7 @@ const {options} = useOptions()
 
 const { $application } = useService()
 const { timestampToUnix, unixToTimestamp } = $application
-const { spanArray } = useSpanService()
+const { spanArray, segmentForm } = useSpanService()
 
 defineEmits(['handleWordClick'])
 
@@ -115,6 +143,44 @@ const removeSpanPreview = () => {
     .filter((element:Node)=>(element as Element).getAttribute('data-tc'))
     .forEach((element:Node)=>(element as Element).classList.remove('dragged_outer','dragged_inner'))
 
+}
+
+function getSegmentNodes(): HTMLElement[] {
+  return Array.from(
+    document.querySelectorAll(`[data-tc]`)
+  ).filter((el) => {
+    const tcin = Number(el.getAttribute('tcin'))
+    return tcin >= Number(local.tcin) && tcin <= Number(local.tcout)
+  }) as HTMLElement[]
+}
+
+const wrapperTcin = computed(() => Number(local.tcin))
+const wrapperTcout = computed(() => Number(local.tcout))
+const segmentSpanId = computed(() => {
+  const span = spanArray.value?.find((span: any) => {
+    return (
+      span?.isSegment === true &&
+      Number(span.tcin) === wrapperTcin.value &&
+      Number(span.tcout) === wrapperTcout.value
+    )
+  })
+
+  return span?.id 
+})
+
+function openSegmentForm(event: MouseEvent) {
+  if (!segmentForm.value?.open) return
+  const nodes = getSegmentNodes()
+  const id = spanArray.value.length
+  segmentSpanId?.value ? segmentForm.value.open({span:spanArray.value[segmentSpanId.value]}):segmentForm.value.open({
+    span: {
+      id,
+      tcin: local.tcin,
+      tcout: local.tcout,
+      nodes, 
+    },
+    event
+  })
 }
 
 </script>
