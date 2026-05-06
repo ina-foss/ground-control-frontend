@@ -56,12 +56,12 @@ function createSpanService (){
   const contextMenuOptions = ref([{label:  t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value]})},{id:1, label:t('contextMenu.editBounds'), command:(event)=>showDragPin(event)},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],suppression: true}) }])
   const contextControlPanelMenuOptions = ref([{label: t('contextMenu.editProperties'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})},{id:2, label: t('contextMenu.delete'), command: ()=>spanForm.value?.open({span:spanArray.value[spanMenuSelected.value],role:spanRole,selectedGroup:selectedGroupVirtual.value,mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,suppression: true}) }])
   const contextMenuOptionsSegment = ref([{
-    label: t('contextMenu.editProperties'), 
+    label: t('contextMenu.editProperties'),
     command: ()=>segmentForm.value?.open({span:spanArray.value[spanMenuSelected.value],
     role:spanRole,
     selectedGroup:selectedGroupVirtual.value,
     mainGroupPluginIndex:mainGroupPluginIndexVirtual.value})}
-    ,{id:2, label: t('contextMenu.delete'), 
+    ,{id:2, label: t('contextMenu.delete'),
       command: ()=>segmentForm.value?.open({span:spanArray.value[spanMenuSelected.value],
         role:spanRole,selectedGroup:selectedGroupVirtual.value,
         mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,
@@ -339,7 +339,6 @@ function createSpanService (){
     if (!span) return
     removeSpanFromDOM(span)
     span.deletedItems = deletedNum.value ? markRaw(deletedNum.value) : span.deletedItems
-    span.verified=span.verified
     span.label = (()=>{
       if (!defaultLabel.value) return span.label
       else if (span.label && defaultLabel.value) return markRaw(defaultLabel.value)
@@ -727,7 +726,7 @@ function createSpanService (){
   function applySpanNoColor(spanOrId: number | Span) {
     let span: Span
     let spanId: number
-    
+
     if (typeof spanOrId === "number") {
       spanId = spanOrId
       span = spanArray.value[spanId]
