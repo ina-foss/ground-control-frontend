@@ -89,7 +89,7 @@ describe('Molecule Form Task',()=>{
     expect(wrapper.text()).toContain('taskForm.dialog.title')
   })
 
-  it('click the create button', async ()=>{
+  it('Create ', async ()=>{
         const manualTab = wrapper.findAllComponents(Tab)
           .find(t => t.text().includes('manual'))
 
@@ -102,9 +102,7 @@ describe('Molecule Form Task',()=>{
         )
 
         const fileUpload = wrapper.findComponent(FileUpload)
-
         await fileUpload.vm.$emit('select', { files: [file] })
-
         await wrapper.vm.$nextTick()
 
         // Wait for the file reader to populate the fileData array
@@ -115,7 +113,7 @@ describe('Molecule Form Task',()=>{
         expect(Media.createMediaMediaPost).toHaveBeenCalledOnce()
         expect(Media.createMediaMediaPost).toHaveBeenLastCalledWith({body:{url: "http://example.com", type: "video", player_parameters: {}}})
         expect(Task.createTaskTaskPost).toHaveBeenCalledOnce()
-        expect(Task.createTaskTaskPost).toHaveBeenLastCalledWith({body:{name: undefined,
+        expect(Task.createTaskTaskPost).toHaveBeenLastCalledWith({body:{name: 'test',
           expiration_date : null, instruction:'', data_type: TaskDataType.AMALIA, status:Status.DRAFT, lead_time: null, step_id: mockedStepObject.id, media_id: 2  }})
 
         // Wait for all asynchronous operations to complete

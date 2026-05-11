@@ -248,13 +248,16 @@ const endDate = ref(null)
 const fileData = ref([])
 const deleteDialog = ref(false)
 const activeTab = ref('upload')
+const fileName = ref('')
 const isUploadEnabled = computed(() => fileData.value.length > 0)
 
 const onSelect = async (event) => {
-  const reader = new FileReader();
-  reader.onloadend = onReaderLoad;
-  reader.readAsText(event.files[event.files.length - 1]);
-};
+  const file = event.files[event.files.length - 1]
+  fileName.value = file.name.replace(/\.json$/i, '')
+  const reader = new FileReader()
+  reader.onloadend = onReaderLoad
+  reader.readAsText(file)
+}
 
 const onReaderLoad = (event) => {
   try {
@@ -269,7 +272,7 @@ const onReaderLoad = (event) => {
 
 const createTaskFromUpload = async () => {
   const results = await Promise.all(
-    fileData.value.map(async (entry) => {
+    fileData.value.map(async (entry,index) => {
       try {
         const media = await Media.createMediaMediaPost({
           body: {
@@ -282,8 +285,10 @@ const createTaskFromUpload = async () => {
         const task = await Task.createTaskTaskPost({
           body: {
             name:
-              name.value ||
-              entry.data?.[0]?.localisation?.[0]?.sublocalisations?.localisation?.[0]?.label,
+              name.value
+                ? `${name.value}${fileData.value.length > 1 ? `_${index + 1}` : ''}`
+                : entry.data?.[0]?.localisation?.[0]?.sublocalisations?.localisation?.[0]?.label ||
+                  `${fileName.value}${fileData.value.length > 1 ? `_${index + 1}` : ''}`,
             instruction: instruction.value,
             data_type: TaskDataType.AMALIA,
             status: Status.DRAFT,
