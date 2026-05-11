@@ -1,4 +1,12 @@
 {
+  "comment":{
+    "message":{
+      "emptyComment": "Comment can't be empty.",
+      "successCreate": "Your comment has been posted successfully.",
+      "successDelete": "Your comment has been deleted successfully.",
+      "errorDelete": "Error while deleting the comment : {message}"
+    }
+  },
   "menu": {
     "options": "Options",
     "language": "Language",

@@ -104,6 +104,8 @@ const comments = ref<TaskCommentDto[] | null>(null)
 const {getData} = refresh
 const isAnnotationEditable = inject('isAnnotationEditable')
 
+const { t } = useI18n()
+
 onMounted(async () => {
   comments.value = getData.task_comments
 })
@@ -117,41 +119,56 @@ function handleClearComment() {
 }
 
 function handleCreateComment() {
-  if (comment.value != '') {
-    createTaskCommentTaskCommentPost({comment: comment.value, task_id: getData.id, created_by: userEmail}).then(() => toast.add({detail: 'Votre commentaire à été envoyé', summary: 'Envoie réussi', life: 3000}))
-        .then(() => readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id).then((comment) => comments.value = comment))
-  }
+  if (comment.value.trim()) {
+    TaskComment.createTaskCommentTaskCommentPost({
+      body: {comment: comment.value, task_id: getData.id, created_by: userEmail}
+    })
+    .then(
+      () => toast.add({
+        summary: t('comment.message.successCreate'), life: 3000, severity: 'success'
+      })
+    )
+    .then(
+      () => TaskComment.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet({
+        path: {task_comment_task_id: getData.id}
+      })
+    .then(
+      (comment) => comments.value = comment)
+    )
   comment.value = ""
+  }
+  else {
+    toast.add({
+      severity: 'warn',
+      summary: t('comment.message.emptyComment'), life: 2000
+    })
+  }
 }
 
-
 const handleDeleteComment = async (id) => {
-  const { execute } = await useAsyncData(
+  const { execute, status } = await useAsyncData(
     `deleteComment-${id}`,
     async () => {
-      await TaskComment.deleteTaskCommentTaskCommentTaskCommentIdDelete(id);
-      comments.value = await TaskComment.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet(getData.id);
-
+      await TaskComment.deleteTaskCommentTaskCommentTaskCommentIdDelete({query: {task_comment_id : id}});
+      comments.value = await TaskComment.readTaskCommentsByTaskIdTaskCommentsTaskCommentTaskIdGet({path:{ task_comment_task_id: getData.id}} );
     },
-    { immediate: false,
-      onSuccess: () => {
-        toast.add({
-          severity: 'success',
-          summary: 'Succès',
-          detail: 'Commentaire supprimé avec succès',
-          life: 3000
-        });
-      },
-      onError: (error) => {
-        toast.add({
-          severity: 'error',
-          summary: 'Erreur',
-          detail: `Échec de la suppression du commentaire : ${error.message || 'Erreur inconnue'}`,
-          life: 3000
-        });
-      }}
+    { immediate: false }
   );
   await execute()
+  if(status.value === 'error') {
+    toast.add({
+      severity: 'error',
+      summary: t('comment.message.errorDelete',{message : status.value.error.message || t('error.unknownError') } ),
+      life: 3000
+    })
+  }
+  else if(status.value === 'success') {
+    toast.add({
+      severity: "info",
+      summary: t('comment.message.successDelete'),
+      life: 3000
+    });
+  }
 };
 
 

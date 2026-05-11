@@ -1,4 +1,12 @@
 {
+  "comment":{
+    "message":{
+      "successCreate": "Votre commentaire à été envoyé",
+      "successDelete": "Votre commentaire à été supprimé",
+      "errorDelete": "Echec de la suppression du commentaire : {message}",
+      "emptyComment": "Le commentaire ne peut pas être vide."
+    }
+  },
   "menu": {
     "options": "Options",
     "language": "Langue",
