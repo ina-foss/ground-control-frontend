@@ -64,20 +64,20 @@ v-for="(chip, index) in chipList" :key="chip.label" :label="chip.label" :removab
         </div>
       </div>
     </div>
-    <div ref="commentWrapper"  :class="`absolute  ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'}  right-[4px]`" >
-    <OverlayBadge
-v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
-                  :class="`overflow-visible  z-[60] !transition !duration-500 $  `">
-      <Button class="!bg-primary !border-primary"  @click="toggleComment">
+    <div v-if="showSecondaryButtons" ref="commentWrapper"  :class="`absolute  ${isTopicFirstSegment? 'top-[53px]' : 'top-[3px]'}  right-[4px]`" >
+      <OverlayBadge
+  v-if="phrase.data.comments?.length > 0" :value="phrase.data.comments?.length"
+                    :class="`overflow-visible  z-[60] !transition !duration-500 $  `">
+        <Button class="!bg-primary !border-primary"  @click="toggleComment">
+          <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" >
+        </Button>
+      </OverlayBadge>
+      <Button
+  v-else-if="isAnnotationEditable"
+        :class="`  opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500  `"
+        @click="toggleComment" >
         <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" >
       </Button>
-    </OverlayBadge>
-    <Button
-v-else-if="isAnnotationEditable"
-      :class="`  opacity-0 hover:!bg-primary hover:!border-primary  group-hover:opacity-30 hover:!opacity-100 z-[60] !transition !duration-500  `"
-      @click="toggleComment" >
-      <img style="height:14px;width:14px;" :src="commentIcon" alt="comment icon" >
-    </Button>
     </div>
     <div
       :class="`bg-white relative p-3 ${isTopicFirstSegment? 'mt-[10px]' : ' '} z-40 isolate  text-sm col-auto grow rounded-md cursor-pointer transition-all relative hover:shadow-lg `"

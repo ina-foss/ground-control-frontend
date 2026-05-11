@@ -1,6 +1,6 @@
 <template>
   <transcription-container class="flex flex-col gap-2 w-full min-w-0">
-    <div class="flex justify-between"         
+    <div class="flex justify-between"
         @mousedown.stop
         @mouseup.stop
         @click.stop>
@@ -11,29 +11,29 @@
         class="w-fit bg-surface-200 cursor-none"
       />
       <div v-if="showSegmentSpan" class="flex items-center">
-        <Tag v-if="segmentSpanId" 
-          value="1" 
+        <Tag v-if="segmentSpanId"
+          value="1"
           class="cursor-none"
           severity="success"/>
-        <Button 
-          icon="pi pi-ellipsis-h" 
-          text 
-          rounded 
+        <Button
+          icon="pi pi-ellipsis-h"
+          text
+          rounded
           @click="openSegmentForm"
           />
       </div>
     </div>
-    <span-transcription-wrapper class="bg-white rounded-md scroll-m-12 flex flex-wrap gap-y-6 w-full max-w-full min-w-0 border-l-inherit py-6 px-2">     
+    <span-transcription-wrapper class="bg-white rounded-md scroll-m-12 flex flex-wrap gap-y-6 w-full max-w-full min-w-0 border-l-inherit py-6 px-2">
        <div
         v-for="word in local.sublocalisations?.localisation.sort((wordA,wordB)=>unixToTimestamp(wordA?.tcin)-unixToTimestamp(wordB?.tcin))"
-        :key="word.tcin" 
-        :data-tc="word.tcin" 
-        :tcin="unixToTimestamp(word.tcin)" 
+        :key="word.tcin"
+        :data-tc="word.tcin"
+        :tcin="unixToTimestamp(word.tcin)"
         :tcout="unixToTimestamp(word.tcout)"
-        :class="{'inline px-[2px] break-words hover:bg-surface-200 relative  ': true, 'text-active  '
-        : playerTime && !showSegmentSpan && playerTime > unixToTimestamp(word.tcin),}" 
-        @drop="handleDrop" 
-        @dragleave="removeSpanPreview" 
+        :class="{'inline-block hover:bg-surface-200 relative whitespace-pre ': true, 'text-active  '
+        : playerTime && !showSegmentSpan && playerTime > unixToTimestamp(word.tcin),}"
+        @drop="handleDrop"
+        @dragleave="removeSpanPreview"
         @dragover="addSpanPrewiev"
         @click="$emit('handleWordClick',{tcin: word.tcin, event: $event, tcout:word.tcout})">
         {{ word.data.text[0] }}
@@ -41,7 +41,7 @@
       <AtomSpanForm :segmentModal="true" ref="segmentForm"/>
     </span-transcription-wrapper>
   </transcription-container>
-  
+
 </template>
 
 <script setup lang="ts">
@@ -165,7 +165,7 @@ const segmentSpanId = computed(() => {
     )
   })
 
-  return span?.id 
+  return span?.id
 })
 
 function openSegmentForm(event: MouseEvent) {
@@ -177,7 +177,7 @@ function openSegmentForm(event: MouseEvent) {
       id,
       tcin: local.tcin,
       tcout: local.tcout,
-      nodes, 
+      nodes,
     },
     event
   })
