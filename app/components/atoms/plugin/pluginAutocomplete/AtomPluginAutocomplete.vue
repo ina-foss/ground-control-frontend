@@ -64,7 +64,6 @@
       :href="pluginValue[0].link"
       target="_blank"
       rel="noopener noreferrer"
-      role="button"
       class="flex items-center p-2 rounded-[4px] gap-2 outline outline-1 outline-[#003A4C] no-underline"
       @click.stop
       >
