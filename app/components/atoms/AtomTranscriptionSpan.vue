@@ -30,7 +30,7 @@
         :data-tc="word.tcin"
         :tcin="unixToTimestamp(word.tcin)"
         :tcout="unixToTimestamp(word.tcout)"
-        :class="{'inline-block hover:bg-surface-200 relative whitespace-pre ': true, 'text-active  '
+        :class="{'inline-block hover:bg-surface-200 relative break-words whitespace-pre ': true, 'text-active  '
         : playerTime && !showSegmentSpan && playerTime > unixToTimestamp(word.tcin),}"
         @drop="handleDrop"
         @dragleave="removeSpanPreview"
