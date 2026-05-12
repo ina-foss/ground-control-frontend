@@ -4,7 +4,13 @@ import AtomPluginAutocomplete from '@/components/atoms/plugin/pluginAutocomplete
 import PrimeVue from 'primevue/config'
 import { AutoComplete } from 'primevue'
 import { nextTick, ref } from 'vue'
+import { createI18n } from 'vue-i18n'
 
+const i18n = createI18n({
+  legacy: false,
+  locale: 'fr',
+  messages: { fr: {} }
+})
 // Mock du composable useTopicList
 vi.mock('~/composables/useTopicList', () => ({
   useTopicList: () => ({
@@ -46,7 +52,7 @@ describe('AtomPluginAutocomplete.vue', () => {
   function createWrapper(propsOverride = {}) {
     return mount(AtomPluginAutocomplete, {
       global: {
-        plugins: [PrimeVue],
+        plugins: [PrimeVue,i18n],
         provide: {
           chipList: chipListMock,
           isAnnotationEditable: true
@@ -112,7 +118,7 @@ describe('AtomPluginAutocomplete.vue', () => {
     const topicList = ref([{ labels: [] }])
     const wrapper2 = mount(AtomPluginAutocomplete, {
       global: {
-        plugins: [PrimeVue],
+        plugins: [PrimeVue,i18n],
         provide: {
           chipList: chipListMock,
           isAnnotationEditable: true
@@ -144,7 +150,7 @@ describe('AtomPluginAutocomplete.vue', () => {
 
     const wrapper = mount(AtomPluginAutocomplete, {
       global: {
-        plugins: [PrimeVue],
+        plugins: [PrimeVue,i18n],
         provide: {
           isAnnotationEditable: true
         },

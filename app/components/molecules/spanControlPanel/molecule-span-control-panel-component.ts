@@ -141,6 +141,19 @@ export default defineComponent({
            })
     )
 
+    const hasVerifiablePlugin = computed(() => {
+      const mainPlugin = pluginList.value.find(x => x.id == mainPluginId.value)
+      if (!mainPlugin) return false
+
+      if (mainPlugin.available_plugins?.length !== 0) {
+        return Object.values(mainPlugin.available_plugins ?? {}).some(pluginName => {
+          const pluginConfig = pluginList.value.find(x => x.name == pluginName)
+          return pluginConfig?.display_config?.is_verifiable === true
+        })
+      }
+
+      return mainPlugin.display_config?.is_verifiable === true
+    })
     const spanNone = computed(()=>
       spanArray.value.filter(span=>span && span.id == 0).pop()
     )
@@ -401,7 +414,8 @@ export default defineComponent({
       t,
       getGroupLabel,
       showUnverifiedOnly,
-        contextMenuModel
+        contextMenuModel,
+      hasVerifiablePlugin
     }
   }
 })

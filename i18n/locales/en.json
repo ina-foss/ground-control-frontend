@@ -156,10 +156,9 @@
       "video": {
         "backward5Seconds": "Rewind 5 seconds",
         "forward5Seconds": "Forward 5 seconds",
-        "backwardFrame": "Frame backward",
-        "forwardFrame": "Frame forward",
-        "slowBackward": "Slow rewind",
-        "slowForward": "Slow forward"
+        "backwardStart": "Backward start",
+        "forwardEnd": "Forward end",
+        "forward": "Forward"
       }
     }
   },
@@ -265,7 +264,8 @@
       "mainPlugin": "Main plugin",
       "chooseRole": "Choose a role",
       "getName": "Enter the name",
-      "personName": "Enter the person's name"
+      "personName": "Enter the person's name",
+      "wikidata": "Wikidata"
     },
     "delete": {
       "title": "Delete plugin",
@@ -281,7 +281,7 @@
       "all": "All"
     }
   },
-  "taskForm": 
+  "taskForm":
     {
       "dialog":{
           "title":"New tasks"

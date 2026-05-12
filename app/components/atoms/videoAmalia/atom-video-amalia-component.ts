@@ -97,10 +97,9 @@ export default defineComponent({
   const videoCategories = computed(() => [
     { name: t('player.config.video.backward5Seconds'), key: "backward-5seconds" },
     { name:  t('player.config.video.forward5Seconds'), key: "forward-5seconds" },
-    { name: t('player.config.video.backwardFrame'), key: "backward-frame" },
-    { name: t('player.config.video.forwardFrame'), key: "forward-frame" },
-    { name: t('player.config.video.slowBackward'), key: "slow-backward" },
-    { name: t('player.config.video.slowForward'), key: "slow-forward" }
+    { name: t('player.config.video.backwardStart'), key: "backward-start" },
+    { name: t('player.config.video.forwardEnd'), key: "forward-end" },
+    { name: t('player.config.video.forward'), key: "forward" }
   ]);
 
     watch([selectedCategories, visibleRight], async () => {

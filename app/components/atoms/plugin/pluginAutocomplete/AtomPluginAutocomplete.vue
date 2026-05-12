@@ -17,7 +17,7 @@
       @complete="handleFilter"
       @dropdown-click="onDropdownOpen">
       <template #option="slotProps">
-        <div class="flex items-start space-x-2 w-[450px] overflow-auto gap-2 ">
+        <div class="flex items-start space-x-2 overflow-auto gap-2 ">
           <img
               v-if="slotProps.option.image"
               :src="slotProps.option.image"
@@ -61,18 +61,18 @@
       class="absolute right-7 -translate-y-1/2 flex items-center"
     >
       <a
-        :href="pluginValue[0].link"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="flex items-center gap-1 text-sm font-bold text-gray-600 hover:text-black"
-        @click.stop
+      :href="pluginValue[0].link"
+      target="_blank"
+      rel="noopener noreferrer"
+      role="button"
+      class="flex items-center p-2 rounded-[4px] gap-2 outline outline-1 outline-[#003A4C] no-underline"
+      @click.stop
       >
-        <img
-          class="h-8 w-8 brightness-0"
+      <img
           alt="wikidata icon"
-          src="/icons/icons-svg/icons-svg/wikiData.svg"
-        >
-        <span>Wikidata</span>
+          src="/icons/icons-svg/icons-svg/link.svg"
+      >
+      <span class="text-[#003A4C] text-xs font-bold">{{t('plugin.fields.wikidata')}}</span>
       </a>
     </div>
     <div
@@ -157,7 +157,7 @@
   </div>
 </template>
 
-<script lang="ts" src="./atom-plugin-autocomplete-component">
+<script lang="ts" src="./atom-plugin-autocomplete-component.ts">
 
 </script>
 <style scoped >

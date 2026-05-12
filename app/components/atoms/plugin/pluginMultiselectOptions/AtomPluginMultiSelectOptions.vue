@@ -30,7 +30,7 @@
             :options="optionsByGroup[group]"
             optionLabel="label"
             :placeholder="group"
-            :class="{'basis-[calc(100%-360px)]': $slots.default}"
+            :class="{'basis-[calc(100%-365px)]': $slots.default}"
             :maxSelectedLabels="0"
             :selectedItemsLabel="getGroupLabel(row, group)"
             :label="getGroupLabel(row, groups[0])"

@@ -4,6 +4,7 @@ import type { PluginWithIdDto } from '~/api/generate'
 import type { PropType } from 'vue'
 import _ from 'lodash'
 import {cleanText} from '~/utils/span'
+import {useI18n} from "#i18n";
 
 
 export default defineComponent({
@@ -32,6 +33,7 @@ export default defineComponent({
         emit('update:pluginValue', newValue)
       }
     })
+    const { t } = useI18n()
 
     const filteredOptions = ref( pluginItemsConfig.value ?? [])
     const emptyInput = ref([])
@@ -226,7 +228,8 @@ export default defineComponent({
       iconClass,
       showChips,
       selectedValue,
-      testOptions: filteredOptions
+      testOptions: filteredOptions,
+      t
     }
   }
 })

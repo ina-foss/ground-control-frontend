@@ -385,7 +385,7 @@ function createSpanService (){
 
     if (isVerifiable) {
       const dot = document.createElement('span')
-      const isVerified = span.verified === true
+      const isVerified = span.verified
       dot.style.display = 'inline-block'
       dot.style.width = '8px'
       dot.style.height = '8px'

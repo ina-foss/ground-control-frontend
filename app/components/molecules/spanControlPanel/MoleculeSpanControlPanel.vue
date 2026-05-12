@@ -31,7 +31,7 @@
                             :options="[{label:'Aucun',value:'unlinked'},{label:'Groupe',value:'linked'}]"
                         />
                       </span-link-filter>
-                      <span-filter v-if="mainPluginId" class="flex items-center gap-2 pr-3" @click.stop>
+                      <span-filter v-if="mainPluginId && hasVerifiablePlugin" class="flex items-center gap-2 pr-3" @click.stop>
                         {{t('project.statusPlaceholder')}}
                         <Button
                             :class="showUnverifiedOnly ? '' : '!bg-white !border-surface-300 !text-gray-700'"
@@ -104,7 +104,7 @@
                           {{extractTextFromSpanNodes(span?.nodes)}}
                         </span>
                         </span>
-                      </span-content-wrapper> 
+                      </span-content-wrapper>
                       <ContextMenu
                         v-if="isAnnotationEditable"
                         ref="spanControlPanelMenu"
