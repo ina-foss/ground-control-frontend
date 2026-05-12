@@ -26,7 +26,7 @@
           </div>
         </div>
       </SplitterPanel>
-      <SplitterPanel class="bg-secondary" :size="55"> 
+      <SplitterPanel class="bg-secondary" :size="55" :min-size="30"> 
         <div class="flex flex-col items-center w-full h-full gap-10 overflow-hidden ">
                   <Tabs value="span" class="w-full h-full flex flex-col">
                     <TabList  >

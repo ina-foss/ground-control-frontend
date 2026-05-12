@@ -110,13 +110,13 @@
     </div>
     <div v-else-if="annotation_type == 'span'" class="h-full w-full">
       <Splitter class="h-full" state-storage='local' state-key="ground-control-span-h" @resize="triggerResize">
-        <SplitterPanel class="flex h-full items-center justify-center bg-secondary" :size="20">
+        <SplitterPanel class="flex h-full items-center justify-center bg-secondary" :size="20" :min-size="20">
           <Splitter
             v-if="isEvaluatedSpan"
             layout="vertical"
             state-storage="local"
             state-key="ground-control-span-v"
-            style="height: calc(100vh - 100px);"
+            style="height: calc(90vh - 50px);"
             @resize="triggerResize"
             class="bg-secondary"
           >
