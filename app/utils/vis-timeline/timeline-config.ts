@@ -22,6 +22,8 @@ export function createTimelineOptions(checkOverlapFn, duration: number): Timelin
         },
         groupEditable: true,
         horizontalScroll: true,
+        zoomKey: 'ctrlKey',
+        moveable: true,
         itemsAlwaysDraggable: { item: true, range: true },
         multiselect: true,
         zoomable: true,

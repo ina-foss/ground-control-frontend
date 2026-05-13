@@ -29,6 +29,8 @@ v-model:visible="visibleRight" header="Raccourcis clavier" position="right"
 
 import { ref } from 'vue';
 
+const annotation_type = inject('annotation_type')
+
 const helpIcon = '/icons/icons-svg/icons-svg/help-icon.svg';
 const visibleRight = ref(false);
 const shortcutList = [
@@ -45,4 +47,12 @@ const shortcutList = [
   { key: "Espace", value: "Création d'une rupture avant" },
   { key: "Ctrl + Espace", value: "Création d'une rupture après" },
 ];
+
+if (annotation_type == 'video-segmentation' ){
+  shortcutList.push(
+    { key: "Ctrl + molette", value: "Zoom dans la timeline"},
+    { key: "molette", value: "Deplacement horizontal dans la timeline"}
+  )
+}
+
 </script>
