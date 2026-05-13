@@ -275,6 +275,20 @@
     "edit": {
       "title": "Edit configuration"
     },
+    "dialog": {
+      "subtitleCreate": "Upload a JSON file or configure the plugin manually",
+      "subtitleEdit": "Update this plugin's configuration",
+      "uploadHint": "Select a JSON file describing your plugin configuration.",
+      "manualHint": "Edit the JSON directly or use the form to configure each section.",
+      "acceptedFormat": "Accepted format: .json"
+    },
+    "popover": {
+      "search": "Search a plugin…",
+      "count": "{n} plugin(s)",
+      "empty": "No plugin matches your search",
+      "expandAll": "Expand all",
+      "collapseAll": "Collapse all"
+    },
     "status" : {
       "verificationStatus": "Verification Status",
       "toBeVerified": "To be verified",

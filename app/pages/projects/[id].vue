@@ -764,42 +764,154 @@ style="color: #0B7698 !important;
       @confirm="deletePlugin"
     />
     <Popover ref="pluginsPopover">
-      <div class="min-w-64 max-w-xs">
-        <ul class="flex flex-col divide-y divide-gray-100">
-          <li
-            v-for="plugin in currentPopoverStep?.plugins"
-            :key="plugin.id"
-            class="flex items-center justify-between gap-3 px-3 py-2 hover:bg-gray-50"
+      <div class="max-w-200">
+        <div class="sticky top-0 z-10 bg-white dark:bg-surface-900 border-b border-gray-100 dark:border-surface-700 p-2">
+          <div class="relative">
+            <span class="pi pi-search absolute left-2 top-3 -translate-y-1/2 text-xs text-gray-400 dark:text-surface-500" />
+            <InputText
+              v-model="pluginSearch"
+              :placeholder="t('plugin.popover.search')"
+              class="w-full !text-sm !pl-8 "
+              size="small"
+            />
+          </div>
+          <div class="mt-1.5 px-1 flex items-center justify-between text-xs text-gray-500 dark:text-surface-400">
+            <span>{{ t('plugin.popover.count', { n: filteredPluginsCount }) }}</span>
+            <button
+              v-if="hasGroups"
+              type="button"
+              class="text-[11px] text-[#0B7698] dark:text-[#4FB3D1] hover:underline"
+              @click="toggleAllPluginGroups"
+            >
+              {{ allGroupsCollapsed ? t('plugin.popover.expandAll') : t('plugin.popover.collapseAll') }}
+            </button>
+          </div>
+        </div>
+
+        <div class="max-h-96 overflow-y-auto">
+          <div
+            v-if="filteredPluginsCount === 0"
+            class="p-4 text-center text-sm text-gray-400 dark:text-surface-500"
           >
-            <div class="flex items-center gap-2 min-w-0">
-              <span class="pi pi-tag text-gray-400 text-xs flex-shrink-0" />
-              <span class="text-sm font-medium truncate">
-                {{ plugin.display_config?.label || plugin.name }}
-              </span>
-              <Tag :value="plugin.type" severity="secondary" class="!text-[10px] flex-shrink-0" />
-            </div>
-            <div class="flex gap-0.5 flex-shrink-0">
-              <Button
-                v-if="roleCreatePlugin"
-                icon="pi pi-pencil"
-                text
-                size="small"
-                severity="secondary"
-                v-tooltip="t('actions.edit')"
-                @click="editPlugin(plugin)"
-              />
-              <Button
-                v-if="roleCreatePlugin"
-                icon="pi pi-trash"
-                text
-                size="small"
-                severity="danger"
-                v-tooltip="t('actions.delete')"
-                @click="confirmDeletePlugin(plugin)"
-              />
-            </div>
-          </li>
-        </ul>
+            {{ t('plugin.popover.empty') }}
+          </div>
+          <ul v-else class="flex flex-col">
+            <template v-for="plugin in filteredPlugins" :key="plugin.id">
+              <li
+                v-if="plugin.children && plugin.children.length"
+                class="border-b border-gray-100 dark:border-surface-700 last:border-b-0"
+              >
+                <div
+                  class="flex items-center justify-between gap-2 px-3 py-2 bg-gray-50 dark:bg-surface-800 hover:bg-gray-100 dark:hover:bg-surface-700 cursor-pointer select-none"
+                  @click="togglePluginGroup(plugin.id)"
+                >
+                  <div class="flex items-center gap-2 min-w-0 flex-1">
+                    <span
+                      :class="[
+                        'pi text-[10px] text-gray-500 dark:text-surface-400 flex-shrink-0',
+                        collapsedGroups.has(plugin.id) ? 'pi-chevron-right' : 'pi-chevron-down',
+                      ]"
+                    />
+                    <span class="text-sm font-semibold truncate text-gray-800 dark:text-surface-100">
+                      {{ plugin.display_config?.label || plugin.name }}
+                    </span>
+                    <Tag :value="plugin.type" severity="secondary" class="!text-[10px] flex-shrink-0" />
+                    <span class="ml-auto text-[11px] text-gray-400 dark:text-surface-500 flex-shrink-0">
+                      {{ plugin.children.length }}
+                    </span>
+                  </div>
+                  <div class="flex gap-0.5 flex-shrink-0" @click.stop>
+                    <Button
+                      v-if="roleCreatePlugin"
+                      icon="pi pi-pencil"
+                      text
+                      size="small"
+                      severity="secondary"
+                      v-tooltip="t('actions.edit')"
+                      @click="editPlugin(plugin)"
+                    />
+                    <Button
+                      v-if="roleCreatePlugin"
+                      icon="pi pi-trash"
+                      text
+                      size="small"
+                      severity="danger"
+                      v-tooltip="t('actions.delete')"
+                      @click="confirmDeletePlugin(plugin)"
+                    />
+                  </div>
+                </div>
+                <ul v-show="!collapsedGroups.has(plugin.id)" class="divide-y divide-gray-50 dark:divide-surface-800">
+                  <li
+                    v-for="child in plugin.children"
+                    :key="child.id"
+                    class="flex items-center justify-between gap-2 pl-8 pr-3 py-1.5 hover:bg-gray-50 dark:hover:bg-surface-800"
+                  >
+                    <div class="flex items-center gap-2 min-w-0">
+                      <span class="pi pi-angle-right text-gray-300 dark:text-surface-600 text-[10px] flex-shrink-0" />
+                      <span class="text-sm truncate text-gray-800 dark:text-surface-200">
+                        {{ child.display_config?.label || child.name }}
+                      </span>
+                      <Tag :value="child.type" severity="secondary" class="!text-[10px] flex-shrink-0" />
+                    </div>
+                    <div class="flex gap-0.5 flex-shrink-0">
+                      <Button
+                        v-if="roleCreatePlugin"
+                        icon="pi pi-pencil"
+                        text
+                        size="small"
+                        severity="secondary"
+                        v-tooltip="t('actions.edit')"
+                        @click="editPlugin(child)"
+                      />
+                      <Button
+                        v-if="roleCreatePlugin"
+                        icon="pi pi-trash"
+                        text
+                        size="small"
+                        severity="danger"
+                        v-tooltip="t('actions.delete')"
+                        @click="confirmDeletePlugin(child)"
+                      />
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li
+                v-else
+                class="flex items-center justify-between gap-2 px-3 py-2 hover:bg-gray-50 dark:hover:bg-surface-800 border-b border-gray-100 dark:border-surface-700 last:border-b-0"
+              >
+                <div class="flex items-center gap-2 min-w-0">
+                  <span class="pi pi-tag text-gray-400 dark:text-surface-500 text-xs flex-shrink-0" />
+                  <span class="text-sm font-medium truncate text-gray-800 dark:text-surface-100">
+                    {{ plugin.display_config?.label || plugin.name }}
+                  </span>
+                  <Tag :value="plugin.type" severity="secondary" class="!text-[10px] flex-shrink-0" />
+                </div>
+                <div class="flex gap-0.5 flex-shrink-0">
+                  <Button
+                    v-if="roleCreatePlugin"
+                    icon="pi pi-pencil"
+                    text
+                    size="small"
+                    severity="secondary"
+                    v-tooltip="t('actions.edit')"
+                    @click="editPlugin(plugin)"
+                  />
+                  <Button
+                    v-if="roleCreatePlugin"
+                    icon="pi pi-trash"
+                    text
+                    size="small"
+                    severity="danger"
+                    v-tooltip="t('actions.delete')"
+                    @click="confirmDeletePlugin(plugin)"
+                  />
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
       </div>
     </Popover>
   </div>
@@ -863,6 +975,53 @@ const editingPluginId = ref<number | null>(null)
 const editingPluginInitialJson = ref<Record<string, any> | null>(null)
 const showDeletePluginConfirm = ref(false)
 const pluginToDelete = ref<any>(null)
+const pluginSearch = ref('')
+const collapsedGroups = ref<Set<number>>(new Set())
+
+const filteredPlugins = computed(() => {
+  const plugins = (currentPopoverStep.value?.plugins ?? []) as any[]
+  const query = pluginSearch.value.trim().toLowerCase()
+  if (!query) return plugins
+  const matches = (p: any) =>
+    (p.display_config?.label || p.name || '').toLowerCase().includes(query) ||
+    (p.type || '').toLowerCase().includes(query)
+  return plugins
+    .map((p) => {
+      const childMatches = (p.children ?? []).filter(matches)
+      if (matches(p)) return p
+      if (childMatches.length) return { ...p, children: childMatches }
+      return null
+    })
+    .filter(Boolean)
+})
+
+const filteredPluginsCount = computed(() =>
+  filteredPlugins.value.reduce((acc: number, p: any) => acc + 1 + (p.children?.length ?? 0), 0),
+)
+
+const hasGroups = computed(() =>
+  filteredPlugins.value.some((p: any) => p.children?.length),
+)
+
+const allGroupsCollapsed = computed(() => {
+  const groups = filteredPlugins.value.filter((p: any) => p.children?.length)
+  return groups.length > 0 && groups.every((p: any) => collapsedGroups.value.has(p.id))
+})
+
+function togglePluginGroup(id: number) {
+  if (collapsedGroups.value.has(id)) collapsedGroups.value.delete(id)
+  else collapsedGroups.value.add(id)
+  collapsedGroups.value = new Set(collapsedGroups.value)
+}
+
+function toggleAllPluginGroups() {
+  const groups = filteredPlugins.value.filter((p: any) => p.children?.length)
+  if (allGroupsCollapsed.value) {
+    collapsedGroups.value = new Set()
+  } else {
+    collapsedGroups.value = new Set(groups.map((p: any) => p.id))
+  }
+}
 const toggleStrategy = () => {
   showStrategy.value = !showStrategy.value
 }
@@ -1210,6 +1369,11 @@ const createConfig = (stepId) => {
 
 function togglePluginsPopover(event: any, stepData: any) {
   currentPopoverStep.value = stepData
+  pluginSearch.value = ''
+  const parentIds = (stepData?.plugins ?? [])
+    .filter((p: any) => p.children?.length)
+    .map((p: any) => p.id)
+  collapsedGroups.value = new Set<number>(parentIds)
   pluginsPopover.value.toggle(event)
 }
 
