@@ -89,7 +89,7 @@ describe('Molecule Form Task',()=>{
     expect(wrapper.text()).toContain('taskForm.dialog.title')
   })
 
-  it('Create ', async ()=>{
+  it('Create Task manually', async ()=>{
         const manualTab = wrapper.findAllComponents(Tab)
           .find(t => t.text().includes('manual'))
 
@@ -109,7 +109,12 @@ describe('Molecule Form Task',()=>{
         await new Promise(resolve => setTimeout(resolve, 500));
         await wrapper.vm.$nextTick()
 
-        await wrapper.find('button[aria-label="Créer"]').trigger('click')
+        const createBtn = wrapper.findAll('button')
+          .find(b => b.text().includes('actions.create'))
+
+        expect(createBtn).toBeTruthy()
+
+        await createBtn!.trigger('click')
         expect(Media.createMediaMediaPost).toHaveBeenCalledOnce()
         expect(Media.createMediaMediaPost).toHaveBeenLastCalledWith({body:{url: "http://example.com", type: "video", player_parameters: {}}})
         expect(Task.createTaskTaskPost).toHaveBeenCalledOnce()

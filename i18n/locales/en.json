@@ -201,6 +201,7 @@
     }
   },
   "task": {
+    "creating": "Creating...",
     "activation": "Activation",
     "deactivation": "Deactivation",
     "activateAll": "Activate all",

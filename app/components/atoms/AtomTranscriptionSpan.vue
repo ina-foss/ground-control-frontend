@@ -1,14 +1,12 @@
 <template>
   <transcription-container class="flex flex-col gap-2 w-full min-w-0">
-    <div class="flex justify-between"
-        @mousedown.stop
-        @mouseup.stop
-        @click.stop>
+    <div data-ignore-selection class="flex justify-between">
       <Tag
         v-if="options.timecode_bloc"
         severity="secondary"
         :value="timestampToUnix(local.tcin)"
-        class="w-fit bg-surface-200 cursor-none"
+        class="w-fit bg-surface-200 cursor-pointer"
+        @click="$emit('handleWordClick',{tcin: local.tcin, tcout:local.tcout, event: $event})"
       />
       <div v-if="showSegmentSpan" class="flex items-center">
         <Tag v-if="segmentSpanId"
@@ -30,7 +28,7 @@
         :data-tc="word.tcin"
         :tcin="unixToTimestamp(word.tcin)"
         :tcout="unixToTimestamp(word.tcout)"
-        :class="{'inline-block hover:bg-surface-200 relative break-words whitespace-pre ': true, 'text-active  '
+        :class="{'inline-block hover:bg-surface-200 relative whitespace-pre ': true, 'text-active  '
         : playerTime && !showSegmentSpan && playerTime > unixToTimestamp(word.tcin),}"
         @drop="handleDrop"
         @dragleave="removeSpanPreview"
@@ -145,6 +143,20 @@ const removeSpanPreview = () => {
 
 }
 
+const sortedWords = computed(() =>
+  [...(local.sublocalisations?.localisation || [])].sort(
+    (wordA, wordB) =>
+      unixToTimestamp(wordA?.tcin) -
+      unixToTimestamp(wordB?.tcin)
+  )
+)
+const firstTcin = computed(() =>
+  sortedWords.value[0]?.tcin
+)
+const lastTcout = computed(() =>
+  sortedWords.value[sortedWords.value.length - 1]?.tcout
+)
+
 function getSegmentNodes(): HTMLElement[] {
   return Array.from(
     document.querySelectorAll(`[data-tc]`)
@@ -154,14 +166,13 @@ function getSegmentNodes(): HTMLElement[] {
   }) as HTMLElement[]
 }
 
-const wrapperTcin = computed(() => Number(local.tcin))
-const wrapperTcout = computed(() => Number(local.tcout))
+
 const segmentSpanId = computed(() => {
   const span = spanArray.value?.find((span: any) => {
     return (
       span?.isSegment === true &&
-      Number(span.tcin) === wrapperTcin.value &&
-      Number(span.tcout) === wrapperTcout.value
+      (span.tcin) === firstTcin.value &&
+      (span.tcout) === lastTcout.value
     )
   })
 
@@ -175,8 +186,8 @@ function openSegmentForm(event: MouseEvent) {
   segmentSpanId?.value ? segmentForm.value.open({span:spanArray.value[segmentSpanId.value]}):segmentForm.value.open({
     span: {
       id,
-      tcin: local.tcin,
-      tcout: local.tcout,
+      tcin: firstTcin.value,
+      tcout: lastTcout.value,
       nodes,
     },
     event

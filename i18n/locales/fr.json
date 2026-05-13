@@ -201,6 +201,7 @@
     "hide": " < Stratégie"
   },
   "task": {
+    "creating": "Création en cours...",
     "activation": "Activation",
     "deactivation": "Désactivation",
     "activateAll": "Tout activer",

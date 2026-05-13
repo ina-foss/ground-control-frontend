@@ -82,8 +82,7 @@ export default defineComponent({
     let doubleClickTimeout : NodeJS.Timeout | null = null
 
     function handleWordClick (event: {tcin: number | string, event: MouseEvent}){
-      if (!isEvaluatedSpan) {
-              if (options.value.ctrlWordClick) {
+        if (options.value.ctrlWordClick) {
         emit('on-segment-click', event)
       } else {
         if (doubleClickTimeout) {
@@ -99,7 +98,6 @@ export default defineComponent({
             }, 500);
           }
         }
-      }
       }
     }
 

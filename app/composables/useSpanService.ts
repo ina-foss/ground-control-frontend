@@ -553,15 +553,20 @@ function createSpanService (){
       event?.stopPropagation()
       if( options.unlabelled_span || labelSelected.value.length != 0 ) {
         const nodes = ExtractNodesFromCurrentSelection() as Element[]
-        if(nodes.length == 0) {
-          const error = new Error(t("error.title.impossibleAction"),{cause: t("span.highlight.errors.emptySpan")})
+        const throwSpanError = () => {
+          const error = new Error(
+            t('error.title.impossibleAction'),
+            { cause: t('span.highlight.errors.emptySpan') }
+          )
           nuxtApp.$handleApiError(error)
-          throw  error
+          throw error
         }
+        if(nodes.length == 0) return throwSpanError()
         const tcin = nodes[0].getAttribute('tcin')
         const tcout = nodes[nodes.length-1].getAttribute('tcout')
+        if(!tcin || !tcout) return throwSpanError()
+          
         const id = unref(spanCount.value)
-
         return {span: {id, nodes,tcin,tcout, deletedItems:0, plugins: [] } }
       }
     }
@@ -629,6 +634,12 @@ function createSpanService (){
                 // Si le noeud est un wrapper on le skip et on passe a ses descendants
                 if (node.nodeName === "SPAN-TRANSCRIPTION-WRAPPER" ||node.nodeName === "TRANSCRIPTION-CONTAINER") {
                   return NodeFilter.FILTER_SKIP
+                }
+                if (
+                  node instanceof Element &&
+                  node.hasAttribute("data-ignore-selection")
+                ) {
+                  return NodeFilter.FILTER_REJECT
                 }
                 //Si le noeud est une div, on le parcourt, sinon (tag, border, bg... ) on le rejette
                 return node.nodeName === "DIV" ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT

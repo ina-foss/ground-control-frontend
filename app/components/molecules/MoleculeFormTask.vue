@@ -61,6 +61,7 @@
                       icon="pi pi-times" text rounded size="small" severity="danger"
                       class="self-center hover:bg-surface-100 hover:cursor-pointer"
                       style="font-size: 15px;"
+                      :disabled="isCreating"
                       :pt="{
                         root: { style: 'justify-content: center; justify-items: center; place-self: center;' },
                         icon: { style: 'max-width:24px' }
@@ -81,7 +82,9 @@
               class="button"
               icon="pi pi-check"
               icon-pos="left"
-              label="Créer"
+              :label="isCreating ? t('task.creating') : t('actions.create')"
+              :loading="isCreating"
+              :disabled="isCreating"
               size="small"
               @click="createTaskFromUpload"
             />
@@ -190,6 +193,7 @@
                           </p>
                           <Button
                             icon="pi pi-times" text rounded size="small" severity="danger"
+                            :disabled="isCreating"
                             class=" self-center hover:bg-surface-100  hover:cursor-pointer" style="font-size: 15px;" :pt="{
                                 root: {
                                   style: 'justify-content: center; justify-items: center; place-self: center;'
@@ -216,8 +220,11 @@
                           size="small" @click="activateCallback('1')"/>
                   <Button
                     class="button"
-                    icon="pi pi-check" icon-pos="left"
-                    label="Créer"
+                    icon="pi pi-check"
+                    icon-pos="left"
+                    :label="isCreating ? t('task.creating') : t('actions.create')"
+                    :loading="isCreating"
+                    :disabled="isCreating"
                     size="small"
                     @click="createTaskFromUpload"
                   />
@@ -249,6 +256,7 @@ const fileData = ref([])
 const deleteDialog = ref(false)
 const activeTab = ref('upload')
 const fileName = ref('')
+const isCreating = ref(false)
 const isUploadEnabled = computed(() => fileData.value.length > 0)
 
 const onSelect = async (event) => {
@@ -271,9 +279,11 @@ const onReaderLoad = (event) => {
 }
 
 const createTaskFromUpload = async () => {
-  const results = await Promise.all(
-    fileData.value.map(async (entry,index) => {
-      try {
+  isCreating.value = true
+
+  try {
+    await Promise.all(
+      fileData.value.map(async (entry, index) => {
         const media = await Media.createMediaMediaPost({
           body: {
             url: entry.asset.url,
@@ -284,11 +294,10 @@ const createTaskFromUpload = async () => {
 
         const task = await Task.createTaskTaskPost({
           body: {
-            name:
-              name.value
-                ? `${name.value}${fileData.value.length > 1 ? `_${index + 1}` : ''}`
-                : entry.data?.[0]?.localisation?.[0]?.sublocalisations?.localisation?.[0]?.label ||
-                  `${fileName.value}${fileData.value.length > 1 ? `_${index + 1}` : ''}`,
+            name: name.value && activeTab.value == 'manual'
+              ? `${name.value}${fileData.value.length > 1 ? `_${index + 1}` : ''}`
+              : entry.data?.[0]?.localisation?.[0]?.sublocalisations?.localisation?.[0]?.label ||
+                `${fileName.value}${fileData.value.length > 1 ? `_${index + 1}` : ''}`,
             instruction: instruction.value,
             data_type: TaskDataType.AMALIA,
             status: Status.DRAFT,
@@ -315,18 +324,19 @@ const createTaskFromUpload = async () => {
             }
           }
         })
+      })
+    )
 
-        return { success: true, entry }
+    emits('toggle-dialog')
+    emits('refresh-data')
 
-      } catch (error) {
-        console.error('Error for entry:', entry, error)
-        $handleApiError(error)
-      }
-    })
-  )
+  } catch (error) {
+    console.error(error)
+    $handleApiError(error)
 
-  emits('toggle-dialog')
-  emits('refresh-data')
+  } finally {
+    isCreating.value = false
+  }
 }
 
 </script>
