@@ -979,7 +979,12 @@ const pluginSearch = ref('')
 const collapsedGroups = ref<Set<number>>(new Set())
 
 const filteredPlugins = computed(() => {
-  const plugins = (currentPopoverStep.value?.plugins ?? []) as any[]
+  const rawPlugins = (currentPopoverStep.value?.plugins ?? []) as any[]
+  const childIds = new Set<number>()
+  rawPlugins.forEach((p) => {
+    (p.children ?? []).forEach((c: any) => childIds.add(c.id))
+  })
+  const plugins = rawPlugins.filter((p) => !childIds.has(p.id))
   const query = pluginSearch.value.trim().toLowerCase()
   if (!query) return plugins
   const matches = (p: any) =>
