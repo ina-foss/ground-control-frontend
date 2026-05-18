@@ -827,7 +827,7 @@ style="color: #0B7698 !important;
                       text
                       size="small"
                       severity="secondary"
-                      v-tooltip="t('actions.edit')"
+                      v-tooltip="t('actions.modify')"
                       @click="editPlugin(plugin)"
                     />
                     <Button
@@ -861,7 +861,7 @@ style="color: #0B7698 !important;
                         text
                         size="small"
                         severity="secondary"
-                        v-tooltip="t('actions.edit')"
+                        v-tooltip="t('actions.modify')"
                         @click="editPlugin(child)"
                       />
                       <Button
@@ -895,7 +895,7 @@ style="color: #0B7698 !important;
                     text
                     size="small"
                     severity="secondary"
-                    v-tooltip="t('actions.edit')"
+                    v-tooltip="t('actions.modify')"
                     @click="editPlugin(plugin)"
                   />
                   <Button

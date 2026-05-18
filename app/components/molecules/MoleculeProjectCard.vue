@@ -329,7 +329,7 @@ const toggleMenu = (event) => {
 
 const actions = computed(() => [
   {
-    label: t('actions.edit'),
+    label: t('actions.modify'),
     condition: project.status !== Status.DONE && project.status !== Status.ARCHIVED && roleUpdateProject.value,
     handler: () => {
       visible.value = true;

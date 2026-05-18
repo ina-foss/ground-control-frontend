@@ -14,10 +14,13 @@ import MoleculeDialogConfirm from "~/components/molecules/moleculeDialogConfirm/
 import MoleculeVideoSegmentation from "~/components/molecules/videoSegmentation/MoleculeVideoSegmentation.vue"
 import AmaliaPlayerService from "~/services/amalia-player-service";
 import {resetPlayer} from "~/composables/usePlayer";
+import AtomPophover from "~/components/atoms/pophover/AtomPophover.vue";
+import { nextTick } from 'vue'
 
 export default defineComponent({
   name: "OrganismAnnotation",
   components:{
+      AtomPophover,
     MoleculeAnnotationLeftPanel,
     MoleculeSpan,
     MoleculeSegmentation,
@@ -49,7 +52,7 @@ export default defineComponent({
   setup(props, {emit}) {
     const transcriptionContainer = ref<HTMLElement | null>(null)
     const { data, annotationsIn, annotationsOut, allFetched } = toRefs(props)
-
+    const spanService = useSpanService(true)
     const { t } = useI18n()
     const authStore = useAuth()
     const optionStore = useOptions()
@@ -610,32 +613,48 @@ export default defineComponent({
 
   }
 
-    const hasSpansToVerify = computed(() => {
-      const spanService = useSpanService()
-      const { spanArray, mainPluginIndex, mainPluginId } = spanService
-
-      return spanArray.value.some((span) => {
-        if (!span?.nodes) return false
-        if (span.verified) return false
-
-        const mainPlugin = pluginList.value.find(x => x.id == mainPluginId.value)
-        if (!mainPlugin) return false
-
-        if (mainPlugin.available_plugins?.length !== 0) {
-          const pluginName = mainPlugin.available_plugins?.[span?.plugins?.[mainPluginIndex.value]?.[0]?.ext_id]
-          const pluginConfig = pluginList.value.find(x => x.name == pluginName)
-          return pluginConfig?.display_config?.is_verifiable === true
-        } else {
-          return mainPlugin.display_config?.is_verifiable === true
-        }
-      })
-    })
-
   onUnmounted(()=>{
     resetPlayer()
   })
 
-  const spanService = useSpanService(true)
+    const tagOverlayPanel = ref()
+
+    watch(spanService.tagContextMenuEvent, async (event) => {
+      if (!event) return
+      if (tagOverlayPanel.value?.visible) {
+        tagOverlayPanel.value.hide()
+        await nextTick()
+      }
+      tagOverlayPanel.value.show(event)
+      spanService.tagContextMenuEvent.value = null
+    })
+
+    const tagPluginName = computed(() =>
+      Object.values(spanService.tagContextMenuSpan.value?.plugins ?? {})
+        .find(values => values?.[0])?.[0]?.label ?? ''
+    )
+
+    function onStatusUpdate(newStatus: string) {
+      if (spanService.tagContextMenuSpan.value) {
+        spanService.tagContextMenuSpan.value.verified = newStatus === Status.VERIFIED
+        spanService.applySpan(spanService.tagContextMenuSpan.value)
+      }
+    }
+
+    function onEditFromPophover(span: any) {
+      tagOverlayPanel.value?.hide()
+      spanService.spanForm.value?.open({ span })
+    }
+
+    function onRemoveFromPophover(span: any) {
+      const pluginKey = Object.keys(span.plugins ?? {})
+        .find(key => span.plugins[key]?.[0]?.plugin_id)
+      if (pluginKey !== undefined) {
+        span.plugins[pluginKey] = []
+      }
+      spanService.applySpan(span)
+      tagOverlayPanel.value?.hide()
+    }
   provide('spanService',spanService)
 
   provide('plugin-config', config)
@@ -704,7 +723,12 @@ export default defineComponent({
     media_type,
     transcriptionContainer,
     isEvaluatedSpan,
-    hasSpansToVerify
+    onStatusUpdate,
+    tagOverlayPanel,
+    spanService,
+    tagPluginName,
+    onEditFromPophover,
+    onRemoveFromPophover
   }
 },
 })

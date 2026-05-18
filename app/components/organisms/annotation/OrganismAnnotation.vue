@@ -59,7 +59,7 @@
       @unselect="handleSelection"
     />
       <div
-          v-if="hasSpansToVerify && annotation_type === 'span'"
+          v-if="annotation_type === 'span'"
           class="absolute left-1/2 -translate-x-1/2 z-[5] flex items-center gap-2 text-sm font-medium"
           style="top: 82px;"
       >
@@ -251,6 +251,18 @@
       {{ $t("annotation.dialogs.finish.description_part2") }}
     </template>
   </MoleculeDialogConfirm>
+
+  <OverlayPanel ref="tagOverlayPanel">
+    <AtomPophover
+      v-if="spanService.tagContextMenuSpan.value"
+      :plugin-value="spanService.tagContextMenuSpan.value?.verified ? Status.VERIFIED : Status.PENDING"
+      :span="spanService.tagContextMenuSpan.value"
+      :plugin-name="tagPluginName"
+      @update:plugin-value="onStatusUpdate"
+      @remove="onRemoveFromPophover"
+      @edit="onEditFromPophover"
+    />
+  </OverlayPanel>
 </template>
 
 <script src="./organism-annotation-component.ts"></script>

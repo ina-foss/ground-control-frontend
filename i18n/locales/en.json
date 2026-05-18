@@ -124,6 +124,7 @@
   },
   "actions": {
     "add": "Add",
+    "modify": "Edit",
     "edit": "Edit",
     "archive":"Archive",
     "finish":"Finish",

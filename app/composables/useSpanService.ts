@@ -66,7 +66,8 @@ function createSpanService (){
         role:spanRole,selectedGroup:selectedGroupVirtual.value,
         mainGroupPluginIndex:mainGroupPluginIndexVirtual.value,
         suppression: true}) }])
-
+  const tagContextMenuEvent = ref<MouseEvent | null>(null)
+  const tagContextMenuSpan = ref<any>(null)
   const pluginValues = reactive<pluginValues>({})
   const state: State = reactive({
     selection: null,
@@ -392,19 +393,25 @@ function createSpanService (){
       dot.style.marginRight = '2px'
       dot.style.borderRadius = '50%'
       dot.style.flexShrink = '0'
-      dot.style.backgroundColor = isVerified ? '#268750' : '#FCDB00'
-      dot.style.border = isVerified ? '1px solid #268750' : '1px solid black'
-      tag.prepend(dot)
+      dot.style.backgroundColor = '#FCDB00'
+      dot.style.border ='1px solid black'
+      if(!isVerified){
+        tag.prepend(dot)
+      }
     }
 
     element.appendChild(tag)
     tag.addEventListener('dragstart',event=> {
       event.dataTransfer.setData('span',spanId)
     })
-    tag.addEventListener('contextmenu', (event )=>{
-      spanMenuSelected.value = spanId
-      spanMenu.value.show(event)
-      })
+    tag.addEventListener('contextmenu', (event: MouseEvent) => {
+      event.stopPropagation()
+      event.preventDefault()
+      if(isVerifiable) {
+        tagContextMenuEvent.value = event
+        tagContextMenuSpan.value = span
+      }
+    })
     const tagCoord = tag.getBoundingClientRect()
 
     // Check for existing tag being overlap by the new tag on the LEFT side
@@ -763,7 +770,7 @@ function createSpanService (){
   return{
     focusGroup, saveSpan, extractTextFromSpanNodes, dragData,showDragPin, reccursiveSibling, deleteSpan, loadSpan, newFocus, handleDrop, recordSpanId, spanForm, op, spanMenuSelected, defaultLabel, applySpan, spanMenu, spanArray, handleSelectionV2, selectSpanNodes, onDeleteSpan, spanClicked,linkMode, labelSelected,isForResearch,deletedNum,
     affectPluginValues, initPluginValues, pluginValues,contextMenuOptions, mainPluginId, createSpanColorPalette,readPluginValues,mainPluginIndex,createdPluginOptionsList,contextControlPanelMenuOptions, contextMenuOptionsSegment, spanControlPanelMenu, spanControlPanelMenuSegment, appendAllSpansToDOM, isSpan, isSpanGroup, isVirtualSpan,spanRole,selectedGroupVirtual,mainGroupPluginIndexVirtual,hideDragPin,capitalizeFirstLetter,
-    spansChanged, resetSpansChanged, applySpanNoColor, segmentForm
+    spansChanged, resetSpansChanged, applySpanNoColor, segmentForm,tagContextMenuEvent,tagContextMenuSpan
   }
 }
 

@@ -124,7 +124,8 @@
   },
   "actions": {
     "add": "Ajouter",
-    "edit": "Modifier",
+    "modify": "Modifier",
+    "edit": "Éditer",
     "archive":"Archiver",
     "finish":"Terminer",
     "unarchive":"Désarchiver",

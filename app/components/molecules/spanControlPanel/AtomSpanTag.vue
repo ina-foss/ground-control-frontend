@@ -7,11 +7,11 @@
           '--computed-width' : getMinSizeText() + 'px'
         }"
       :class="{'min-w-[80px] w-[80px] hover-span': expandable ,'w-fit':fluid , ' px-2 py-1 max-w-full transition-all duration-300 font-bold rounded border-2 inline-block text-xs/4 h-fit truncate  ' : true}" >
-          <span v-if="getStatusOfVerify"
+          <span v-if="getStatusOfVerify && !verifiedSpan"
               :style="{
-          backgroundColor: verifiedSpan? '#268750':'#FCDB00',
-          borderColor: verifiedSpan? '#268750':'black',
-          border: verifiedSpan ? '#268750':'1px solid black'
+          backgroundColor: '#FCDB00',
+          borderColor: 'black',
+          border: '1px solid black'
         }"
               class="inline-block w-2 h-2 rounded-full shrink-0"
           />
