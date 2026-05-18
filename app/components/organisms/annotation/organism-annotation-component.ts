@@ -172,7 +172,7 @@ export default defineComponent({
           localisation: words.map((word, index) => ({
             data: {
               text: [
-                index === 0 || /^[-']|[-']$/.test(words[index - 1])
+                index === 0 || /(^[-']|[-']$)/.test(words[index - 1]) 
                   ? word
                   : ` ${word}`
               ]
