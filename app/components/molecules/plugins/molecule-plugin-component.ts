@@ -120,7 +120,7 @@ export default defineComponent({
 
     function pluginChangeValue(plugin: PluginWithIdDto,event){
       if( (plugin.display_config.main_plugin || plugin.display_config.required_value || PickErrorByPlugin(plugin.name, false) ) && event.length != 0 && event[0] != null ) showErrorMessage.value = false
-      else if( (plugin.display_config.main_plugin  || plugin.display_config.required_value ) && ( event.length == 0 || event[0] == null)) showErrorMessage.value[plugin.name] = true
+      else if( (plugin.display_config.main_plugin  || plugin.display_config.required_value ) && ( event.length == 0 || event[0] == null)) showErrorMessage.value = true
     }
 
 
