@@ -1,14 +1,40 @@
 <template>
   <transcription-container class="flex flex-col gap-2 w-full min-w-0">
     <div data-ignore-selection class="flex justify-between">
-      <Tag
-        v-if="options.timecode_bloc"
-        severity="secondary"
-        :value="timestampToUnix(local.tcin)"
-        class="w-fit bg-surface-200 cursor-pointer"
-        @click="$emit('handleWordClick',{tcin: local.tcin, tcout:local.tcout, event: $event})"
-      />
-      <div v-if="showSegmentSpan" class="flex items-center">
+      <div class="flex gap-3">
+        <Tag
+          v-if="options.timecode_bloc && local.type != 'global-summary'"
+          severity="secondary"
+          :value="timestampToUnix(local.tcin)"
+          class="w-fit bg-surface-200 cursor-pointer"
+          @click="$emit('handleWordClick',{tcin: local.tcin, tcout:local.tcout, event: $event})"
+        />
+        <div
+          v-if="local?.label && isEvaluatedSpan"
+        >
+        <span-transcription-wrapper class="bg-white rounded-md scroll-m-12 flex flex-wrap gap-y-6 w-full max-w-full min-w-0 border-l-inherit py-6 px-2">
+          <div
+            v-for="word in normalizedLabel.sublocalisations.localisation"
+            :key="word.tcin"
+            :data-tc="word.tcin"
+            :tcin="word.tcin"
+            :tcout="word.tcout"
+            :class="{'inline-block hover:bg-surface-200 relative whitespace-pre font-bold': true, 'text-active  '
+            : playerTime && !isEvaluatedSpan && playerTime > unixToTimestamp(word.tcin)}"
+            @drop="handleDrop"
+            @dragleave="removeSpanPreview"
+            @dragover="addSpanPrewiev"
+            @click="$emit('handleWordClick', {
+              tcin: word.tcin,
+              event: $event,
+              tcout: word.tcout
+            })"
+          >
+            {{ word.data.text[0] }}
+          </div></span-transcription-wrapper>
+      </div>
+      </div>
+      <div v-if="isEvaluatedSpan" class="flex items-center">
         <Tag v-if="segmentSpanId"
           value="1"
           class="cursor-none"
@@ -29,7 +55,7 @@
         :tcin="unixToTimestamp(word.tcin)"
         :tcout="unixToTimestamp(word.tcout)"
         :class="{'inline-block hover:bg-surface-200 relative whitespace-pre ': true, 'text-active  '
-        : playerTime && !showSegmentSpan && playerTime > unixToTimestamp(word.tcin),}"
+        : playerTime && !isEvaluatedSpan && playerTime > unixToTimestamp(word.tcin),}"
         @drop="handleDrop"
         @dragleave="removeSpanPreview"
         @dragover="addSpanPrewiev"
@@ -56,7 +82,7 @@ const { local, playerTime } = defineProps({
     type: Number,
     default : () => 0
   },
-  showSegmentSpan: { type: Boolean, default: false }
+  isEvaluatedSpan: { type: Boolean, default: false }
 })
 
 const { handleDrop, dragData } = useSpanService()
@@ -178,6 +204,34 @@ const segmentSpanId = computed(() => {
 
   return span?.id
 })
+
+const normalizedLabel = computed(()=>
+ ({
+  data: {
+    text: [{ text: local.label || "" }],
+  },
+  label: local.label || "",
+  sublocalisations: {
+    localisation: (local.label || "")
+      .match(/[\wÀ-ÿ]+(?:['-][\wÀ-ÿ]+)*/g)
+      ?.map((word, index, arr) => ({
+        data: {
+          text: [
+            index === 0 || /(^[-']|[-']$)/.test(arr[index - 1])
+              ? word
+              : ` ${word}`
+          ]
+        },
+        tcin: index+local.label,
+        tclevel: local.tclevel,
+        tcout: (index + 1)+local.label
+      })) || []
+  },
+  tcin: local.tcin,
+  tclevel: local.tclevel,
+  tcout: local.tcout,
+  type: local.type,
+}))
 
 function openSegmentForm(event: MouseEvent) {
   if (!segmentForm.value?.open) return

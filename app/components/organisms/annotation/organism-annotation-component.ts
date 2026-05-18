@@ -161,14 +161,49 @@ export default defineComponent({
       return response
     })
 
+    function normalizeAndSplit(obj) {
+      const words = obj.data.text[0].split(" ");
+      return {
+        data: {
+          text: [{"text": obj.data.text[0]}],
+        },
+        label: obj.label || "",
+        sublocalisations: {
+          localisation: words.map((word, index) => ({
+            data: {
+              text: [
+                index === 0 || /^[-']|[-']$/.test(words[index - 1])
+                  ? word
+                  : ` ${word}`
+              ]
+            },
+            tcin: index,
+            tclevel: obj.tclevel,
+            tcout: index + 1
+          }))
+        },
+        tcin: obj.tcin,
+        tclevel: obj.tclevel,
+        tcout: obj.tcout,
+        type: obj.type,
+      };
+    }
     const locals = computed(() => {
-      if(allFetched.value){
-        const l = _.sortBy(getMetadataBlock(result.value, typeBlock.value).localisation[0].sublocalisations.localisation,(el)=>unixToTimestamp(el?.tcin))
-        return l.filter(e=> e != null || undefined )
-      }
-      return []
-    })
+      if (!allFetched.value) return []
+      const block = getMetadataBlock(result.value, typeBlock.value)
 
+      const globalSummary = block?.localisation?.[0]?.data?.text[0] && block?.localisation?.[0]?.type == "global-summary"
+        ? [normalizeAndSplit(block?.localisation?.[0])]
+        : []
+      
+      const subLocs = _.sortBy(
+        block?.localisation?.[0]?.sublocalisations?.localisation || [],
+        el => unixToTimestamp(el?.tcin)
+      ).filter(e => e != null)
+
+      return [...globalSummary, ...subLocs]
+    })
+    
     const result = computed(() => {
       if(allFetched.value){
       return (annotationInfo.value == null)
